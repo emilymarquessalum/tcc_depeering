@@ -1,0 +1,16 @@
+{
+    "rrc": "rrc03",
+    "name": "DE-CIX Amsterdam",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10",
+    "asn_and_prefix": {
+        "asn": "6777",
+        "prefix": "80.249.208.255"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "6777",
+        "prefix": "2001:67c:2b0::254"
+    },
+    "day_delta": 0,
+    "time_delta_hours": 8
+}

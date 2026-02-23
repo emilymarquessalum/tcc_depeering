@@ -1,0 +1,8 @@
+
+
+
+This paper: https://dl.acm.org/doi/full/10.1145/3735358.3735391
+
+Took the aspaths and cut them to represent the "Russian perspective", by 
+keeping the russian ASes as the first element and cutting the rest.
+With the same strategy, we can find Google's perspective over peering if we wanted to.
