@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-from src.ripe_bviews.bview_labels import date_range_title, date_range_title_config
+from src.ripe_bviews.bview_labels import get_date_range_title, date_range_title_config
 from src.ripe_bviews.download_and_parse.load_configs import load_configs
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data_timeline_from_configs
 from src.ripe_bviews.oscillations.bview_oscillation_logic import calculate_oscillation_metrics
@@ -38,5 +38,5 @@ if __name__ == "__main__":
     plot_list_as_bar_plot(sorted_keys, [oscillating_frequency[k] for k in sorted_keys],
                             title=f"Frequency of Oscillations for ASes - {config.get('name', 'Unknown')} - {date_range_title_config(config)}",
                             xlabel="Number of Oscillations",
-                            ylabel="Number of ASes",
+                            ylabel="Number of ASes",    
                             subfolder=subfolder)

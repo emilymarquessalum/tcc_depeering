@@ -1,8 +1,22 @@
 {
     "rrc": "rrc03",
     "name": "DE-CIX Amsterdam",
-    "start_date": "2026-01-01",
-    "end_date": "2026-01-10",
+    "start_date": "2025-12-01",
+    "end_date": "2026-01-01",
+    "end_date": "2025-12-02",
+
+
+    "start_date": "2025-12-01",   
+    "end_date": "2025-12-30", 
+
+
+    "start_date": "2025-12-01",   
+    "end_date": "2025-12-06", 
+
+
+    "start_date": "2025-12-29",   
+    "end_date": "2026-01-12", 
+    
     "asn_and_prefix": {
         "asn": "6777",
         "prefix": "80.249.208.255"

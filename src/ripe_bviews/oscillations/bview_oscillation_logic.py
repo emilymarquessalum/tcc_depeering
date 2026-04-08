@@ -1,13 +1,16 @@
 
 
+from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
 from src.utils.graphs import plot_list_as_line_plot
 
+from progress.bar import Bar
 
 class OscillationMetrics:
-    def __init__(self, oscillation_info: dict, total_oscillations: int, all_stats):
-        self.oscillation_info = oscillation_info
+    def __init__(self, oscillation_info: dict, total_oscillations: int, all_stats, route_oscillation_info: list = None):
+        self.oscillation_info: dict = oscillation_info
         self.total_oscillations = total_oscillations
-        self.all_stats = all_stats
+        self.all_stats: list[BGPDumpSnapshotStats] = all_stats
+        self.route_oscillation_info: list = route_oscillation_info if route_oscillation_info is not None else []
 
         self.oscillating_start_over_time = []
         self.oscillating_end_over_time = []
@@ -20,10 +23,24 @@ class OscillationMetrics:
 
 
         self.all_did_not_come_backs = set()
-        self.removed_oscillating_asns_over_time = []
-        self.removed_non_oscillating_asns_over_time = []
-        self.all_removed_asns_over_time = []
-        
+        self.removed_oscillating_asns_over_time: list[int] = []
+        self.removed_non_oscillating_asns_over_time: list[int] = []
+        self.all_removed_asns_over_time: list[set[int]] = []
+        self.all_added_asns_over_time: list[set[int]] = []
+        self.unique_oscillating_asns = None
+
+        self.oscillating_routes_over_time = []
+
+    def get_unique_oscillating_asns(self):
+        if self.unique_oscillating_asns is None:
+            self.unique_oscillating_asns = set(self.oscillation_info.keys())
+        return self.unique_oscillating_asns
+
+    def get_as_oscillation_count(self, asn: str):
+        asn = int(asn)  
+        if asn not in self.oscillation_info:    
+            return 0
+        return self.oscillation_info[asn]["oscillations"]
 
     def get_oscillating_variance_over_time(self):
         total_variance = []
@@ -35,6 +52,38 @@ class OscillationMetrics:
             total_variance.append(variance)
         return total_variance
 
+
+    def load_route_oscillating_info(self):
+        
+        if len(self.oscillating_routes_over_time) > 0:
+            return
+        
+        routes_removed_over_time = []
+        routes_added_over_time = []
+        all_removed_routes_over_time = []
+        all_added_routes_over_time = []
+        
+        for i in range(1, len(self.all_stats)): 
+            previous_routes = self.all_stats[i-1].get_unique_routes()
+            current_routes = self.all_stats[i].get_unique_routes()
+            removed_routes = previous_routes - current_routes
+            added_routes = current_routes - previous_routes
+            routes_removed_over_time.append(len(removed_routes))
+            routes_added_over_time.append(len(added_routes))
+            all_removed_routes_over_time.append(removed_routes)
+            all_added_routes_over_time.append(added_routes)
+        
+        for i in range(len(routes_added_over_time)):
+            routes_removed = routes_removed_over_time[i]
+            routes_added = routes_added_over_time[i]
+            
+            self.oscillating_routes_over_time.append({
+                "removed_count": routes_removed,
+                "added_count": routes_added,
+                "removed_routes": all_removed_routes_over_time[i],
+                "added_routes": all_added_routes_over_time[i]
+            })
+
     def load_oscillating_lists(self):
  
         for i in range(1, len(self.all_stats)): 
@@ -42,7 +91,9 @@ class OscillationMetrics:
             previous_asns = self.all_stats[i-1].unique_members
             current_asns = self.all_stats[i].unique_members
 
+            # ex: [1,2,3] - [1,2] = [3] (3 was removed)
             removed_asns = previous_asns - current_asns
+            # ex: [1,2,3] - [2,3] = [1] (1 was added)
             added_asns = current_asns - previous_asns
 
             self.removed_asns_over_time.append(len(removed_asns))
@@ -63,12 +114,21 @@ class OscillationMetrics:
             
             self.added_oscillating_asns_over_time.append(oscillating_count)
             self.added_non_oscillating_asns_over_time.append(non_oscillating_count)
- 
+            self.all_added_asns_over_time.append(added_asns)
             self.all_removed_asns_over_time.append(removed_asns)
-
+        
+        assert len(self.removed_asns_over_time) == len(self.all_stats) - 1
+        assert len(self.added_asns_over_time) == len(self.all_stats) - 1
+        assert len(self.oscillating_start_over_time) == len(self.all_stats) - 1
+        assert len(self.oscillating_end_over_time) == len(self.all_stats) - 1
+        assert len(self.added_oscillating_asns_over_time) == len(self.all_stats) - 1
+        assert len(self.added_non_oscillating_asns_over_time) == len(self.all_stats) - 1
+        assert len(self.all_added_asns_over_time) == len(self.all_stats) - 1
+        assert len(self.all_removed_asns_over_time) == len(self.all_stats) - 1
+        
         for i in range(len(self.all_removed_asns_over_time)):
             asns_removed = self.all_removed_asns_over_time[i]
-            did_not_come_back = []
+            did_not_come_back: list[int] = []
             for asn in asns_removed:
                 came_back = False
                 for j in range(i+1, len(self.all_stats)-1):
@@ -76,11 +136,13 @@ class OscillationMetrics:
                     if asn in future_asns:
                         came_back = True
                         break
-                if not came_back:
+                if not came_back: 
                     did_not_come_back.append(asn)
                     self.all_did_not_come_backs.add(asn)
-            oscillating_count = sum(1 for asn in did_not_come_back if asn in self.oscillation_info)
-            non_oscillating_count = len(did_not_come_back) - oscillating_count
+
+            # Count oscillating ASes that were removed (regardless of whether they come back)
+            oscillating_count = sum(1 for asn in asns_removed if asn in self.oscillation_info)
+            non_oscillating_count = len(asns_removed) - oscillating_count
             self.removed_oscillating_asns_over_time.append(oscillating_count)
             self.removed_non_oscillating_asns_over_time.append(non_oscillating_count)
 
@@ -107,84 +169,153 @@ def plot_as_presences_over_time(all_asn_presences, group=None, subfolder=None):
                            ylabel="Number of Oscillating ASes",
                            subfolder=subfolder)
     
-def calculate_oscillation_metrics(all_stats, use_reachables=False) -> OscillationMetrics:
+def calculate_oscillation_metrics(all_stats: list[BGPDumpSnapshotStats], use_reachables=False, calculate_routes=False) -> OscillationMetrics:
     oscillation_info = {}  # asn -> {"start_idx": i, "end_idx": j, "comeback_times": []}
+    route_oscillation_info = [] # {"path": ["123","234","345"], "start_idx": i, "end_idx": j}
     total_oscillations = 0
+    total_routes_oscillations = 0
      
     attr_name = "unique_reachables" if use_reachables else "unique_members"
-     
-    all_asns = set()
-    for stat in all_stats:
-        all_asns.update(getattr(stat, attr_name))
-    # if an AS existed at a time i, left at a time i+1, and came back at a time i+a (a > 1),
-    # start_idx should be i and end_idx should be i+b
-    for asn in all_asns:
-        presence = [asn in getattr(stat, attr_name) for stat in all_stats]
-        oscillations = 0
-        first_absence_idx = None
-        comeback_times = []  # times (in snapshots) to come back
-        start_idx = None
-        start_idxs = []
-        end_idx = None
-        end_idxs = []
-        has_been_present = presence[0]  # Was this AS present at the start?
-        has_disappeared = False  # Has this AS disappeared after being present?
-        presence_historic = [1 if p else 0 for p in presence]
-        currently_in_oscillation = False # added this to make sure we are not doing conflicting logic
+    
+    num_snapshots = len(all_stats)
+    asn_states = {} # asn -> {state_vars}
+    
+    for i, stat in enumerate(all_stats):
+        current_asns = getattr(stat, attr_name)
         
-        
-        for i in range(0, len(presence)):
-            if presence[i] and not has_been_present:
-                # By design this condition is only caught once.
-                # First time appearing - this is NOT oscillation
-                # it can happen at the very beggining of our timeline, 
-                # or later if an AS enters for the first time 
-                # In our definition of oscillation,
-                # the last time this condition is True before other conditions, 
-                # its the index "i".
-                has_been_present = True
-            elif not presence[i] and has_been_present:
-                # If it disappears after being present, this could be oscillation
-                # or it could be the AS will never come back (not oscillating)
-                if not has_disappeared:
-                    # Disappeared after being present
-                    has_disappeared = True
-                    first_absence_idx = i
-                    start_idx = i
-                    currently_in_oscillation = True
-                    # start_ids are counted the first time the AS disappears.
-                    # which in our definition of oscillation, is the first time the AS is not present (i+1)
-                    # after being present for some time (0 up to i)
-                    start_idxs.append(i)
-            elif presence[i] and has_disappeared:
+        # Track all unique ASNs encountered so far to handle those NOT in current snapshot
+        for asn in current_asns:
+            if asn not in asn_states:
+                asn_states[asn] = {
+                    "has_been_present": True,
+                    "has_disappeared": False,
+                    "first_absence_idx": None,
+                    "start_idx": None,
+                    "start_idxs": [],
+                    "end_idx": None,
+                    "end_idxs": [],
+                    "comeback_times": [],
+                    "presence_historic": [0] * num_snapshots,
+                    "oscillations": 0,
+                    "currently_in_oscillation": False,
+                    "last_seen_idx": i
+                }
+            
+            state = asn_states[asn]
+            state["presence_historic"][i] = 1
+            
+            if state["has_disappeared"]:
                 # Came back after disappearing - this IS oscillation
-                oscillations += 1
-                
-                if first_absence_idx is not None and currently_in_oscillation:
-                    comeback_times.append(i - first_absence_idx)
-                currently_in_oscillation = False # oscilaltion ends untill the AS disappears again
-                if oscillations == 1:  # First time coming back
-                    end_idx = i
-                has_disappeared = False # makes sure we are not counting oscillations multiple times if the AS disappears and comes back multiple times in a row
+                state["oscillations"] += 1
+                if state["first_absence_idx"] is not None and state["currently_in_oscillation"]:
+                    state["comeback_times"].append(i - state["first_absence_idx"])
+                state["currently_in_oscillation"] = False # oscilaltion ends untill the AS disappears again
+                if state["oscillations"] == 1:  # First time coming back
+                    state["end_idx"] = i
+                state["has_disappeared"] = False # makes sure we are not counting oscillations multiple times if the AS disappears and comes back multiple times in a row
                 # end idxs counts the exact moment the AS came back after disappearing, 
                 # which in our definition of oscillation, 
                 #  is i+a, where a counts the amount of time in snapshots that the AS 
                 # was not present in the oscillation period (a > 1, because it counts the i+1 snapshot too)
-                end_idxs.append(i)
-        
-        total_oscillations += oscillations
-        if oscillations > 0:
+                state["end_idxs"].append(i)
+            
+            state["last_seen_idx"] = i
+
+        # Check for disappearances
+        for asn, state in asn_states.items():
+            if state["last_seen_idx"] < i: # Not in current snapshot
+                if state["has_been_present"] and not state["has_disappeared"]:
+                    # If it disappears after being present, this could be oscillation
+                    # or it could be the AS will never come back (not oscillating)
+                    # Disappeared after being present
+                    state["has_disappeared"] = True
+                    state["first_absence_idx"] = i
+                    state["start_idx"] = i
+                    state["currently_in_oscillation"] = True
+                    # start_ids are counted the first time the AS disappears.
+                    # which in our definition of oscillation, is the first time the AS is not present (i+1)
+                    # after being present for some time (0 up to i)
+                    state["start_idxs"].append(i)
+
+    for asn, state in asn_states.items():
+        if state["oscillations"] > 0:
+            total_oscillations += state["oscillations"]
             oscillation_info[asn] = {
-                "start_idx": start_idx,
-                "end_idx": end_idx,
-                "start_idxs": start_idxs,
-                "end_idxs": end_idxs,
-                "comeback_times": comeback_times,
-                "presence_historic": presence_historic,
-                "oscillations": oscillations
+                "start_idx": state["start_idx"],
+                "end_idx": state["end_idx"],
+                "start_idxs": state["start_idxs"],
+                "end_idxs": state["end_idxs"],
+                "comeback_times": state["comeback_times"],
+                "presence_historic": state["presence_historic"],
+                "oscillations": state["oscillations"]
             }
-    
-    return OscillationMetrics(oscillation_info, total_oscillations, all_stats)
+
+    if calculate_routes:
+
+        bar = Bar(max=len(all_stats)-1)
+        route_states = {}
+        for i, stat in enumerate(all_stats):
+            bar.next()
+
+            _, current_routes_list = stat.get_unique_routes()
+            current_routes_set = {tuple(r) for r in current_routes_list}
+            
+            for r_tuple in current_routes_set:
+                if r_tuple not in route_states:
+                    route_states[r_tuple] = {
+                        "has_been_present": True,
+                        "has_disappeared": False,
+                        "first_absence_idx": None,
+                        "start_idx": None,
+                        "start_idxs": [],
+                        "end_idx": None,
+                        "end_idxs": [],
+                        "comeback_times": [],
+                        "presence_historic": [0] * num_snapshots,
+                        "oscillations": 0,
+                        "currently_in_oscillation": False,
+                        "last_seen_idx": i
+                    }
+                
+                state = route_states[r_tuple]
+                state["presence_historic"][i] = 1
+                if state["has_disappeared"]:
+                    # Came back after disappearing - this IS oscillation
+                    state["oscillations"] += 1
+                    if state["first_absence_idx"] is not None and state["currently_in_oscillation"]:
+                        state["comeback_times"].append(i - state["first_absence_idx"])
+                    state["currently_in_oscillation"] = False
+                    if state["oscillations"] == 1:  # First time coming back
+                        state["end_idx"] = i
+                    state["has_disappeared"] = False
+                    state["end_idxs"].append(i)
+                state["last_seen_idx"] = i
+
+            for r_tuple, state in route_states.items():
+                if state["last_seen_idx"] < i:
+                    if state["has_been_present"] and not state["has_disappeared"]:
+                        # Route disappeared after being present
+                        state["has_disappeared"] = True
+                        state["first_absence_idx"] = i
+                        state["start_idx"] = i
+                        state["currently_in_oscillation"] = True
+                        state["start_idxs"].append(i)
+       
+        for r_tuple, state in route_states.items():
+            if state["oscillations"] > 0:
+                total_routes_oscillations += state["oscillations"]
+                route_oscillation_info.append({
+                    "path": list(r_tuple),
+                    "start_idx": state["start_idx"],
+                    "end_idx": state["end_idx"],
+                    "start_idxs": state["start_idxs"],
+                    "end_idxs": state["end_idxs"],
+                    "comeback_times": state["comeback_times"],
+                    "presence_historic": state["presence_historic"],
+                    "oscillations": state["oscillations"]
+                })
+        bar.finish()
+    return OscillationMetrics(oscillation_info, total_oscillations, all_stats, route_oscillation_info)
 
 
 def get_comeback_times_count_from_oscillation_info(oscillation_info):

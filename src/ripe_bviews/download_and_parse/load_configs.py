@@ -22,7 +22,12 @@ def load_configs(config_file_path):
         config = json.load(f)
     return config
 
-
+def print_config(config, ip_version=None):
+    start_date = config.get("start_date", "N/A")
+    end_date = config.get("end_date", "N/A")
+    rrc = config.get("rrc", "N/A")
+    time_delta_hours = config.get("time_delta_hours", "N/A")
+    print(f"Loaded config: RRC={rrc}, Start Date={start_date}, End Date={end_date}, IP Version={ip_version}, Time Delta Hours={time_delta_hours}")
 if __name__ == "__main__":
     config = load_configs("ixbr.json")
-    print(config)
+    print_config(config)

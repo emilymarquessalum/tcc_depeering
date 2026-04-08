@@ -5,7 +5,7 @@ import warnings
 from progress.bar import Bar
 import mmap
 from dataclasses import dataclass, asdict, field
-
+from collections import defaultdict
 from definitions import ROOT_DIR, append_root
 
 
@@ -25,14 +25,14 @@ class BGPDumpSnapshotStats:
     one_length_as_paths: int = 0
     count_as_origin: int = 0
     count_as_member: int = 0
-    unique_members: set = field(default_factory=set)
-    unique_reachables: set = field(default_factory=set)
-    unique_monitors: set = field(default_factory=set)
-    unique_next_hops_from_monitored_as: set = field(default_factory=set)
-    unique_prefixes_from_monitored_as: set = field(default_factory=set)
+    unique_members: set[int] = field(default_factory=set)
+    unique_reachables: set[int] = field(default_factory=set)
+    unique_monitors: set[int] = field(default_factory=set)
+    unique_next_hops_from_monitored_as: set[int] = field(default_factory=set)
+    unique_prefixes_from_monitored_as: set[str] = field(default_factory=set)
     monitor_to_count: dict = field(default_factory=dict)
     times_as_was_in_aspath: int = 0
-    mappings: dict = field(default_factory=dict)
+    mappings: dict[str, list[dict]] = field(default_factory=dict) # member_as-> list of dicts with keys "reachable" and "as_path"
 
     def print_summary(self):
         print(f"Monitor: {self.prefix} - AS{self.asn}")
@@ -53,6 +53,97 @@ class BGPDumpSnapshotStats:
             if not reachable.isdigit():
                 print("Reachable AS is not numeric:", reachable)
 
+    def get_all_reachables_for_member(self, member_asn: str | int) -> set[str]:
+        reachables = set()
+        for mapping in self.mappings.get(member_asn, []):
+            reachables.add(mapping["reachable"])
+        return reachables
+    
+    def get_all_members_that_allow_asn_to_be_reachable(self, reachable_asn: str | int) -> set[str]:
+
+        allowing_members = set()
+        for mapping_asn, reachables in self.mappings.items():
+            reachables_asn = [r["reachable"] for r in reachables]
+            if int(reachable_asn) in reachables_asn:
+                allowing_members.add(mapping_asn)
+        return allowing_members
+
+
+    def get_best_as_path_length_for_member_to_reach_asn(self, member_asn: str | int, reachable_asn: str | int, remove_prepend: bool = True) -> tuple[int | None, list[str] | None]:
+    
+        best_path = None
+        best_length = float("inf")
+        for mapping in self.mappings.get(member_asn, []):
+            if mapping["reachable"] == reachable_asn:
+                as_path_length = len(mapping["as_path"])
+                if remove_prepend and as_path_length > 1:
+                    as_path_length = len([asn for idx, asn in enumerate(mapping["as_path"]) if idx == 0 or asn != mapping["as_path"][idx - 1]])
+                if as_path_length < best_length:
+                    best_length = as_path_length
+                    best_path = mapping["as_path"]
+
+        return best_length if best_length != float("inf") else None, best_path
+    
+
+    def get_best_as_path_length_for_reachable(self, reachable_asn: str | int, remove_prepend: bool = True) -> tuple[int | None, list[str] | None]:
+    
+        best_path = None
+        best_length = float("inf")
+        members_allowing_reachable = self.get_all_members_that_allow_asn_to_be_reachable(reachable_asn)
+        for member in members_allowing_reachable:
+            for mapping in self.mappings.get(member, []):
+                if mapping["reachable"] == reachable_asn:
+                    as_path_length = len(mapping["as_path"])
+                    if remove_prepend and as_path_length > 1:
+                        as_path_length = len([asn for idx, asn in enumerate(mapping["as_path"]) if idx == 0 or asn != mapping["as_path"][idx - 1]])
+                    if as_path_length < best_length:
+                        best_length = as_path_length
+                        best_path = mapping["as_path"]
+    
+        return best_length if best_length != float("inf") else None, best_path  
+
+    def get_worst_as_path_length_for_reachable(self, reachable_asn: str | int, remove_prepend: bool = True) -> tuple[int | None, list[str] | None]:
+    
+        worst_path = None
+        worst_length = -1
+        members_allowing_reachable = self.get_all_members_that_allow_asn_to_be_reachable(reachable_asn)
+        for member in members_allowing_reachable:
+            for mapping in self.mappings.get(member, []):
+                if mapping["reachable"] == reachable_asn:
+                    as_path_length = len(mapping["as_path"])
+                    if remove_prepend and as_path_length > 1:
+                        as_path_length = len([asn for idx, asn in enumerate(mapping["as_path"]) if idx == 0 or asn != mapping["as_path"][idx - 1]])
+                    if as_path_length > worst_length:
+                        worst_length = as_path_length
+                        worst_path = mapping["as_path"]
+    
+        return worst_length if worst_length != -1 else None, worst_path
+
+    def get_all_reachables_to_members_map(self): 
+        if hasattr(self, '_reachability_map_cache'):
+            return self._reachability_map_cache
+        
+        reach_map = defaultdict(set)
+        
+        for member, reachables in self.mappings.items():
+            for asn in reachables:
+                reach_map[asn["reachable"]].add(member)
+                
+        self._reachability_map_cache = reach_map
+        return reach_map
+    
+    def get_unique_routes(self) -> tuple[set[str], list[list[str]]]:
+        unique_routes = set()
+        for member, reachables in self.mappings.items():
+            for mapping in reachables:
+                complete_path = [str(member)]
+                complete_path.extend([str(asn) for asn in mapping["as_path"]])
+                complete_path_str = "->".join(complete_path)
+                unique_routes.add(complete_path_str)
+            
+        unique_routes_list = [route.split("->") for route in unique_routes]  
+        return unique_routes, unique_routes_list
+    
     # save as json
     def save_details(self, filename):
         save_file = Path(append_root(filename))
@@ -69,6 +160,7 @@ class BGPDumpSnapshotStats:
         print(f"Saved details to {save_file}")
 
     def load_details(self, filename):
+        print(filename)
         with open(filename, "r") as f:
             details = json.load(f)
             # Handle backward compatibility: old JSON had "members" and "reachables" keys
@@ -94,7 +186,7 @@ class BGPDumpSnapshotStats:
             self.mappings = details.get("mapping", {})
 
 
-def _read_bgpdump(file1, monitor_as, monitor_prefix, date, time, save_details=True):
+def _read_bgpdump(file1, monitor_as, monitor_prefix, date, time, save_details=True, skip_if_missing=False):
 
     print("Searching for AS:", monitor_as, "Prefix:", monitor_prefix)
     print("Date:", date, "Time:", time)
@@ -106,6 +198,12 @@ def _read_bgpdump(file1, monitor_as, monitor_prefix, date, time, save_details=Tr
     mappings = dict()
 
     buffering = 10485760
+    
+    # Check if files exist before attempting to open
+    if skip_if_missing and not os.path.exists(file1):
+        print(f"File not found and skip_if_missing=True, returning None: {file1}")
+        return None
+    
     with open(file1, "rb", buffering=buffering) as f:
 
         filesize = os.path.getsize(file1)
@@ -195,7 +293,7 @@ def get_stats_filename(monitor_as, monitor_prefix, date, time, rrc, ip_version):
     return append_root(f"cache/{rrc}/{ip_version}/bview_cache.{date}.{time}.json")
     return append_root(f"cache/bview_cache.{date}.{time}_{monitor_as}_{monitor_prefix}.json")
 
-def read_bgpdump(file1, monitor_as, rrc, ip_version, monitor_prefix=None, date=None, time=None) -> BGPDumpSnapshotStats:
+def read_bgpdump(file1, monitor_as, rrc, ip_version, monitor_prefix=None, date=None, time=None, skip_if_missing=0) -> BGPDumpSnapshotStats:
     stats = BGPDumpSnapshotStats(monitor_as, monitor_prefix, date, time)
     #details_file = f"data/stats_{file1}_{monitor_as}_{monitor_prefix}.json"
     details_file = get_stats_filename(monitor_as, monitor_prefix, date, time, rrc, ip_version)
@@ -204,7 +302,7 @@ def read_bgpdump(file1, monitor_as, rrc, ip_version, monitor_prefix=None, date=N
         stats.load_details(details_file)
     else: 
         print("Details file not found, processing bgpdump:", details_file)
-        stats = _read_bgpdump(file1, monitor_as, monitor_prefix, date, time, save_details=True)
+        stats = _read_bgpdump(file1, monitor_as, monitor_prefix, date, time, save_details=True, skip_if_missing=(skip_if_missing > 0))
     return stats
 
 

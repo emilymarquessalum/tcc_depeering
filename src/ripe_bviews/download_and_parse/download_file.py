@@ -68,9 +68,9 @@ def get_rib_file_name(rrc, date_str, time_str):
     file_name = f"data/{rrc}/bview.{date_str}.{time_str}.gz" 
     return append_root(file_name)
 
-def get_rib_output_file_name(rrc, date_str, time_str, asn):
-    file_name = f"data/{rrc}/bview.{date_str}.{time_str}.{asn}.txt" 
-    file_name = f"{rrc}/output_bview.{date_str}.{time_str}.txt"
+def get_rib_output_file_name(rrc, date_str, time_str, asn, prefix):
+    file_name = f"data/{rrc}/bview.{date_str}.{time_str}.{asn}.{prefix}.txt" 
+    file_name = f"{rrc}/{prefix}/output_bview.{date_str}.{time_str}.txt"
     return append_root(file_name)
 
 
@@ -87,7 +87,7 @@ def parsing_ripe_file(bgpcanner_or_bgpdump, rrc, date_str, time_str, asn, prefix
 
 def download_and_save_file(rrc, date_str, time_str, asn, prefix, bgpcanner_or_bgpdump="bgpscanner"):
  
-    output_file_name = get_rib_output_file_name(rrc, date_str, time_str, asn)
+    output_file_name = get_rib_output_file_name(rrc, date_str, time_str, asn, prefix)
     if os.path.exists(output_file_name):
         warnings.warn(f"File {output_file_name} already exists. Skipping download.")
         return
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     asn = "26162" 
     prefix = "187.16.216.253"
     
-    parsing_ripe_file("bgpdump", rrc, date_str, time_str, asn, prefix, get_rib_output_file_name(rrc, date_str, time_str, asn))
+    parsing_ripe_file("bgpdump", rrc, date_str, time_str, asn, prefix, get_rib_output_file_name(rrc, date_str, time_str, asn, prefix))
     #download_and_save_file(rrc, date_str, time_str, asn, prefix)
