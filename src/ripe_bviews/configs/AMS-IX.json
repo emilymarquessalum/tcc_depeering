@@ -1,0 +1,31 @@
+{
+    "rrc": "rrc03",
+    "name": "AMS-IX",
+    "start_date": "2025-12-01",
+    "end_date": "2026-01-01",
+    "end_date": "2025-12-02",
+
+
+    "start_date": "2025-12-01",   
+    "end_date": "2025-12-30", 
+
+
+    "start_date": "2025-12-01",   
+    "end_date": "2025-12-06", 
+
+ 
+    "note": "prefixes",
+    "start_date": "2025-12-01",   
+    "end_date": "2026-05-01",  
+     
+    "asn_and_prefix": {
+        "asn": "6777",
+        "prefix": "80.249.208.255"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "6777",
+        "prefix": "2001:7f8:1::a500:6777:1"
+    },
+    "day_delta": 30,
+    "time_delta_hours": 0
+}

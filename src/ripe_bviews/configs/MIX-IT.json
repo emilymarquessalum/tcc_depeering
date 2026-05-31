@@ -1,0 +1,24 @@
+{
+    
+    "rrc": "rrc10",
+    "name": "MIX-IT",
+
+    "note": "prefixes",
+    "start_date": "2026-03-14",   
+    "end_date": "2026-03-15", 
+
+    "start_date": "2025-03-01",   
+    "end_date": "2026-05-01",  
+
+
+    "asn_and_prefix": {
+        "asn": "61968",
+        "prefix": "217.29.66.254"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "61968",
+        "prefix": "2001:7f8:b:100:1d1:a5d1:6004:254"
+    },
+    "day_delta": 30,
+    "time_delta_hours": 0
+}

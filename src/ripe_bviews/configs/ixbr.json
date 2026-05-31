@@ -1,0 +1,55 @@
+{
+    "name": "IX.br São Paulo",
+    "rrc": "rrc15", 
+    
+
+  
+    
+   "start_date": "2023-12-12",  
+    "end_date": "2023-12-15", 
+
+    "asn_and_prefix": {
+        "note": "below are the asn and prefix from 2023", 
+        "asn": "22548",
+        "prefix": "187.16.217.17"  
+    }, 
+
+
+
+  
+  
+
+
+
+
+
+
+    "start_date": "2026-02-01",  
+    "end_date": "2026-02-03",    
+
+    "note": "prefixes",
+    "start_date": "2026-03-01",   
+    "end_date": "2026-03-02", 
+
+
+    "note": "prefixes-with-reachable-asn-origin",
+    "start_date": "2026-04-03",   
+    "end_date": "2026-04-04", 
+    
+    "start_date": "2025-10-28",   
+    "end_date": "2026-02-12",  
+
+    "asn_and_prefix": { 
+        "note":"below are the asn and prefix from 2026",
+        "asn": "26162",
+        "prefix": "187.16.216.253"
+    }, 
+
+    "asn_and_prefix_v6": {
+        "asn": "26162",
+        "prefix": "2001:12f8::253"
+    },      
+    "day_delta": 30,
+    "time_delta_hours": 0, 
+    "looking_glass": "https://lg.ix.br/routeservers/SP-rs1-v4?s=routes_accepted&o=desc"
+} 
