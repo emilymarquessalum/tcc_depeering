@@ -4,6 +4,8 @@ import sys
 from pathlib import Path
 import warnings
 
+from src.caidapeeringdb.caidapeeringdb_load import get_asinfo_from_asn, get_most_recent_data
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent)) 
  
@@ -18,7 +20,7 @@ from src.services.maxmind import load_ip_block_to_country_mapping
 
 from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data_timeline_from_configs
-from src.utils.graphs import create_window_with_all_rendered_graphs_this_session, plot_list_as_bar_plot, plot_list_as_line_plot, plot_map_as_bar_plot, plot_stacked_line_plot, plot_stacked_bar_plot
+from src.utils.graphs import create_colors_for_groups, create_window_with_all_rendered_graphs_this_session, plot_list_as_bar_plot, plot_list_as_line_plot, plot_map_as_bar_plot, plot_stacked_line_plot, plot_stacked_bar_plot
 
 from src.ripe_bviews.download_and_parse.load_configs import load_configs, print_config
 from src.ripe_bviews.timeline.bview_vars import get_ip_version
@@ -241,13 +243,27 @@ def view_prefixes_member_concentration(stat: BGPDumpSnapshotStats, name, ip_vers
     
     top_prefix_percentage_counts = [count / total_prefix_count * 100 for _, count in top_by_prefix_count]
 
+    peeringdb_data = get_most_recent_data()
+    
+    locations_of_ases = []
+    for asn in top_member_ases:
+        asinfo = get_asinfo_from_asn(peeringdb_data, int(asn))
+        location = asinfo.get("info_scope", "Unknown") if asinfo else "Unknown"
+        locations_of_ases.append(location)
+
+
+    
+    colors, color_labels = create_colors_for_groups(locations_of_ases)
     plot_list_as_bar_plot(
         top_member_ases,
         y=top_prefix_percentage_counts,
         title=f"{name} - Top {top_n} ASes by Prefix Count - {ip_version} - {from_self_or_others}",
         xlabel="ASN",
         ylabel="Prefixes %",
-        subfolder=subfolder
+        subfolder=subfolder,
+        colors=colors, 
+        color_labels=color_labels
+        
     )
 
     # Get top by address count
@@ -327,7 +343,7 @@ def view_unique_prefixes_member_concentration(stat: BGPDumpSnapshotStats, name, 
         )
 
 
-def plot_prefix_by_country(name, ip_version, prefix_mappings):
+def plot_prefix_by_country(name, ip_version, prefix_mappings, title_suffix=""):
     ip_block_to_country_name_mapping = load_ip_block_to_country_mapping()
     
     ip_blocks_not_found = 0
@@ -360,73 +376,50 @@ def plot_prefix_by_country(name, ip_version, prefix_mappings):
     plot_list_as_bar_plot(
         countries,
         counts,
-        title=f"{name} - Prefixes by Country - {ip_version}",
+        title=f"{name} - Prefixes by Country - {ip_version}{title_suffix}",
         xlabel="Country",
         ylabel="Number of Prefixes",
         do_top_n=10, 
     )
 
-if __name__ == "__main__":
-    
-    config = load_configs("ixbr.json")
-    config = load_configs("MIX-IT.json")
-    config = load_configs("AMS-IX.json")
-    
+
+def bview_prefixes(all_required_data):
+
+    all_stats, labels, _ = all_required_data["timeline"]
+    config = all_required_data["config"]
     ip_version = get_ip_version(config)
-    print_config(config, ip_version)
-
-    name = config.get("name", "Unknown") 
-  
-    rrc = config["rrc"]
-    start_date = datetime.datetime.strptime(config["start_date"], "%Y-%m-%d")
-    end_date = datetime.datetime.strptime(config["end_date"], "%Y-%m-%d")
-    day_delta = datetime.timedelta(days=config.get("day_delta", 7))
-    time_str = config.get("time_str", "0000")   
-
-    all_stats, labels = load_bview_data_timeline_from_configs(config, ip_version=ip_version,
-                                                              skip_if_missing=3)    
-
+    name = config.get("name", "Unknown")
 
     stat_before: BGPDumpSnapshotStats = all_stats[0]
-    #first_stat = all_stats[1]
+    first_stat = all_stats[1]
 
-    #stat_before.sanity_check_on_mappings()
-    #stat_before.sanity_check_on_prefix_mappings()
 
-    if stat_before.prefix_mappings is None:
-        print(f"No prefix mapping data available for {name} at {stat_before.datetime_str()}.")
-        sys.exit(0)
-        
-    #prefix_mappings_member_has, prefix_mappings_member_reaches = first_stat.prefix_mappings
-    prefix_mappings_member_has, prefix_mappings_member_reaches, prefix_mappings_asn_has = stat_before.get_prefix_mappings()
+
+    prefix_mappings_member_has, prefix_mappings_member_reaches, _ = stat_before.get_prefix_mappings()
     #unique_prefixes = stat_before.get_unique_prefixes()
 
-    if not prefix_mappings_member_has or not prefix_mappings_member_reaches or not prefix_mappings_asn_has:
-        print(f"No prefix mapping data available for {name} at {stat_before.datetime_str()}.")
-        sys.exit(0)
 
-    #view_prefixes_grouped_by_length(prefix_mappings, name, ip_version)
-    subfolder = f"{name}_{ip_version}_member_concentration"
+    plot_prefix_by_country(name, ip_version, prefix_mappings_member_reaches,
+                           title_suffix=" (Reached by the Member)")
+    plot_prefix_by_country(name, ip_version, prefix_mappings_member_has,
+                           title_suffix=" (Owned by the Member)") 
     
-
-    view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Owned by the Member", subfolder=subfolder)
-    #view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Reached by the Member", subfolder=subfolder)
-    #view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Owned by ASN (member or reachable)", subfolder=subfolder)
-
-    #view_unique_prefixes_member_concentration(prefix_mappings_member_reaches, name, ip_version, from_self_or_others="Reached by the Member", subfolder=subfolder)
-
-    # plot_prefix_by_country()
-
-    #view_prefix_changes(prefix_mappings, stat_before, first_stat, ip_version)
-
-    '''
+    view_prefix_changes(prefix_mappings_member_reaches, stat_before, first_stat, ip_version)
+    view_prefixes_grouped_by_length(prefix_mappings_member_reaches, name, ip_version)
+ 
+    
+    return
     prefixes_over_time = []
     for stat in all_stats:
-        unique_prefixes = set()
-        for prefixes in stat.prefix_mappings.values():
-            unique_prefixes.update(prefixes)
+        unique_prefixes = stat.get_unique_prefixes()
         prefixes_over_time.append(len(unique_prefixes))
-    
+    plot_list_as_line_plot(
+        prefixes_over_time,
+        y=labels,
+        title=f"{name} - Unique Prefixes Over Time - {ip_version}",
+        xlabel="Date",
+        ylabel="Unique Prefixes",
+    )
     address_spaces_over_time = []
     for stat in all_stats:
         unique_prefixes = set()
@@ -443,12 +436,26 @@ if __name__ == "__main__":
         ylabel="Total Address Space (aggregated)",
     )
 
-    plot_list_as_line_plot(
-        prefixes_over_time,
-        y=labels,
-        title=f"{name} - Unique Prefixes Over Time - {ip_version}",
-        xlabel="Date",
-        ylabel="Unique Prefixes",
-    )
-    '''
-    create_window_with_all_rendered_graphs_this_session()   
+    
+
+def bview_prefixes_ranking(all_required_data):
+    stat_before: BGPDumpSnapshotStats = all_required_data["timeline"][0][0]
+    config = all_required_data["config"]
+    ip_version = get_ip_version(config)
+    name = config.get("name", "Unknown")
+    prefix_mappings_member_has, prefix_mappings_member_reaches, _ = stat_before.get_prefix_mappings()
+    subfolder = "ranking"
+    view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Owned by the Member", subfolder=subfolder)
+    view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Reached by the Member", subfolder=subfolder)
+    view_prefixes_member_concentration(stat_before, name, ip_version, from_self_or_others="Owned by ASN (member or reachable)", subfolder=subfolder)
+
+    #view_unique_prefixes_member_concentration(prefix_mappings_member_reaches, name, ip_version,  subfolder=subfolder)
+ 
+   
+  
+  
+
+
+     
+ 
+ 

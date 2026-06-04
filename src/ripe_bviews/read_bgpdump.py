@@ -8,7 +8,7 @@ from dataclasses import dataclass, asdict, field
 from collections import defaultdict
 
 from definitions import append_roots
-
+from collections import Counter
 
 
 SAVE_RESULTS = False
@@ -61,6 +61,7 @@ class BGPDumpSnapshotStats:
             if not isinstance(reachable, int):
                 print("Reachable AS is not a number:", reachable)
 
+
     def get_all_reachables_for_member(self, member_asn: str | int) -> set[str]:
         
         member_asn_str = str(member_asn)
@@ -69,6 +70,34 @@ class BGPDumpSnapshotStats:
             reachables.add(mapping["reachable"])
         return reachables
     
+
+    def get_all_unique_reachables_for_members(self) -> dict[str, set[str]]:
+ 
+        
+
+        # Step 1: Count global frequencies of each reachable
+        global_reachable_counts = Counter()
+        
+        # Pre-aggregate reachables per AS to handle potential duplicates within the same AS
+        as_to_reachables: dict[str, set[str]] = {}
+
+        for asn, mappings in self.mappings.items():
+            # Using a set comprehension handles any duplicate reachables inside the same AS
+            reachables_set = {mapping["reachable"] for mapping in mappings}
+            as_to_reachables[asn] = reachables_set
+            
+            # Update the global counts
+            global_reachable_counts.update(reachables_set)
+
+        # Step 2: Filter for reachables that appeared exactly once globally
+        unique_reachables_per_as = {}
+        for asn, reachables_set in as_to_reachables.items():
+            # Keep only the reachables whose global count is exactly 1
+            unique_set = {r for r in reachables_set if global_reachable_counts[r] == 1}
+            unique_reachables_per_as[asn] = unique_set
+
+        return unique_reachables_per_as
+
     def get_all_members_that_allow_asn_to_be_reachable(self, reachable_asn: str | int) -> set[str]:
 
         allowing_members = set()
@@ -78,6 +107,31 @@ class BGPDumpSnapshotStats:
                 allowing_members.add(mapping_asn)
         return allowing_members
     
+    def get_all_non_unique_reachables_for_members(self) -> dict[str, set[str]]:
+        """
+        Returns a dictionary mapping each member_asn to a set of its NON-UNIQUE reachables.
+        A reachable is non-unique if it is reachable via more than one AS.
+        """
+        from collections import Counter
+
+        # Pass 1: Count global frequencies of each reachable
+        global_reachable_counts = Counter()
+        as_to_reachables: dict[str, set[str]] = {}
+
+        for asn, mappings in self.mappings.items():
+            reachables_set = {mapping["reachable"] for mapping in mappings}
+            as_to_reachables[asn] = reachables_set
+            global_reachable_counts.update(reachables_set)
+
+        # Pass 2: Filter for reachables that appeared MORE THAN ONCE globally
+        non_unique_reachables_per_as = {}
+        for asn, reachables_set in as_to_reachables.items():
+            # Keep only the reachables whose global count is > 1
+            shared_set = {r for r in reachables_set if global_reachable_counts[r] > 1}
+            non_unique_reachables_per_as[asn] = shared_set
+
+        return non_unique_reachables_per_as
+
 
     def get_top_members_by_reachables(self, top_n=10) -> list[tuple[str, int]]:
         member_reachable_counts = []

@@ -1,0 +1,113 @@
+[
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 40,
+    "dst_name": "35.214.167.88",
+    "af": 4,
+    "dst_addr": "35.214.167.88",
+    "src_addr": "10.0.0.4",
+    "proto": "ICMP",
+    "size": 64,
+    "result": [
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      }
+    ],
+    "dup": 0,
+    "rcvd": 0,
+    "sent": 3,
+    "min": -1,
+    "max": -1,
+    "avg": -1,
+    "msm_id": 67040107,
+    "prb_id": 61190,
+    "timestamp": 1706759155,
+    "msm_name": "Ping",
+    "from": "154.113.73.198",
+    "type": "ping",
+    "group_id": 67040107,
+    "step": null,
+    "stored_timestamp": 1706759299
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 45,
+    "dst_name": "35.214.167.88",
+    "af": 4,
+    "dst_addr": "35.214.167.88",
+    "src_addr": "10.97.93.254",
+    "proto": "ICMP",
+    "size": 64,
+    "result": [
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      }
+    ],
+    "dup": 0,
+    "rcvd": 0,
+    "sent": 3,
+    "min": -1,
+    "max": -1,
+    "avg": -1,
+    "msm_id": 67040107,
+    "prb_id": 62796,
+    "timestamp": 1706759158,
+    "msm_name": "Ping",
+    "from": "165.16.221.228",
+    "type": "ping",
+    "group_id": 67040107,
+    "step": null,
+    "stored_timestamp": 1706759285
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 32,
+    "dst_name": "35.214.167.88",
+    "af": 4,
+    "dst_addr": "35.214.167.88",
+    "src_addr": "192.168.20.161",
+    "proto": "ICMP",
+    "size": 64,
+    "result": [
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      },
+      {
+        "x": "*"
+      }
+    ],
+    "dup": 0,
+    "rcvd": 0,
+    "sent": 3,
+    "min": -1,
+    "max": -1,
+    "avg": -1,
+    "msm_id": 67040107,
+    "prb_id": 62927,
+    "timestamp": 1706759154,
+    "msm_name": "Ping",
+    "from": "196.216.149.2",
+    "type": "ping",
+    "group_id": 67040107,
+    "step": null,
+    "stored_timestamp": 1706759325
+  }
+]

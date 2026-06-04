@@ -25,23 +25,11 @@ warnings.filterwarnings('ignore', category=UserWarning, message='.*')
 
 
 
-def bview_timeline_ip_version():
+def bview_timeline_ip_version(all_required_data):
 
-    config = load_configs("ixbr.json")
+    config = all_required_data["config"]
 
-    #config = load_configs("AMS-IX.json")
-    
-    ip_version = get_ip_version(config)
-    
-    print_config(config, ip_version)
-
-    name = config.get("name", "Unknown") 
-  
-    rrc = config["rrc"]
-    start_date = datetime.datetime.strptime(config["start_date"], "%Y-%m-%d")
-    end_date = datetime.datetime.strptime(config["end_date"], "%Y-%m-%d")
-    day_delta = datetime.timedelta(days=config.get("day_delta", 7))
-    time_str = config.get("time_str", "0000") 
+ 
 
     all_stats_v4, labels = load_bview_data_timeline_from_configs(config, ip_version="v4",
                                                               ignored_dates=["20251205.0000"])       
@@ -120,8 +108,5 @@ def bview_timeline_ip_version():
     '''
 
 
-
-if __name__ == "__main__":
-    bview_timeline_ip_version()
-    create_window_with_all_rendered_graphs_this_session()
+ 
     

@@ -15,6 +15,12 @@ class ConfigLoader:
             self.config = json.load(f)
         return self.config
 
+def get_all_configs():
+    configs_path = Path(__file__).parent.parent / "configs"
+    config_files = [f.name for f in configs_path.glob("*.json")]
+    
+    return config_files
+
 def load_configs(config_file_path):
     
     path = Path(__file__).parent.parent / "configs" / config_file_path

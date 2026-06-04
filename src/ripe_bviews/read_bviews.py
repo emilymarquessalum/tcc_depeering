@@ -242,9 +242,7 @@ if __name__ == "__main__":
     #as_prefix = ("26162", None)
     #as_prefix = ("26162", "2001:12f8::253") 
     #as_prefix = ("917","187.16.220.159")
-
-    #results = verify_ripestat_count(as_prefix[0], as_prefix[1], "2026-01-16T08:00:00Z")
-    #print("Official prefix count from RIPEstat:", results)
+ 
     if True:
         stats = read_bview(file, as_prefix[0], as_prefix[1])
         stats.print_summary()

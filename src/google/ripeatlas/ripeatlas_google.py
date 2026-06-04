@@ -8,6 +8,7 @@ from src.utils.graphs import plot_list_as_line_plot
 from cache_manager import load_latency_cache, save_latency_cache
 from data_loader import group_measurement_data_by_viewpoint, load_measurement_data, extract_latencies_and_failed_measurements, check_if_measurement_passed_through_ixp
 from ripeatlas_route_diversity import calculate_route_diversity, calculate_route_diversity_per_interval, calculate_asn_diversity, calculate_prefix_diversity
+from src.services.caida_prefix_to_as.caida_prefix_to_AS import caida_prefix_to_AS
 
 
 def print_average_latency_stats(latencies): 
@@ -80,6 +81,14 @@ def print_prefix_diversity(measurement_data):
     print(f"Total IPs Seen: {prefix_diversity['total_ips_seen']}")
     print(f"Prefix Diversity Ratio (prefixes seen / measurements): {prefix_diversity['prefix_diversity_score']:.4f}")
     
+    prefixes_to_asn_mapping = {}
+
+    for prefix, count in prefix_diversity['most_common_prefixes']:
+        asn = caida_prefix_to_AS(prefix)
+        prefixes_to_asn_mapping[prefix] = asn
+        print(f"  {prefix}: {count} occurrences, ASN: {asn}")
+
+
     
 google_ases_for_search = [15169]
 
@@ -101,11 +110,12 @@ for asn in google_ases_for_search:
 
 
     
-    print_viewpoints(measurement_data)
+    #print_viewpoints(measurement_data)
         
     #print_route_diversity(measurement_data)
-    #print_prefix_diversity(measurement_data)
-     
+    print_prefix_diversity(measurement_data)
+      
+
     sys.exit(0)
 
     
@@ -158,7 +168,6 @@ for asn in google_ases_for_search:
     #    print(f"  ASN {asn_num}: {count} occurrences")
     
 
-    caida_prefix_to_AS()
 
     # Calculate prefix diversity (/24 networks)
     print("\n" + "="*60)

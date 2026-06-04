@@ -218,5 +218,7 @@ class DataAvailabilityCalendar:
 
 if __name__ == "__main__":
     # You can change config_name to use different configurations
-    app = DataAvailabilityCalendar(config_name="ixbr.json")
+    config_name = "ixbr.json"
+    config_name = "AMS-IX.json"
+    app = DataAvailabilityCalendar(config_name=config_name)
     app.run()

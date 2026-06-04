@@ -1,0 +1,509 @@
+[
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 40,
+    "dst_name": "www.chrome.com",
+    "ttr": 49.302416,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "172.17.0.3",
+    "proto": "ICMP",
+    "ttl": 117,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 12.511454
+      },
+      {
+        "rtt": 11.384206
+      },
+      {
+        "rtt": 8.932211
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 8.932211,
+    "max": 12.511454,
+    "avg": 10.9426236667,
+    "msm_id": 68234475,
+    "prb_id": 1003473,
+    "timestamp": 1709519959,
+    "msm_name": "Ping",
+    "from": "77.32.96.59",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709548415
+  },
+  {
+    "fw": 5040,
+    "mver": "2.4.1",
+    "lts": 7,
+    "dst_name": "www.chrome.com",
+    "ttr": 143.703591,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "10.71.1.11",
+    "proto": "ICMP",
+    "ttl": 60,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 5.609418
+      },
+      {
+        "rtt": 5.356746
+      },
+      {
+        "rtt": 5.392322
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 5.356746,
+    "max": 5.609418,
+    "avg": 5.4528286667,
+    "msm_id": 68234475,
+    "prb_id": 1004168,
+    "timestamp": 1709519960,
+    "msm_name": "Ping",
+    "from": "71.168.162.212",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709542726
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 186,
+    "dst_name": "www.chrome.com",
+    "ttr": 10039.252251,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.1.101",
+    "proto": "ICMP",
+    "ttl": 110,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 59.081849
+      },
+      {
+        "rtt": 75.433518
+      },
+      {
+        "rtt": 82.974892
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 59.081849,
+    "max": 82.974892,
+    "avg": 72.496753,
+    "msm_id": 68234475,
+    "prb_id": 1005633,
+    "timestamp": 1709519972,
+    "msm_name": "Ping",
+    "from": "49.224.78.147",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709541303
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 41,
+    "dst_name": "www.chrome.com",
+    "ttr": 18.14143,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.1.2",
+    "proto": "ICMP",
+    "ttl": 103,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 18.507456
+      },
+      {
+        "rtt": 16.778586
+      },
+      {
+        "rtt": 16.73573
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 16.73573,
+    "max": 18.507456,
+    "avg": 17.3405906667,
+    "msm_id": 68234475,
+    "prb_id": 1006531,
+    "timestamp": 1709519960,
+    "msm_name": "Ping",
+    "from": "91.230.107.222",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709547898
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 38,
+    "dst_name": "www.chrome.com",
+    "ttr": 205.897308,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.1.13",
+    "proto": "ICMP",
+    "ttl": 114,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 7.507745
+      },
+      {
+        "rtt": 6.429947
+      },
+      {
+        "rtt": 6.735625
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 6.429947,
+    "max": 7.507745,
+    "avg": 6.8911056667,
+    "msm_id": 68234475,
+    "prb_id": 1006776,
+    "timestamp": 1709519960,
+    "msm_name": "Ping",
+    "from": "86.248.1.189",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709550270
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 34,
+    "dst_name": "www.chrome.com",
+    "ttr": 1.232446,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "10.0.0.5",
+    "proto": "ICMP",
+    "ttl": 118,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 13.246292
+      },
+      {
+        "rtt": 12.988758
+      },
+      {
+        "rtt": 13.038887
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 12.988758,
+    "max": 13.246292,
+    "avg": 13.0913123333,
+    "msm_id": 68234475,
+    "prb_id": 1007619,
+    "timestamp": 1709519960,
+    "msm_name": "Ping",
+    "from": "122.161.162.225",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709550730
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 5,
+    "dst_name": "www.chrome.com",
+    "ttr": 1.742492,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "10.2.0.179",
+    "proto": "ICMP",
+    "ttl": 60,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 59.82507
+      },
+      {
+        "rtt": 59.070826
+      },
+      {
+        "rtt": 60.781847
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 59.070826,
+    "max": 60.781847,
+    "avg": 59.892581,
+    "msm_id": 68234475,
+    "prb_id": 14015,
+    "timestamp": 1709519961,
+    "msm_name": "Ping",
+    "from": "212.164.54.90",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709548143
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 64,
+    "dst_name": "www.chrome.com",
+    "ttr": 87.500105,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.1.2",
+    "proto": "ICMP",
+    "ttl": 115,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 31.539575
+      },
+      {
+        "rtt": 30.81889
+      },
+      {
+        "rtt": 31.543075
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 30.81889,
+    "max": 31.543075,
+    "avg": 31.3005133333,
+    "msm_id": 68234475,
+    "prb_id": 23445,
+    "timestamp": 1709519957,
+    "msm_name": "Ping",
+    "from": "113.199.225.232",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709541041
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 78,
+    "dst_name": "www.chrome.com",
+    "ttr": 59.124625,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.1.50",
+    "proto": "ICMP",
+    "ttl": 115,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 19.63275
+      },
+      {
+        "rtt": 22.609167
+      },
+      {
+        "rtt": 13.32275
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 13.32275,
+    "max": 22.609167,
+    "avg": 18.5215556667,
+    "msm_id": 68234475,
+    "prb_id": 53323,
+    "timestamp": 1709519961,
+    "msm_name": "Ping",
+    "from": "217.79.197.53",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709547159
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 1,
+    "dst_name": "www.chrome.com",
+    "ttr": 28.319406,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.2.119",
+    "proto": "ICMP",
+    "ttl": 111,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 34.186443
+      },
+      {
+        "rtt": 30.056211
+      },
+      {
+        "rtt": 35.95589
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 30.056211,
+    "max": 35.95589,
+    "avg": 33.3995146667,
+    "msm_id": 68234475,
+    "prb_id": 60683,
+    "timestamp": 1709519960,
+    "msm_name": "Ping",
+    "from": "73.79.12.109",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709553776
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 81,
+    "dst_name": "www.chrome.com",
+    "ttr": 19.399795,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "10.0.200.10",
+    "proto": "ICMP",
+    "ttl": 116,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 6.145289
+      },
+      {
+        "rtt": 6.111926
+      },
+      {
+        "rtt": 6.301063
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 6.111926,
+    "max": 6.301063,
+    "avg": 6.1860926667,
+    "msm_id": 68234475,
+    "prb_id": 60872,
+    "timestamp": 1709519959,
+    "msm_name": "Ping",
+    "from": "68.69.159.214",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709547159
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 34,
+    "dst_name": "www.chrome.com",
+    "ttr": 31.637586,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "192.168.123.142",
+    "proto": "ICMP",
+    "ttl": 118,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 19.958869
+      },
+      {
+        "rtt": 19.537228
+      },
+      {
+        "rtt": 23.337832
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 19.537228,
+    "max": 23.337832,
+    "avg": 20.944643,
+    "msm_id": 68234475,
+    "prb_id": 62621,
+    "timestamp": 1709519959,
+    "msm_name": "Ping",
+    "from": "45.13.105.69",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709549309
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 290,
+    "dst_name": "www.chrome.com",
+    "ttr": 539.542362,
+    "af": 4,
+    "dst_addr": "216.239.32.27",
+    "src_addr": "202.52.0.25",
+    "proto": "ICMP",
+    "ttl": 117,
+    "size": 48,
+    "result": [
+      {
+        "rtt": 15.37469
+      },
+      {
+        "rtt": 15.312031
+      },
+      {
+        "rtt": 15.323043
+      }
+    ],
+    "dup": 0,
+    "rcvd": 3,
+    "sent": 3,
+    "min": 15.312031,
+    "max": 15.37469,
+    "avg": 15.336588,
+    "msm_id": 68234475,
+    "prb_id": 6575,
+    "timestamp": 1709519967,
+    "msm_name": "Ping",
+    "from": "202.52.0.25",
+    "type": "ping",
+    "group_id": 68234474,
+    "step": null,
+    "stored_timestamp": 1709546036
+  }
+]

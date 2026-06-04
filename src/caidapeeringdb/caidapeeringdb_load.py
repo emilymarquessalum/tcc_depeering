@@ -146,8 +146,8 @@ def get_ases_by_number_of_lost_peered_connections(all_files, base_path="/home/em
     return sorted(results, key=lambda x: x[1], reverse=True)
 
 
-def get_data(file):
-    with open("/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/" + file, "r") as f:
+def get_data(file: str):
+    with open(_folder + file if file.startswith("peeringdb_2_dump_") else file, "r") as f:
         data = json.load(f)
     return data
 
@@ -258,6 +258,7 @@ def get_all_asns(data):
 def get_asinfo_from_asn(data, asn: int):
     asn_information = data["net"]["data"] 
 
+    # info like: name, asn, looking_glass, info_type, info_scope (which seems to be the location, at least for some) 
     for net in asn_information:
         if get_asn_from_net(net) == asn:
             return net
@@ -268,6 +269,14 @@ def get_all_ixps(data) -> list[dict]:
     # id, name, city, country, region_continent, created, updated...
     return list(data.get("ix", {}).get("data", []))
 
+
+
+def is_asn_in_ixp(asn: int, ixp_id: int, data, key="netixlan", connections_should_be="peered"):
+    connections = get_connections_for_ixp(ixp_id, data, key=key, connections_should_be=connections_should_be)
+    for conn in connections:
+        if get_asn_from_net(conn) == asn:
+            return True
+    return False
 
 def get_unique_ixps_from_data_list(data_list):
     unique_ixps = []
@@ -334,15 +343,32 @@ def get_all_organizations_that_own_ixps(data, key="org"):
  
 
 
-
+_folder = "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/"
 def get_all_files():
-    return [f for f in os.listdir("/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/") if f.startswith("peeringdb_2_dump_") and f.endswith(".json")]
+    return [f for f in os.listdir(_folder) if f.startswith("peeringdb_2_dump_") and f.endswith(".json")]
+
+def get_file_from_date(date):
+    return _folder + f"peeringdb_2_dump_{date}.json"
+    
+
+def get_most_recent_file():
+    all_files = get_all_files()
+    if not all_files:
+        return None
+    all_files.sort()
+    return all_files[-1]
+
+
+def get_most_recent_data():
+    most_recent_file = get_most_recent_file()
+    if most_recent_file is None:
+        return None
+    return get_data(most_recent_file)
 
 if __name__ == "__main__":
 
 
-    download_peeringdb_dump("2022_12_01")
-    download_peeringdb_dump("2023_12_01")
+    download_peeringdb_dump("2026_04_30") 
     sys.exit(0)
     if False:
         for i in range(2,4,1):

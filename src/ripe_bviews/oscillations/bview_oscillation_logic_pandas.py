@@ -25,7 +25,7 @@ class OscillationMetricsPandas:
         # Actual ASN sets over time
         self.all_removed_asns_over_time: list[set[int]] = []
         self.all_added_asns_over_time: list[set[int]] = []
-        self.all_did_not_come_backs = set()
+        self.all_did_not_come_backs = set[int]()
 
         self.oscillating_routes_over_time = []
         self.unique_oscillating_asns = None

@@ -1,0 +1,21 @@
+{
+    "rrc": "rrc19",
+    "routeviews": "route-views.napafrica",
+    "name": "NAPAfrica",  
+
+ 
+    "note": "prefixes",
+    "start_date": "2025-12-01",   
+    "end_date": "2026-01-16",  
+     
+    "asn_and_prefix": {
+        "asn": "37195",
+        "prefix": "196.60.9.2" 
+    },
+    "asn_and_prefix_v6": {
+        "asn": "37195",
+        "prefix": "2001:43f8:6d0::2"
+    },
+    "day_delta": 5,
+    "time_delta_hours": 0
+}

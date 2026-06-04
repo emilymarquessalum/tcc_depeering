@@ -46,21 +46,18 @@ def calculate_comeback_time_metrics(metrics: OscillationMetrics):
     
     return all_comeback_times, all_comeback_times_with_one_contribution_per_asn_in_a_time, average_time_ases_take_to_come_back
 
-def plot_member_oscillation_statistics(metrics: OscillationMetrics, config, title_start, date_range_title_str, time_delta_title_str, subfolder):
-    comeback_times_count = {}
-    for time in metrics.get("comeback_times", []):
-        if time not in comeback_times_count:
-            comeback_times_count[time] = 0
-        comeback_times_count[time] += 1
-
-    come_back_set = set(metrics.get("comeback_times", []))
+def plot_member_oscillation_statistics(comeback_times_count: dict, config, title_start, date_range_title_str, time_delta_title_str, subfolder):
+    
+    print(f"Number of different comeback times: {len(set(comeback_times_count.keys()))}")
+    
+    come_back_set = set(comeback_times_count.keys())
     ordered_comeback_times_count = sorted(comeback_times_count.items())
     ordered_comeback_values = [count for _, count in ordered_comeback_times_count]
 
     number_of_ases_label = "Number of ASes"
     time_to_come_back_label = "Time to Come Back (in snapshots)"
 
-    plot_list_as_bar_plot(come_back_set , 
+    plot_list_as_bar_plot(sorted(come_back_set), 
                         y=ordered_comeback_values,
                         max_x_value=20,
                         title=f"{title_start}Member Count of ASes by Time to Come Back {date_range_title_str} - {time_delta_title_str}",
@@ -244,6 +241,7 @@ def plot_oscillations_by_time_of_day(metrics, labels, config, title_start, ip_ve
 def bview_oscillation_metrics():
 
     config = load_configs("ixbr.json")
+    config = load_configs("AMS-IX.json")
 
     title_start = get_title_start(config) 
     ip_version = get_ip_version(config)
@@ -303,6 +301,7 @@ def bview_oscillation_metrics():
 
     plot_member_oscillation_statistics(comeback_times_count, config, title_start, date_range_title_str, time_delta_title_str, subfolder)
     
+    sys.exit(0)
     reachable_oscillation_metrics = calculate_oscillation_metrics(all_stats, use_reachables=True)
     plot_reachable_oscillation_statistics(reachable_oscillation_metrics, title_start, date_range_title_str, time_delta_title_str, subfolder)
 

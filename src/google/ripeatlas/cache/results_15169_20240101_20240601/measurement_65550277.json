@@ -1,0 +1,6231 @@
+[
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 17,
+    "endtime": 1705190425,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.0.193",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.0.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.183
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "195.209.230.33",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.679
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "195.209.230.181",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 1.507
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "194.85.36.237",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 0.888
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "194.85.42.129",
+            "ttl": 251,
+            "size": 140,
+            "rtt": 1.44,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 1274,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "194.85.43.134",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 9.24
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "72.14.210.102",
+            "ttl": 57,
+            "size": 68,
+            "rtt": 9.754
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.64.109",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 9.223,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "108.170.250.83",
+            "ttl": 57,
+            "size": 28,
+            "rtt": 8.674,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "209.85.249.158",
+            "ttl": 57,
+            "size": 140,
+            "rtt": 23.046,
+            "itos": 96,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 728382,
+                      "exp": 3,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "216.239.43.20",
+            "ttl": 57,
+            "size": 28,
+            "rtt": 24.08,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "216.239.63.129",
+            "ttl": 57,
+            "size": 68,
+            "rtt": 24.377,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 13,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 14,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 15,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 16,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 17,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 255,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 57,
+            "size": 48,
+            "rtt": 24.586
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1000747,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "195.209.232.17",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190477
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 7,
+    "endtime": 1705190414,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "195.93.226.2",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "195.93.226.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.146
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "195.93.226.254",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 7.697
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "10.11.1.97",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 8.598
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "10.50.27.121",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 9.184
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "159.146.22.233",
+            "ttl": 247,
+            "size": 144,
+            "rtt": 19.357,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 165284,
+                      "exp": 0,
+                      "s": 0,
+                      "ttl": 1
+                    },
+                    {
+                      "label": 116388,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "72.14.210.191",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 16.307
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "72.14.210.190",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 17.225
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "216.239.62.49",
+            "ttl": 55,
+            "size": 68,
+            "rtt": 18.078,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "108.170.236.33",
+            "ttl": 243,
+            "size": 68,
+            "rtt": 17.473,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 55,
+            "size": 48,
+            "rtt": 16.283
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1002718,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "195.93.226.2",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 44,
+    "endtime": 1705190410,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "172.18.0.2",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "172.18.0.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.922
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "103.176.189.65",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 1.15
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "103.16.68.17",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 9.43,
+            "itos": 184
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.251.227.211",
+            "ttl": 249,
+            "size": 68,
+            "rtt": 9.184,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.251.55.227",
+            "ttl": 60,
+            "size": 76,
+            "rtt": 7.022,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 119,
+            "size": 48,
+            "tos": 96,
+            "rtt": 7.221
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1003696,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "103.176.189.70",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190478
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 51,
+    "endtime": 1705190426,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "101.6.21.11",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "118.229.2.65",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.657
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "118.229.4.73",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 1.115
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "202.112.38.1",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 1.711
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "101.4.117.173",
+            "ttl": 248,
+            "size": 28,
+            "rtt": 1.598
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "101.4.114.170",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 2.257
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "101.4.114.222",
+            "ttl": 247,
+            "size": 28,
+            "rtt": 33.906
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "62.115.174.47",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 35.682
+          }
+        ]
+      },
+      {
+        "hop": 13,
+        "result": [
+          {
+            "from": "108.170.231.19",
+            "ttl": 53,
+            "size": 76,
+            "rtt": 35.783,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 14,
+        "result": [
+          {
+            "from": "142.251.245.17",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 35.862,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 15,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 114,
+            "size": 48,
+            "rtt": 35.479
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1006179,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "101.6.21.11",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190495
+  },
+  {
+    "fw": 4790,
+    "lts": 784,
+    "endtime": 1705190432,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "10.10.10.173",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "10.10.10.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 13.506
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "114.23.17.255",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 7.324
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "114.23.17.230",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 9.85
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "43.240.33.97",
+            "ttl": 249,
+            "size": 144,
+            "rtt": 25.19,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 35238,
+                      "exp": 0,
+                      "s": 0,
+                      "ttl": 1
+                    },
+                    {
+                      "label": 913,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "114.23.29.22",
+            "ttl": 248,
+            "size": 144,
+            "rtt": 14.98,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 36317,
+                      "exp": 0,
+                      "s": 0,
+                      "ttl": 1
+                    },
+                    {
+                      "label": 913,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "43.240.33.17",
+            "ttl": 244,
+            "size": 140,
+            "rtt": 36.73,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 913,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 13,
+        "result": [
+          {
+            "from": "218.100.52.3",
+            "ttl": 243,
+            "size": 28,
+            "rtt": 36.612
+          }
+        ]
+      },
+      {
+        "hop": 14,
+        "result": [
+          {
+            "from": "192.178.97.83",
+            "ttl": 240,
+            "size": 68,
+            "rtt": 42.197
+          }
+        ]
+      },
+      {
+        "hop": 15,
+        "result": [
+          {
+            "from": "142.250.234.211",
+            "ttl": 238,
+            "size": 68,
+            "rtt": 41.558
+          }
+        ]
+      },
+      {
+        "hop": 16,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 110,
+            "size": 48,
+            "rtt": 38.785
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1018,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "114.23.156.125",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190483
+  },
+  {
+    "fw": 4790,
+    "lts": 236,
+    "endtime": 1705190405,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.50.118",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.50.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 9.222
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "124.246.64.1",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 4.629
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "202.65.246.182",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 17.423
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "202.65.246.181",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 4.401
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "202.65.246.38",
+            "ttl": 252,
+            "size": 140,
+            "rtt": 6.43,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 203,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "202.65.245.159",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 6.416
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "72.14.222.186",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 5.516
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.250.56.51",
+            "ttl": 246,
+            "size": 68,
+            "rtt": 7.6
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "142.251.241.3",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 5.68
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "rtt": 5.424
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1033,
+    "timestamp": 1705190404,
+    "msm_name": "Traceroute",
+    "from": "124.246.99.132",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190408
+  },
+  {
+    "fw": 4790,
+    "lts": 218,
+    "endtime": 1705190408,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "103.196.108.3",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "103.196.108.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 248.523
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "130.195.196.161",
+            "ttl": 254,
+            "size": 68,
+            "rtt": 11.678
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "210.7.36.29",
+            "ttl": 246,
+            "size": 28,
+            "rtt": 13.369
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "210.7.33.255",
+            "ttl": 248,
+            "size": 28,
+            "rtt": 50.435
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "210.7.33.254",
+            "ttl": 249,
+            "size": 28,
+            "rtt": 43.72
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "210.7.33.237",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 43.574
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.168.168",
+            "ttl": 246,
+            "size": 28,
+            "rtt": 44.0
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "192.178.97.225",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 92.933
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "209.85.253.181",
+            "ttl": 247,
+            "size": 68,
+            "rtt": 46.386
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 118,
+            "size": 48,
+            "rtt": 60.121
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1050,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "103.196.108.3",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190495
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 39,
+    "endtime": 1705190412,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.0.5",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.0.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 2.501
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "192.168.252.134",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 15.965
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "192.168.15.105",
+            "ttl": 250,
+            "size": 144,
+            "rtt": 11.71,
+            "icmpext": {
+              "version": 0,
+              "rfc4884": 1,
+              "obj": [
+                {
+                  "class": 0,
+                  "type": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "72.14.211.5",
+            "ttl": 58,
+            "size": 68,
+            "rtt": 12.697
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.251.249.7",
+            "ttl": 58,
+            "size": 68,
+            "rtt": 12.606,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.247.223",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 11.75,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "rtt": 10.678
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 10661,
+    "timestamp": 1705190404,
+    "msm_name": "Traceroute",
+    "from": "190.163.38.42",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190497
+  },
+  {
+    "fw": 4790,
+    "lts": 78,
+    "endtime": 1705190414,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.0.100",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.0.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 584.685
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "100.92.37.131",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 630.505
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "68.87.155.37",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 39.236
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "96.108.158.25",
+            "ttl": 61,
+            "size": 76,
+            "rtt": 26.075
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "96.108.71.101",
+            "ttl": 251,
+            "size": 68,
+            "rtt": 66.499
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "96.110.42.5",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 29.924
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "96.110.34.38",
+            "ttl": 249,
+            "size": 68,
+            "rtt": 480.406
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "142.251.225.91",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 20.734
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "142.250.46.193",
+            "ttl": 56,
+            "size": 68,
+            "rtt": 26.259
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 115,
+            "size": 48,
+            "rtt": 23.849
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1185,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "76.19.209.137",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 4790,
+    "lts": 68,
+    "endtime": 1705190411,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.168.100",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.168.1",
+            "ttl": 255,
+            "size": 76,
+            "rtt": 9.829
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "46.214.145.1",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 8.282
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "46.214.145.129",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 4.489
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "10.19.141.57",
+            "ttl": 252,
+            "size": 68,
+            "rtt": 5.403
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "10.0.246.173",
+            "ttl": 251,
+            "size": 140,
+            "rtt": 7.079
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "10.0.240.194",
+            "ttl": 247,
+            "size": 140,
+            "rtt": 43.693,
+            "ittl": 3,
+            "icmpext": {
+              "version": 0,
+              "rfc4884": 1,
+              "obj": [
+                {
+                  "class": 0,
+                  "type": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "10.0.200.18",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 40.364
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "92.87.30.10",
+            "ttl": 55,
+            "size": 68,
+            "rtt": 41.086
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "142.250.239.67",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 45.972
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "142.250.214.195",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 45.984
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 55,
+            "size": 48,
+            "rtt": 38.678
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 1211,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "46.214.145.12",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190478
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 139,
+    "endtime": 1705190413,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "196.200.131.136",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "196.200.131.129",
+            "ttl": 255,
+            "size": 76,
+            "rtt": 1.242
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "192.168.105.1",
+            "ttl": 254,
+            "size": 76,
+            "rtt": 1.504
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "105.73.33.160",
+            "ttl": 253,
+            "size": 68,
+            "rtt": 2.442
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.174.134",
+            "ttl": 56,
+            "size": 28,
+            "rtt": 50.288
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "74.125.242.177",
+            "ttl": 243,
+            "size": 68,
+            "rtt": 52.616,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.213.127",
+            "ttl": 51,
+            "size": 76,
+            "rtt": 51.584,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 56,
+            "size": 48,
+            "rtt": 51.907
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 12344,
+    "timestamp": 1705190409,
+    "msm_name": "Traceroute",
+    "from": "196.200.131.136",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190495
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 104,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "138.44.176.166",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "138.44.176.165",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 0.796
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "113.197.15.44",
+            "ttl": 254,
+            "size": 140,
+            "rtt": 27.258,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 1667,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "113.197.15.43",
+            "ttl": 253,
+            "size": 140,
+            "rtt": 43.84,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 109,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "113.197.15.253",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 50.358
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "209.85.174.216",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 45.031
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "192.178.97.139",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 47.262,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.224.219",
+            "ttl": 249,
+            "size": 68,
+            "rtt": 46.137,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 120,
+            "size": 48,
+            "rtt": 45.263
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 17003,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "138.44.176.166",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190414
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 21,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "146.231.130.254",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "146.231.130.1",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 15.292
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "146.231.135.20",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 7.129
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "192.42.99.230",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.867
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "192.42.99.253",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 0.963
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "155.232.5.4",
+            "ttl": 251,
+            "size": 140,
+            "rtt": 5.16,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 23789,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "155.232.1.193",
+            "ttl": 250,
+            "size": 140,
+            "rtt": 13.912,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 172,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "155.232.1.149",
+            "ttl": 249,
+            "size": 140,
+            "rtt": 29.665,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 518,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "155.232.128.76",
+            "ttl": 248,
+            "size": 28,
+            "rtt": 29.529
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "72.14.221.238",
+            "ttl": 247,
+            "size": 28,
+            "rtt": 29.323
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "192.178.97.27",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 30.161,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "192.178.73.123",
+            "ttl": 51,
+            "size": 76,
+            "rtt": 30.156,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 114,
+            "size": 48,
+            "tos": 96,
+            "rtt": 30.025
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 18169,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "146.231.130.254",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190478
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 45,
+    "endtime": 1705190408,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "172.20.99.250",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "172.20.99.254",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.729
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "37.128.233.21",
+            "ttl": 249,
+            "size": 140,
+            "rtt": 7.884,
+            "ittl": 2
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "37.128.239.105",
+            "ttl": 250,
+            "size": 140,
+            "rtt": 7.301,
+            "ittl": 3
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "37.128.239.42",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 6.446
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "86.104.125.129",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 32.971
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "108.170.251.193",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 33.349,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.241.75",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 30.844,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 118,
+            "size": 48,
+            "rtt": 30.8
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 19664,
+    "timestamp": 1705190404,
+    "msm_name": "Traceroute",
+    "from": "81.180.221.28",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 5,
+    "endtime": 1705190403,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "129.242.214.5",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "129.242.214.2",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 5.594
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "129.242.25.213",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.857
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "158.36.4.26",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.757
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "128.39.231.57",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 3.741
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "128.39.254.247",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 3.87
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "109.105.102.69",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 3.717
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "109.105.97.110",
+            "ttl": 249,
+            "size": 28,
+            "rtt": 19.008
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "109.105.101.53",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 24.904
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "109.105.98.6",
+            "ttl": 243,
+            "size": 68,
+            "rtt": 20.071
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "142.250.213.135",
+            "ttl": 50,
+            "size": 76,
+            "rtt": 25.295,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "209.85.241.225",
+            "ttl": 50,
+            "size": 68,
+            "rtt": 26.223,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 50,
+            "size": 48,
+            "rtt": 25.346
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 19887,
+    "timestamp": 1705190403,
+    "msm_name": "Traceroute",
+    "from": "129.242.214.5",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190414
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 18,
+    "endtime": 1705190404,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.157.20",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.157.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 2.902
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "192.168.155.1",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 0.726
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "179.60.247.254",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 1.044
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "10.104.110.129",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 3.639
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "200.69.177.81",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 2.805
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "200.69.177.126",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 18.286
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.172.196",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 17.759
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "192.178.87.233",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 17.772,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "192.178.87.111",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 17.775,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "tos": 96,
+            "rtt": 17.909
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 20423,
+    "timestamp": 1705190404,
+    "msm_name": "Traceroute",
+    "from": "179.60.244.8",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190406
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 17,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "41.63.32.249",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "41.63.32.1",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 7.413
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "41.63.2.241",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 0.517
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "196.32.209.36",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 128.215
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "196.32.210.29",
+            "ttl": 252,
+            "size": 140,
+            "rtt": 7.888,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 596736,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "196.32.210.34",
+            "ttl": 251,
+            "size": 140,
+            "rtt": 26.039,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 582,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "196.32.210.117",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 29.297
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "72.14.216.20",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 33.792
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "172.253.65.161",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 25.19,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "172.253.72.65",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 24.917,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "rtt": 25.407
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 21673,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "41.63.32.249",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190478
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 44,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "194.214.253.13",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "194.214.253.14",
+            "ttl": 255,
+            "size": 76,
+            "rtt": 0.762
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "193.50.198.6",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 0.917
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "193.51.180.237",
+            "ttl": 253,
+            "size": 68,
+            "rtt": 241.508
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "193.51.180.134",
+            "ttl": 252,
+            "size": 140,
+            "rtt": 241.35,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 34062,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "193.55.204.193",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 241.526
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "192.178.70.144",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 241.485
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "108.170.245.1",
+            "ttl": 247,
+            "size": 68,
+            "rtt": 242.97,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.49.133",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 241.653,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 118,
+            "size": 48,
+            "rtt": 241.672
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 23002,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "194.214.253.13",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190495
+  },
+  {
+    "fw": 4790,
+    "lts": 62,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.1.64",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.1.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 20.402
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "46.189.128.3",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 7.449
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "83.174.50.24",
+            "ttl": 252,
+            "size": 68,
+            "rtt": 7.463
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "142.250.161.112",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 8.074
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.251.54.13",
+            "ttl": 60,
+            "size": 76,
+            "rtt": 8.356
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "192.178.82.18",
+            "ttl": 60,
+            "size": 28,
+            "rtt": 6.268
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.237.82",
+            "ttl": 60,
+            "size": 140,
+            "rtt": 5.282,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 24147,
+                      "exp": 3,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.55.151",
+            "ttl": 60,
+            "size": 28,
+            "rtt": 13.306
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "108.170.253.241",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 15.458
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "142.251.54.151",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 15.835
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 60,
+            "size": 48,
+            "rtt": 14.776
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 24,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "161.230.189.193",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190503
+  },
+  {
+    "fw": 4790,
+    "lts": 672,
+    "endtime": 1705190426,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.0.102",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.0.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 19.089
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "186.153.155.24",
+            "ttl": 252,
+            "size": 140,
+            "rtt": 34.06
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "181.96.62.212",
+            "ttl": 245,
+            "size": 140,
+            "rtt": 28.905,
+            "ittl": 2,
+            "icmpext": {
+              "version": 0,
+              "rfc4884": 1,
+              "obj": [
+                {
+                  "class": 0,
+                  "type": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "181.96.113.234",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 207.59
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "72.14.194.198",
+            "ttl": 52,
+            "size": 76,
+            "rtt": 24.725
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "142.250.57.175",
+            "ttl": 244,
+            "size": 68,
+            "rtt": 25.398
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "172.253.71.11",
+            "ttl": 243,
+            "size": 68,
+            "rtt": 27.223
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 114,
+            "size": 48,
+            "rtt": 27.046
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 243,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "152.171.213.230",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190498
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 69,
+    "endtime": 1705190424,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "10.255.255.163",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "10.255.255.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 3.851,
+            "ittl": 0
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 121,
+            "size": 48,
+            "rtt": 6.108
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 30306,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "14.10.128.32",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 4790,
+    "lts": 55,
+    "endtime": 1705190410,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.88.234",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.88.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 334.185
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "10.112.238.163",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 26.068
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "96.110.176.45",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 14.941
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "96.108.99.69",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 12.823
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "68.85.86.173",
+            "ttl": 61,
+            "size": 76,
+            "rtt": 1129.867
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "68.87.226.109",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 104.647
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "68.86.143.93",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 81.228
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "69.241.75.46",
+            "ttl": 245,
+            "size": 68,
+            "rtt": 114.075
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "142.251.70.47",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 34.83
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "209.85.243.49",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 54.607
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "rtt": 17.007
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 307,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "73.93.221.79",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190477
+  },
+  {
+    "fw": 4760,
+    "lts": 5,
+    "endtime": 1705190409,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "132.248.108.240",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "132.248.108.254",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 14.594
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "192.100.200.225",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 4.1
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "132.247.237.53",
+            "ttl": 62,
+            "size": 28,
+            "rtt": 0.605
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "132.248.133.1",
+            "ttl": 125,
+            "size": 28,
+            "rtt": 0.971,
+            "ittl": 0
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "132.247.254.14",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 1.164
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "187.188.69.125",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 11.193
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "72.14.215.106",
+            "ttl": 56,
+            "size": 68,
+            "rtt": 15.023
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "142.250.215.91",
+            "ttl": 56,
+            "size": 68,
+            "rtt": 15.456
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "192.178.81.5",
+            "ttl": 52,
+            "size": 68,
+            "rtt": 21.539
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 56,
+            "size": 48,
+            "rtt": 14.563
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 32139,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "132.248.108.240",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190500
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 43,
+    "endtime": 1705190404,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "10.63.1.190",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "10.63.1.5",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 5.261
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "111.223.252.129",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.976
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "111.223.252.1",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 1.0
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "36.93.255.41",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 2.42
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "36.88.254.241",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 4.82
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "36.88.254.242",
+            "ttl": 246,
+            "size": 68,
+            "rtt": 8.107
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.62.201",
+            "ttl": 58,
+            "size": 68,
+            "rtt": 7.147,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "172.253.70.177",
+            "ttl": 58,
+            "size": 68,
+            "rtt": 6.154,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 58,
+            "size": 48,
+            "rtt": 5.478
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 34574,
+    "timestamp": 1705190404,
+    "msm_name": "Traceroute",
+    "from": "111.223.252.151",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190497
+  },
+  {
+    "fw": 4790,
+    "lts": 263,
+    "endtime": 1705190413,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.1.135",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.1.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 9.502
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "176.230.251.125",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 4.744
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "142.250.169.119",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 5.428
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.169.118",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 4.695
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "216.239.50.169",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 4.563
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "72.14.237.235",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 4.943
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 117,
+            "size": 48,
+            "rtt": 4.278
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 3625,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "87.68.231.78",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190508
+  },
+  {
+    "fw": 4790,
+    "lts": 76,
+    "endtime": 1705190408,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.142.100",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.142.1",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 499.104
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "182.71.53.97",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 151.47
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "182.74.14.241",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 29.986
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "182.79.255.126",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 10.984
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.161.56",
+            "ttl": 247,
+            "size": 68,
+            "rtt": 14.507
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.251.66.171",
+            "ttl": 59,
+            "size": 68,
+            "rtt": 81.187
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "72.14.232.95",
+            "ttl": 59,
+            "size": 68,
+            "rtt": 9.049
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 59,
+            "size": 48,
+            "rtt": 8.199
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 385,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "182.71.53.98",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190428
+  },
+  {
+    "fw": 4790,
+    "lts": 136,
+    "endtime": 1705190409,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "172.16.16.51",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "172.16.16.16",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 474.101
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "197.148.64.12",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 18.179
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "209.85.168.58",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 10.53
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "74.125.245.209",
+            "ttl": 249,
+            "size": 68,
+            "rtt": 10.253
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "192.178.86.211",
+            "ttl": 61,
+            "size": 68,
+            "rtt": 8.768
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 61,
+            "size": 48,
+            "rtt": 7.721
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 4092,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "197.148.64.10",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 51,
+    "endtime": 1705190418,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.42.242",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.42.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 7.239
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "192.168.1.254",
+            "ttl": 63,
+            "size": 40,
+            "rtt": 2.536
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.250.162.84",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 93.435
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "172.253.65.207",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 93.63,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "142.251.233.237",
+            "ttl": 54,
+            "size": 76,
+            "rtt": 95.402,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 116,
+            "size": 48,
+            "tos": 96,
+            "rtt": 92.181
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 52614,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "202.90.87.2",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190499
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 47,
+    "endtime": 1705190405,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.168.110.203",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.168.111.254",
+            "ttl": 255,
+            "size": 76,
+            "rtt": 0.487
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "160.242.112.81",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 0.66
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "160.242.1.177",
+            "ttl": 253,
+            "size": 68,
+            "rtt": 23.608
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "160.242.1.177",
+            "ttl": 253,
+            "size": 68,
+            "rtt": 22.62
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "72.14.194.212",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 23.314
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "172.253.65.163",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 25.976,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "192.178.73.217",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 23.708,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 60,
+            "size": 48,
+            "rtt": 23.039
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 60583,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "160.242.112.84",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190414
+  },
+  {
+    "fw": 4790,
+    "lts": 55,
+    "endtime": 1705190426,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "176.32.128.19",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "176.32.128.17",
+            "ttl": 255,
+            "size": 52,
+            "rtt": 8.978,
+            "ittl": 0
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "217.150.49.134",
+            "ttl": 254,
+            "size": 68,
+            "rtt": 7.347
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "217.150.55.234",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 26.088
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "188.43.10.141",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 44.582
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "108.170.250.83",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 69.999
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "72.14.234.54",
+            "ttl": 250,
+            "size": 140,
+            "rtt": 56.027,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 640506,
+                      "exp": 3,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "66.249.95.224",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 63.216
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 255,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 112,
+            "size": 48,
+            "rtt": 48.965
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 607,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "176.32.128.19",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190503
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 28,
+    "endtime": 1705190405,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "41.207.252.42",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "41.207.252.41",
+            "ttl": 255,
+            "size": 68,
+            "rtt": 1.214
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "154.113.144.102",
+            "ttl": 254,
+            "size": 68,
+            "rtt": 6.816
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "154.113.144.102",
+            "ttl": 254,
+            "size": 68,
+            "rtt": 6.565
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "72.14.217.212",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 6.416
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "108.170.240.33",
+            "ttl": 60,
+            "size": 76,
+            "rtt": 6.653,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "172.253.76.219",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 7.444,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 121,
+            "size": 48,
+            "rtt": 6.566
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 61438,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "41.207.252.42",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190419
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 98,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "103.5.243.2",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "103.5.243.254",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 9.781
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "203.30.38.110",
+            "ttl": 63,
+            "size": 28,
+            "rtt": 0.691
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "203.30.38.45",
+            "ttl": 250,
+            "size": 28,
+            "rtt": 1.625
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "74.125.242.33",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 1.451,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.251.54.249",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 1.459,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 62,
+            "size": 48,
+            "rtt": 1.379
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 62827,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "103.5.243.2",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190482
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 84,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "200.132.1.32",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "200.132.1.2",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 0.187
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "170.79.214.36",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 4.788
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "170.79.212.254",
+            "ttl": 253,
+            "size": 140,
+            "rtt": 10.249,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 235729,
+                      "exp": 1,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "170.79.213.108",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 15.328,
+            "itos": 4
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "72.14.220.240",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 17.774,
+            "itos": 4
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "108.170.226.225",
+            "ttl": 60,
+            "size": 76,
+            "rtt": 15.555,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "172.253.69.203",
+            "ttl": 60,
+            "size": 68,
+            "rtt": 16.131,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 60,
+            "size": 48,
+            "rtt": 15.566
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6349,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "200.132.1.32",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190412
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 57,
+    "endtime": 1705190410,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "109.171.136.4",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "109.171.136.2",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 1.857
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "10.126.145.5",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 1.528
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "192.168.11.14",
+            "ttl": 253,
+            "size": 68,
+            "rtt": 1.727
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "4.68.75.110",
+            "ttl": 246,
+            "size": 68,
+            "rtt": 69.299
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "172.253.71.29",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 70.73,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "108.170.227.3",
+            "ttl": 246,
+            "size": 68,
+            "rtt": 69.365,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 117,
+            "size": 48,
+            "rtt": 68.423
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6431,
+    "timestamp": 1705190405,
+    "msm_name": "Traceroute",
+    "from": "109.171.136.4",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190477
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 138,
+    "endtime": 1705190421,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "204.87.183.13",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "204.87.183.1",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.377
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "64.62.206.97",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 2.566
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "184.104.188.173",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 0.698
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "72.52.92.246",
+            "ttl": 61,
+            "size": 76,
+            "rtt": 4.096
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "206.223.117.119",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 0.767
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "192.178.87.163",
+            "ttl": 248,
+            "size": 68,
+            "rtt": 2.276,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.251.228.83",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 1.374,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 118,
+            "size": 48,
+            "rtt": 1.285
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6482,
+    "timestamp": 1705190421,
+    "msm_name": "Traceroute",
+    "from": "204.87.183.13",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190429
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 309,
+    "endtime": 1705190408,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "143.255.248.149",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "143.255.248.141",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 6.258
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "200.0.204.234",
+            "ttl": 254,
+            "size": 68,
+            "rtt": 12.964
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "200.0.204.26",
+            "ttl": 249,
+            "size": 144,
+            "rtt": 78.52,
+            "icmpext": {
+              "version": 0,
+              "rfc4884": 1,
+              "obj": [
+                {
+                  "class": 0,
+                  "type": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "200.0.204.31",
+            "ttl": 250,
+            "size": 68,
+            "rtt": 78.396
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "72.14.205.62",
+            "ttl": 249,
+            "size": 28,
+            "rtt": 77.714
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "108.170.253.17",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 78.048,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.225.9",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 78.036,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 117,
+            "size": 48,
+            "rtt": 78.358
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6488,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "143.255.248.149",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190412
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 659,
+    "endtime": 1705190414,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "200.1.122.55",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "190.151.19.25",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 2.159
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "192.168.202.5",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 1.819
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.47.198",
+            "ttl": 251,
+            "size": 28,
+            "rtt": 2.236
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "192.178.99.45",
+            "ttl": 59,
+            "size": 68,
+            "rtt": 4.308,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.251.247.223",
+            "ttl": 55,
+            "size": 76,
+            "rtt": 2.472,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 59,
+            "size": 48,
+            "rtt": 2.029
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6554,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "200.1.122.55",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190496
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 29,
+    "endtime": 1705190420,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "206.196.178.150",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "206.196.178.149",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 0.604
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "206.196.178.81",
+            "ttl": 254,
+            "size": 140,
+            "rtt": 1.332,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 3407,
+                      "exp": 0,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "206.196.177.109",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 3.111
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "108.170.246.1",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 2.925,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.251.77.65",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 2.565,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 61,
+            "size": 48,
+            "rtt": 2.229
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6588,
+    "timestamp": 1705190420,
+    "msm_name": "Traceroute",
+    "from": "206.196.178.150",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190428
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 52,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "129.122.18.18",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "129.122.31.254",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 1.869
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "169.239.248.177",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 7.008
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "196.201.2.118",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 12.016
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "108.170.240.17",
+            "ttl": 251,
+            "size": 68,
+            "rtt": 12.479,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "172.253.76.217",
+            "ttl": 247,
+            "size": 68,
+            "rtt": 13.985,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 121,
+            "size": 48,
+            "rtt": 12.569
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6612,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "129.122.18.18",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190415
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 55,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "94.77.252.90",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "94.77.252.89",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 0.255
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "94.77.210.69",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 0.56
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "45.94.12.36",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 6.553
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "142.251.204.177",
+            "ttl": 60,
+            "size": 76,
+            "rtt": 6.466,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "172.253.77.243",
+            "ttl": 59,
+            "size": 76,
+            "rtt": 6.594,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 121,
+            "size": 48,
+            "rtt": 6.346
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6616,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "94.77.252.90",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190413
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 109,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "203.175.175.206",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "203.175.175.252",
+            "ttl": 255,
+            "size": 28,
+            "rtt": 11.552
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "103.16.102.30",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 0.835
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "103.16.102.188",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 1.833
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "108.170.240.161",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 0.962,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.251.241.1",
+            "ttl": 61,
+            "size": 76,
+            "rtt": 0.803,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 120,
+            "size": 48,
+            "tos": 96,
+            "rtt": 1.015
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 6676,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "203.175.175.206",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190495
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 175,
+    "endtime": 1705190410,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "45.11.104.146",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "45.11.104.7",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 0.318
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "199.119.64.150",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 0.327
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "45.11.107.130",
+            "ttl": 253,
+            "size": 28,
+            "rtt": 0.315
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "193.41.248.14",
+            "ttl": 59,
+            "size": 68,
+            "rtt": 1.072
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.250.63.187",
+            "ttl": 59,
+            "size": 76,
+            "rtt": 0.424,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "216.239.46.183",
+            "ttl": 59,
+            "size": 76,
+            "rtt": 0.432,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 59,
+            "size": 48,
+            "rtt": 0.283
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 7030,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "45.11.104.146",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190504
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 150,
+    "endtime": 1705190412,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "187.44.229.14",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "187.44.229.13",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.659
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "189.89.129.137",
+            "ttl": 254,
+            "size": 28,
+            "rtt": 54.565
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "x": "*"
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "189.89.141.33",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 5.041
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "209.85.148.234",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 31.715
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.251.69.135",
+            "ttl": 57,
+            "size": 76,
+            "rtt": 31.92,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.251.76.103",
+            "ttl": 56,
+            "size": 76,
+            "rtt": 29.692,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 118,
+            "size": 48,
+            "tos": 96,
+            "rtt": 29.646
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 7057,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "187.44.229.14",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190414
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 152,
+    "endtime": 1705190407,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "202.152.129.74",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "202.152.129.73",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.462
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "202.152.153.20",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 0.796
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "202.152.153.209",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 13.304
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "117.20.51.50",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 13.7
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.170.114",
+            "ttl": 59,
+            "size": 68,
+            "rtt": 15.853
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.250.62.197",
+            "ttl": 59,
+            "size": 76,
+            "rtt": 13.437,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.251.252.207",
+            "ttl": 59,
+            "size": 76,
+            "rtt": 14.022,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 59,
+            "size": 48,
+            "rtt": 13.382
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 7059,
+    "timestamp": 1705190407,
+    "msm_name": "Traceroute",
+    "from": "202.152.129.74",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190408
+  },
+  {
+    "fw": 5080,
+    "mver": "2.6.2",
+    "lts": 100,
+    "endtime": 1705190406,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "190.124.192.162",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "190.124.192.129",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 0.769
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "190.124.210.20",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 0.874
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "190.124.210.5",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 0.742
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "200.14.37.202",
+            "ttl": 252,
+            "size": 28,
+            "rtt": 8.729
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "142.250.165.180",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 9.052
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "142.250.57.177",
+            "ttl": 58,
+            "size": 68,
+            "rtt": 9.828,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "142.250.46.111",
+            "ttl": 58,
+            "size": 76,
+            "rtt": 9.028,
+            "itos": 96
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 58,
+            "size": 48,
+            "rtt": 8.826
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 7099,
+    "timestamp": 1705190406,
+    "msm_name": "Traceroute",
+    "from": "190.124.192.162",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190412
+  },
+  {
+    "fw": 4790,
+    "lts": 1,
+    "endtime": 1705190409,
+    "dst_name": "35.190.84.173",
+    "dst_addr": "35.190.84.173",
+    "src_addr": "192.104.48.120",
+    "proto": "ICMP",
+    "af": 4,
+    "size": 48,
+    "paris_id": 1,
+    "result": [
+      {
+        "hop": 1,
+        "result": [
+          {
+            "from": "192.104.48.126",
+            "ttl": 64,
+            "size": 76,
+            "rtt": 8.349
+          }
+        ]
+      },
+      {
+        "hop": 2,
+        "result": [
+          {
+            "from": "10.0.232.14",
+            "ttl": 63,
+            "size": 76,
+            "rtt": 4.212
+          }
+        ]
+      },
+      {
+        "hop": 3,
+        "result": [
+          {
+            "from": "10.0.232.86",
+            "ttl": 62,
+            "size": 76,
+            "rtt": 4.189
+          }
+        ]
+      },
+      {
+        "hop": 4,
+        "result": [
+          {
+            "from": "193.137.237.206",
+            "ttl": 53,
+            "size": 76,
+            "rtt": 4.219
+          }
+        ]
+      },
+      {
+        "hop": 5,
+        "result": [
+          {
+            "from": "193.136.1.153",
+            "ttl": 243,
+            "size": 68,
+            "rtt": 3.784
+          }
+        ]
+      },
+      {
+        "hop": 6,
+        "result": [
+          {
+            "from": "194.210.6.108",
+            "ttl": 240,
+            "size": 140,
+            "rtt": 3.671,
+            "icmpext": {
+              "version": 0,
+              "rfc4884": 1,
+              "obj": [
+                {
+                  "class": 0,
+                  "type": 0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 7,
+        "result": [
+          {
+            "from": "194.210.6.103",
+            "ttl": 241,
+            "size": 68,
+            "rtt": 4.027
+          }
+        ]
+      },
+      {
+        "hop": 8,
+        "result": [
+          {
+            "from": "193.136.251.2",
+            "ttl": 240,
+            "size": 28,
+            "rtt": 4.393
+          }
+        ]
+      },
+      {
+        "hop": 9,
+        "result": [
+          {
+            "from": "108.170.237.7",
+            "ttl": 237,
+            "size": 68,
+            "rtt": 4.088
+          }
+        ]
+      },
+      {
+        "hop": 10,
+        "result": [
+          {
+            "from": "66.249.95.226",
+            "ttl": 237,
+            "size": 28,
+            "rtt": 44.563
+          }
+        ]
+      },
+      {
+        "hop": 11,
+        "result": [
+          {
+            "from": "142.250.237.82",
+            "ttl": 238,
+            "size": 140,
+            "rtt": 4.243,
+            "icmpext": {
+              "version": 2,
+              "rfc4884": 0,
+              "obj": [
+                {
+                  "class": 1,
+                  "type": 1,
+                  "mpls": [
+                    {
+                      "label": 24099,
+                      "exp": 3,
+                      "s": 1,
+                      "ttl": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "hop": 12,
+        "result": [
+          {
+            "from": "142.251.55.151",
+            "ttl": 236,
+            "size": 28,
+            "rtt": 10.171
+          }
+        ]
+      },
+      {
+        "hop": 13,
+        "result": [
+          {
+            "from": "108.170.253.225",
+            "ttl": 45,
+            "size": 76,
+            "rtt": 10.428
+          }
+        ]
+      },
+      {
+        "hop": 14,
+        "result": [
+          {
+            "from": "142.251.49.53",
+            "ttl": 44,
+            "size": 76,
+            "rtt": 11.484
+          }
+        ]
+      },
+      {
+        "hop": 15,
+        "result": [
+          {
+            "from": "35.190.84.173",
+            "ttl": 106,
+            "size": 48,
+            "rtt": 10.144
+          }
+        ]
+      }
+    ],
+    "destination_ip_responded": true,
+    "msm_id": 65550277,
+    "prb_id": 724,
+    "timestamp": 1705190408,
+    "msm_name": "Traceroute",
+    "from": "192.104.48.120",
+    "type": "traceroute",
+    "group_id": 65550277,
+    "stored_timestamp": 1705190411
+  }
+]

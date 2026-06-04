@@ -9,6 +9,7 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.patches as mpatches
 
 from definitions import append_roots
 
@@ -203,11 +204,11 @@ def plot_map_as_bar_plot(data_map, title='Data Bar Plot', xlabel='Key', ylabel='
                            subfolder=subfolder, max_x_value=max_x_value, max_labels=max_labels, use_colors=use_colors, use_rotated_labels=use_rotated_labels)
 
 def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Index', ylabel='Value', subfolder=None, max_x_value=None, max_labels=None, use_colors=False,
-                          colors=None,   
+                          colors=None, color_labels=None,
                           is_percentage=False,
                           do_top_n=None,
                           sort_by_size=False,
-                          moments_of_separation=None, # list of indices where vertical lines should be drawn to separate different moments in time, for example, or different categories. These lines will be drawn across the entire plot to visually separate the sections.
+                          moments_of_separation=None, 
                           use_rotated_labels=True):
     
     plt.figure(figsize=(12, 6))
@@ -229,6 +230,7 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
         data_list = [data_list[i] for i in sorted_indices]
         y = [y[i] for i in sorted_indices]
         colors = [colors[i] for i in sorted_indices]
+        
     # Calculate x-positions with spacing at separation moments
     def get_x_position(index, separations):
         """Get the adjusted x-position for a bar, accounting for spacing at separation moments."""
@@ -255,22 +257,18 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
             over_x_labels = [label for label in data_list if label >= max_x_value]
             over_x_value = 0
             start_index = len(data_list) - len(over_x_labels)
-            #print(f"over_x_labels: {over_x_labels}, start_index: {start_index}")
             if over_x_labels:
                 for i, label in enumerate(over_x_labels):
                     index = start_index + i
-                    #print(f"size of y: {len(y)}, index: {index}")
                     over_x_value += y[index]
                 data_list = list(data_list)[:start_index]  
                 y = [y[i] for i in range(len(data_list))]
                 data_list.append(f'>{max_x_value}')
                 y.append(over_x_value)
         
-        # Calculate x-positions with spacing only if moments_of_separation is provided
         if moments_of_separation:
             x_positions = [get_x_position(i, moments_of_separation) for i in range(len(y))]
             plt.bar(x_positions, y, color=colors[:len(y)])
-            # Handle too many labels
             if max_labels and len(data_list) > max_labels:
                 step = len(data_list) // max_labels
                 tick_positions = [x_positions[i] for i in range(0, len(data_list), step)]
@@ -280,7 +278,6 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
                 plt.xticks(x_positions, data_list, rotation=45 if use_rotated_labels else 0)
         else:
             plt.bar(range(len(y)), y, color=colors[:len(y)])
-            # Handle too many labels
             if max_labels and len(data_list) > max_labels:
                 step = len(data_list) // max_labels
                 tick_positions = list(range(0, len(data_list), step))
@@ -289,11 +286,9 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
             else:
                 plt.xticks(range(len(data_list)), data_list, rotation=45 if use_rotated_labels else 0)
     else:
-        # Calculate x-positions with spacing only if moments_of_separation is provided
         if moments_of_separation:
             x_positions = [get_x_position(i, moments_of_separation) for i in range(len(data_list))]
             plt.bar(x_positions, data_list, color=colors[:len(data_list)])
-            # Handle too many labels
             if max_labels and len(data_list) > max_labels:
                 step = len(data_list) // max_labels
                 tick_positions = [x_positions[i] for i in range(0, len(data_list), step)]
@@ -302,7 +297,6 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
                 plt.xticks(x_positions)
         else:
             plt.bar(range(len(data_list)), data_list, color=colors[:len(data_list)])
-            # Handle too many labels
             if max_labels and len(data_list) > max_labels:
                 step = len(data_list) // max_labels
                 tick_positions = list(range(0, len(data_list), step))
@@ -319,14 +313,22 @@ def plot_list_as_bar_plot(data_list, y=None, title='Data Bar Plot', xlabel='Inde
     plt.ylabel(ylabel)
     plt.title(title)
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-
-    #make_sanity_check_tests
     
     if is_percentage:
         ax = plt.gca()
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
 
     plt.grid(axis='y') 
+
+    # --- NEW: Generate Custom Legend for Color Labels ---
+    if color_labels:
+        legend_patches = [
+            mpatches.Patch(color=color, label=label) 
+            for color, label in color_labels.items()
+        ]
+        # loc='best' automatically finds a clean spot, or use 'upper right'
+        plt.legend(handles=legend_patches, loc='best')
+    # -----------------------------------------------------
  
     save_plot(plt, title, subfolder=subfolder)
     plt.close()
@@ -362,6 +364,12 @@ def get_colors():
                     'salmon', 'turquoise', 'tan', 'orchid', 'plum', 'steelblue', 'sandybrown', 'lightcoral', 'mediumseagreen', 'mediumpurple'
                   ]
 
+def create_colors_for_groups(groups: list[str]):
+    unique_groups = list(set(groups))
+    color_palette = get_colors()
+    group_to_color = {group: color_palette[i % len(color_palette)] for i, group in enumerate(unique_groups)}
+    color_to_group = {color: group for group, color in group_to_color.items()}
+    return [group_to_color[group] for group in groups], color_to_group
 
 def get_negative_positive_colors(categories: list[int]):
 

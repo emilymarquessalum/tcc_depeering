@@ -22,7 +22,8 @@ class OscillationMetrics:
         self.added_non_oscillating_asns_over_time = []
 
 
-        self.all_did_not_come_backs = set()
+        self.all_did_not_come_backs = set[int]()
+        self.all_did_not_come_back_events = [] # list of tuples for ASes that did not come back (asn, last index seen)
         self.removed_oscillating_asns_over_time: list[int] = []
         self.removed_non_oscillating_asns_over_time: list[int] = []
         self.all_removed_asns_over_time: list[set[int]] = []
@@ -153,6 +154,7 @@ class OscillationMetrics:
                 if not came_back: 
                     did_not_come_back.append(asn)
                     self.all_did_not_come_backs.add(asn)
+                    self.all_did_not_come_back_events.append((asn, i))
 
             # Count oscillating ASes that were removed (regardless of whether they come back)
             oscillating_count = sum(1 for asn in asns_removed if asn in self.oscillation_info)
@@ -222,7 +224,7 @@ def calculate_oscillation_metrics(all_stats: list[BGPDumpSnapshotStats], use_rea
             if state["has_disappeared"]:
                 # Came back after disappearing - this IS oscillation
                 state["oscillations"] += 1
-                if state["first_absence_idx"] is not None and state["currently_in_oscillation"]:
+                if state["first_absence_idx"] is not None:
                     state["comeback_times"].append(i - state["first_absence_idx"])
                 state["currently_in_oscillation"] = False # oscilaltion ends untill the AS disappears again
                 if state["oscillations"] == 1:  # First time coming back
