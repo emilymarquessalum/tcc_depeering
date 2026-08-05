@@ -1,0 +1,14 @@
+{
+    "urls": [
+        "https://ix.nap.africa/peering-matrix",
+        "https://www.inex.ie/ixp/peering-matrix",
+        "https://ixp.edgeix.net.au/peering-matrix",
+        "https://ixpmanager.bknix.co.th/peering-matrix",
+        "https://portal.nix.no/peering-matrix",
+        "https://ixp.onenet.net/peering-matrix",
+        "https://ixpm.nvix.us/peering-matrix"
+    ],
+    "outputs": [
+        "./peering_matrix"
+    ]
+}

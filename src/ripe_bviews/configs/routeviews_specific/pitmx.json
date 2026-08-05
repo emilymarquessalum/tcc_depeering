@@ -1,0 +1,19 @@
+{
+    "routeserver-folder-name": "pitmx.qro",
+    "name": "pitmx",
+    "start_date": "2025-12-01",
+    "end_date": "2026-01-30",
+    "day_delta": 15,
+
+    "asn_and_prefix": {   
+        "asn": "61525",
+        "prefix": "200.23.206.1"   
+    }, 
+    "asn_and_prefix_v6": { 
+        "note": "",
+        "asn": "61525",
+        "prefix": "2803:3440:9025::1" 
+    } 
+    
+    
+}

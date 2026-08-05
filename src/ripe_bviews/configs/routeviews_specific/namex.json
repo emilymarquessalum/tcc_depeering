@@ -1,0 +1,23 @@
+{
+    "didnt-find-valid-prefix-routeserver-folder-name": "namex.fco",
+    "name": "namex",
+    "note": "routeviews",
+
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "day_delta": 15,
+
+    "asn_and_prefix": {
+        "asn": "206122",
+        "prefix": "185.0.9.1"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "206122",
+        "prefix": "2001:7f8:13f::20:6122"
+    },
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}

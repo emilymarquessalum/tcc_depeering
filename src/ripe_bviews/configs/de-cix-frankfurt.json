@@ -1,0 +1,23 @@
+{
+    "rrc": "rrc12",
+    "exists-but-only-2026-forward-routeserver-folder-name": "decix.fra",
+    "name": "DE-CIX Frankfurt",
+
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-16",
+    "day_delta": 15,
+
+    "asn_and_prefix": {
+        "asn": "6695",
+        "prefix": "80.81.192.157"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "6695",
+        "prefix": "2001:7f8::1a27:5051:c19d"
+    },
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}

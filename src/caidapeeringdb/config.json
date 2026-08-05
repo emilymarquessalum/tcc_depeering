@@ -1,0 +1,41 @@
+{
+  "focused_date": null,
+  "group_focused": null,
+  "connection_type_focused": "peered",
+  "loading_method": "data_range",
+  "start_folder": "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/",
+  "asns_to_search": [
+    [15169, "Google", ["Big Tech", "Cloud", "Search Engine", "FAANG"]],
+    [16509, "Amazon", ["Big Tech", "Cloud", "Streaming", "FAANG"]],
+    [15133, "EdgeCast", ["Cloud"]],
+    [54113, "Fastly", ["CDN"]], 
+    [33438, "Datum Cloud", ["AI", "Cloud"]], 
+    [396986, "ByteDance", ["Big Tech", "Cloud", "Social Media"]],
+    [13335, "Cloudflare", ["Big Tech", "Cloud"]],
+    [32934, "Meta", ["Big Tech", "Cloud", "Social Media", "FAANG"]],
+    [20940, "Akamai", ["Big Tech", "Cloud"]],
+    [714, "Apple", ["Big Tech", "Consumer Electronics", "FAANG"]],
+    [23344, "Disney+", ["Streaming"]],
+    [31898, "Oracle Cloud Infrastructure", ["Big Tech", "Cloud"]],
+    [10310, "Yahoo", ["Search Engine"]],
+    [136907, "Huawei Cloud Global", ["Big Tech", "Cloud"]],
+    [2906, "Netflix", ["Streaming", "FAANG"]],
+    [8075, "Microsoft", ["Big Tech", "Consumer Electronics"]]
+  ],
+  "date_skips": 3,
+  "manual_ixp_to_continent_mapping": {
+    "64526": "Europe",
+    "69061": "Asia",
+    "61146": "North America",
+    "33899": "North America"
+  },
+  "continent_colors": {
+    "North America": "orange",
+    "Europe": "lightblue",
+    "Asia Pacific": "lightgreen",
+    "South America": "cyan",
+    "Africa": "purple",
+    "Australia": "red",
+    "Middle East": "magenta"
+  }
+}

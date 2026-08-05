@@ -1,0 +1,20 @@
+{
+    
+    "name": "IX.br Rio",
+    "routeserver-folder-name": "route-views.rio",
+
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-16",
+    "day_delta": 15,
+    "asn_and_prefix": {
+        
+        "asn": "26162",
+        "prefix": "45.68.80.253"
+    },
+    "asn_and_prefix_v6": {
+        "note": "",
+        "asn": "26162",
+        "prefix": "2001:12f8:0:2::52:253"
+    }
+
+} 

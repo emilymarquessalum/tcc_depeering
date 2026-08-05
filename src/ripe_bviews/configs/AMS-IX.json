@@ -1,0 +1,26 @@
+{
+    "rrc": "rrc03",
+    "name": "AMS-IX",
+    "routeserver-folder-name": "amsix.ams",
+    "peeringdb_ixp_id": 26,
+    "note": "routeviews-for-past-hegemony",
+
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "day_delta": 15,
+
+    "asn_and_prefix": {
+        "asn": "6777",
+        "prefix": "80.249.208.255"
+    },
+    "asn_and_prefix_v6": {
+        "asn": "6777",
+        "prefix": "2001:7f8:1::a500:6777:1"
+    },
+    "time_delta_hours": 0,
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}

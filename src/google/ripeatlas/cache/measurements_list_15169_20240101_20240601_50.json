@@ -1,0 +1,964 @@
+{
+  "measurement_counts": [
+    50,
+    50,
+    50,
+    34,
+    50
+  ],
+  "dates_in_plot": [
+    "2024",
+    "Feb 24",
+    "Mar 24",
+    "Apr 24",
+    "May 24"
+  ],
+  "filtered_results_per_interval": [
+    [
+      {
+        "id": 65549785,
+        "type": "traceroute"
+      },
+      {
+        "id": 65549862,
+        "type": "traceroute"
+      },
+      {
+        "id": 65549899,
+        "type": "traceroute"
+      },
+      {
+        "id": 65549983,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550011,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550042,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550086,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550130,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550155,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550191,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550217,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550253,
+        "type": "traceroute"
+      },
+      {
+        "id": 65550277,
+        "type": "traceroute"
+      },
+      {
+        "id": 65553260,
+        "type": "ping"
+      },
+      {
+        "id": 65553274,
+        "type": "ping"
+      },
+      {
+        "id": 65553289,
+        "type": "ping"
+      },
+      {
+        "id": 65553303,
+        "type": "ping"
+      },
+      {
+        "id": 65553318,
+        "type": "ping"
+      },
+      {
+        "id": 65553332,
+        "type": "ping"
+      },
+      {
+        "id": 65553347,
+        "type": "ping"
+      },
+      {
+        "id": 65553363,
+        "type": "ping"
+      },
+      {
+        "id": 65553377,
+        "type": "ping"
+      },
+      {
+        "id": 65553393,
+        "type": "ping"
+      },
+      {
+        "id": 65553427,
+        "type": "ping"
+      },
+      {
+        "id": 65553442,
+        "type": "ping"
+      },
+      {
+        "id": 65553456,
+        "type": "ping"
+      },
+      {
+        "id": 65553471,
+        "type": "ping"
+      },
+      {
+        "id": 65553485,
+        "type": "ping"
+      },
+      {
+        "id": 65553501,
+        "type": "ping"
+      },
+      {
+        "id": 65553516,
+        "type": "ping"
+      },
+      {
+        "id": 65553530,
+        "type": "ping"
+      },
+      {
+        "id": 65553548,
+        "type": "ping"
+      },
+      {
+        "id": 65553562,
+        "type": "ping"
+      },
+      {
+        "id": 65553578,
+        "type": "ping"
+      },
+      {
+        "id": 65553594,
+        "type": "ping"
+      },
+      {
+        "id": 65553623,
+        "type": "ping"
+      },
+      {
+        "id": 65553638,
+        "type": "ping"
+      },
+      {
+        "id": 65553653,
+        "type": "ping"
+      },
+      {
+        "id": 65553667,
+        "type": "ping"
+      },
+      {
+        "id": 65553682,
+        "type": "ping"
+      },
+      {
+        "id": 65553698,
+        "type": "ping"
+      },
+      {
+        "id": 65553712,
+        "type": "ping"
+      },
+      {
+        "id": 65553727,
+        "type": "ping"
+      },
+      {
+        "id": 65553742,
+        "type": "ping"
+      },
+      {
+        "id": 65553757,
+        "type": "ping"
+      },
+      {
+        "id": 65553773,
+        "type": "ping"
+      },
+      {
+        "id": 65553788,
+        "type": "ping"
+      },
+      {
+        "id": 65553857,
+        "type": "ping"
+      },
+      {
+        "id": 65553873,
+        "type": "ping"
+      },
+      {
+        "id": 65553888,
+        "type": "ping"
+      }
+    ],
+    [
+      {
+        "id": 66144184,
+        "type": "ping"
+      },
+      {
+        "id": 66144198,
+        "type": "ping"
+      },
+      {
+        "id": 66144213,
+        "type": "ping"
+      },
+      {
+        "id": 66144227,
+        "type": "ping"
+      },
+      {
+        "id": 66144242,
+        "type": "ping"
+      },
+      {
+        "id": 66144256,
+        "type": "ping"
+      },
+      {
+        "id": 66144271,
+        "type": "ping"
+      },
+      {
+        "id": 66144285,
+        "type": "ping"
+      },
+      {
+        "id": 66144299,
+        "type": "ping"
+      },
+      {
+        "id": 66144314,
+        "type": "ping"
+      },
+      {
+        "id": 67037350,
+        "type": "ping"
+      },
+      {
+        "id": 67037357,
+        "type": "ping"
+      },
+      {
+        "id": 67037406,
+        "type": "ping"
+      },
+      {
+        "id": 67037409,
+        "type": "ping"
+      },
+      {
+        "id": 67037425,
+        "type": "ping"
+      },
+      {
+        "id": 67037920,
+        "type": "ping"
+      },
+      {
+        "id": 67037928,
+        "type": "ping"
+      },
+      {
+        "id": 67037967,
+        "type": "ping"
+      },
+      {
+        "id": 67037969,
+        "type": "ping"
+      },
+      {
+        "id": 67037979,
+        "type": "ping"
+      },
+      {
+        "id": 67038035,
+        "type": "ping"
+      },
+      {
+        "id": 67038599,
+        "type": "ping"
+      },
+      {
+        "id": 67038606,
+        "type": "ping"
+      },
+      {
+        "id": 67038621,
+        "type": "ping"
+      },
+      {
+        "id": 67038701,
+        "type": "ping"
+      },
+      {
+        "id": 67038743,
+        "type": "ping"
+      },
+      {
+        "id": 67038786,
+        "type": "ping"
+      },
+      {
+        "id": 67038824,
+        "type": "ping"
+      },
+      {
+        "id": 67038835,
+        "type": "ping"
+      },
+      {
+        "id": 67038993,
+        "type": "ping"
+      },
+      {
+        "id": 67039506,
+        "type": "ping"
+      },
+      {
+        "id": 67039539,
+        "type": "ping"
+      },
+      {
+        "id": 67039578,
+        "type": "ping"
+      },
+      {
+        "id": 67039613,
+        "type": "ping"
+      },
+      {
+        "id": 67039625,
+        "type": "ping"
+      },
+      {
+        "id": 67040107,
+        "type": "ping"
+      },
+      {
+        "id": 67040142,
+        "type": "ping"
+      },
+      {
+        "id": 67040176,
+        "type": "ping"
+      },
+      {
+        "id": 67040187,
+        "type": "ping"
+      },
+      {
+        "id": 67040271,
+        "type": "ping"
+      },
+      {
+        "id": 67040299,
+        "type": "ping"
+      },
+      {
+        "id": 67040845,
+        "type": "ping"
+      },
+      {
+        "id": 67040877,
+        "type": "ping"
+      },
+      {
+        "id": 67040932,
+        "type": "ping"
+      },
+      {
+        "id": 67040976,
+        "type": "ping"
+      },
+      {
+        "id": 67041566,
+        "type": "ping"
+      },
+      {
+        "id": 67041596,
+        "type": "ping"
+      },
+      {
+        "id": 67041649,
+        "type": "ping"
+      },
+      {
+        "id": 67041657,
+        "type": "traceroute"
+      },
+      {
+        "id": 67041695,
+        "type": "ping"
+      }
+    ],
+    [
+      {
+        "id": 65554870,
+        "type": "ping"
+      },
+      {
+        "id": 68212416,
+        "type": "ping"
+      },
+      {
+        "id": 68212418,
+        "type": "ping"
+      },
+      {
+        "id": 68212420,
+        "type": "ping"
+      },
+      {
+        "id": 68212422,
+        "type": "ping"
+      },
+      {
+        "id": 68212425,
+        "type": "ping"
+      },
+      {
+        "id": 68212427,
+        "type": "ping"
+      },
+      {
+        "id": 68212428,
+        "type": "ping"
+      },
+      {
+        "id": 68212670,
+        "type": "traceroute"
+      },
+      {
+        "id": 68212674,
+        "type": "traceroute"
+      },
+      {
+        "id": 68213135,
+        "type": "traceroute"
+      },
+      {
+        "id": 68213150,
+        "type": "traceroute"
+      },
+      {
+        "id": 68213261,
+        "type": "traceroute"
+      },
+      {
+        "id": 68213925,
+        "type": "traceroute"
+      },
+      {
+        "id": 68217578,
+        "type": "ping"
+      },
+      {
+        "id": 68218115,
+        "type": "traceroute"
+      },
+      {
+        "id": 68218791,
+        "type": "traceroute"
+      },
+      {
+        "id": 68218795,
+        "type": "traceroute"
+      },
+      {
+        "id": 68220630,
+        "type": "traceroute"
+      },
+      {
+        "id": 68220697,
+        "type": "ping"
+      },
+      {
+        "id": 68221556,
+        "type": "traceroute"
+      },
+      {
+        "id": 68223002,
+        "type": "traceroute"
+      },
+      {
+        "id": 68223008,
+        "type": "ping"
+      },
+      {
+        "id": 68223033,
+        "type": "ping"
+      },
+      {
+        "id": 68223079,
+        "type": "traceroute"
+      },
+      {
+        "id": 68223205,
+        "type": "traceroute"
+      },
+      {
+        "id": 68223714,
+        "type": "ping"
+      },
+      {
+        "id": 68224260,
+        "type": "ping"
+      },
+      {
+        "id": 68224261,
+        "type": "ping"
+      },
+      {
+        "id": 68224262,
+        "type": "ping"
+      },
+      {
+        "id": 68226524,
+        "type": "ping"
+      },
+      {
+        "id": 68228668,
+        "type": "traceroute"
+      },
+      {
+        "id": 68228984,
+        "type": "traceroute"
+      },
+      {
+        "id": 68229225,
+        "type": "traceroute"
+      },
+      {
+        "id": 68229273,
+        "type": "traceroute"
+      },
+      {
+        "id": 68229344,
+        "type": "traceroute"
+      },
+      {
+        "id": 68233541,
+        "type": "traceroute"
+      },
+      {
+        "id": 68233897,
+        "type": "traceroute"
+      },
+      {
+        "id": 68234260,
+        "type": "ping"
+      },
+      {
+        "id": 68234360,
+        "type": "ping"
+      },
+      {
+        "id": 68234475,
+        "type": "ping"
+      },
+      {
+        "id": 68235124,
+        "type": "traceroute"
+      },
+      {
+        "id": 68235945,
+        "type": "traceroute"
+      },
+      {
+        "id": 68235989,
+        "type": "traceroute"
+      },
+      {
+        "id": 68236035,
+        "type": "traceroute"
+      },
+      {
+        "id": 68236042,
+        "type": "traceroute"
+      },
+      {
+        "id": 68236188,
+        "type": "ping"
+      },
+      {
+        "id": 68236193,
+        "type": "ping"
+      },
+      {
+        "id": 68236195,
+        "type": "ping"
+      },
+      {
+        "id": 68236242,
+        "type": "ping"
+      }
+    ],
+    [
+      {
+        "id": 69593173,
+        "type": "traceroute"
+      },
+      {
+        "id": 69593363,
+        "type": "ping"
+      },
+      {
+        "id": 69594192,
+        "type": "traceroute"
+      },
+      {
+        "id": 69594217,
+        "type": "traceroute"
+      },
+      {
+        "id": 69594228,
+        "type": "traceroute"
+      },
+      {
+        "id": 69594229,
+        "type": "traceroute"
+      },
+      {
+        "id": 69602704,
+        "type": "traceroute"
+      },
+      {
+        "id": 69602855,
+        "type": "traceroute"
+      },
+      {
+        "id": 69604972,
+        "type": "traceroute"
+      },
+      {
+        "id": 69606188,
+        "type": "ping"
+      },
+      {
+        "id": 69606273,
+        "type": "ping"
+      },
+      {
+        "id": 69606503,
+        "type": "ping"
+      },
+      {
+        "id": 69607044,
+        "type": "ping"
+      },
+      {
+        "id": 69607053,
+        "type": "ping"
+      },
+      {
+        "id": 69607067,
+        "type": "ping"
+      },
+      {
+        "id": 69607488,
+        "type": "ping"
+      },
+      {
+        "id": 69607622,
+        "type": "traceroute"
+      },
+      {
+        "id": 69607918,
+        "type": "ping"
+      },
+      {
+        "id": 69608074,
+        "type": "ping"
+      },
+      {
+        "id": 69608510,
+        "type": "ping"
+      },
+      {
+        "id": 69608717,
+        "type": "ping"
+      },
+      {
+        "id": 69608799,
+        "type": "ping"
+      },
+      {
+        "id": 69609116,
+        "type": "ping"
+      },
+      {
+        "id": 69609124,
+        "type": "ping"
+      },
+      {
+        "id": 69609152,
+        "type": "ping"
+      },
+      {
+        "id": 69609203,
+        "type": "ping"
+      },
+      {
+        "id": 69609380,
+        "type": "ping"
+      },
+      {
+        "id": 69609454,
+        "type": "ping"
+      },
+      {
+        "id": 69609495,
+        "type": "ping"
+      },
+      {
+        "id": 69609751,
+        "type": "traceroute"
+      },
+      {
+        "id": 69610756,
+        "type": "ping"
+      },
+      {
+        "id": 69610761,
+        "type": "ping"
+      },
+      {
+        "id": 69610767,
+        "type": "ping"
+      },
+      {
+        "id": 69610777,
+        "type": "ping"
+      }
+    ],
+    [
+      {
+        "id": 70782610,
+        "type": "traceroute"
+      },
+      {
+        "id": 70786907,
+        "type": "ping"
+      },
+      {
+        "id": 70791766,
+        "type": "traceroute"
+      },
+      {
+        "id": 70791769,
+        "type": "ping"
+      },
+      {
+        "id": 70792226,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794231,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794234,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794236,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794237,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794244,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794246,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794247,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794248,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794250,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794254,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794255,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794256,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794257,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794259,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794262,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794263,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794264,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794265,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794268,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794269,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794272,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794275,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794276,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794278,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794281,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794283,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794285,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794287,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794290,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794293,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794296,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794297,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794298,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794299,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794304,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794306,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794308,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794313,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794315,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794323,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794325,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794339,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794340,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794341,
+        "type": "traceroute"
+      },
+      {
+        "id": 70794342,
+        "type": "traceroute"
+      }
+    ]
+  ]
+}

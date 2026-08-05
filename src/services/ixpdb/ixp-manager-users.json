@@ -1,0 +1,3979 @@
+{
+    "ixp_list": [
+        {
+            "name": "aamra Internet Exchange Point",
+            "shortname": "AIX-BD",
+            "city": "Dhaka",
+            "country": "BD",
+            "cc": "BD",
+            "gps": [
+                23.793,
+                90.404
+            ],
+            "url": "https:\/\/www.aamratechnologies.com\/",
+            "ixf_id": null,
+            "peeringdb_id": 2786,
+            "since": 2020
+        },
+        {
+            "name": "AddIX Internet Exchange",
+            "shortname": "ADDIX",
+            "city": "Addis Ababa",
+            "country": "ET",
+            "cc": "ET",
+            "gps": [
+                8.963,
+                38.695
+            ],
+            "url": "https:\/\/www.addix.et\/",
+            "ixf_id": null,
+            "peeringdb_id": 4357,
+            "since": 2024
+        },
+        {
+            "name": "Advanced Internet Exchange",
+            "shortname": "A.IX",
+            "city": "Beirut",
+            "country": "LB",
+            "cc": "LB",
+            "gps": [
+                33.875059,
+                35.5319
+            ],
+            "url": "http:\/\/ixpmanager.a-ix.org\/",
+            "ixf_id": 699,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Albanian Neutral Internet Exchange",
+            "shortname": "ANIX",
+            "city": "Tirana",
+            "country": "AL",
+            "cc": "AL",
+            "gps": [
+                41.332558,
+                19.807102
+            ],
+            "url": "https:\/\/www.anix.al\/",
+            "ixf_id": 746,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Albuquerque IX",
+            "shortname": "Albuquerque IX",
+            "city": "Albuquerque, NM",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                35.09237,
+                -106.65365
+            ],
+            "url": "http:\/\/abqix.net",
+            "ixf_id": 893,
+            "peeringdb_id": 3322,
+            "since": 2020
+        },
+        {
+            "name": "Alien Internet Exchange",
+            "shortname": "AIX",
+            "city": "Depok",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -6.3877616,
+                106.7765981
+            ],
+            "url": "http:\/\/area31.id",
+            "ixf_id": null,
+            "peeringdb_id": 4449,
+            "since": 2024
+        },
+        {
+            "name": "Alpes Adria Internet Exchange",
+            "shortname": "AAIX",
+            "city": "Carinthia",
+            "country": "AT",
+            "cc": "AT",
+            "gps": [
+                46.621144,
+                14.3078509
+            ],
+            "url": "http:\/\/www.aaix.at",
+            "ixf_id": 276,
+            "peeringdb_id": 377,
+            "since": 2020
+        },
+        {
+            "name": "Angonix",
+            "shortname": "angonix",
+            "city": null,
+            "country": "AO",
+            "cc": "AO",
+            "gps": [
+                -8.8825017,
+                13.2786426
+            ],
+            "url": "https:\/\/www.angonix.net\/",
+            "ixf_id": 531,
+            "peeringdb_id": 1007,
+            "since": 0
+        },
+        {
+            "name": "APLIX.PL",
+            "shortname": "APLIX",
+            "city": "Gdynia",
+            "country": "PL",
+            "cc": "PL",
+            "gps": [
+                54.433098,
+                18.571905
+            ],
+            "url": "http:\/\/aplix.pl\/",
+            "ixf_id": 721,
+            "peeringdb_id": 1919,
+            "since": 2017
+        },
+        {
+            "name": "Armenian Internet Traffic Exchange Foundation",
+            "shortname": "ArmIX",
+            "city": "Yerevan",
+            "country": "AM",
+            "cc": "AM",
+            "gps": [
+                40.205867,
+                44.523209
+            ],
+            "url": "https:\/\/armix.am",
+            "ixf_id": 372,
+            "peeringdb_id": 851,
+            "since": 2025
+        },
+        {
+            "name": "Arusha Internet eXchange Point",
+            "shortname": "AIXP",
+            "city": "Arusha",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                -3.3980574,
+                36.6421077
+            ],
+            "url": "http:\/\/www.aixp.or.tz\/",
+            "ixf_id": 212,
+            "peeringdb_id": 1201,
+            "since": null
+        },
+        {
+            "name": "Baden-Wuerttemberg Internet Exchange (BW-IX) Karlsruhe",
+            "shortname": "BW-IX",
+            "city": "Karlsruhe",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                8.408391,
+                49.01234
+            ],
+            "url": "https:\/\/www.bw-ix.net\/",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Baltic Internet Exchange",
+            "shortname": "Balt-IX",
+            "city": "Vilnius",
+            "country": "LT",
+            "cc": "LT",
+            "gps": [
+                54.637417,
+                25.306889
+            ],
+            "url": "http:\/\/www.balt-ix.lt",
+            "ixf_id": 741,
+            "peeringdb_id": 2005,
+            "since": 0
+        },
+        {
+            "name": "Baltimore Internet Exchange",
+            "shortname": "Baltimore IX",
+            "city": "Baltimore",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.291778,
+                -76.620092
+            ],
+            "url": "https:\/\/baltimoreix.net",
+            "ixf_id": 766,
+            "peeringdb_id": 2186,
+            "since": 0
+        },
+        {
+            "name": "Bangkok Neutral Internet Exchange",
+            "shortname": "BKNIX",
+            "city": "Bangkok",
+            "country": "TH",
+            "cc": "TH",
+            "gps": [
+                13.7037519,
+                100.56628860000001
+            ],
+            "url": "https:\/\/bknix.co.th\/en\/",
+            "ixf_id": 587,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Bangladesh Internet Exchange",
+            "shortname": "BDIX",
+            "city": "Dhaka",
+            "country": "BD",
+            "cc": "BD",
+            "gps": [
+                23.7807777,
+                90.3492864
+            ],
+            "url": "http:\/\/bdix.net\/",
+            "ixf_id": 109,
+            "peeringdb_id": 2516,
+            "since": 2018
+        },
+        {
+            "name": "Bangladesh Internet Service Provider Internet Exchange Trust",
+            "shortname": "ISPAB-NIX",
+            "city": "Dhaka",
+            "country": "BD",
+            "cc": "BD",
+            "gps": [
+                23.7809756,
+                90.3371168
+            ],
+            "url": "https:\/\/www.ispabix.org.bd",
+            "ixf_id": null,
+            "peeringdb_id": 3903,
+            "since": 2022
+        },
+        {
+            "name": "Batam Internet Exchange",
+            "shortname": "BatamIX",
+            "city": "Batam, Kepuluan Riau",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                1.118673,
+                104.048442
+            ],
+            "url": "https:\/\/batamix.net\/",
+            "ixf_id": 845,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Belgian National Internet eXchange",
+            "shortname": "BNIX",
+            "city": "Brussels",
+            "country": "BE",
+            "cc": "BE",
+            "gps": [
+                50.8607286,
+                4.3539296
+            ],
+            "url": "https:\/\/www.bnix.net\/",
+            "ixf_id": 4,
+            "peeringdb_id": 59,
+            "since": null
+        },
+        {
+            "name": "Berlin Commercial Internet Exchange",
+            "shortname": "BCIX",
+            "city": "Berlin",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                52.514712,
+                13.3970436
+            ],
+            "url": "http:\/\/www.bcix.de\/",
+            "ixf_id": 21,
+            "peeringdb_id": 87,
+            "since": null
+        },
+        {
+            "name": "BFD-IX",
+            "shortname": "BFD-IX",
+            "city": "Bradford",
+            "country": "GB",
+            "cc": "GB",
+            "gps": [
+                53.7970422,
+                -1.7893796
+            ],
+            "url": "https:\/\/bfd-ix.net\/",
+            "ixf_id": 855,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "BFIX Bobo-Dioulasso",
+            "shortname": "BFIX Bobo-Dioulasso",
+            "city": "Bobo-Dioulasso",
+            "country": "BF",
+            "cc": "BF",
+            "gps": [
+                11.176002,
+                -4.3375678
+            ],
+            "url": "https:\/\/www.bfix.bf\/",
+            "ixf_id": 907,
+            "peeringdb_id": 3401,
+            "since": 2021
+        },
+        {
+            "name": "BFIX Ouagadougou",
+            "shortname": "BFIX Ouagadougou",
+            "city": "Ouagadougou",
+            "country": "BF",
+            "cc": "BF",
+            "gps": [
+                12.7391552,
+                -2.9138741
+            ],
+            "url": "https:\/\/www.bfix.bf\/",
+            "ixf_id": 556,
+            "peeringdb_id": 2729,
+            "since": 2021
+        },
+        {
+            "name": "Bhutan Internet Exchange",
+            "shortname": "btIX",
+            "city": "Thimphu",
+            "country": "BT",
+            "cc": "BT",
+            "gps": [
+                27.4277805,
+                89.6487942
+            ],
+            "url": "https:\/\/www.btix.bt\/",
+            "ixf_id": 757,
+            "peeringdb_id": 2355,
+            "since": 2018
+        },
+        {
+            "name": "Biznet Internet Exchange",
+            "shortname": "Biznet-IX",
+            "city": "Jakarta",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -6.2295712,
+                106.7594786
+            ],
+            "url": "https:\/\/bix.biznetnetworks.com",
+            "ixf_id": 358,
+            "peeringdb_id": 452,
+            "since": 2020
+        },
+        {
+            "name": "Bosnia and Herzegovina Neutral Internet Exchange",
+            "shortname": "BHNIX",
+            "city": "Sarajevo",
+            "country": "BA",
+            "cc": "BA",
+            "gps": [
+                43.8938255,
+                18.3127807
+            ],
+            "url": "https:\/\/bhnix.ba\/en\/home\/",
+            "ixf_id": 748,
+            "peeringdb_id": 2239,
+            "since": null
+        },
+        {
+            "name": "Budapest Internet Exchange",
+            "shortname": "BIX",
+            "city": "Budapest",
+            "country": "HU",
+            "cc": "HU",
+            "gps": [
+                47.518001,
+                19.055443
+            ],
+            "url": "https:\/\/www.bix.hu\/",
+            "ixf_id": 12,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "Calabria Internet Exchange",
+            "shortname": "CAL-IX",
+            "city": "Corigliano Rossano - Cosenza",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                39.60397,
+                16.62614
+            ],
+            "url": "http:\/\/www.cal-ix.it",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": null
+        },
+        {
+            "name": "CANIX Montreal",
+            "shortname": "CANIX YUL",
+            "city": "Montreal",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                45.559,
+                -73.876
+            ],
+            "url": "https:\/\/canix.ca",
+            "ixf_id": 266,
+            "peeringdb_id": 355,
+            "since": 2024
+        },
+        {
+            "name": "CANIX Ottawa",
+            "shortname": "CANIX YOW",
+            "city": "Ottawa",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                45.249,
+                -76.129
+            ],
+            "url": "https:\/\/canix.ca",
+            "ixf_id": 811,
+            "peeringdb_id": 2584,
+            "since": 2024
+        },
+        {
+            "name": "CANIX Quebec city",
+            "shortname": "CANIX YQB",
+            "city": "Quebec city",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                46.78,
+                -71.22
+            ],
+            "url": "https:\/\/canix.ca",
+            "ixf_id": 1451,
+            "peeringdb_id": 4604,
+            "since": 2024
+        },
+        {
+            "name": "CANIX Toronto",
+            "shortname": "CANIX YYZ",
+            "city": "Toronto",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                43.718,
+                -79.542
+            ],
+            "url": "https:\/\/canix.ca",
+            "ixf_id": 1452,
+            "peeringdb_id": 4861,
+            "since": 2024
+        },
+        {
+            "name": "CANL IX",
+            "shortname": "CANL-IX",
+            "city": "Noumea",
+            "country": "NC",
+            "cc": "NC",
+            "gps": [
+                -22.2643522,
+                166.4036673
+            ],
+            "url": "https:\/\/ix.canl.nc",
+            "ixf_id": 984,
+            "peeringdb_id": 3720,
+            "since": 2021
+        },
+        {
+            "name": "Cape Town Internet Exchange",
+            "shortname": "CINX",
+            "city": "Cape Town",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -33.9249,
+                18.4241009
+            ],
+            "url": "https:\/\/www.inx.net.za\/",
+            "ixf_id": 209,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Catalunya Neutral Internet eXchange",
+            "shortname": "CATNIX",
+            "city": "Barcelona",
+            "country": "ES",
+            "cc": "ES",
+            "gps": [
+                41.3871984,
+                2.1088338
+            ],
+            "url": "http:\/\/www.catnix.net\/",
+            "ixf_id": 11,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Central Oregon Internet Exchange",
+            "shortname": "COIX",
+            "city": "Bend, Oregon",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                44.0611928,
+                -121.3496637
+            ],
+            "url": "https:\/\/www.centraloregonix.org\/",
+            "ixf_id": 477,
+            "peeringdb_id": null,
+            "since": 2021
+        },
+        {
+            "name": "CERN Internet Exchange Point",
+            "shortname": "CIXP",
+            "city": "Geneva",
+            "country": "CH",
+            "cc": "CH",
+            "gps": [
+                46.2855919,
+                6.0011287
+            ],
+            "url": "https:\/\/cixp.net\/",
+            "ixf_id": 7,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Charlotte-IX (Ninja-IX)",
+            "shortname": "Charlotte-IX",
+            "city": "Charlotte NC",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                35.2033533,
+                -80.9799117
+            ],
+            "url": "http:\/\/www.ninja-ix.net\/",
+            "ixf_id": 921,
+            "peeringdb_id": 2317,
+            "since": 2021
+        },
+        {
+            "name": "Chicago IX - United Internet Exchange",
+            "shortname": "ChIX",
+            "city": "Chicago",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                41.8784166,
+                -87.6300755
+            ],
+            "url": "https:\/\/www.unitedix.net\/",
+            "ixf_id": 149,
+            "peeringdb_id": 239,
+            "since": 0
+        },
+        {
+            "name": "China Internet eXchange",
+            "shortname": "CNIX",
+            "city": "Beijing",
+            "country": "CN",
+            "cc": "CN",
+            "gps": [
+                39.9042091,
+                116.4073944
+            ],
+            "url": "http:\/\/www.cnix.com.cn\/",
+            "ixf_id": 604,
+            "peeringdb_id": 1303,
+            "since": 2017
+        },
+        {
+            "name": "CloudSingularity Internet Exchange",
+            "shortname": "CSIX",
+            "city": "Vancouver, BC",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                49.2594385,
+                -123.0318716
+            ],
+            "url": "https:\/\/cloudsingularity.exchange\/",
+            "ixf_id": 882,
+            "peeringdb_id": 2776,
+            "since": 2020
+        },
+        {
+            "name": "CLOUDXCHANGE",
+            "shortname": "CXC",
+            "city": "Denpasar",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -8.681,
+                115.188
+            ],
+            "url": "https:\/\/cloudxchange.id",
+            "ixf_id": 1187,
+            "peeringdb_id": 2737,
+            "since": 2023
+        },
+        {
+            "name": "Community IX - Northern Virginia",
+            "shortname": "CIX-NoVA",
+            "city": "Ashburn, Reston, Washington DC",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                38.97,
+                -77.33
+            ],
+            "url": "https:\/\/www.communityix.org\/cix-nova\/",
+            "ixf_id": 1447,
+            "peeringdb_id": 4796,
+            "since": 2025
+        },
+        {
+            "name": "Community IX Atlanta",
+            "shortname": "CIX-ATL",
+            "city": "Atlanta, GA",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                33.7678358,
+                -84.4906432
+            ],
+            "url": "https:\/\/www.communityix.org\/index.php\/cix-atl\/",
+            "ixf_id": 684,
+            "peeringdb_id": 1668,
+            "since": null
+        },
+        {
+            "name": "Community-IX",
+            "shortname": "Community-IX",
+            "city": "Berlin",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                52.52,
+                13.40495
+            ],
+            "url": "https:\/\/www.community-ix.de\/",
+            "ixf_id": 747,
+            "peeringdb_id": null,
+            "since": 2016
+        },
+        {
+            "name": "Conex - IXP",
+            "shortname": "Conex - IXP",
+            "city": "Lima",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -12.026,
+                -77.152
+            ],
+            "url": "https:\/\/conex-ixp.net\/",
+            "ixf_id": 1406,
+            "peeringdb_id": 4545,
+            "since": 2024
+        },
+        {
+            "name": "Consorzio Ge-DIX",
+            "shortname": "Ge-DIX",
+            "city": "Genoa",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                44.4465678,
+                8.7435777
+            ],
+            "url": "https:\/\/www.ge-dix.net\/",
+            "ixf_id": 1229,
+            "peeringdb_id": 4172,
+            "since": 2024
+        },
+        {
+            "name": "Costa Rica Neutral Internet Exchange Point",
+            "shortname": "CRIX",
+            "city": "San Jos\u00e9",
+            "country": "CR",
+            "cc": "CR",
+            "gps": [
+                9.9299961,
+                -84.0661925
+            ],
+            "url": "https:\/\/www.crix.cr\/",
+            "ixf_id": 541,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "C\u00f4te d'Ivoire Internet Exchange point",
+            "shortname": "CIVIX",
+            "city": "Abidjan, C\u00f4te d'Ivoire",
+            "country": "CI",
+            "cc": "CI",
+            "gps": [
+                5.3484461,
+                -4.0498767
+            ],
+            "url": "https:\/\/www.civix.ci\/",
+            "ixf_id": 205,
+            "peeringdb_id": 810,
+            "since": 2021
+        },
+        {
+            "name": "Croatian Internet Exchange",
+            "shortname": "CIX",
+            "city": "Zagreb",
+            "country": "HR",
+            "cc": "HR",
+            "gps": [
+                45.7923629,
+                15.9673472
+            ],
+            "url": "http:\/\/www.cix.hr\/",
+            "ixf_id": 28,
+            "peeringdb_id": 303,
+            "since": 0
+        },
+        {
+            "name": "CSL THAI IX Bangkok",
+            "shortname": "CSL THIX Bangkok",
+            "city": "Bangkok",
+            "country": "TH",
+            "cc": "TH",
+            "gps": [
+                13.7245599,
+                100.492683
+            ],
+            "url": "https:\/\/www.cslthai-ix.net\/",
+            "ixf_id": 936,
+            "peeringdb_id": 2495,
+            "since": 2021
+        },
+        {
+            "name": "CSL THAI IX Malaysia",
+            "shortname": "CSL THIX Malaysia",
+            "city": null,
+            "country": "MY",
+            "cc": "MY",
+            "gps": [
+                4.1278735,
+                105.110985
+            ],
+            "url": "https:\/\/www.cslthai-ix.net\/",
+            "ixf_id": 934,
+            "peeringdb_id": 2454,
+            "since": 2021
+        },
+        {
+            "name": "CSL THAI IX Singapore",
+            "shortname": "CSL THIX Singapore",
+            "city": "Singapore",
+            "country": "SG",
+            "cc": "SG",
+            "gps": [
+                1.3139961,
+                103.703822
+            ],
+            "url": "https:\/\/www.cslthai-ix.net\/",
+            "ixf_id": 935,
+            "peeringdb_id": 2494,
+            "since": 2021
+        },
+        {
+            "name": "Dallas-IX (Ninja-IX)",
+            "shortname": "Dallas-IX",
+            "city": "Dallas TX",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                32.8208751,
+                -96.8716355
+            ],
+            "url": "http:\/\/www.ninja-ix.net\/",
+            "ixf_id": 922,
+            "peeringdb_id": 2318,
+            "since": 2021
+        },
+        {
+            "name": "Danish Internet Exchange Point",
+            "shortname": "DIX",
+            "city": "",
+            "country": "DK",
+            "cc": "DK",
+            "gps": [
+                55.6879765,
+                12.5259387
+            ],
+            "url": "http:\/\/www.dix.dk\/",
+            "ixf_id": 29,
+            "peeringdb_id": 78,
+            "since": 0
+        },
+        {
+            "name": "DataIX Internet Exchange",
+            "shortname": "DATAIX",
+            "city": "Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.3547498,
+                5.5280201
+            ],
+            "url": "http:\/\/ixpmanager.dataix.eu",
+            "ixf_id": 522,
+            "peeringdb_id": 358,
+            "since": 2022
+        },
+        {
+            "name": "DataSphere Internet Exchange (Hong Kong)",
+            "shortname": "DSIX",
+            "city": "Hong Kong",
+            "country": "HK",
+            "cc": "HK",
+            "gps": [
+                22.365,
+                114.134
+            ],
+            "url": "https:\/\/ix.datasphere.studio\/",
+            "ixf_id": null,
+            "peeringdb_id": 4440,
+            "since": 2025
+        },
+        {
+            "name": "DE-CIX Chennai",
+            "shortname": "DE-CIX Chennai",
+            "city": "Chennai",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                13.0476832,
+                80.1388007
+            ],
+            "url": "https:\/\/www.de-cix.in\/locations\/de-cix-chennai",
+            "ixf_id": 860,
+            "peeringdb_id": 2588,
+            "since": null
+        },
+        {
+            "name": "DE-CIX Delhi",
+            "shortname": "DE-CIX Delhi",
+            "city": "Delhi",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                28.6471944,
+                76.9528385
+            ],
+            "url": "https:\/\/www.de-cix.in\/locations\/de-cix-delhi",
+            "ixf_id": 688,
+            "peeringdb_id": 2587,
+            "since": null
+        },
+        {
+            "name": "DE-CIX Kolkata",
+            "shortname": "DE-CIX Kolkata",
+            "city": "Kolkata",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                22.676251399999998,
+                88.1893036
+            ],
+            "url": "https:\/\/www.de-cix.in\/locations\/de-cix-kolkata",
+            "ixf_id": 689,
+            "peeringdb_id": 2589,
+            "since": null
+        },
+        {
+            "name": "DE-CIX Mumbai",
+            "shortname": "DE-CIX Mumbai",
+            "city": "Mumbai",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                19.0823997,
+                72.8109751
+            ],
+            "url": "https:\/\/www.de-cix.in\/locations\/de-cix-mumbai",
+            "ixf_id": 634,
+            "peeringdb_id": 832,
+            "since": null
+        },
+        {
+            "name": "Djibouti Internet Exchange",
+            "shortname": "DjIX",
+            "city": "Djibouti",
+            "country": "DJ",
+            "cc": "DJ",
+            "gps": [
+                11.573078,
+                43.16092
+            ],
+            "url": "http:\/\/www.djix.dj\/",
+            "ixf_id": 549,
+            "peeringdb_id": 967,
+            "since": 2019
+        },
+        {
+            "name": "Dodoma Internet eXchange Point",
+            "shortname": "DIXP",
+            "city": "Dodoma",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                -6.1728611,
+                35.7380451
+            ],
+            "url": "https:\/\/tix.or.tz\/dixp\/",
+            "ixf_id": null,
+            "peeringdb_id": 2624,
+            "since": null
+        },
+        {
+            "name": "Dominica National Internet Exchange",
+            "shortname": "DANIX",
+            "city": "Roseau",
+            "country": "DM",
+            "cc": "DM",
+            "gps": [
+                15.3061008,
+                -61.3876294
+            ],
+            "url": "https:\/\/danix.dm",
+            "ixf_id": 1060,
+            "peeringdb_id": 3893,
+            "since": 2023
+        },
+        {
+            "name": "Dortmund Internet eXchange",
+            "shortname": "DO-IX",
+            "city": "Dortmund",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                51.507587,
+                7.4358395
+            ],
+            "url": "https:\/\/www.do-ix.net\/",
+            "ixf_id": 463,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "DOUALA-IX",
+            "shortname": "DLA-IX",
+            "city": "Douala",
+            "country": "CM",
+            "cc": "CM",
+            "gps": [
+                4.0359027,
+                9.7006052
+            ],
+            "url": "https:\/\/www.douala-ix.net",
+            "ixf_id": 978,
+            "peeringdb_id": 3561,
+            "since": 2021
+        },
+        {
+            "name": "Durban Internet Exchange",
+            "shortname": "DINX",
+            "city": "Durban",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -29.778832,
+                30.9897693
+            ],
+            "url": "https:\/\/www.inx.net.za\/",
+            "ixf_id": 487,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "EdgeIX Adelaide",
+            "shortname": "EdgeIX Adelaide",
+            "city": "Adelaide",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -34.9998826,
+                138.3309891
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 835,
+            "peeringdb_id": 2658,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Brisbane",
+            "shortname": "EdgeIX Brisbane",
+            "city": "Brisbane",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -27.3812534,
+                152.7130232
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 839,
+            "peeringdb_id": 2756,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Darwin",
+            "shortname": "EdgeIX Darwin",
+            "city": "Darwin",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -12.425724,
+                130.863269
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 837,
+            "peeringdb_id": 2563,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Hobart",
+            "shortname": "EdgeIX Hobart",
+            "city": "Hobart",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -42.7930979,
+                147.181998
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 836,
+            "peeringdb_id": 2602,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Melbourne",
+            "shortname": "EdgeIX Melbourne",
+            "city": "Melbourne",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -37.9716929,
+                144.7729657
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 841,
+            "peeringdb_id": 2762,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Perth",
+            "shortname": "EdgeIX Perth",
+            "city": "Perth",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -32.0391738,
+                115.6813639
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 838,
+            "peeringdb_id": 2718,
+            "since": 2020
+        },
+        {
+            "name": "EdgeIX Sydney",
+            "shortname": "EdgeIX Sydney",
+            "city": "Sydney",
+            "country": "AU",
+            "cc": "AU",
+            "gps": [
+                -33.8473568,
+                150.6518036
+            ],
+            "url": "https:\/\/www.edgeix.net\/",
+            "ixf_id": 840,
+            "peeringdb_id": 2761,
+            "since": 2020
+        },
+        {
+            "name": "Extreme IX Chennai",
+            "shortname": "EIX Chennai",
+            "city": "Chennai",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                13.0474878,
+                80.0689252
+            ],
+            "url": "https:\/\/extreme-ix.org\/",
+            "ixf_id": 772,
+            "peeringdb_id": 1786,
+            "since": 2020
+        },
+        {
+            "name": "Extreme IX Delhi",
+            "shortname": "EIX Delhi",
+            "city": "Delhi",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                28.6468935,
+                76.9531817
+            ],
+            "url": "https:\/\/extreme-ix.org\/",
+            "ixf_id": 683,
+            "peeringdb_id": 1323,
+            "since": 2020
+        },
+        {
+            "name": "Extreme IX Hyderabad",
+            "shortname": "EIX Hyderabad",
+            "city": "Hyderabad",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                17.4122998,
+                78.2679633
+            ],
+            "url": "https:\/\/extreme-ix.org\/",
+            "ixf_id": 773,
+            "peeringdb_id": 1785,
+            "since": 2020
+        },
+        {
+            "name": "Extreme IX Kolkata",
+            "shortname": "EIX Kolkata",
+            "city": "Kolkata",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                22.6759349,
+                88.1896467
+            ],
+            "url": "https:\/\/extreme-ix.org\/",
+            "ixf_id": 771,
+            "peeringdb_id": 2167,
+            "since": 2020
+        },
+        {
+            "name": "Extreme IX Mumbai",
+            "shortname": "EIX Mumbai",
+            "city": "Mumbai",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                19.0822375,
+                72.8111467
+            ],
+            "url": "https:\/\/extreme-ix.org\/",
+            "ixf_id": 694,
+            "peeringdb_id": 1627,
+            "since": 2020
+        },
+        {
+            "name": "Fargo\/Moorhead Internet Exchange",
+            "shortname": "FMIX",
+            "city": "Fargo, ND",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                46.868457,
+                96.827218
+            ],
+            "url": "https:\/\/fmix.net",
+            "ixf_id": 958,
+            "peeringdb_id": 3573,
+            "since": 2021
+        },
+        {
+            "name": "FD-IX - St. Louis",
+            "shortname": "FDIX-STL",
+            "city": "St. Louis Missouri",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                38.6530715,
+                -90.3258618
+            ],
+            "url": "https:\/\/fd-ix.com",
+            "ixf_id": null,
+            "peeringdb_id": 1519,
+            "since": 2014
+        },
+        {
+            "name": "FIX Berlin",
+            "shortname": "FIX",
+            "city": "Berlin",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                13.389075,
+                52.455763
+            ],
+            "url": "https:\/\/fix-berlin.net\/",
+            "ixf_id": 1259,
+            "peeringdb_id": 4367,
+            "since": 2023
+        },
+        {
+            "name": "FIXO",
+            "shortname": "FIXO",
+            "city": "Oslo",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                59.9247264,
+                10.8079891
+            ],
+            "url": "http:\/\/fixo.no\/",
+            "ixf_id": 150,
+            "peeringdb_id": 453,
+            "since": 0
+        },
+        {
+            "name": "Florida Internet Exchange",
+            "shortname": "FL-IX",
+            "city": "Florida",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                25.7599303,
+                -80.1924825
+            ],
+            "url": "http:\/\/www.fl-ix.net\/",
+            "ixf_id": 543,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "frankonIX",
+            "shortname": "FNIX",
+            "city": "Nuremberg",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                49.4361759,
+                11.0506377
+            ],
+            "url": "https:\/\/www.frankonix.de\/",
+            "ixf_id": null,
+            "peeringdb_id": 4503,
+            "since": 2024
+        },
+        {
+            "name": "Free IX",
+            "shortname": "Free-IX",
+            "city": "Geneva, Z\u00fcrich, Lugano",
+            "country": "CH",
+            "cc": "CH",
+            "gps": [
+                46.778164,
+                8.48547
+            ],
+            "url": "https:\/\/free-ix.net",
+            "ixf_id": 959,
+            "peeringdb_id": 3570,
+            "since": 2021
+        },
+        {
+            "name": "Free Sandefjord IX",
+            "shortname": "FSIX",
+            "city": "Sandefjord",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                59.1383554,
+                10.1898303
+            ],
+            "url": "http:\/\/fsix.no\/public-content\/index",
+            "ixf_id": 861,
+            "peeringdb_id": 3157,
+            "since": null
+        },
+        {
+            "name": "Fremont Metro Internet Exchange",
+            "shortname": "FREMIX",
+            "city": "Fremont, California",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                37.5305463,
+                -122.0820298
+            ],
+            "url": "https:\/\/www.fremix.exchange",
+            "ixf_id": 976,
+            "peeringdb_id": 3685,
+            "since": 2021
+        },
+        {
+            "name": "Gabon Internet eXchange",
+            "shortname": "GABIX",
+            "city": "Libreville",
+            "country": "GA",
+            "cc": "GA",
+            "gps": [
+                0.420954,
+                9.452268
+            ],
+            "url": "https:\/\/www.gabix.ga\/",
+            "ixf_id": 807,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "Georgian Internet Exchange",
+            "shortname": "GIX",
+            "city": "Tbilisi",
+            "country": "GE",
+            "cc": "GE",
+            "gps": [
+                41.732566,
+                44.768642
+            ],
+            "url": "http:\/\/www.gix.ge\/",
+            "ixf_id": 711,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Georgian Internet Exchange",
+            "shortname": "IXP.GE",
+            "city": "Tbilisi",
+            "country": "GE",
+            "cc": "GE",
+            "gps": [
+                41.7324298,
+                44.7564532
+            ],
+            "url": "https:\/\/ixp.ge",
+            "ixf_id": null,
+            "peeringdb_id": 3674,
+            "since": 2021
+        },
+        {
+            "name": "GetaFIX",
+            "shortname": "GetaFIX",
+            "city": "Manila",
+            "country": "PH",
+            "cc": "PH",
+            "gps": [
+                14.312033,
+                121.049228
+            ],
+            "url": "https:\/\/getafix.ph\/",
+            "ixf_id": 755,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "GetaFIX Cebu",
+            "shortname": "GetaFIX Cebu",
+            "city": "Cebu",
+            "country": "PH",
+            "cc": "PH",
+            "gps": [
+                10.35,
+                123.023
+            ],
+            "url": "https:\/\/getafix.ph\/",
+            "ixf_id": 1334,
+            "peeringdb_id": 3558,
+            "since": 2024
+        },
+        {
+            "name": "GetaFIX Davao",
+            "shortname": "GetaFIX Davao",
+            "city": "Davao",
+            "country": "PH",
+            "cc": "PH",
+            "gps": [
+                7.263,
+                125.28
+            ],
+            "url": "https:\/\/getafix.ph\/",
+            "ixf_id": 1335,
+            "peeringdb_id": 4327,
+            "since": 2024
+        },
+        {
+            "name": "GIBIRNET Internet Exchange",
+            "shortname": "GIBIRIX",
+            "city": "Konya",
+            "country": "TR",
+            "cc": "TR",
+            "gps": [
+                37.985049,
+                32.5746652
+            ],
+            "url": "https:\/\/ix.gibir.net.tr\/",
+            "ixf_id": 970,
+            "peeringdb_id": 3659,
+            "since": 2021
+        },
+        {
+            "name": "Government of Latvia Internet Exchange",
+            "shortname": "GLV-IX",
+            "city": "Riga",
+            "country": "LV",
+            "cc": "LV",
+            "gps": [
+                24.1369186,
+                56.92396
+            ],
+            "url": "https:\/\/glv-ix.lv",
+            "ixf_id": 1016,
+            "peeringdb_id": 3750,
+            "since": 2022
+        },
+        {
+            "name": "GraniteIX",
+            "shortname": "GraniteIX",
+            "city": "Salt Lake City",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                40.7770201,
+                -112.003506
+            ],
+            "url": "https:\/\/graniteix.net",
+            "ixf_id": null,
+            "peeringdb_id": 4622,
+            "since": 2025
+        },
+        {
+            "name": "Greek Internet Exchange",
+            "shortname": "GR-IX",
+            "city": "Athens",
+            "country": "GR",
+            "cc": "GR",
+            "gps": [
+                38.7820859,
+                21.8064801
+            ],
+            "url": "https:\/\/www.gr-ix.gr\/",
+            "ixf_id": 752,
+            "peeringdb_id": null,
+            "since": 2014
+        },
+        {
+            "name": "Greek Internet Exchange (Thessaloniki)",
+            "shortname": "GR-IX Thessaloniki",
+            "city": "Thessaloniki",
+            "country": "GR",
+            "cc": "GR",
+            "gps": [
+                40.6212238,
+                22.9285177
+            ],
+            "url": "https:\/\/www.gr-ix.gr\/",
+            "ixf_id": 753,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Grenada Internet Exchange",
+            "shortname": "GREX",
+            "city": "St. George's",
+            "country": "GD",
+            "cc": "GD",
+            "gps": [
+                12.031383,
+                -61.7727001
+            ],
+            "url": "https:\/\/ixgd.wordpress.com\/",
+            "ixf_id": 539,
+            "peeringdb_id": 1790,
+            "since": null
+        },
+        {
+            "name": "Guam IX",
+            "shortname": "Guam IX",
+            "city": "Harmon",
+            "country": "GU",
+            "cc": "GU",
+            "gps": [
+                13.50042,
+                144.806046
+            ],
+            "url": "https:\/\/ix.gu",
+            "ixf_id": null,
+            "peeringdb_id": 4494,
+            "since": 2024
+        },
+        {
+            "name": "Haiti Internet eXchange Point",
+            "shortname": "HIXP",
+            "city": "Port au Prince",
+            "country": "HT",
+            "cc": "HT",
+            "gps": [
+                18.5790339,
+                -72.3194793
+            ],
+            "url": "https:\/\/www.peeringdb.com\/ix\/573",
+            "ixf_id": null,
+            "peeringdb_id": 573,
+            "since": 2019
+        },
+        {
+            "name": "Hamro Internet eXchange",
+            "shortname": "HamroIX",
+            "city": "Biratnagar",
+            "country": "NP",
+            "cc": "NP",
+            "gps": [
+                26.6653083,
+                87.3121359
+            ],
+            "url": "https:\/\/ix.hamro.net",
+            "ixf_id": 912,
+            "peeringdb_id": 3393,
+            "since": 2021
+        },
+        {
+            "name": "Harare Internet Exchange Point",
+            "shortname": "HIX",
+            "city": "Harare",
+            "country": "ZW",
+            "cc": "ZW",
+            "gps": [
+                -17.825151,
+                31.05031
+            ],
+            "url": "http:\/\/www.hix.org.zw\/",
+            "ixf_id": 730,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Indianapolis Internet Exchange",
+            "shortname": "IndyIX",
+            "city": "Indianapolis, IN",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.779,
+                -86.215
+            ],
+            "url": "https:\/\/indyix.com",
+            "ixf_id": null,
+            "peeringdb_id": 4720,
+            "since": 2025
+        },
+        {
+            "name": "Indonesia Internet eXchange",
+            "shortname": "IIX",
+            "city": "Jakarta",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -6.2293136,
+                106.5177048
+            ],
+            "url": "https:\/\/iix.net.id",
+            "ixf_id": 111,
+            "peeringdb_id": 210,
+            "since": 2023
+        },
+        {
+            "name": "Indonesian Local Internet Exchange",
+            "shortname": "ILIX",
+            "city": "Jakarta",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -6.22,
+                106.74
+            ],
+            "url": "https:\/\/ixp.ilixchange.com\/statistics\/ixp",
+            "ixf_id": null,
+            "peeringdb_id": 4588,
+            "since": 2026
+        },
+        {
+            "name": "INEX",
+            "shortname": "INEX",
+            "city": "Dublin",
+            "country": "IE",
+            "cc": "IE",
+            "gps": [
+                53.2910921,
+                -6.4153178
+            ],
+            "url": "https:\/\/www.inex.ie\/",
+            "ixf_id": 20,
+            "peeringdb_id": null,
+            "since": 2008
+        },
+        {
+            "name": "INEX Cork",
+            "shortname": "INEX Cork",
+            "city": "Cork",
+            "country": "IE",
+            "cc": "IE",
+            "gps": [
+                51.9038293,
+                -8.514156
+            ],
+            "url": "https:\/\/www.inex.ie\/",
+            "ixf_id": 646,
+            "peeringdb_id": null,
+            "since": 2016
+        },
+        {
+            "name": "INEX LAN2",
+            "shortname": "INEX LAN2",
+            "city": "Dublin",
+            "country": "IE",
+            "cc": "IE",
+            "gps": [
+                53.410938,
+                -6.349794
+            ],
+            "url": "https:\/\/www.inex.ie\/",
+            "ixf_id": 645,
+            "peeringdb_id": null,
+            "since": 2008
+        },
+        {
+            "name": "Innovation Internet Exchange Point",
+            "shortname": "INIXP",
+            "city": "Tokyo",
+            "country": "JP",
+            "cc": "JP",
+            "gps": [
+                35.6476118,
+                139.6840992
+            ],
+            "url": "https:\/\/inixp.io",
+            "ixf_id": 1248,
+            "peeringdb_id": 4296,
+            "since": 2023
+        },
+        {
+            "name": "INSTA-IX",
+            "shortname": "INSTA-IX",
+            "city": "Delhi",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                28.6442852,
+                76.928426
+            ],
+            "url": "https:\/\/instalinks.in",
+            "ixf_id": null,
+            "peeringdb_id": 3675,
+            "since": 2023
+        },
+        {
+            "name": "InteRed Panama",
+            "shortname": "InterRed",
+            "city": "Panama",
+            "country": "PA",
+            "cc": "PA",
+            "gps": [
+                8.3761189,
+                -81.226523
+            ],
+            "url": "https:\/\/intered.org.pa\/",
+            "ixf_id": 814,
+            "peeringdb_id": 1896,
+            "since": 2020
+        },
+        {
+            "name": "InterIX",
+            "shortname": "INIX",
+            "city": "Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.3103483,
+                4.7647883
+            ],
+            "url": "https:\/\/www.inter-ix.net",
+            "ixf_id": null,
+            "peeringdb_id": 3990,
+            "since": 2022
+        },
+        {
+            "name": "InterLAN Internet Exchange",
+            "shortname": "InterLAN",
+            "city": "Bucharest",
+            "country": "RO",
+            "cc": "RO",
+            "gps": [
+                44.481718,
+                26.120596
+            ],
+            "url": "http:\/\/www.interlan.ro\/",
+            "ixf_id": 37,
+            "peeringdb_id": 270,
+            "since": 2017
+        },
+        {
+            "name": "International Cloud Xchange Delhi",
+            "shortname": "ICX Delhi",
+            "city": "Delhi",
+            "country": "IN",
+            "cc": "IN",
+            "gps": [
+                28.6923329,
+                76.951267
+            ],
+            "url": "https:\/\/www.icxglobal.net",
+            "ixf_id": null,
+            "peeringdb_id": 3321,
+            "since": 2021
+        },
+        {
+            "name": "Internet eXchange of the Oresund Region",
+            "shortname": "IXOR",
+            "city": "South of Sweden",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                55.8290612,
+                12.884534500000001
+            ],
+            "url": "http:\/\/www.ixor.se",
+            "ixf_id": 106,
+            "peeringdb_id": 231,
+            "since": 2022
+        },
+        {
+            "name": "Internet Exchange Point of the Dominican Republic",
+            "shortname": "IXDO",
+            "city": "Dominican Republic",
+            "country": "DO",
+            "cc": "DO",
+            "gps": [
+                18.4530556,
+                -69.6622222
+            ],
+            "url": "https:\/\/ix.do",
+            "ixf_id": 891,
+            "peeringdb_id": 3342,
+            "since": 2021
+        },
+        {
+            "name": "Internet Exchange Roraima",
+            "shortname": "IX RORAIMA",
+            "city": "Roraima",
+            "country": "BR",
+            "cc": "BR",
+            "gps": [
+                1.8468103,
+                -62.9818855
+            ],
+            "url": "https:\/\/www.ixrr.com.br\/",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": null
+        },
+        {
+            "name": "IX ANDESPARK PERU",
+            "shortname": "AndeSpark Per\u00fa",
+            "city": "Lima - Huancayo - Huanuco",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -11.4179087,
+                -76.1407359
+            ],
+            "url": "https:\/\/www.portal.andespark-ixp.net",
+            "ixf_id": 1393,
+            "peeringdb_id": null,
+            "since": 2024
+        },
+        {
+            "name": "IX CDE Sociedad An\u00f3nima",
+            "shortname": "IX-CDE",
+            "city": "Ciudad del Este",
+            "country": "PY",
+            "cc": "PY",
+            "gps": [
+                -25.513929,
+                -54.610728
+            ],
+            "url": "https:\/\/ixcde.com.py",
+            "ixf_id": 1394,
+            "peeringdb_id": 4458,
+            "since": 2024
+        },
+        {
+            "name": "IX Liverpool",
+            "shortname": "IXLiverpool",
+            "city": "Liverpool",
+            "country": "GB",
+            "cc": "GB",
+            "gps": [
+                53.395804,
+                -2.9803111
+            ],
+            "url": "https:\/\/www.ixliverpool.net\/",
+            "ixf_id": 1302,
+            "peeringdb_id": null,
+            "since": 2016
+        },
+        {
+            "name": "IX Midlands",
+            "shortname": "IXMIDS",
+            "city": "West Midlands",
+            "country": "GB",
+            "cc": "GB",
+            "gps": [
+                52.5051,
+                -1.9802
+            ],
+            "url": "https:\/\/www.ixmids.net\/",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2025
+        },
+        {
+            "name": "IX-Cape Town at NAPAfrica",
+            "shortname": "IX-Cape Town",
+            "city": "Cape Town",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -33.9288777,
+                18.4524126
+            ],
+            "url": "https:\/\/www.napafrica.net\/napafrica-traffic\/cape-town-internet-exchange\/",
+            "ixf_id": 648,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "IX-Denver",
+            "shortname": "IX-Denver",
+            "city": "Denver",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.745636,
+                -104.997825
+            ],
+            "url": "https:\/\/ix-denver.org\/",
+            "ixf_id": 650,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "IX-Durban at NAPAfrica",
+            "shortname": "IX-Durban",
+            "city": "Durban",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -29.8611731,
+                30.9888292
+            ],
+            "url": "https:\/\/www.napafrica.net\/napafrica-traffic\/durban-internet-exchange\/",
+            "ixf_id": 649,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "IX-Johannesburg at NAPAfrica",
+            "shortname": "IX-Johannesburg",
+            "city": "Johannesburg",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -26.1900482,
+                28.0289667
+            ],
+            "url": "https:\/\/www.napafrica.net\/napafrica-traffic\/johannesburg-internet-exchange\/",
+            "ixf_id": 351,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "IXP.mk",
+            "shortname": "IXP.mk",
+            "city": "Skopje",
+            "country": "MK",
+            "cc": "MK",
+            "gps": [
+                41.9991964,
+                21.3546795
+            ],
+            "url": "http:\/\/ixp.mk\/",
+            "ixf_id": 760,
+            "peeringdb_id": 2276,
+            "since": 2018
+        },
+        {
+            "name": "IXPN Abuja",
+            "shortname": "IXPN Abuja",
+            "city": "Abuja",
+            "country": "NG",
+            "cc": "NG",
+            "gps": [
+                9.0544966,
+                7.3241457
+            ],
+            "url": "http:\/\/ixp.net.ng\/",
+            "ixf_id": null,
+            "peeringdb_id": 1870,
+            "since": null
+        },
+        {
+            "name": "IXPN Kano",
+            "shortname": "IXPN Kano",
+            "city": "Kano",
+            "country": "NG",
+            "cc": "NG",
+            "gps": [
+                11.9980465,
+                8.470687999999999
+            ],
+            "url": "http:\/\/ixp.net.ng\/",
+            "ixf_id": null,
+            "peeringdb_id": 2414,
+            "since": null
+        },
+        {
+            "name": "IXPN Lagos",
+            "shortname": "IXPN Lagos",
+            "city": "Lagos",
+            "country": "NG",
+            "cc": "NG",
+            "gps": [
+                6.5482208,
+                3.2137485
+            ],
+            "url": "http:\/\/ixp.net.ng\/",
+            "ixf_id": 60,
+            "peeringdb_id": 488,
+            "since": null
+        },
+        {
+            "name": "IXPN Port Harcourt",
+            "shortname": "IXPN Port Harcourt",
+            "city": "Port Harcourt",
+            "country": "NG",
+            "cc": "NG",
+            "gps": [
+                4.8242498000000005,
+                6.9984408
+            ],
+            "url": "http:\/\/ixp.net.ng\/",
+            "ixf_id": null,
+            "peeringdb_id": 2415,
+            "since": null
+        },
+        {
+            "name": "IXSal - El Salvador IXP",
+            "shortname": "IXSal",
+            "city": "San Salvador",
+            "country": "SV",
+            "cc": "SV",
+            "gps": [
+                13.7701218,
+                -89.2668891
+            ],
+            "url": "https:\/\/ixsal.sv",
+            "ixf_id": 965,
+            "peeringdb_id": 3626,
+            "since": 2020
+        },
+        {
+            "name": "Jakarta Internet Exchange",
+            "shortname": "JKT-IX",
+            "city": "Jakarta",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -6.2037946999999996,
+                106.818106
+            ],
+            "url": "https:\/\/www.glc.ntt.com\/en\/services\/service-in-indonesia\/data-center\/internet-exchange.html",
+            "ixf_id": null,
+            "peeringdb_id": 2476,
+            "since": 2019
+        },
+        {
+            "name": "Jamiaca Internet Exchnage",
+            "shortname": "JAIXP",
+            "city": null,
+            "country": "JM",
+            "cc": "JM",
+            "gps": [
+                18.119,
+                -77.344
+            ],
+            "url": "https:\/\/jaixp.com\/",
+            "ixf_id": null,
+            "peeringdb_id": 4880,
+            "since": 2026
+        },
+        {
+            "name": "JasTel Internet Exchange",
+            "shortname": "JTIX",
+            "city": "Bangkok",
+            "country": "TH",
+            "cc": "TH",
+            "gps": [
+                13.905329,
+                100.521019
+            ],
+            "url": "https:\/\/jtix.jastel.co.th",
+            "ixf_id": 883,
+            "peeringdb_id": 3156,
+            "since": 2020
+        },
+        {
+            "name": "Johannesburg Internet Exchange",
+            "shortname": "JINX",
+            "city": "Johannesburg",
+            "country": "ZA",
+            "cc": "ZA",
+            "gps": [
+                -26.2040997,
+                28.0473003
+            ],
+            "url": "https:\/\/www.inx.net.za\/",
+            "ixf_id": 95,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Kawaii IX AMS",
+            "shortname": "KIX AMS",
+            "city": "Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.3975641,
+                4.8477559
+            ],
+            "url": "https:\/\/kawaii-ix.net",
+            "ixf_id": 1462,
+            "peeringdb_id": 4973,
+            "since": 2026
+        },
+        {
+            "name": "KazNIX",
+            "shortname": "KazNIX",
+            "city": "Semey",
+            "country": "KZ",
+            "cc": "KZ",
+            "gps": [
+                50.4130211,
+                80.2054888
+            ],
+            "url": "https:\/\/kaznix.kz\/en\/",
+            "ixf_id": 768,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Kenya Internet Exchange Point",
+            "shortname": "KIXP",
+            "city": null,
+            "country": "KE",
+            "cc": "KE",
+            "gps": [
+                0.0058764,
+                37.7667287
+            ],
+            "url": "http:\/\/www.tespok.co.ke\/",
+            "ixf_id": 49,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Kinshasa Internet Exchange Point",
+            "shortname": "KINIX",
+            "city": "Kinshasa",
+            "country": "CD",
+            "cc": "CD",
+            "gps": [
+                -4.325,
+                15.322222
+            ],
+            "url": "http:\/\/ispa-drc.cd",
+            "ixf_id": 204,
+            "peeringdb_id": 628,
+            "since": 2022
+        },
+        {
+            "name": "KleyReX Internet Exchange",
+            "shortname": "KleyRex",
+            "city": "Frankfurt",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                50.098826,
+                8.6330878
+            ],
+            "url": "http:\/\/www.kleyrex.net\/",
+            "ixf_id": 78,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "kremen-IX",
+            "shortname": "kremen-IX",
+            "city": "Kremenchuk",
+            "country": "UA",
+            "cc": "UA",
+            "gps": [
+                49.0933412,
+                33.3689785
+            ],
+            "url": "https:\/\/kremen-ix.net.ua\/",
+            "ixf_id": 911,
+            "peeringdb_id": 3422,
+            "since": 2019
+        },
+        {
+            "name": "Kuwait Internet Exchange",
+            "shortname": "ix.kw",
+            "city": "Kuwait City",
+            "country": "KW",
+            "cc": "KW",
+            "gps": [
+                29.36819,
+                47.97441
+            ],
+            "url": "https:\/\/ix.kw",
+            "ixf_id": 762,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "LayerSwitch Internet Exchange",
+            "shortname": "LSIX",
+            "city": "Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.3546449,
+                4.8339215
+            ],
+            "url": "https:\/\/lsix.net\/",
+            "ixf_id": 681,
+            "peeringdb_id": 1308,
+            "since": 2018
+        },
+        {
+            "name": "Lille Internet Exchange",
+            "shortname": "LILLIX",
+            "city": "Lille",
+            "country": "FR",
+            "cc": "FR",
+            "gps": [
+                50.6311167,
+                3.0121412
+            ],
+            "url": "http:\/\/www.lillix.fr\/",
+            "ixf_id": 433,
+            "peeringdb_id": 881,
+            "since": 2019
+        },
+        {
+            "name": "Lilongwe Open Neutral Internet Exchange",
+            "shortname": "LIONEX",
+            "city": "Lilongwe",
+            "country": "MW",
+            "cc": "MW",
+            "gps": [
+                -13.9551871,
+                33.7101651
+            ],
+            "url": "http:\/\/www.lionex.org",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2022
+        },
+        {
+            "name": "Local Internet Exchange",
+            "shortname": "LocIX",
+            "city": "Frankfurt",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                50.1106444,
+                8.6820917
+            ],
+            "url": "https:\/\/locix.online\/",
+            "ixf_id": 775,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "LONAP Limited",
+            "shortname": "LONAP",
+            "city": "London",
+            "country": "GB",
+            "cc": "GB",
+            "gps": [
+                51.514,
+                -0.1059
+            ],
+            "url": "http:\/\/www.lonap.net\/",
+            "ixf_id": 18,
+            "peeringdb_id": null,
+            "since": 2014
+        },
+        {
+            "name": "London (Romania Commercial Internet Exchange)",
+            "shortname": "RO-CIX",
+            "city": "Bucharest",
+            "country": "RO",
+            "cc": "RO",
+            "gps": [
+                44.3739401,
+                26.1080071
+            ],
+            "url": "http:\/\/rocix.net\/",
+            "ixf_id": 846,
+            "peeringdb_id": 2804,
+            "since": null
+        },
+        {
+            "name": "Luxembourg Internet Exchange",
+            "shortname": "LU-CIX",
+            "city": "Luxembourg",
+            "country": "LU",
+            "cc": "LU",
+            "gps": [
+                49.5983921,
+                6.0888959
+            ],
+            "url": "https:\/\/www.lu-cix.lu\/",
+            "ixf_id": 58,
+            "peeringdb_id": 297,
+            "since": 2023
+        },
+        {
+            "name": "Madagascar Global Internet eXchange",
+            "shortname": "MGIx",
+            "city": "Antananarivo",
+            "country": "MG",
+            "cc": "MG",
+            "gps": [
+                -18.8875029,
+                47.4423024
+            ],
+            "url": "https:\/\/www.mgix.mg\/",
+            "ixf_id": 685,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "Maharlika Internet Exchange",
+            "shortname": "MHK-IX",
+            "city": "Philippines",
+            "country": "PH",
+            "cc": "PH",
+            "gps": [
+                11.649000000000001,
+                117.33
+            ],
+            "url": "https:\/\/www.maharlikaix.ph",
+            "ixf_id": null,
+            "peeringdb_id": 4167,
+            "since": 2025
+        },
+        {
+            "name": "Maldives Internet Exchange",
+            "shortname": "MVIX",
+            "city": "Maldives",
+            "country": "MV",
+            "cc": "MV",
+            "gps": [
+                -0.633453,
+                73.1213557
+            ],
+            "url": "https:\/\/mvixp.org\/",
+            "ixf_id": 1168,
+            "peeringdb_id": 3987,
+            "since": 2022
+        },
+        {
+            "name": "Massachusetts Internet Exchange",
+            "shortname": "MASS IX",
+            "city": "Boston",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                42.3601,
+                -71.0589
+            ],
+            "url": "http:\/\/www.mass-ix.net\/",
+            "ixf_id": 665,
+            "peeringdb_id": 1086,
+            "since": 2017
+        },
+        {
+            "name": "Mauritius Internet eXchange Point",
+            "shortname": "MIXP",
+            "city": "Port Louis",
+            "country": "MU",
+            "cc": "MU",
+            "gps": [
+                -20.245227,
+                57.49181
+            ],
+            "url": "https:\/\/www.mixp.org\/",
+            "ixf_id": 546,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Mbeya Internet eXchange Point",
+            "shortname": "MbIXP",
+            "city": "Mbeya",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                -8.9051294,
+                33.4173452
+            ],
+            "url": "http:\/\/www.tix.or.tz\/mbixp\/",
+            "ixf_id": null,
+            "peeringdb_id": 3097,
+            "since": null
+        },
+        {
+            "name": "Mekong Internet Exchange",
+            "shortname": "MIX",
+            "city": "Phnom Penh",
+            "country": "KH",
+            "cc": "KH",
+            "gps": [
+                11.5796669,
+                104.7501044
+            ],
+            "url": "http:\/\/www.mekongix.net",
+            "ixf_id": null,
+            "peeringdb_id": 2802,
+            "since": 2020
+        },
+        {
+            "name": "Midwest Internet Coop Exchange",
+            "shortname": "MICE",
+            "city": "Minneapolis",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                44.970797,
+                -93.3315176
+            ],
+            "url": "https:\/\/www.micemn.net\/",
+            "ixf_id": 335,
+            "peeringdb_id": 446,
+            "since": 2020
+        },
+        {
+            "name": "Midwest-IX Indianapolis",
+            "shortname": "M-IX-Indy",
+            "city": "Indianapolis, Indiana",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.7596476,
+                -86.1724072
+            ],
+            "url": "http:\/\/www.midwest-ix.com\/",
+            "ixf_id": 653,
+            "peeringdb_id": 986,
+            "since": 0
+        },
+        {
+            "name": "Milan Neutral Access Point",
+            "shortname": "MINAP",
+            "city": "Milano",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                45.476775,
+                9.103354
+            ],
+            "url": "https:\/\/www.minap.it\/",
+            "ixf_id": 164,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Mwanza Internet eXchange Point",
+            "shortname": "MIXP",
+            "city": "Mwanza",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                -2.5033214,
+                32.900642
+            ],
+            "url": "https:\/\/tix.or.tz\/mixp\/",
+            "ixf_id": 675,
+            "peeringdb_id": 1574,
+            "since": null
+        },
+        {
+            "name": "NAMEX Roma IXP",
+            "shortname": "NAMEX",
+            "city": "Roma",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                41.898971,
+                12.512127
+            ],
+            "url": "https:\/\/www.namex.it\/",
+            "ixf_id": 17,
+            "peeringdb_id": 121,
+            "since": 2018
+        },
+        {
+            "name": "National Internet Exchange Of Afghanistan",
+            "shortname": "NIXA",
+            "city": "Kabul",
+            "country": "AF",
+            "cc": "AF",
+            "gps": [
+                34.519678,
+                69.175392
+            ],
+            "url": "http:\/\/nixa.af\/",
+            "ixf_id": 749,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Nepal Internet Exchange",
+            "shortname": "NPIX",
+            "city": "Kathmandu",
+            "country": "NP",
+            "cc": "NP",
+            "gps": [
+                27.7,
+                85.333298
+            ],
+            "url": "http:\/\/www.npix.net.np\/",
+            "ixf_id": 53,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Netherland Local Internet Exchange",
+            "shortname": "NLocIX",
+            "city": "Meppel",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.7117443,
+                6.1973073
+            ],
+            "url": "https:\/\/www.nlocix.net\/",
+            "ixf_id": 774,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "Network Service Provider Internet eXchange Point",
+            "shortname": "NSPIXP",
+            "city": "Toyko",
+            "country": "JP",
+            "cc": "JP",
+            "gps": [
+                35.687757,
+                139.764548
+            ],
+            "url": "https:\/\/ixpmanager.wide.ad.jp\/",
+            "ixf_id": 441,
+            "peeringdb_id": 234,
+            "since": 0
+        },
+        {
+            "name": "Neutral Internet Exchange Valencia",
+            "shortname": "NIXVAL",
+            "city": "Valencia",
+            "country": "ES",
+            "cc": "ES",
+            "gps": [
+                39.5195551,
+                -0.4693843
+            ],
+            "url": "https:\/\/www.nixval.com\/en\/",
+            "ixf_id": 724,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "New Mexico Internet Exchange (dba ABQIX)",
+            "shortname": "ABQIX",
+            "city": "Albuquerque, New Mexico",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                35.0825302,
+                -106.7465187
+            ],
+            "url": "http:\/\/abqix.net",
+            "ixf_id": 893,
+            "peeringdb_id": 3322,
+            "since": 2020
+        },
+        {
+            "name": "Newcastle IX",
+            "shortname": "NCL-IX",
+            "city": "Newcastle",
+            "country": "GB",
+            "cc": "GB",
+            "gps": [
+                55.0169858,
+                -1.5060143
+            ],
+            "url": "https:\/\/www.ncl-ix.uk\/",
+            "ixf_id": 901,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Noord-IX",
+            "shortname": "Noord-IX",
+            "city": "Leeuwarden\/Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                53.2,
+                5.777
+            ],
+            "url": "https:\/\/noord-ix.nl",
+            "ixf_id": null,
+            "peeringdb_id": 4360,
+            "since": 2025
+        },
+        {
+            "name": "North Carolina Internet Exchange",
+            "shortname": "NC-IX",
+            "city": "Charlotte, NC",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                35.222101,
+                -80.836747
+            ],
+            "url": "https:\/\/peeringdb.com\/ix\/3081",
+            "ixf_id": null,
+            "peeringdb_id": 3081,
+            "since": 2020
+        },
+        {
+            "name": "North East Ohio Internet Exchange",
+            "shortname": "NEO-IX",
+            "city": "Fairlawn",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                41.133097,
+                -81.629367
+            ],
+            "url": "http:\/\/www.neo-ix.com\/",
+            "ixf_id": 862,
+            "peeringdb_id": 3160,
+            "since": 2020
+        },
+        {
+            "name": "North Sea Internet Exchange",
+            "shortname": "NSIX",
+            "city": "Amsterdam",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.4457492,
+                4.7130225
+            ],
+            "url": "https:\/\/ns-ix.net\/",
+            "ixf_id": 1415,
+            "peeringdb_id": 4589,
+            "since": 2024
+        },
+        {
+            "name": "Northern New England Neutral Internet Exchange",
+            "shortname": "NNENIX",
+            "city": "Portland",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                43.658074,
+                -70.29982
+            ],
+            "url": "http:\/\/www.nnenix.net\/",
+            "ixf_id": 743,
+            "peeringdb_id": 1679,
+            "since": 2018
+        },
+        {
+            "name": "Northern Virginia Internet Exchange",
+            "shortname": "NVIX",
+            "city": "Ashburn, Virginia",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.0492339,
+                -77.5277892
+            ],
+            "url": "https:\/\/www.nvix.us",
+            "ixf_id": 1218,
+            "peeringdb_id": 4462,
+            "since": 2023
+        },
+        {
+            "name": "Northwest Access Exchange",
+            "shortname": "NWAX",
+            "city": "Oregon",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                45.5140736,
+                -122.6840639
+            ],
+            "url": "http:\/\/www.nwax.net\/",
+            "ixf_id": 222,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Norwegian Internet eXchange BIX",
+            "shortname": "BIX Bergen",
+            "city": "Bergen",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                60.3652817,
+                5.2890911
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 192,
+            "peeringdb_id": 582,
+            "since": null
+        },
+        {
+            "name": "Norwegian Internet eXchange NIX1",
+            "shortname": "NIX",
+            "city": "Oslo",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                59.9436349,
+                10.7148047
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 19,
+            "peeringdb_id": 83,
+            "since": null
+        },
+        {
+            "name": "Norwegian Internet eXchange NIX2",
+            "shortname": "NIX2",
+            "city": "Oslo",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                59.938436,
+                10.8327825
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 99,
+            "peeringdb_id": 298,
+            "since": null
+        },
+        {
+            "name": "Norwegian Internet eXchange SIX",
+            "shortname": "SIX",
+            "city": "Stavanger",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                58.948723,
+                5.610298
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 200,
+            "peeringdb_id": 1419,
+            "since": null
+        },
+        {
+            "name": "Norwegian Internet eXchange TIX",
+            "shortname": "TIX",
+            "city": "Troms\u00f8",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                69.6653119,
+                18.7776712
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 199,
+            "peeringdb_id": 1418,
+            "since": null
+        },
+        {
+            "name": "Norwegian Internet eXchange TRDIX",
+            "shortname": "TRDIX",
+            "city": "Trondheim",
+            "country": "NO",
+            "cc": "NO",
+            "gps": [
+                63.4187959,
+                10.3687234
+            ],
+            "url": "https:\/\/www.nix.no\/",
+            "ixf_id": 193,
+            "peeringdb_id": 1420,
+            "since": null
+        },
+        {
+            "name": "OhioIX",
+            "shortname": "OhioIX",
+            "city": "Columbus, OH",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                40.116491,
+                -83.001985
+            ],
+            "url": "http:\/\/ohioix.net\/",
+            "ixf_id": 850,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Omadata Internet Exchange",
+            "shortname": "ODIX",
+            "city": "Surabaya \/ Jawa Timur",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                -7.2754417,
+                112.6302835
+            ],
+            "url": "https:\/\/www.omadata.com\/id\/odix-omadata-internet-exchange",
+            "ixf_id": 1190,
+            "peeringdb_id": 4033,
+            "since": 2023
+        },
+        {
+            "name": "Ontario Internet Exchange",
+            "shortname": "ONIX",
+            "city": "Toronto, ON",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                43.7181557,
+                -79.5181397
+            ],
+            "url": "https:\/\/www.onix.cx",
+            "ixf_id": 1180,
+            "peeringdb_id": 4059,
+            "since": 2022
+        },
+        {
+            "name": "OpenIX Beirut",
+            "shortname": "OIXB",
+            "city": "Beirut",
+            "country": "LB",
+            "cc": "LB",
+            "gps": [
+                33.95,
+                35.5908034
+            ],
+            "url": "https:\/\/openix.ong\/beirut",
+            "ixf_id": null,
+            "peeringdb_id": 4727,
+            "since": null
+        },
+        {
+            "name": "Ottawa Gatineau Internet Exchange",
+            "shortname": "OGIX",
+            "city": "Ottawa",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                45.335349,
+                -75.906163
+            ],
+            "url": "https:\/\/www.ogix.ca\/",
+            "ixf_id": 811,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "PaducahIX",
+            "shortname": "PaducahIX",
+            "city": "Paducah, Kentucky",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                37.0710863,
+                -88.6818742
+            ],
+            "url": "https:\/\/paducahix.net\/",
+            "ixf_id": 919,
+            "peeringdb_id": 3407,
+            "since": 2021
+        },
+        {
+            "name": "PatagoniaIX",
+            "shortname": "PATIX",
+            "city": "Punta Arenas",
+            "country": "CL",
+            "cc": "CL",
+            "gps": [
+                -53.046573,
+                -70.872828
+            ],
+            "url": "https:\/\/www.patagoniaix.cl",
+            "ixf_id": 1426,
+            "peeringdb_id": 4607,
+            "since": 2025
+        },
+        {
+            "name": "Peru IX - Arequipa",
+            "shortname": "Peru IX - Arequipa",
+            "city": "Arequipa",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -16.4040105,
+                -71.556521
+            ],
+            "url": "http:\/\/www.peruix.net\/",
+            "ixf_id": 944,
+            "peeringdb_id": 3418,
+            "since": 2018
+        },
+        {
+            "name": "Peru IX - Cuzco",
+            "shortname": "Peru IX - Cuzco",
+            "city": "Cuzco",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -13.5300159,
+                -71.9804485
+            ],
+            "url": "http:\/\/www.peruix.net\/",
+            "ixf_id": 1150,
+            "peeringdb_id": 3998,
+            "since": 2018
+        },
+        {
+            "name": "Peru IX - Piura",
+            "shortname": "Peru IX - Piura",
+            "city": "Piura",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                5.1929955,
+                -80.7446602
+            ],
+            "url": "http:\/\/www.peruix.net",
+            "ixf_id": null,
+            "peeringdb_id": 4151,
+            "since": 2019
+        },
+        {
+            "name": "Peru IX - Trujillo",
+            "shortname": "Peru IX - Trujillo",
+            "city": "Trujillo",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -8.1167482,
+                -79.0980117
+            ],
+            "url": "http:\/\/www.peruix.net",
+            "ixf_id": null,
+            "peeringdb_id": 3557,
+            "since": 2020
+        },
+        {
+            "name": "Peru IX Chiclayo",
+            "shortname": "Peru IX Chiclayo",
+            "city": "Chiclayo",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -6.7818636,
+                -79.8665501
+            ],
+            "url": "http:\/\/www.peruix.net",
+            "ixf_id": 1149,
+            "peeringdb_id": 3997,
+            "since": 2019
+        },
+        {
+            "name": "Philadelphia Internet Exchange",
+            "shortname": "PhillyIX",
+            "city": "Philadelphia",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                39.95992,
+                -75.16177
+            ],
+            "url": "http:\/\/phillyix.net",
+            "ixf_id": 745,
+            "peeringdb_id": 2088,
+            "since": 0
+        },
+        {
+            "name": "Phoenix-IX (Ninja-IX)",
+            "shortname": "Phoenix-IX",
+            "city": "Arizona",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                33.5010764,
+                -112.0845551
+            ],
+            "url": "http:\/\/www.phoenix-ix.net\/",
+            "ixf_id": 268,
+            "peeringdb_id": 662,
+            "since": null
+        },
+        {
+            "name": "Piacenza Internet Exchange",
+            "shortname": "PCIX",
+            "city": "Emilia-Romagna",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                45.049902,
+                9.738075
+            ],
+            "url": "https:\/\/pcix.it",
+            "ixf_id": 726,
+            "peeringdb_id": 1933,
+            "since": 2026
+        },
+        {
+            "name": "PIT Colombia - Cali",
+            "shortname": "PIT Colombia - Cali",
+            "city": "Cali",
+            "country": "CO",
+            "cc": "CO",
+            "gps": [
+                3.3952322,
+                -76.6082364
+            ],
+            "url": "https:\/\/www.pitcolombia.net",
+            "ixf_id": 1204,
+            "peeringdb_id": 4109,
+            "since": 2019
+        },
+        {
+            "name": "PIT Colombia Bogota",
+            "shortname": "PIT Colombia Bogota",
+            "city": "Bogota",
+            "country": "CO",
+            "cc": "CO",
+            "gps": [
+                4.6482784,
+                -74.272614
+            ],
+            "url": "http:\/\/www.pitcolombia.net\/",
+            "ixf_id": 1052,
+            "peeringdb_id": 3880,
+            "since": 2022
+        },
+        {
+            "name": "PIT HONDURAS",
+            "shortname": "PITHND",
+            "city": "San Pedro Sula",
+            "country": "HN",
+            "cc": "HN",
+            "gps": [
+                -87.998997,
+                15.536878
+            ],
+            "url": "http:\/\/www.pithonduras.hn",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2023
+        },
+        {
+            "name": "PIT Honduras",
+            "shortname": "PITHND",
+            "city": "SAN PEDRO SULA\/CORTES\/HONDURAS",
+            "country": "HN",
+            "cc": "HN",
+            "gps": [
+                15.6426214,
+                -88.1792023
+            ],
+            "url": "http:\/\/www.pithonduras.hn",
+            "ixf_id": 1224,
+            "peeringdb_id": 4176,
+            "since": 2023
+        },
+        {
+            "name": "PIt Peru",
+            "shortname": "PIT-PERU",
+            "city": "Lima",
+            "country": "PE",
+            "cc": "PE",
+            "gps": [
+                -12.0941011,
+                -76.9821017
+            ],
+            "url": "https:\/\/www.pitperu.net\/",
+            "ixf_id": 825,
+            "peeringdb_id": 2680,
+            "since": 2019
+        },
+        {
+            "name": "Piter-IX (Moscow)",
+            "shortname": "Piter-IX (Moscow)",
+            "city": "Moscow",
+            "country": "RU",
+            "cc": "RU",
+            "gps": [
+                55.5817066,
+                37.1053579
+            ],
+            "url": "https:\/\/piter-ix.ru\/",
+            "ixf_id": null,
+            "peeringdb_id": 3017,
+            "since": null
+        },
+        {
+            "name": "Piter-IX (Riga)",
+            "shortname": "Piter-IX (Riga)",
+            "city": "Riga",
+            "country": "LV",
+            "cc": "LV",
+            "gps": [
+                56.9713962,
+                23.9890832
+            ],
+            "url": "https:\/\/piter-ix.ru\/",
+            "ixf_id": null,
+            "peeringdb_id": 3019,
+            "since": null
+        },
+        {
+            "name": "Piter-IX (St. Petersburg)",
+            "shortname": "Piter-IX (St. Petersburg)",
+            "city": "St. Petersburg",
+            "country": "RU",
+            "cc": "RU",
+            "gps": [
+                59.874986,
+                30.437372
+            ],
+            "url": "https:\/\/piter-ix.ru\/",
+            "ixf_id": null,
+            "peeringdb_id": 2149,
+            "since": null
+        },
+        {
+            "name": "Piter-IX (Tallinn)",
+            "shortname": "Piter-IX (Tallinn)",
+            "city": "Tallinn",
+            "country": "EE",
+            "cc": "EE",
+            "gps": [
+                59.4716181,
+                24.5981625
+            ],
+            "url": "https:\/\/piter-ix.ru\/",
+            "ixf_id": null,
+            "peeringdb_id": 3018,
+            "since": null
+        },
+        {
+            "name": "Pittsburgh Internet Exchange",
+            "shortname": "PIT-IX",
+            "city": "Pittsburgh",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                40.4313473,
+                -80.0505396
+            ],
+            "url": "https:\/\/pit-ix.net\/",
+            "ixf_id": 729,
+            "peeringdb_id": null,
+            "since": 2017
+        },
+        {
+            "name": "PK Lahore IX",
+            "shortname": "PKIXLHE",
+            "city": "Lahore, Punjab, Pakistan",
+            "country": "PS",
+            "cc": "PS",
+            "gps": [
+                31.4831271,
+                74.1692393
+            ],
+            "url": "http:\/\/pkix.pk\/",
+            "ixf_id": 636,
+            "peeringdb_id": 3743,
+            "since": 2021
+        },
+        {
+            "name": "Port Vila",
+            "shortname": "VuIXP",
+            "city": "Port Vila",
+            "country": "VU",
+            "cc": "VU",
+            "gps": [
+                -17.6616739,
+                168.3389362
+            ],
+            "url": "https:\/\/portal.vix.vu",
+            "ixf_id": null,
+            "peeringdb_id": 971,
+            "since": 2025
+        },
+        {
+            "name": "Punto de Intercambio de Internet del Paraguay",
+            "shortname": "IXpy",
+            "city": null,
+            "country": "PY",
+            "cc": "PY",
+            "gps": [
+                -25.33575,
+                -57.52256
+            ],
+            "url": "https:\/\/ix.py",
+            "ixf_id": 830,
+            "peeringdb_id": 1522,
+            "since": 2021
+        },
+        {
+            "name": "Punto de Intercambio de Tr\u00e1fico de Internet de Guatemala",
+            "shortname": "GTIX",
+            "city": "Guatemala",
+            "country": "GT",
+            "cc": "GT",
+            "gps": [
+                14.571753,
+                -90.7349637
+            ],
+            "url": "http:\/\/www.ixp.gt",
+            "ixf_id": 888,
+            "peeringdb_id": 3182,
+            "since": 2020
+        },
+        {
+            "name": "Punto de Intercambio de tr\u00e1fico PIT Bolivia - Entidad Civil sin fines de lucro",
+            "shortname": "BINX",
+            "city": "La Paz",
+            "country": "BO",
+            "cc": "BO",
+            "gps": [
+                -16.5430432,
+                -68.0854681
+            ],
+            "url": "http:\/\/www.pit.bo\/",
+            "ixf_id": 941,
+            "peeringdb_id": 3333,
+            "since": 2021
+        },
+        {
+            "name": "Quad Cities Internet Exchange",
+            "shortname": "QCIX",
+            "city": "Davenport, Iowa",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                41.548684,
+                -90.620979
+            ],
+            "url": "https:\/\/www.qcix.net\/",
+            "ixf_id": 853,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Quebec City Internet Exchange",
+            "shortname": "QIX Quebec",
+            "city": "Quebec City",
+            "country": "CA",
+            "cc": "CA",
+            "gps": [
+                46.857,
+                -71.509
+            ],
+            "url": "https:\/\/qix.ca",
+            "ixf_id": 266,
+            "peeringdb_id": 4604,
+            "since": 2025
+        },
+        {
+            "name": "Rheintal Internet Exchange",
+            "shortname": "Rheintal-IX",
+            "city": null,
+            "country": "LI",
+            "cc": "LI",
+            "gps": [
+                47.3835238,
+                9.596403
+            ],
+            "url": "http:\/\/www.rheintal-ix.net\/",
+            "ixf_id": 483,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Richmond-IX (Ninja-IX)",
+            "shortname": "Richmond-IX",
+            "city": "Richmond VA",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                37.5155546,
+                -77.3861777
+            ],
+            "url": "http:\/\/www.richmond-ix.net\/",
+            "ixf_id": 925,
+            "peeringdb_id": 1490,
+            "since": 2021
+        },
+        {
+            "name": "RomandIX",
+            "shortname": "ROIX",
+            "city": "Lausanne",
+            "country": "CH",
+            "cc": "CH",
+            "gps": [
+                46.5285337,
+                6.6173899
+            ],
+            "url": "https:\/\/www.romandix.ch\/en\/home\/",
+            "ixf_id": null,
+            "peeringdb_id": 1984,
+            "since": null
+        },
+        {
+            "name": "Romanian Open Internet Exchange",
+            "shortname": "ROPN-IX",
+            "city": "Bucharest",
+            "country": "RO",
+            "cc": "RO",
+            "gps": [
+                44.4232628,
+                26.1115235
+            ],
+            "url": "https:\/\/ropnix.com\/",
+            "ixf_id": null,
+            "peeringdb_id": 3169,
+            "since": null
+        },
+        {
+            "name": "Sacramento-IX (Ninja-IX)",
+            "shortname": "Sacramento-IX",
+            "city": "Sacramento CA",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                38.6465662,
+                -121.4884598
+            ],
+            "url": "http:\/\/www.sacramento-ix.net\/",
+            "ixf_id": 926,
+            "peeringdb_id": 2032,
+            "since": 2021
+        },
+        {
+            "name": "Saint-Martin Internet Exchange",
+            "shortname": "SMART-IX",
+            "city": "Saint Martin",
+            "country": "MF",
+            "cc": "MF",
+            "gps": [
+                18.0703461,
+                -63.0972552
+            ],
+            "url": "https:\/\/www.smart-ix.fr\/",
+            "ixf_id": 1158,
+            "peeringdb_id": 4008,
+            "since": 2022
+        },
+        {
+            "name": "Salt Lake Internet eXchange",
+            "shortname": "SLIX",
+            "city": "Salt Lake City",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                40.76105,
+                -111.88907
+            ],
+            "url": "https:\/\/slix.net",
+            "ixf_id": 503,
+            "peeringdb_id": 829,
+            "since": 2021
+        },
+        {
+            "name": "Salzburg Internet eXchange",
+            "shortname": "SAIX",
+            "city": "Salzburg",
+            "country": "AT",
+            "cc": "AT",
+            "gps": [
+                47.79222,
+                13.01056
+            ],
+            "url": "https:\/\/www.saix.at\/",
+            "ixf_id": 553,
+            "peeringdb_id": 1073,
+            "since": 2016
+        },
+        {
+            "name": "San Francisco Metropolitan Internet Exchange",
+            "shortname": "SFMIX",
+            "city": "San Francisco",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                37.7576171,
+                -122.5776844
+            ],
+            "url": "https:\/\/www.sfmix.org\/",
+            "ixf_id": 223,
+            "peeringdb_id": 155,
+            "since": 0
+        },
+        {
+            "name": "Santiago Internet Exchange",
+            "shortname": "STIX",
+            "city": "Santiago",
+            "country": "DO",
+            "cc": "DO",
+            "gps": [
+                -70.6107,
+                19.3399
+            ],
+            "url": "https:\/\/stix.do",
+            "ixf_id": 1241,
+            "peeringdb_id": 2537,
+            "since": 2023
+        },
+        {
+            "name": "SBH-IX",
+            "shortname": "SBH-IX",
+            "city": "Saint Barth\u00e9lemy",
+            "country": "BL",
+            "cc": "BL",
+            "gps": [
+                17.905586,
+                -62.824491
+            ],
+            "url": "http:\/\/sbh-ix.fr",
+            "ixf_id": 1055,
+            "peeringdb_id": 3872,
+            "since": 2022
+        },
+        {
+            "name": "Serrekunda IXP",
+            "shortname": "SIXP",
+            "city": "Serrekunda",
+            "country": "GM",
+            "cc": "GM",
+            "gps": [
+                13.4394321,
+                -16.7086424
+            ],
+            "url": "http:\/\/www.sixp.gm\/",
+            "ixf_id": 723,
+            "peeringdb_id": 2682,
+            "since": null
+        },
+        {
+            "name": "SERVICIOS NAP VEN",
+            "shortname": "NAP VE",
+            "city": "Caracas",
+            "country": "VE",
+            "cc": "VE",
+            "gps": [
+                -66.807058,
+                10.49305
+            ],
+            "url": "https:\/\/www.nap.com.ve",
+            "ixf_id": 1400,
+            "peeringdb_id": 4524,
+            "since": 2024
+        },
+        {
+            "name": "Silk Road IX",
+            "shortname": "SR-IX",
+            "city": "Bishkek-Osh",
+            "country": "KG",
+            "cc": "KG",
+            "gps": [
+                42.8746,
+                74.567606
+            ],
+            "url": "http:\/\/sr-ix.in.kg\/",
+            "ixf_id": 758,
+            "peeringdb_id": 2457,
+            "since": 2019
+        },
+        {
+            "name": "Singapore Internet Exchange",
+            "shortname": "SGIX",
+            "city": "Singapore",
+            "country": "SG",
+            "cc": "SG",
+            "gps": [
+                1.3143379,
+                103.6790985
+            ],
+            "url": "https:\/\/www.sgix.sg",
+            "ixf_id": 371,
+            "peeringdb_id": 429,
+            "since": 2023
+        },
+        {
+            "name": "Slovenian Internet eXchange",
+            "shortname": "SIX",
+            "city": "Ljubljana",
+            "country": "SI",
+            "cc": "SI",
+            "gps": [
+                46.050126,
+                14.458125
+            ],
+            "url": "https:\/\/www.six.si\/",
+            "ixf_id": 25,
+            "peeringdb_id": 319,
+            "since": 0
+        },
+        {
+            "name": "Somali Internet Exchange Point - Mogadishu",
+            "shortname": "SoIXP",
+            "city": "Mogadishu",
+            "country": "SO",
+            "cc": "SO",
+            "gps": [
+                2.040807,
+                45.36051
+            ],
+            "url": "http:\/\/soixp.so\/",
+            "ixf_id": 754,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "SONIX Gothenburg",
+            "shortname": "SONIX Gothenburg",
+            "city": "Gothenburg",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                57.7010685,
+                11.7290351
+            ],
+            "url": "https:\/\/sonix.network\/",
+            "ixf_id": 1001,
+            "peeringdb_id": 3745,
+            "since": 2021
+        },
+        {
+            "name": "SONIX Malmo",
+            "shortname": "SONIX Malmo",
+            "city": "Malmo",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                55.5702379,
+                12.9335732
+            ],
+            "url": "https:\/\/sonix.network",
+            "ixf_id": 1247,
+            "peeringdb_id": 4292,
+            "since": 2023
+        },
+        {
+            "name": "SONIX Stockholm",
+            "shortname": "SONIX Stockholm",
+            "city": "Stockholm",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                59.3002897,
+                17.8225027
+            ],
+            "url": "https:\/\/sonix.network\/",
+            "ixf_id": 963,
+            "peeringdb_id": 3607,
+            "since": 2023
+        },
+        {
+            "name": "South Tyrolean Internet Exchange",
+            "shortname": "STIX",
+            "city": "Bozen\/Italy\/Europe",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                46.48205,
+                11.33022
+            ],
+            "url": "https:\/\/www.stix.bz\/",
+            "ixf_id": null,
+            "peeringdb_id": 2537,
+            "since": 2019
+        },
+        {
+            "name": "South Tyrolean Internet Exchange",
+            "shortname": "STIX",
+            "city": "Bozen",
+            "country": "IT",
+            "cc": "IT",
+            "gps": [
+                46.48205,
+                11.33022
+            ],
+            "url": "https:\/\/www.stix.bz\/",
+            "ixf_id": null,
+            "peeringdb_id": 2537,
+            "since": 2019
+        },
+        {
+            "name": "SPEED-IX",
+            "shortname": "SPEED-IX",
+            "city": "Dronten",
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                52.543666,
+                5.703021
+            ],
+            "url": "https:\/\/speed-ix.net\/",
+            "ixf_id": 722,
+            "peeringdb_id": null,
+            "since": 2018
+        },
+        {
+            "name": "Spokane Internet Exchange",
+            "shortname": "SpokaneIX",
+            "city": "Spokane",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                47.6729346,
+                -117.4823606
+            ],
+            "url": "https:\/\/spokaneix.net",
+            "ixf_id": 854,
+            "peeringdb_id": 3090,
+            "since": null
+        },
+        {
+            "name": "STHIX - Copenhagen",
+            "shortname": "STHIX - Copenhagen",
+            "city": "Copenhagen",
+            "country": "DK",
+            "cc": "DK",
+            "gps": [
+                55.6712473,
+                12.5236132
+            ],
+            "url": "https:\/\/www.sthix.net\/",
+            "ixf_id": 713,
+            "peeringdb_id": 1869,
+            "since": null
+        },
+        {
+            "name": "STHIX - Gothenburg",
+            "shortname": "STHIX - Gothenburg",
+            "city": "Gothenburg",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                57.7009143,
+                11.7534129
+            ],
+            "url": "https:\/\/www.sthix.net\/",
+            "ixf_id": 712,
+            "peeringdb_id": 1868,
+            "since": null
+        },
+        {
+            "name": "STHIX - Helsinki",
+            "shortname": "STHIX - Helsinki",
+            "city": "Helsinki",
+            "country": "FI",
+            "cc": "FI",
+            "gps": [
+                60.1098664,
+                24.7378259
+            ],
+            "url": "https:\/\/www.sthix.net\/",
+            "ixf_id": 928,
+            "peeringdb_id": null,
+            "since": null
+        },
+        {
+            "name": "STHIX - Stockholm",
+            "shortname": "STHIX - Stockholm",
+            "city": "Stockholm",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                59.3297503,
+                18.069335
+            ],
+            "url": "http:\/\/www.sthix.net\/",
+            "ixf_id": 144,
+            "peeringdb_id": 172,
+            "since": null
+        },
+        {
+            "name": "STHIX - Sundsvall",
+            "shortname": "STHIX - Sundsvall",
+            "city": "Sundsvall",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                62.3960813,
+                17.2230088
+            ],
+            "url": "https:\/\/www.sthix.net\/",
+            "ixf_id": 820,
+            "peeringdb_id": 2677,
+            "since": null
+        },
+        {
+            "name": "STHIX - Ume\u00e5",
+            "shortname": "STHIX - Ume\u00e5",
+            "city": "Ume\u00e5",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                63.826907,
+                20.171751
+            ],
+            "url": "https:\/\/www.sthix.net\/",
+            "ixf_id": 712,
+            "peeringdb_id": 1868,
+            "since": null
+        },
+        {
+            "name": "Stockholm Open Network Internet Exchange",
+            "shortname": "SONIX",
+            "city": "Stockholm",
+            "country": "SE",
+            "cc": "SE",
+            "gps": [
+                59.316969,
+                18.0417063
+            ],
+            "url": "https:\/\/sonix.network\/",
+            "ixf_id": null,
+            "peeringdb_id": 3607,
+            "since": 2021
+        },
+        {
+            "name": "Strasbourg Internet Exchange",
+            "shortname": "SBG-IX",
+            "city": "Strasbourg",
+            "country": "FR",
+            "cc": "FR",
+            "gps": [
+                48.5690532,
+                7.6920401
+            ],
+            "url": "https:\/\/sbg-ix.net\/",
+            "ixf_id": 1179,
+            "peeringdb_id": null,
+            "since": 2022
+        },
+        {
+            "name": "Student & Technology United Internet Exchanges",
+            "shortname": "STUIX",
+            "city": "Taipei City",
+            "country": "TW",
+            "cc": "TW",
+            "gps": [
+                25.079277,
+                121.56964
+            ],
+            "url": "https:\/\/stuix.io",
+            "ixf_id": null,
+            "peeringdb_id": 3352,
+            "since": 2021
+        },
+        {
+            "name": "Stuttgarter Internet eXchange",
+            "shortname": "BW-IX",
+            "city": "Stuttgart",
+            "country": "DE",
+            "cc": "DE",
+            "gps": [
+                48.775846,
+                9.182932
+            ],
+            "url": "http:\/\/www.stuttgart-ix.de\/",
+            "ixf_id": 139,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "SXMIX",
+            "shortname": "SXMIX",
+            "city": "Marigot",
+            "country": "MF",
+            "cc": "MF",
+            "gps": [
+                18.065,
+                -63.125
+            ],
+            "url": "http:\/\/www.sxmix.fr",
+            "ixf_id": 949,
+            "peeringdb_id": 3530,
+            "since": 2024
+        },
+        {
+            "name": "Tanzania Internet eXchange",
+            "shortname": "TIX",
+            "city": "Dar es Salaam",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                -6.7694157,
+                39.18408
+            ],
+            "url": "http:\/\/www.tix.or.tz\/",
+            "ixf_id": 50,
+            "peeringdb_id": 361,
+            "since": null
+        },
+        {
+            "name": "Tehran IX",
+            "shortname": "TEHRAN-IX",
+            "city": "Tehran",
+            "country": "IR",
+            "cc": "IR",
+            "gps": [
+                35.5031,
+                51.21704
+            ],
+            "url": "https:\/\/tehran-ix.ir\/",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "Texas-IX",
+            "shortname": "Texas-IX",
+            "city": "Texas",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                29.433652,
+                -94.9664912
+            ],
+            "url": "http:\/\/texas-ix.us\/",
+            "ixf_id": null,
+            "peeringdb_id": null,
+            "since": 2020
+        },
+        {
+            "name": "The Frisian Internet Exchange",
+            "shortname": "Frys-IX",
+            "city": null,
+            "country": "NL",
+            "cc": "NL",
+            "gps": [
+                53.1023215,
+                5.7244895
+            ],
+            "url": "http:\/\/www.eritap.com\/frys-ix\/",
+            "ixf_id": 946,
+            "peeringdb_id": 3512,
+            "since": 2021
+        },
+        {
+            "name": "The South Coast Access Exchange",
+            "shortname": "SCAX",
+            "city": "Brookings, Oregon",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                42.051209,
+                -124.28088
+            ],
+            "url": "https:\/\/thescax.net",
+            "ixf_id": 1145,
+            "peeringdb_id": 3946,
+            "since": 2023
+        },
+        {
+            "name": "The Uganda Internet eXchange Point",
+            "shortname": "UIXP",
+            "city": null,
+            "country": "UG",
+            "cc": "UG",
+            "gps": [
+                1.5240572000000001,
+                32.9719305
+            ],
+            "url": "https:\/\/www.uixp.co.ug\/",
+            "ixf_id": 96,
+            "peeringdb_id": null,
+            "since": 0
+        },
+        {
+            "name": "Tirol-IX",
+            "shortname": "Tirol-IX",
+            "city": "Innsbruck \/ Tirol",
+            "country": "AT",
+            "cc": "AT",
+            "gps": [
+                47.265,
+                11.435
+            ],
+            "url": "http:\/\/www.tirol-ix.at\/",
+            "ixf_id": 663,
+            "peeringdb_id": 1009,
+            "since": 2021
+        },
+        {
+            "name": "TOUIX",
+            "shortname": "TOUIX",
+            "city": "Toulouse \/ Haute-Garonne",
+            "country": "FR",
+            "cc": "FR",
+            "gps": [
+                43.604652,
+                1.444209
+            ],
+            "url": "http:\/\/touix.net\/",
+            "ixf_id": 274,
+            "peeringdb_id": 336,
+            "since": 2020
+        },
+        {
+            "name": "TURKISH Internet eXchange",
+            "shortname": "TR-IX",
+            "city": "Istanbul",
+            "country": "TR",
+            "cc": "TR",
+            "gps": [
+                41.0054954,
+                28.8717553
+            ],
+            "url": "https:\/\/tr-ix.com\/",
+            "ixf_id": 767,
+            "peeringdb_id": 2787,
+            "since": null
+        },
+        {
+            "name": "TurkIX Internet Exchange",
+            "shortname": "TURKIX",
+            "city": "Svilengrad",
+            "country": "BG",
+            "cc": "BG",
+            "gps": [
+                41.7666597,
+                26.1909463
+            ],
+            "url": "https:\/\/www.turkix.com.tr\/",
+            "ixf_id": 767,
+            "peeringdb_id": 4186,
+            "since": 2023
+        },
+        {
+            "name": "UEPG Internet Exchange",
+            "shortname": "IX UEPG",
+            "city": "Ponta Grossa, Parana",
+            "country": "BR",
+            "cc": "BR",
+            "gps": [
+                -25.094867999999998,
+                -50.103872
+            ],
+            "url": "https:\/\/ix.uepg.br\/",
+            "ixf_id": 829,
+            "peeringdb_id": null,
+            "since": 2019
+        },
+        {
+            "name": "Universitas Negeri Yogyakarta Internet Exchange",
+            "shortname": "UNY-IX",
+            "city": "Yogyakarta",
+            "country": "ID",
+            "cc": "ID",
+            "gps": [
+                7.803,
+                110.354
+            ],
+            "url": "https:\/\/ix.uny.id",
+            "ixf_id": 849,
+            "peeringdb_id": 983,
+            "since": 2023
+        },
+        {
+            "name": "Vegas-IX (Ninja-IX)",
+            "shortname": "Vegas-IX",
+            "city": "Las Vegas NV",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                36.0669485,
+                -115.1371282
+            ],
+            "url": "http:\/\/www.vegas-ix.net\/",
+            "ixf_id": 927,
+            "peeringdb_id": 1488,
+            "since": 2021
+        },
+        {
+            "name": "Willamette Internet Exchange",
+            "shortname": "WIX",
+            "city": "Eugene \/ Oregon \/ Lane County",
+            "country": "US",
+            "cc": "US",
+            "gps": [
+                44.0499096,
+                -123.0927183
+            ],
+            "url": "https:\/\/www.thewix.net",
+            "ixf_id": 1186,
+            "peeringdb_id": 3466,
+            "since": 2023
+        },
+        {
+            "name": "Zanzibar Internet eXchange Point",
+            "shortname": "ZIXP",
+            "city": "Zanzibar",
+            "country": "TZ",
+            "cc": "TZ",
+            "gps": [
+                6.1645078,
+                39.1955675
+            ],
+            "url": "http:\/\/www.tix.or.tz\/zixp\/",
+            "ixf_id": null,
+            "peeringdb_id": 2208,
+            "since": null
+        }
+    ]
+}

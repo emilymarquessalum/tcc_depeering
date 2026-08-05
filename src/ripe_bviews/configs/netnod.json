@@ -1,0 +1,24 @@
+{
+    "routeserver-folder-name": "netnod.mmx",
+    "name": "netnod",
+
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "day_delta": 15,
+
+    "asn_and_prefix": {
+        "note": "Stockholm GREEN -- MTU1500",
+        "asn": "52005",
+        "prefix": "194.68.123.254"
+    },
+    "asn_and_prefix_v6": {
+        "note": "",
+        "asn": "52005",
+        "prefix": "2001:7f8:d:ff::254"
+    },
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}
