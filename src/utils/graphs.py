@@ -1272,7 +1272,7 @@ def create_text_bubble(
     print(f"Success! Saved to {final_output_filename}")
  
 
- def plot_cdf(data, title='Empirical CDF', xlabel='Value', ylabel='Cumulative Probability', subfolder=None, color='navy', notes=None, annotations=None):
+def plot_cdf(data, title='Empirical CDF', xlabel='Value', ylabel='Cumulative Probability', subfolder=None, color='navy', notes=None, annotations=None):
     
     if not data or len(data) == 0:
         print("Warning: Empty data array passed to plot_cdf(). Skipping plot.")
