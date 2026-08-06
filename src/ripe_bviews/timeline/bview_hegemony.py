@@ -87,7 +87,12 @@ def calculate_as_hegemony(all_stats: list[BGPDumpSnapshotStats], target_asn: int
                 vp_total_paths[unique_vp_key] += 1
                 all_active_peers.add(unique_vp_key)
                 
-                unique_transits = set(as_path)
+                if len(as_path) > 1:
+                    effective_path = as_path[1:]
+                else:
+                    effective_path = as_path
+
+                unique_transits = set(effective_path)
                 
                 # Se for análise de destino (Local Graph), removemos o próprio nó alvo para avaliar os trânsitos [cite: 112]
                 if target_asn is not None and target_asn in unique_transits:
