@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
  
 #import tkinter as tk
-#from tkinter import ttk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+#from tkinter import ttk 
 import matplotlib.patches as mpatches
 
 from definitions import append_roots
