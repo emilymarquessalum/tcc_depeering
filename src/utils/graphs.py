@@ -1272,21 +1272,8 @@ def create_text_bubble(
     print(f"Success! Saved to {final_output_filename}")
  
 
- def plot_cdf(data, title='Empirical CDF', xlabel='Value', ylabel='Cumulative Probability', 
-             subfolder=None, color='navy', notes=None, annotations=None):
-    """
-    Plots an Empirical Cumulative Distribution Function (ECDF) for a given dataset.
+ def plot_cdf(data, title='Empirical CDF', xlabel='Value', ylabel='Cumulative Probability', subfolder=None, color='navy', notes=None, annotations=None):
     
-    Args:
-        data (list or np.ndarray): Raw numerical values to build the CDF from.
-        title (str): Title of the plot.
-        xlabel (str): Label for the X-axis (e.g., 'Outage Duration (days)').
-        ylabel (str): Label for the Y-axis (defaults to Cumulative Probability).
-        subfolder (str): Subfolder path to save the plot.
-        color (str): Color of the step line.
-        notes (str): Informational text box displayed on the plot.
-        annotations (list): Custom artist annotations.
-    """
     if not data or len(data) == 0:
         print("Warning: Empty data array passed to plot_cdf(). Skipping plot.")
         return
