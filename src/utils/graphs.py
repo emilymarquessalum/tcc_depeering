@@ -7,8 +7,8 @@ import scienceplots
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from PIL import Image, ImageTk
-import tkinter as tk
-from tkinter import ttk
+#import tkinter as tk
+#from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as mpatches
 
@@ -1019,6 +1019,11 @@ def plot_stacked_win_loss_bar_plot_by_continent(continent_connections_over_time,
     return continent_colors
 
 def create_window_with_all_rendered_graphs_this_session():
+    pass
+
+"""
+def create_window_with_all_rendered_graphs_this_session():
+
     """Create a scrollable window with all graphs rendered in this session displayed in a grid."""
     if not _session_rendered_graphs:
         print("No graphs rendered in this session.")
@@ -1153,6 +1158,7 @@ def create_window_with_all_rendered_graphs_this_session():
     title_label.pack(side=tk.TOP, padx=5, pady=5)
     
     root.mainloop()
+"""
 
 from PIL import Image, ImageDraw, ImageFont
 
