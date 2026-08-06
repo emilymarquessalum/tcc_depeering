@@ -1023,8 +1023,7 @@ def create_window_with_all_rendered_graphs_this_session():
 
 """
 def create_window_with_all_rendered_graphs_this_session():
-
-    """Create a scrollable window with all graphs rendered in this session displayed in a grid."""
+ 
     if not _session_rendered_graphs:
         print("No graphs rendered in this session.")
         return
