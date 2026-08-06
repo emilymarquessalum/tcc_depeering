@@ -593,8 +593,14 @@ def format_labels_if_they_are_dates(labels):
 
                 day_text = ""
                 if not all_dates_have_same_day:
-                    day_text = f"{date.day}{"st" if date.day == 1 else "nd" if date.day == 2 else "rd" if date.day == 3 else "th"} of "
-
+                    
+                    if 11 <= date.day <= 13: 
+                        suffix = "th"
+                    else:
+                        suffix = {1: "st", 2: "nd", 3: "rd"}.get(date.day % 10, "th")
+                    
+                    day_text = f"{date.day}{suffix} of "
+                    
                 formatted_labels.append(date.strftime('%Y, ') + 
                                             day_text + 
                                             month_str
