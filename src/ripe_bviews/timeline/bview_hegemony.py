@@ -136,7 +136,7 @@ def bview_hegemony_of_current_ixp(all_required_data):
     hegemony_data = calculate_as_hegemony([last_data], target_asn=target_asn, alpha=alpha_value)
     
     plot_top5_transit(hegemony_data, caida_data, target_asn, ip_version, subfolder,
-                      extra_label=f"For {config.get("name")}")
+                      extra_label=f"For {config.get('name')}")
 
 
 def bview_as_hegemony_analysis(all_required_data):
