@@ -50,6 +50,10 @@ def bview_new_members(all_required_data):
         answer = input("Continue anyway? (y/n): ")
         if answer.lower() != "y":
             return   
+        print("Continuing, but separating snapshots into first year and after first year, by halfing the snapshots list.")
+        first_year_snapshots = first_year_snapshots[:len(first_year_snapshots)//2]
+        after_first_year_snapshots = after_first_year_snapshots[len(after_first_year_snapshots)//2:]
+        
     
     if len(after_first_year_snapshots) < 11:
         print(f"Warning: There are only {len(after_first_year_snapshots)} snapshots after the first year. This may not be enough data to analyze new members over time.")
