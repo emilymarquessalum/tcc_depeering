@@ -68,13 +68,13 @@ def bview_new_members(all_required_data):
     new_members_added_over_time = []
     for snapshot in after_first_year_snapshots:
         new_members = set(snapshot.unique_members) - all_members_from_first_year 
-        new_members_added_over_time.append((snapshot.date_as_datetime(), len(new_members)))
+        new_members_added_over_time.append(len(new_members))
         all_members_from_first_year.update(new_members)
  
-    print(f"Unique new members added over time: {sum(count for _, count in new_members_added_over_time)}")
+    print(f"Unique new members added over time: {sum(count for count in new_members_added_over_time)}")
 
     plot_list_as_line_plot(
         new_members_added_over_time,   
-        title="New Members Added Over Time",   
+        title="New Members Added Over Time",    
         ylabel="New Members Added" 
     )
