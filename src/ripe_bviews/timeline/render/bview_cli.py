@@ -13,7 +13,7 @@ init(autoreset=True)
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))  
 
-from src.ripe_bviews.timeline.render.bview_calendar_viz import DataAvailabilityCalendar
+#from src.ripe_bviews.timeline.render.bview_calendar_viz import DataAvailabilityCalendar
 from src.utils.graphs import create_window_with_all_rendered_graphs_this_session 
 from src.ripe_bviews.timeline.bview_vars import get_ip_version   
 from src.ripe_bviews.download_and_parse.load_configs import get_all_configs, load_configs
@@ -299,8 +299,8 @@ try:
             break
 
         elif action == "calendar":
-            app = DataAvailabilityCalendar(config_name=current_config_name)
-            app.run()
+            pass#app = DataAvailabilityCalendar(config_name=current_config_name)
+            #app.run()
             
         elif action == "window":
             create_window_with_all_rendered_graphs_this_session()

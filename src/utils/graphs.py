@@ -2,8 +2,7 @@
 import os
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.patches import Patch
-import numpy as np
-import scienceplots
+import numpy as np  
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
  
