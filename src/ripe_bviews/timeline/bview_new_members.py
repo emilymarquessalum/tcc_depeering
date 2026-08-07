@@ -61,6 +61,8 @@ def bview_new_members(all_required_data):
         if answer.lower() != "y":
             return
 
+    print(f"First year snapshots: {len(first_year_snapshots)}, After first year snapshots: {len(after_first_year_snapshots)}")
+    
     all_members_from_first_year = set()
     for snapshot in first_year_snapshots:
         all_members_from_first_year.update(snapshot.unique_members)
