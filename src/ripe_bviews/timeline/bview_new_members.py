@@ -71,7 +71,10 @@ def bview_new_members(all_required_data):
         new_members_added_over_time.append((snapshot.date_as_datetime(), new_members))
         all_members_from_first_year.update(new_members)
 
-    print(f"Unique new members added over time: {len(set(new_members_added_over_time))}")
+    def flatten(lol):
+        for item in lol:
+            yield from item
+    print(f"Unique new members added over time: {len(set(flatten([m[1] for m in new_members_added_over_time])))}")
 
     plot_list_as_line_plot(new_members_added_over_time,  
                            title="New Members Added Over Time",  
