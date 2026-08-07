@@ -13,7 +13,7 @@ import matplotlib.patches as mpatches
 from definitions import append_roots
 from src.ripe_bviews.timeline.bview_vars import is_tcc_mode
 
-plt.style.use(['science', 'no-latex'])
+#plt.style.use(['science', 'no-latex'])
 
 import warnings
 
