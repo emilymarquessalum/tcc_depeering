@@ -10,6 +10,8 @@
 
 
 
+from datetime import timedelta
+
 from src.utils.graphs import plot_list_as_line_plot
 
 
@@ -39,6 +41,21 @@ def bview_new_members(all_required_data):
             else:
                 after_first_year_snapshots.append(snapshot)
                 passed_first_year = True
+
+    last_first_year_snapshot = first_year_snapshots[-1]
+    last_first_year_snapshot_date = last_first_year_snapshot.date_as_datetime()
+    if last_first_year_snapshot_date < first_snapshot_date + timedelta(days=365):
+        print(f"Warning: The last snapshot in the first year ({last_first_year_snapshot_date}) is less than 365 days after the first snapshot ({first_snapshot_date}).")   
+
+        answer = input("Continue anyway? (y/n): ")
+        if answer.lower() != "y":
+            return   
+    
+    if len(after_first_year_snapshots) < 11:
+        print(f"Warning: There are only {len(after_first_year_snapshots)} snapshots after the first year. This may not be enough data to analyze new members over time.")
+        answer = input("Continue anyway? (y/n): ")
+        if answer.lower() != "y":
+            return
 
     all_members_from_first_year = set()
     for snapshot in first_year_snapshots:
