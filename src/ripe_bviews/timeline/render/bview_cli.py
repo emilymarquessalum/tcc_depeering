@@ -14,7 +14,7 @@ init(autoreset=True)
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))  
 
 #from src.ripe_bviews.timeline.render.bview_calendar_viz import DataAvailabilityCalendar
-from src.utils.graphs import create_window_with_all_rendered_graphs_this_session 
+#from src.utils.graphs import create_window_with_all_rendered_graphs_this_session 
 from src.ripe_bviews.timeline.bview_vars import get_ip_version   
 from src.ripe_bviews.download_and_parse.load_configs import get_all_configs, load_configs
 from src.ripe_bviews.timeline.render.bview_functionalities import functionalities, requirement_functions
