@@ -1,0 +1,28 @@
+{
+    "rrc": "rrc19",
+    "routeserver-folder-name": "route-views.napafrica",
+    "name": "NAPAfrica Johannesburg",
+    "note": "routeviews",
+
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "day_delta": 15,
+
+    "asn_and_prefix": {
+        "note": "I believe this one is specifically for NAPAfrica IX Johannesburg",
+        "asn": "37195",
+        "prefix": "196.60.9.2"
+    },
+    "durban_prefix": "196.10.141.2",
+    "capetown_prefix": "196.60.70.2",
+    "asn_and_prefix_v6": {
+        "asn": "37195",
+        "prefix": "2001:43f8:6d0::2"
+    },
+    "time_delta_hours": 0,
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}

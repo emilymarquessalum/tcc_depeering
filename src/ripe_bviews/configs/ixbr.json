@@ -1,0 +1,36 @@
+{
+    "name": "IX.br S\u00e3o Paulo",
+    "rrc": "rrc15",
+    "routeserver-folder-name": "ix-br.gru",
+    "lookingglass": "https://lg.ix.br/api/v1/routeservers/SP-rs1-v4/neighbors",
+    "use_notes": "can be 'both', 'rrc' or 'routeserver-folder-name'",
+    "use": "both",
+    "peeringdb_ixp_id": 171,
+
+    "start_date": "2023-06-16",
+    "end_date": "2023-06-17",
+
+
+    "start_date": "2025-12-01",
+    "end_date": "2025-12-05",
+
+    "asn_and_prefix": {
+        "note": "below are the asn and prefix from 2026",
+        "asn": "26162",
+        "prefix": "187.16.216.253"
+    },
+    "note": "rrc, ipv4 and ipv6",
+    "day_delta": 1,
+
+    "asn_and_prefix_v6": {
+        "asn": "26162",
+        "prefix": "2001:12f8::253"
+    },
+    "time_delta_hours": 0,
+    "looking_glass": "https://lg.ix.br/routeservers/SP-rs1-v4?s=routes_accepted&o=desc",
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 1
+
+}

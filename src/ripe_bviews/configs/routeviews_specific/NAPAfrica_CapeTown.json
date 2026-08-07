@@ -1,0 +1,26 @@
+{
+    "rrc": "not-available",
+    "arouteserver-folder-name": "? does it get data from route-views.napafrica",
+    "name": "NAPAfrica Cape Town",
+    "note": "prefixes",
+
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "asn_and_prefix": {
+        "asn": "37195",
+        "prefix": "196.60.70.2"
+    },
+    "durban_prefix": "196.10.141.2",
+    "asn_and_prefix_v6": {
+        "asn": "37195",
+        "prefix": "--"
+    },
+    "day_delta": 15,
+
+    "time_delta_hours": 0,
+
+    "temp_start_date": "2023-06-01",
+    "temp_end_date": "2023-06-16",
+    "temp_day_delta": 15
+
+}

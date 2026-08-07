@@ -1,0 +1,7 @@
+{
+    "routeserver-folder-name": "interlan.otp",
+    "name": "interlan",
+    "start_date": "2025-12-01",
+    "end_date": "2026-01-30",
+    "day_delta": 15
+}
