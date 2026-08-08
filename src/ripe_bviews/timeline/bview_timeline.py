@@ -4,6 +4,8 @@ from collections import defaultdict
 import sys
 from pathlib import Path
 
+from src.ripe_bviews.oscillations.bview_timeline_oscillation_metrics import plot_depeerings_over_time
+
 
 
 
@@ -384,8 +386,10 @@ def bview_timeline(all_required_data):
                            max_labels=max_labels, annotations=get_annotations())
 
     
-    plot_change_over_time(all_stats_summarized_by_union, labels, title_start, title_end, subfolder, max_labels, main_title="Union snapshots")
-     
+    #plot_change_over_time(all_stats_summarized_by_union, labels, title_start, title_end, subfolder, max_labels, main_title="Union snapshots")
+    plot_depeerings_over_time(all_stats_summarized_by_union, labels, subfolder, max_labels, title_start="Month Union - ")
+
+    
     plot_list_as_line_plot(reachable_history, labels_summarized, title=f'{title_start} Reachable ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,
                            max_labels=max_labels, annotations=get_annotations())
     
@@ -400,7 +404,7 @@ def bview_timeline(all_required_data):
                            max_labels=max_labels, annotations=get_annotations())
     
 
-    plot_change_over_time(all_stats, labels_summarized, title_start, title_end, subfolder, max_labels, main_title="All snapshots")
+    #plot_change_over_time(all_stats, labels_summarized, title_start, title_end, subfolder, max_labels, main_title="All snapshots")
 
     plot_new_reachables_over_time_by_member_that_added_it(all_stats, labels_summarized, name, ip_version, subfolder, max_labels)
          
