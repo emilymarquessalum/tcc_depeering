@@ -136,6 +136,28 @@ def get_stats_by_analyzed_period(all_stats: list[BGPDumpSnapshotStats], labels: 
     return stats_by_period, labels_by_period
 
 
+def _get_union_history_period_key(stat: BGPDumpSnapshotStats, method: str) -> str:
+    stat_date = stat.date_as_datetime()
+
+    if method == "daily":
+        return stat_date.strftime("%Y-%m-%d")
+    if method == "monthly":
+        return stat_date.strftime("%Y-%m")
+
+    raise ValueError(f"Unsupported union summarization method: {method}. Expected 'daily' or 'monthly'.")
+
+
+def _format_union_history_label(stat: BGPDumpSnapshotStats, method: str) -> str:
+    stat_date = stat.date_as_datetime()
+
+    if method == "daily":
+        return stat_date.strftime("%m/%d/%Y")
+    if method == "monthly":
+        return stat_date.strftime("%m/%Y")
+
+    raise ValueError(f"Unsupported union summarization method: {method}. Expected 'daily' or 'monthly'.")
+
+
 def print_retroactive_loss(all_stats, config, ip_version):
     retroactive = max(int(0.1 * len(all_stats)), 1)
     
@@ -267,6 +289,51 @@ def plot_new_reachables_over_time_by_member_that_added_it(all_stats, labels_summ
     )
 
 
+# summarize method 1: takes the latest snapshot of a given period (e.g., month) and uses it as the representative snapshot for that period
+def bview_summarize_history(all_stats, method="monthly"):
+
+    stats_by_period, labels_by_period = get_stats_by_analyzed_period(all_stats, [stat.date for stat in all_stats], stats_are_daily_separated=True)
+    return stats_by_period, labels_by_period
+
+
+def bview_summarize_via_union_history(all_stats, method="monthly"):
+
+    if not all_stats:
+        return [], []
+
+    summarized_stats = []
+    summarized_labels = []
+
+    current_group = [all_stats[0]]
+    current_period_key = _get_union_history_period_key(all_stats[0], method)
+
+    for stat in all_stats[1:]:
+        stat_period_key = _get_union_history_period_key(stat, method)
+
+        if stat_period_key == current_period_key:
+            current_group.append(stat)
+            continue
+
+        union_stat = current_group[0]
+        for grouped_stat in current_group[1:]:
+            union_stat = union_stat.union_stats(grouped_stat)
+
+        summarized_stats.append(union_stat)
+        summarized_labels.append(_format_union_history_label(current_group[0], method))
+
+        current_group = [stat]
+        current_period_key = stat_period_key
+
+    union_stat = current_group[0]
+    for grouped_stat in current_group[1:]:
+        union_stat = union_stat.union_stats(grouped_stat)
+
+    summarized_stats.append(union_stat)
+    summarized_labels.append(_format_union_history_label(current_group[0], method))
+
+    return summarized_stats, summarized_labels
+
+
 def bview_timeline(all_required_data):
 
     all_stats, labels_summarized, max_labels = all_required_data["timeline"]
@@ -287,6 +354,15 @@ def bview_timeline(all_required_data):
     plot_list_as_line_plot(member_history, labels_summarized,title=f'Member ASes Over Time - {name} - IP{ip_version}', xlabel='Time', ylabel='Number of Member ASes', subfolder=subfolder, 
                            max_labels=max_labels, annotations=get_annotations()
                            )
+
+
+    all_stats_summarized_by_union, labels = bview_summarize_via_union_history(all_stats, method="monthly")
+
+    plot_list_as_line_plot([stat.members for stat in all_stats_summarized_by_union], labels, title=f'Member ASes Over Time - Monthly Union - {name} - IP{ip_version}', xlabel='Time', ylabel='Number of Member ASes', subfolder=subfolder,
+                           max_labels=max_labels, annotations=get_annotations())
+    plot_list_as_line_plot([stat.reachables for stat in all_stats_summarized_by_union], labels, title=f'Reachable ASes Over Time - Monthly Union - {name} - IP{ip_version}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,
+                           max_labels=max_labels, annotations=get_annotations())
+     
     plot_list_as_line_plot(reachable_history, labels_summarized, title=f'{title_start} Reachable ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,
                            max_labels=max_labels, annotations=get_annotations())
     

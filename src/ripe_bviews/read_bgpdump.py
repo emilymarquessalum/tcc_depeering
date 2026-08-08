@@ -36,6 +36,58 @@ class BGPDumpSnapshotStats:
     times_as_was_in_aspath: int = 0
     mappings: dict[str, list[dict]] = field(default_factory=dict) # member_as-> list of dicts with keys "reachable", "prefix" and "as_path"
     prefix_mappings: dict[str, list[dict]] = field(default_factory=dict) # deprecated member_as-> list of string (prefixes)
+
+
+    def union_stats(self, other_stats: BGPDumpSnapshotStats):
+
+        new_unique_members = self.unique_members.union(other_stats.unique_members)
+        new_unique_reachables = self.unique_reachables.union(other_stats.unique_reachables)
+
+        new_mappings = {}
+
+        for member in new_unique_members:
+            other_mappings = other_stats.mappings.get(member, [])
+            current_mappings = self.mappings.get(member, [])
+            
+            new_mappings[member] = []
+
+            current_reachables = {mapping["reachable"] for mapping in current_mappings}
+            other_reachables = {mapping["reachable"] for mapping in other_mappings}
+
+            reachables_to_add = other_reachables - current_reachables
+
+            for mapping in other_mappings:
+                if mapping["reachable"] in reachables_to_add:
+                    new_mappings[member].append(mapping)
+
+            for mapping in current_mappings:
+                if mapping["reachable"] not in other_reachables:
+                    new_mappings[member].append(mapping)
+
+        new_stats = BGPDumpSnapshotStats(
+            asn=self.asn,
+            prefix=self.prefix,
+            date=self.date, 
+            time=self.time,
+            total_lines=None,
+            lines=None,
+            members=len(new_unique_members),
+            reachables=len(new_unique_reachables),
+            one_length_as_paths=None,
+            count_as_origin=None,
+            count_as_member=None,
+            unique_members=new_unique_members,
+            unique_reachables=new_unique_reachables,
+            unique_monitors=self.unique_monitors.union(other_stats.unique_monitors),
+            unique_next_hops_from_monitored_as=self.unique_next_hops_from_monitored_as.union(other_stats.unique_next_hops_from_monitored_as),
+            unique_prefixes_from_monitored_as=self.unique_prefixes_from_monitored_as.union(other_stats.unique_prefixes_from_monitored_as),
+            monitor_to_count={**self.monitor_to_count, **other_stats.monitor_to_count},
+            times_as_was_in_aspath=None,
+            mappings=new_mappings,
+            prefix_mappings={**self.prefix_mappings, **other_stats.prefix_mappings}
+        )
+        return new_stats
+
     def print_summary(self):
         print(f"Monitor: {self.prefix} - AS{self.asn}")
         print(f"Lines in snapshot: {self.total_lines}")
