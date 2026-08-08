@@ -334,6 +334,26 @@ def bview_summarize_via_union_history(all_stats, method="monthly"):
     return summarized_stats, summarized_labels
 
 
+
+def plot_change_over_time(all_stats, labels_summarized, title_start, title_end, subfolder, max_labels,
+                          main_title=None):
+    member_change_over_time = []
+
+    for i in range(1, len(all_stats)):
+        change = len(all_stats[i].unique_members) - len(all_stats[i-1].unique_members)
+        member_change_over_time.append(change)
+    plot_list_as_line_plot(member_change_over_time, labels_summarized[1:], title=f'{title_start} {main_title} Change in Member ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Unique Member ASes - Number of Total Member ASes', subfolder=subfolder,
+                           max_labels=max_labels, annotations=get_annotations())
+ 
+    accumulated_member_change_over_time = []
+    accumulated_change = 0
+    for change in member_change_over_time:
+        accumulated_change += change
+        accumulated_member_change_over_time.append(accumulated_change)
+    plot_list_as_line_plot(accumulated_member_change_over_time, labels_summarized[1:], title=f'{title_start} Accumulated Change in Member ASes Over Time {title_end}', xlabel='Time', ylabel='Accumulated Change in Number of Unique Member ASes', subfolder=subfolder,
+                           max_labels=max_labels, annotations=get_annotations())
+
+
 def bview_timeline(all_required_data):
 
     all_stats, labels_summarized, max_labels = all_required_data["timeline"]
@@ -362,6 +382,9 @@ def bview_timeline(all_required_data):
                            max_labels=max_labels, annotations=get_annotations())
     plot_list_as_line_plot([stat.reachables for stat in all_stats_summarized_by_union], labels, title=f'Reachable ASes Over Time - Monthly Union - {name} - IP{ip_version}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,
                            max_labels=max_labels, annotations=get_annotations())
+
+    
+    plot_change_over_time(all_stats_summarized_by_union, labels, title_start, title_end, subfolder, max_labels, main_title="Union snapshots")
      
     plot_list_as_line_plot(reachable_history, labels_summarized, title=f'{title_start} Reachable ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,
                            max_labels=max_labels, annotations=get_annotations())
@@ -377,20 +400,8 @@ def bview_timeline(all_required_data):
                            max_labels=max_labels, annotations=get_annotations())
     
 
-    member_change_over_time = []
-    for i in range(1, len(all_stats)):
-        change = len(all_stats[i].unique_members) - len(all_stats[i-1].unique_members)
-        member_change_over_time.append(change)
-    plot_list_as_line_plot(member_change_over_time, labels_summarized[1:], title=f'{title_start} Change in Member ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Unique Member ASes - Number of Total Member ASes', subfolder=subfolder,
-                           max_labels=max_labels, annotations=get_annotations())
- 
-    accumulated_member_change_over_time = []
-    accumulated_change = 0
-    for change in member_change_over_time:
-        accumulated_change += change
-        accumulated_member_change_over_time.append(accumulated_change)
-    plot_list_as_line_plot(accumulated_member_change_over_time, labels_summarized[1:], title=f'{title_start} Accumulated Change in Member ASes Over Time {title_end}', xlabel='Time', ylabel='Accumulated Change in Number of Unique Member ASes', subfolder=subfolder,
-                           max_labels=max_labels, annotations=get_annotations())
+    plot_change_over_time(all_stats, labels_summarized, title_start, title_end, subfolder, max_labels, main_title="All snapshots")
+
     plot_new_reachables_over_time_by_member_that_added_it(all_stats, labels_summarized, name, ip_version, subfolder, max_labels)
          
     
