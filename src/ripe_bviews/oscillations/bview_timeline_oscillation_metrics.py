@@ -266,7 +266,7 @@ def plot_depeerings_over_time(all_stats, labels_summarized, subfolder, max_label
     metrics.load_oscillating_lists()
     plot_list_as_line_plot([len(asns) for asns in metrics.all_removed_asns_over_time], labels_summarized[1:], 
 
-                           title="{title_start}Depeerings Over Time", xlabel="Time", ylabel="Number of Depeerings", subfolder=subfolder, max_labels=max_labels, annotations=get_annotations())
+                           title=f"{title_start}Depeerings Over Time", xlabel="Time", ylabel="Number of Depeerings", subfolder=subfolder, max_labels=max_labels, annotations=get_annotations())
 def bview_oscillation_metrics():
 
     config = load_configs("ixbr.json")
