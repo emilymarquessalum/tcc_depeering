@@ -263,6 +263,7 @@ def plot_oscillations_by_time_of_day(metrics, labels, config, title_start, ip_ve
 
 def plot_depeerings_over_time(all_stats, labels_summarized, subfolder, max_labels, title_start=''):
     metrics = calculate_oscillation_metrics(all_stats, snapshots_for_real_depeering=7)
+    metrics.load_oscillating_lists()
     plot_list_as_line_plot([len(asns) for asns in metrics.all_removed_asns_over_time], labels_summarized[1:], 
 
                            title="{title_start}Depeerings Over Time", xlabel="Time", ylabel="Number of Depeerings", subfolder=subfolder, max_labels=max_labels, annotations=get_annotations())
