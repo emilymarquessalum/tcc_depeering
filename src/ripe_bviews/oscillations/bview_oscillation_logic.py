@@ -1,5 +1,7 @@
 
 
+from collections import Counter
+
 from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
 from src.utils.graphs import plot_list_as_line_plot
 
@@ -106,35 +108,44 @@ class OscillationMetrics:
             self.oscillating_end_routes_over_time.append(end_count)
 
     def load_oscillating_lists(self, use_reachables=False):
- 
-        for i in range(1, len(self.all_stats)): 
+        if len(self.all_stats) < 2:
+            return
 
-            previous_asns = self.all_stats[i-1].unique_members if not use_reachables else self.all_stats[i-1].unique_reachables
-            current_asns = self.all_stats[i].unique_members if not use_reachables else self.all_stats[i].unique_reachables
+        # Pre-index oscillation counts for O(1) access
+        start_counts = Counter(
+            idx for info in self.oscillation_info.values() for idx in info.get("start_idxs", [])
+        )
+        end_counts = Counter(
+            idx for info in self.oscillation_info.values() for idx in info.get("end_idxs", [])
+        )
 
-            # ex: [1,2,3] - [1,2] = [3] (3 was removed)
+        for i in range(1, len(self.all_stats)):
+            prev_stat = self.all_stats[i-1]
+            curr_stat = self.all_stats[i]
+
+            previous_asns = prev_stat.unique_reachables if use_reachables else prev_stat.unique_members
+            current_asns = curr_stat.unique_reachables if use_reachables else curr_stat.unique_members
+
             removed_asns = previous_asns - current_asns
-            # ex: [1,2,3] - [2,3] = [1] (1 was added)
             added_asns = current_asns - previous_asns
 
             self.removed_asns_over_time.append(len(removed_asns))
             self.added_asns_over_time.append(len(added_asns))
 
-            #start_count = sum(1 for asn, info in self.oscillation_info.items() if info["start_idx"] == i)
-            #end_count = sum(1 for asn, info in self.oscillation_info.items() if info["end_idx"] == i)
-            start_count = sum(1 for asn, info in self.oscillation_info.items() if i in info["start_idxs"])
-            end_count = sum(1 for asn, info in self.oscillation_info.items() if i in info["end_idxs"])
+            # Time-indexed counts
+            self.oscillating_start_over_time.append(start_counts[i]) 
+            self.oscillating_end_over_time.append(end_counts[i]) 
 
-            self.oscillating_start_over_time.append(start_count) 
-            self.oscillating_end_over_time.append(end_count) 
+            # Added oscillating breakdowns
+            added_osc_count = sum(1 for asn in added_asns if asn in self.oscillation_info)
+            self.added_oscillating_asns_over_time.append(added_osc_count)
+            self.added_non_oscillating_asns_over_time.append(len(added_asns) - added_osc_count)
 
-   
-            
-            oscillating_count = sum(1 for asn in added_asns if asn in self.oscillation_info)
-            non_oscillating_count = len(added_asns) - oscillating_count
-            
-            self.added_oscillating_asns_over_time.append(oscillating_count)
-            self.added_non_oscillating_asns_over_time.append(non_oscillating_count)
+            # Removed oscillating breakdowns (done in-place)
+            removed_osc_count = sum(1 for asn in removed_asns if asn in self.oscillation_info)
+            self.removed_oscillating_asns_over_time.append(removed_osc_count)
+            self.removed_non_oscillating_asns_over_time.append(len(removed_asns) - removed_osc_count)
+
             self.all_added_asns_over_time.append(added_asns)
             self.all_removed_asns_over_time.append(removed_asns)
         

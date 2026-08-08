@@ -1,6 +1,7 @@
     
 
 from collections import defaultdict
+from functools import reduce
 import sys
 from pathlib import Path
 
@@ -315,10 +316,9 @@ def bview_summarize_via_union_history(all_stats, method="monthly"):
         if stat_period_key == current_period_key:
             current_group.append(stat)
             continue
-
-        union_stat = current_group[0]
-        for grouped_stat in current_group[1:]:
-            union_stat = union_stat.union_stats(grouped_stat)
+ 
+        union_stat = reduce(lambda a, b: a.union_stats(b), current_group)
+ 
 
         summarized_stats.append(union_stat)
         summarized_labels.append(_format_union_history_label(current_group[0], method))
