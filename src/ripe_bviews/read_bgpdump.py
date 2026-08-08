@@ -38,7 +38,7 @@ class BGPDumpSnapshotStats:
     prefix_mappings: dict[str, list[dict]] = field(default_factory=dict) # deprecated member_as-> list of string (prefixes)
 
 
-    def union_stats(self, other_stats: BGPDumpSnapshotStats):
+    def union_stats(self, other_stats):
 
         new_unique_members = self.unique_members.union(other_stats.unique_members)
         new_unique_reachables = self.unique_reachables.union(other_stats.unique_reachables)
