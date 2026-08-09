@@ -5,11 +5,13 @@ from collections import defaultdict
 from pathlib import Path
 import sys
 
+from matplotlib import pyplot as plt
+
 # Preserving your setup
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from src.ripe_bviews.timeline.render.bview_functionalities import _get_most_recent_caida_data
 from src.ripe_bviews.timeline.bview_hegemony import _apply_alpha_trimming, get_sorted_asns_from_scores, plot_top5_transit 
-
+from definitions import ROOT_DIR
 
 def calculate_as_hegemony_disk(
     db_path: str, 
@@ -17,7 +19,7 @@ def calculate_as_hegemony_disk(
     alpha: float = 0.34,
     filter_full_feed: bool = True,
     ip_version: str = "v4",
-    v4_threshold: int = 50_000,
+    v4_threshold: int = 100,
     v6_threshold: int = 50_000,
     allowed_viewpoints: Optional[Set[str]] = None  # <-- Added parameter
 ) -> Tuple[Dict[int, float], Set[str]]:            # <-- Now returns (scores, active_viewpoints)
@@ -107,11 +109,15 @@ def calculate_as_hegemony_disk(
                 as_path = [int(x) for x in path_str.split(",") if x]
             except ValueError:
                 continue
-                
+            
+	    
             unique_transits = set(as_path)
             if target_asn is not None and target_asn in unique_transits:
                 unique_transits.remove(target_asn)
-                
+            if len(unique_transits) > 1:
+               pass#unique_transits = list(unique_transits)[1:]
+            else:
+                pass#continue
             for transit_node in unique_transits:
                 transit_vp_weights[transit_node][vp] += weight
                 all_transit_asns.add(transit_node)
@@ -267,7 +273,7 @@ class LargeBViewParser:
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}.db"
-    path = f"/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/{rrc_used}/output_bview.{date}.0000.txt"
+    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.txt"
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
@@ -301,13 +307,112 @@ def compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before
     print("Current placement for past top5:", current_score_placement_for_past_top5)
     print("Previous placement for current top5:", previous_score_placement_for_current_top5)
 
-    caida_data = _get_most_recent_caida_data(None, None)
+    caida_data = None
+    try:
+       caida_data = _get_most_recent_caida_data(None, None)
+    except:
+       pass
 
     plot_top5_transit(hegemony_scores_before, caida_data, asn,  
         ip_version, "", extra_label=f"{date_before} for {rrc_used} - α={alpha}") 
     
     plot_top5_transit(hegemony_scores_after, caida_data, asn,  
         ip_version, "", extra_label=f"{date_after} for {rrc_used} - α={alpha}") 
+    
+
+def compare_hegemony_for_several_dates(
+    asn, alpha, rrc_used, ip_version, date_list
+):
+    hegemony_scores_dict = {}
+    viewpoints_dict = {}
+
+    first_date = date_list[0]
+
+    first_score, first_viewpoints = load_hegemony_for_date(
+        asn, alpha, rrc_used, first_date, ip_version
+    )
+
+    hegemony_scores_dict[first_date] = first_score
+    viewpoints_dict[first_date] = first_viewpoints
+
+    for date in date_list:
+        scores, viewpoints = load_hegemony_for_date(
+            asn, alpha, rrc_used, date, ip_version,
+            allowed_viewpoints=first_viewpoints
+        )
+        hegemony_scores_dict[date] = scores
+        viewpoints_dict[date] = viewpoints
+
+    all_unique_top_fives = set()
+    for date in date_list:
+        print(f"Hegemony scores for {date}:")
+        sorted_asns = get_sorted_asns_from_scores(hegemony_scores_dict[date])
+        all_unique_top_fives.update(sorted_asns[:5])
+
+    unique_asns_list = sorted(list(all_unique_top_fives))
+
+    top_fives_over_time = []
+
+    for date in date_list:
+        all_top_fives_but_in_current_date = []
+        for target_asn in unique_asns_list:
+            if target_asn in hegemony_scores_dict[date]:
+                all_top_fives_but_in_current_date.append(
+                    hegemony_scores_dict[date][target_asn]
+                )
+            else:
+                all_top_fives_but_in_current_date.append(0.0)
+        top_fives_over_time.append(all_top_fives_but_in_current_date)
+
+    # --- Line Plot Implementation with Anti-Occlusion Visual Tricks ---
+    plt.figure(figsize=(12, 6))
+
+    # Line styles and markers to rotate through
+    line_styles = ["-", "--", ":", "-."]
+    markers = ["o", "s", "^", "v", "D", "X", "P"]
+
+    # Calculate small step decreases in linewidth so earlier lines peek out beneath later ones
+    base_linewidth = 6.0
+    width_step = 0.8
+
+    for i, target_asn in enumerate(unique_asns_list):
+        scores_for_asn = [
+            top_fives_over_time[d_idx][i] for d_idx in range(len(date_list))
+        ]
+
+        # Trick 1: Decreasing linewidth for each successive line
+        lw = max(1.5, base_linewidth - (i * width_step))
+
+        # Trick 2: Cycle through styles (solid, dashed, dotted, dash-dot)
+        ls = line_styles[i % len(line_styles)]
+        mk = markers[i % len(markers)]
+
+        # Trick 3: Slight alpha transparency on thicker base lines
+        alpha_val = 0.75 if lw > 3.0 else 1.0
+
+        plt.plot(
+            date_list,
+            scores_for_asn,
+            marker=mk,
+            markersize=7 - (i * 0.4),  # Decreasing marker size
+            linewidth=lw,
+            linestyle=ls,
+            alpha=alpha_val,
+            label=f"ASN {target_asn}",
+        )
+
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Hegemony Score", fontsize=12)
+    plt.title(
+        f"Hegemony Scores Over Time for Top ASNs (Target ASN: {asn})",
+        fontsize=14,
+    )
+    plt.xticks(rotation=45)
+    plt.grid(True, linestyle="--", alpha=0.5)
+
+    plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="ASNs")
+    plt.tight_layout()
+    plt.show()
     
 
 if __name__ == "__main__":
@@ -321,3 +426,5 @@ if __name__ == "__main__":
     alpha = 0.34 
 
     compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after)
+
+    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, ["20240616","20251201", "20260130"])

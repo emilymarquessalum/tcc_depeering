@@ -37,6 +37,9 @@ def save_plot(fig, title, subfolder=None):
         with open(folder + "README.txt", "a") as f:
             f.write("Graph generated on: {}\n".format(__import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     save_fig_file = f'{folder}{title.replace(" ", "_").replace("(", "-").replace(")", "-").lower()}.png'
+
+    # windows doesnt accept saving files with >
+    save_fig_file = save_fig_file.replace(">", "gt").replace("<", "lt") 
     fig.savefig(save_fig_file, bbox_inches='tight')
     print(f"Saved plot to: {save_fig_file}")
     

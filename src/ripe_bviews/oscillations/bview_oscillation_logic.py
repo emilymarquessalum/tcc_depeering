@@ -8,7 +8,7 @@ from src.utils.graphs import plot_list_as_line_plot
 from progress.bar import Bar
 
 class OscillationMetrics:
-    def __init__(self, oscillation_info: dict, total_oscillations: int, all_stats, route_oscillation_info: list = None, snapshots_for_real_depeering: int = 0):
+    def __init__(self, oscillation_info: dict, total_oscillations: int, all_stats, route_oscillation_info: list = None, snapshots_for_real_depeering: int = 0, asn_states: dict = None):
         
         # every key is an AS that oscillated at least once, and the value is a dict with info about the oscillation periods of that AS, comeback times, and presence historic
         self.oscillation_info: dict = oscillation_info
@@ -17,6 +17,7 @@ class OscillationMetrics:
         self.all_stats: list[BGPDumpSnapshotStats] = all_stats
         self.route_oscillation_info: list = route_oscillation_info if route_oscillation_info is not None else []
         self.snapshots_for_real_depeering = snapshots_for_real_depeering
+        self.asn_states: dict = asn_states if asn_states is not None else {}
 
         self.oscillating_start_over_time = []
         self.oscillating_end_over_time = []
@@ -197,7 +198,7 @@ def calculate_oscillation_metrics(all_stats: list[BGPDumpSnapshotStats], use_rea
     attr_name = "unique_reachables" if use_reachables else "unique_members"
 
     num_snapshots = len(all_stats)
-    asn_states = {} # asn -> {state_vars}
+    asn_states = {} # asn -> {state_vars}, will contain all the ASes that have been seen at least once in the snapshots 
     route_states = {} if calculate_routes else None
     last_idx = num_snapshots - 1
 
@@ -343,7 +344,10 @@ def calculate_oscillation_metrics(all_stats: list[BGPDumpSnapshotStats], use_rea
             bar.next()
         bar.finish()
 
-    metrics = OscillationMetrics(oscillation_info, total_oscillations, all_stats, route_oscillation_info, snapshots_for_real_depeering=snapshots_for_real_depeering)
+    metrics = OscillationMetrics(oscillation_info, total_oscillations, all_stats, route_oscillation_info, snapshots_for_real_depeering=snapshots_for_real_depeering,
+
+                        asn_states=asn_states
+                                 )
 
     for asn, state in asn_states.items():
         if state["has_disappeared"] and state["first_absence_idx"] is not None:

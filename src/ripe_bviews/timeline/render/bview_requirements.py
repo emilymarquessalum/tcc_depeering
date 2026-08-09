@@ -99,6 +99,7 @@ def load_timeline(config, ip_version, all_stats=None, load_from_routeviews=False
     print("[DEBUG] loading options - load_from_routeviews:", load_from_routeviews, "load_from_both:", load_from_both)
     all_stats, labels = load_bview_data_timeline_from_configs(config, ip_version=ip_version,
                                                               ignored_dates=["20251205.0000", 
+                                                                             "20251124.0000" # for whatever reason this date didnt load
                                                               ], 
                             load_from_routeviews=load_from_routeviews,
                             load_from_both_routeviews_and_rrc=load_from_both,

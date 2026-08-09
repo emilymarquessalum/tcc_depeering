@@ -214,7 +214,6 @@ def get_sorted_asns_from_scores(hegemony_data):
 
     
 def plot_top5_transit(hegemony_data, caida_data, target_asn, ip_version, subfolder, extra_label=""):
-
     label = f"Grafo Local -> Destino AS{target_asn}" if target_asn else "Grafo Global"
     sorted_asns = get_sorted_asns_from_scores(hegemony_data)
     top_5 = sorted_asns[:5]
@@ -225,29 +224,34 @@ def plot_top5_transit(hegemony_data, caida_data, target_asn, ip_version, subfold
 
     top_5_info = [get_asinfo_from_asn(caida_data, asn) for asn in top_5] if caida_data else None
     top_5_names = [
-        get_formatted_asn_name(
-        info["name"]) for info in top_5_info] if top_5_info else None
+        get_formatted_asn_name(info["name"]) for info in top_5_info
+    ] if top_5_info else None
 
     top_5_info_scope = [info["info_scope"] for info in top_5_info] if top_5_info else None
 
-    group_colors, color_to_group = create_colors_for_groups(top_5_info_scope,
-                                                            overrides={
-                                                                "Global": "lightblue",
-                                                                "South America": "orange",
-                                                                "Regional": "purple"
-                                                            })
-    print(group_colors, color_to_group) 
+    group_colors, color_to_group = create_colors_for_groups(
+        top_5_info_scope,
+        overrides={
+            "Global": "lightblue",
+            "South America": "orange",
+            "Regional": "purple"
+        }
+    )
+    
+    # FIX: Check unique color/group categories instead of length of all bar colors
+    has_multiple_groups = color_to_group is not None and len(color_to_group) > 1
+
     plot_list_as_bar_plot(
         top_5_names if top_5_names else top_5,  
         [hegemony_data[asn] for asn in top_5], 
         extra_labels=[f"AS{asn}" for asn in top_5] if top_5_names else None,
         title=f'Top Transits - {label} (IP{ip_version}) {extra_label}', 
         xlabel='Transit ASN',   
-        colors=group_colors if len(group_colors) > 1 else None,
-        color_labels=color_to_group if len(group_colors) > 1 else None, 
+        colors=group_colors if group_colors else None,
+        color_labels=color_to_group if has_multiple_groups else None, 
         ylabel='AS Hegemony Score (0.0 - 1.0)', 
         subfolder=subfolder
-    ) 
+    )
 
 
 #def bview_compare_start_and_end_hegemony(all_required_data):
