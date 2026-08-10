@@ -347,7 +347,7 @@ def compare_hegemony_for_several_dates(
     for date in date_list:
         print(f"Hegemony scores for {date}:")
         sorted_asns = get_sorted_asns_from_scores(hegemony_scores_dict[date])
-        all_unique_top_fives.update(sorted_asns[:5])
+        all_unique_top_fives.update(sorted_asns[:3])
 
     unique_asns_list = sorted(list(all_unique_top_fives))
 
@@ -427,4 +427,19 @@ if __name__ == "__main__":
 
     compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after)
 
-    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, ["20240616","20251201", "20260130"])
+    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, [
+        
+        #"20220101",
+        "20220630",
+        "20230625",
+        #"20231222",
+        "20240616",
+        #"20241216",
+
+        "20250614",
+        #"20251201",
+        
+        "20260127"
+        ])
+
+ 

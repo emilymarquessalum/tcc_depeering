@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 import datetime 
 from src.ripe_bviews.timeline.bview_vars import get_annotations, get_ip_version, get_subfolder, get_title_end, get_title_start 
-from src.ripe_bviews.bview_labels import summarized_date_labels
+from src.ripe_bviews.bview_labels import get_date_range_title, summarized_date_labels
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data_timeline_from_configs
 from src.ripe_bviews.download_and_parse.load_configs import load_configs, print_config 
 from src.ripe_bviews.oscillations.bview_oscillation_logic import OscillationMetrics, calculate_oscillation_metrics 
@@ -402,7 +402,8 @@ def analyze_asn_changes_between_dates(all_stats, labels, previous_date, current_
         return asns_kept_sorted, asns_lost_sorted
 
 
-def print_depeered_relevance_based_on_routes():
+
+def print_depeered_relevance_based_on_routes(all_stats, labels, start, end, change_in="members"):
     reachables_lost_sorted, reachables_lost_routes_sorted = analyze_asn_changes_between_dates(all_stats, labels, start, end, change_in=change_in)
     members_kept_sorted, members_lost_sorted = analyze_asn_changes_between_dates(all_stats, labels, start, end, change_in="members")
     
@@ -456,7 +457,7 @@ def print_depeered_relevance_based_on_routes():
         print(f"  Match ratio: {match_ratio:.2%}")
 
 
-def print_depeering_event_details():
+def print_depeering_event_details(all_stats, labels, change_in="members"):
     start, end = get_peak_change_dates(all_stats, labels, look_at_added=False,
                                        change_in=change_in)
     print(f"Peak loss between {start} and {end}")
@@ -479,6 +480,7 @@ def plot_added_removed_asnes_over_time(metrics: OscillationMetrics, labels_summa
 def bview_depeering(all_required_data):
 
     oscillation_metrics = all_required_data["oscillations"]
-    plot_added_removed_asnes_over_time(oscillation_metrics, labels_summarized, max_labels=max_labels, title_start=title_start, title_end=title_end, subfolder=subfolder)
+
+    #plot_added_removed_asnes_over_time(oscillation_metrics, labels_summarized, max_labels=max_labels, title_start=title_start, title_end=title_end, subfolder=subfolder)
     
     

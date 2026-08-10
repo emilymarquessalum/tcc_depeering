@@ -1,5 +1,5 @@
 Report for Region-wise IXP Connection Gains vs Losses Over Time for ByteDance (AS396986) - In Route Server
-Generated on: 2026-08-07 15:40:54
+Generated on: 2026-08-09 22:43:25
 
 Gains and Losses by Continent Over Time:
 
@@ -12,8 +12,8 @@ Gains and Losses by Continent Over Time:
     Losses: 0
   Asia Pacific:
     Gains: 2
-      ID 11351: MyIX
       ID 76206: Equinix Singapore
+      ID 11351: MyIX
     Losses: 0
   Africa:
     Gains: 0
@@ -31,16 +31,16 @@ Gains and Losses by Continent Over Time:
 2022_12_01:
   Europe:
     Gains: 4
+      ID 38648: Netnod Stockholm BLUE -- MTU1500: STH-B -- MTU1500
+      ID 76647: France-IX Marseille
       ID 72250: EPIX.Warszawa-KIX
       ID 38646: Netnod Stockholm GREEN -- MTU1500: STH-A -- MTU1500
-      ID 76647: France-IX Marseille
-      ID 38648: Netnod Stockholm BLUE -- MTU1500: STH-B -- MTU1500
     Losses: 0
   North America:
     Gains: 4
       ID 34158: Equinix San Jose
-      ID 16586: Equinix Ashburn
       ID 78560: Equinix Dallas
+      ID 16586: Equinix Ashburn
       ID 34070: SIX Seattle: MTU 1500
     Losses: 0
   Asia Pacific:
@@ -90,27 +90,27 @@ Gains and Losses by Continent Over Time:
 2023_08_01:
   Europe:
     Gains: 7
-      ID 82910: BiX
+      ID 55823: DE-CIX Madrid: DE-CIX Madrid Peering LAN
       ID 56444: DE-CIX Marseille: DE-CIX Marseille Peering LAN
       ID 83950: LONAP: LON0
-      ID 55823: DE-CIX Madrid: DE-CIX Madrid Peering LAN
+      ID 82910: BiX
+      ID 67795: STHIX - Stockholm: STH Peering
       ID 82609: IXPlay Madrid
       ID 67446: InterLAN-IX: InterLAN Peering Network
-      ID 67795: STHIX - Stockholm: STH Peering
     Losses: 0
   North America:
     Gains: 4
-      ID 82250: TorIX
       ID 84236: DE-CIX Phoenix
-      ID 84640: DE-CIX Chicago
+      ID 82250: TorIX
       ID 84315: DE-CIX Dallas: DE-CIX Dallas Peering LAN
+      ID 84640: DE-CIX Chicago
     Losses: 0
   Asia Pacific:
     Gains: 4
       ID 82681: IIX-Jakarta
-      ID 83188: Digital Edge EPIX Jakarta
       ID 84600: CLOUDXCHANGE-CXC
       ID 84493: BBIX Osaka
+      ID 83188: Digital Edge EPIX Jakarta
     Losses: 0
   Africa:
     Gains: 0
@@ -133,8 +133,8 @@ Gains and Losses by Continent Over Time:
   North America:
     Gains: 3
       ID 87649: CIX-ATL
-      ID 85631: FL-IX
       ID 22235: DE-CIX New York: DE-CIX New York Peering LAN
+      ID 85631: FL-IX
     Losses: 0
   Asia Pacific:
     Gains: 1
@@ -162,9 +162,9 @@ Gains and Losses by Continent Over Time:
       ID 87852: 1-IX EU
       ID 87884: Giganet IXN Warsaw: Warsaw local exchange
     Losses: 3
-      ID 68727: MSK-IX Moscow: MSK-IX peering network
       ID 82609: IXPlay Madrid
       ID 73302: Equinix Warsaw
+      ID 68727: MSK-IX Moscow: MSK-IX peering network
   North America:
     Gains: 1
       ID 90129: QIX
@@ -222,8 +222,8 @@ Gains and Losses by Continent Over Time:
 2024_09_01:
   Europe:
     Gains: 2
-      ID 82609: IXPlay Global Peers
       ID 92354: Frys-IX
+      ID 82609: IXPlay Global Peers
     Losses: 0
   North America:
     Gains: 0
@@ -231,10 +231,10 @@ Gains and Losses by Continent Over Time:
       ID 77967: Any2West
   Asia Pacific:
     Gains: 4
-      ID 93446: BKNIX: Bangkok
-      ID 91908: BBIX Manila
-      ID 82857: SGIX: Peering LAN
       ID 91738: GetaFIX Manila: Main
+      ID 93446: BKNIX: Bangkok
+      ID 82857: SGIX: Peering LAN
+      ID 91908: BBIX Manila
     Losses: 0
   Africa:
     Gains: 1
@@ -253,8 +253,8 @@ Gains and Losses by Continent Over Time:
 2025_01_01:
   Europe:
     Gains: 2
-      ID 97109: Namex Rome: VLAN Peering
       ID 96098: GIBIRIX
+      ID 97109: Namex Rome: VLAN Peering
     Losses: 1
       ID 67957: NL-ix: Main
   North America:
@@ -307,80 +307,80 @@ Gains and Losses by Continent Over Time:
   Europe:
     Gains: 0
     Losses: 29
-      ID 82910: BiX
-      ID 38646: Netnod Stockholm GREEN -- MTU1500: STH-A -- MTU1500
-      ID 87852: 1-IX EU
+      ID 79852: ERA-IX Amsterdam
+      ID 43340: DE-CIX Marseille: DE-CIX Marseille Peering LAN
+      ID 97989: SOX Serbia
+      ID 76647: France-IX Marseille
+      ID 72116: France-IX Paris
       ID 33138: BCIX: BCIX Peering LAN
+      ID 67795: STHIX - Stockholm: STH Peering
+      ID 51212: DE-CIX Frankfurt: DE-CIX Frankfurt Peering LAN
+      ID 55823: DE-CIX Madrid: DE-CIX Madrid Peering LAN
+      ID 96208: Namex Rome: VLAN Peering
+      ID 92354: Frys-IX
+      ID 83950: LONAP: LON0
+      ID 96098: GIBIRIX
+      ID 82910: BiX
+      ID 11297: VIX
+      ID 87852: 1-IX EU
+      ID 91064: NetIX: NetIX
+      ID 38646: Netnod Stockholm GREEN -- MTU1500: STH-A -- MTU1500
+      ID 33501: LINX LON1: Main
+      ID 26086: LINX Manchester
+      ID 72250: EPIX.Warszawa
+      ID 67446: InterLAN-IX: InterLAN Peering Network
+      ID 38648: Netnod Stockholm BLUE -- MTU1500: STH-B -- MTU1500
+      ID 82609: IXPlay Global Peers
       ID 72668: MIX-IT
       ID 80218: AMS-IX
-      ID 96098: GIBIRIX
-      ID 82609: IXPlay Global Peers
-      ID 79909: THINX Warsaw
-      ID 51212: DE-CIX Frankfurt: DE-CIX Frankfurt Peering LAN
-      ID 72250: EPIX.Warszawa
-      ID 43340: DE-CIX Marseille: DE-CIX Marseille Peering LAN
-      ID 38648: Netnod Stockholm BLUE -- MTU1500: STH-B -- MTU1500
-      ID 67795: STHIX - Stockholm: STH Peering
-      ID 83950: LONAP: LON0
-      ID 72116: France-IX Paris
-      ID 91064: NetIX: NetIX
       ID 71353: ESpanix Madrid Lower LAN
-      ID 79852: ERA-IX Amsterdam
-      ID 96208: Namex Rome: VLAN Peering
-      ID 33501: LINX LON1: Main
-      ID 76647: France-IX Marseille
-      ID 92354: Frys-IX
-      ID 11297: VIX
-      ID 67446: InterLAN-IX: InterLAN Peering Network
-      ID 26086: LINX Manchester
-      ID 97989: SOX Serbia
-      ID 55823: DE-CIX Madrid: DE-CIX Madrid Peering LAN
       ID 87884: Giganet IXN Warsaw: Warsaw local exchange
+      ID 79909: THINX Warsaw
   North America:
     Gains: 0
     Losses: 14
+      ID 84236: DE-CIX Phoenix
+      ID 77402: Equinix Chicago
       ID 85631: FL-IX
-      ID 16586: Equinix Ashburn
-      ID 22235: DE-CIX New York: DE-CIX New York Peering LAN
       ID 78560: Equinix Dallas
       ID 79273: Digital Realty New York
-      ID 77402: Equinix Chicago
       ID 82250: TorIX
-      ID 84236: DE-CIX Phoenix
       ID 91516: QIX Montreal
+      ID 22235: DE-CIX New York: DE-CIX New York Peering LAN
+      ID 87649: CIX-ATL
+      ID 84766: DE-CIX Dallas: DE-CIX Dallas Peering LAN
+      ID 84640: DE-CIX Chicago
       ID 34070: SIX Seattle: MTU 1500
       ID 34158: Equinix San Jose
-      ID 87649: CIX-ATL
-      ID 84640: DE-CIX Chicago
-      ID 84766: DE-CIX Dallas: DE-CIX Dallas Peering LAN
+      ID 16586: Equinix Ashburn
   Asia Pacific:
     Gains: 0
     Losses: 20
-      ID 91738: GetaFIX Manila: Main
+      ID 87786: JPIX OSAKA
+      ID 89371: JKT-IX: Main
       ID 83188: Digital Edge EPIX Jakarta
+      ID 27359: Equinix Singapore
+      ID 90018: BBIX Thailand: Main
+      ID 91738: GetaFIX Manila: Main
+      ID 97480: DCI Indonesia DCI-IX
+      ID 94807: JPNAP Tokyo: Peering
+      ID 11351: MyIX
+      ID 87087: JPNAP Osaka
+      ID 97478: IIX-Jakarta
+      ID 84492: BBIX Osaka
+      ID 84600: CXC Jakarta
+      ID 89795: THAILAND IX (TH-IX)
       ID 66986: JPIX TOKYO
       ID 87026: BBIX Singapore
-      ID 87087: JPNAP Osaka
-      ID 94807: JPNAP Tokyo: Peering
-      ID 91908: BBIX Manila
-      ID 84600: CXC Jakarta
-      ID 89371: JKT-IX: Main
-      ID 93446: BKNIX (Thailand): Bangkok
-      ID 90018: BBIX Thailand: Main
-      ID 27359: Equinix Singapore
       ID 82857: SGIX: Peering LAN
-      ID 11351: MyIX
-      ID 87786: JPIX OSAKA
-      ID 97478: IIX-Jakarta
-      ID 89795: THAILAND IX (TH-IX)
-      ID 84492: BBIX Osaka
-      ID 97480: DCI Indonesia DCI-IX
+      ID 93446: BKNIX (Thailand): Bangkok
       ID 60558: BBIX Tokyo
+      ID 91908: BBIX Manila
   Africa:
     Gains: 0
     Losses: 2
-      ID 92355: IXPN Lagos
       ID 84771: NAPAfrica IX Johannesburg: Peering
+      ID 92355: IXPN Lagos
   Middle East:
     Gains: 0
     Losses: 1
@@ -388,11 +388,11 @@ Gains and Losses by Continent Over Time:
   South America:
     Gains: 0
     Losses: 5
-      ID 81826: IX.br (PTT.br) Fortaleza: ATM/MPLA
-      ID 85314: IX.br (PTT.br) Rio de Janeiro: ATM/MPLA
-      ID 42321: IX.br (PTT.br) São Paulo: ATM/MPLA
       ID 96863: PIT - Colombia - Bogota
       ID 37421: PIT Santiago - PIT Chile: LAN
+      ID 42321: IX.br (PTT.br) São Paulo: ATM/MPLA
+      ID 81826: IX.br (PTT.br) Fortaleza: ATM/MPLA
+      ID 85314: IX.br (PTT.br) Rio de Janeiro: ATM/MPLA
   Australia:
     Gains: 0
     Losses: 3

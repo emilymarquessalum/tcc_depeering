@@ -47,7 +47,7 @@ def plot_ixp_connections_over_time_by_age_ranges(all_data, all_files, depeered_i
             date_str = match.group(1)
             dates.append(date_str)
             try:
-                snapshot_dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
+                snapshot_dates.append(datetime.strptime(date_str, "%Y_%m_%d"))
             except:
                 snapshot_dates.append(None)
         else:

@@ -9,12 +9,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+from src.caidapeeringdb.ixp_region import analyze_depeering_by_continent
 from src.caidapeeringdb.utils import COMPLETELY_LOST_LABEL, DEPEERED_IXPS_YLABEL, PEERINGDB_SUBFOLDER_PREFIX, PLOT_COLORS, STILL_CONNECTED_LABEL
 
 from src.caidapeeringdb.ixp_times import get_ixp_connections_time_delta, plot_time_in_ixp_distribution
-from src.caidapeeringdb.ixp_overtime_size import plot_ixp_connections_over_time_by_size_ranges
-from src.caidapeeringdb.ixp_overtime_region import plot_ixp_connections_over_time_by_region
-from src.caidapeeringdb.ixp_overtime_times import plot_ixp_connections_over_time_by_age_ranges
+from src.caidapeeringdb.ixp_features.ixp_overtime_size import plot_ixp_connections_over_time_by_size_ranges
+from src.caidapeeringdb.ixp_features.ixp_overtime_region import plot_ixp_connections_over_time_by_region
+from src.caidapeeringdb.ixp_features.ixp_overtime_times import plot_ixp_connections_over_time_by_age_ranges
 from src.utils.graphs import plot_stacked_bar_plot
 from src.caidapeeringdb.ixp_size import analyze_depeering_by_size_ranges, get_largest_ixps_per_continent_of_an_asn, plot_ixp_size_ranges_by_percentage_of_total_loss_connections, plot_ixps_by_size_ranges
 from src.caidapeeringdb.loaders import load_all_files, config
@@ -224,6 +225,8 @@ def get_depeered_ixp_sizes(depeered_ixp_ids, before_data, all_data=None,
     return depeered_ixp_sizes
 
 
+def get_all_content_providers_asns(): # this will be needed to analyze cases where an ICP left 1 specific IXP but not others 
+
 
 if __name__ == "__main__":
 
@@ -244,7 +247,7 @@ if __name__ == "__main__":
 
 
     print(f"Analyzing ASN {asn_to_analyze} ({asns_to_search_for_analysis[0][1]})")
-    #all_ixps = get_unique_ixps_from_data_list([after_data])
+    all_ixps = get_unique_ixps_from_data_list([after_data])
     
 
     # Get IXP distribution by continent
@@ -255,7 +258,6 @@ if __name__ == "__main__":
  
     plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None)
      
-    sys.exit(0)
     #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
     
     
@@ -267,10 +269,9 @@ if __name__ == "__main__":
     #print_depeering_summary(asn_to_analyze, data_structures)
     
     # Analyze and plot by continent
-    #analyze_depeering_by_continent(data_structures, asn_to_analyze, all_ixps)
+    analyze_depeering_by_continent(data_structures, asn_to_analyze, all_ixps)
     
-    depeered_ixp_ids: set[str] = data_structures["depeered_ixp_ids"]
-    depeered_completely_lost_ixp_ids: set[str] = data_structures["completely_lost_ixp_ids"]
+    
     if False:
         #conns = before_data.get("netixlan", {}).get("data", [])
         
@@ -299,8 +300,10 @@ if __name__ == "__main__":
 
         sys.exit(0) 
 
+    depeered_ixp_ids: set[str] = data_structures["depeered_ixp_ids"]
+    depeered_completely_lost_ixp_ids: set[str] = data_structures["completely_lost_ixp_ids"]
 
-    def ixp_sizes_analysis():
+    def ixps_features_analysis():
         all_data = get_all_data(all_files_before_depeering) + get_all_data(all_files_after_depeering)
         
         depeered_ixp_sizes = get_depeered_ixp_sizes(depeered_ixp_ids, after_data,
@@ -310,7 +313,11 @@ if __name__ == "__main__":
         
 
         
-        
+        depeered_ixp_ids
+        completely_lost_ixp_ids
+
+        ixps_that_are_vpps = 
+
 
         all_files = all_files_before_depeering + all_files_after_depeering
         completely_lost_ixp_ids = data_structures["completely_lost_ixp_ids"]
@@ -329,4 +336,4 @@ if __name__ == "__main__":
                                                      depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,
                                                      depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)  
      
-    ixp_sizes_analysis() 
+    ixps_features_analysis() 

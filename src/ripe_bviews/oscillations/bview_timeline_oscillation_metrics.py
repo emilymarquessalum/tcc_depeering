@@ -69,6 +69,7 @@ def plot_member_oscillation_statistics(comeback_times_count: dict, config, title
                             ylabel=number_of_ases_label,
                             subfolder=subfolder)
 
+
 def plot_reachable_oscillation_statistics(reachable_oscillation_metrics, title_start, date_range_title_str, time_delta_title_str, subfolder):
     comeback_times_count_reachables, _ = get_comeback_times_count_from_oscillation_info(reachable_oscillation_metrics.oscillation_info)
     ordered_comeback_times_count_reachables = sorted(comeback_times_count_reachables.items()) 
@@ -267,6 +268,9 @@ def plot_depeerings_over_time(all_stats, labels_summarized, subfolder, max_label
     plot_list_as_line_plot([len(asns) for asns in metrics.all_removed_asns_over_time], labels_summarized[1:], 
 
                            title=f"{title_start}Depeerings Over Time", xlabel="Time", ylabel="Number of Depeerings", subfolder=subfolder, max_labels=max_labels, annotations=get_annotations())
+
+
+
 def bview_oscillation_metrics():
 
     config = load_configs("ixbr.json")

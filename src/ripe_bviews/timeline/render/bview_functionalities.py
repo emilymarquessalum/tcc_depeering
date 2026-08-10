@@ -19,7 +19,7 @@ from src.ripe_bviews.timeline.bview_timeline_reachable_metrics import bview_reac
 from src.ripe_bviews.oscillations.bview_timeline_oscillation_metrics import bview_oscillations
 from src.caidapeeringdb.caidapeeringdb_load import get_most_recent_data
 from src.ripe_bviews.timeline.bview_hegemony import bview_as_hegemony_analysis, bview_hegemony_of_current_ixp
-from src.ripe_bviews.timeline.bview_as_depeer_relevance import bview_depeering 
+from src.ripe_bviews.timeline.bview_as_depeer_relevance import bview_depeering, bview_depeering_routes_impact 
 from src.ripe_bviews.timeline.bview_timeline_routes import bview_timeline_routes
 from src.ripe_bviews.timeline.bview_timeline_vpps_compare import bview_check_for_vpps
 from src.ripe_bviews.timeline.variability import print_variability_metrics
@@ -60,7 +60,10 @@ functionalities = [
     {"name": "new-members", "function": bview_new_members, "description": "New members over time", "requirements": ["timeline"]},
     {"name": "ranking", "function": bview_ranking, "description": "Rankings, like member reachability...", "requirements": ["timeline", "caida_data"]},
     {"name": "reachability_metrics", "function": bview_reachable_metrics, "description": "Reachability metrics over time", "requirements": ["timeline"]},
+
     {"name": "route-analysis", "function": bview_timeline_routes, "description": "Routes over time and other analysis", "requirements": ["timeline"]},
+
+    {"name": "route-impact", "function": bview_depeering_routes_impact, "description": "Route impact analysis", "requirements": ["timeline"]},
 
     {"name": "Looking Glass", "function": bview_looking_glass, "description": "Access Looking Glass data"},
     
