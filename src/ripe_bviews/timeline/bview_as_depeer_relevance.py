@@ -145,9 +145,16 @@ def check_reachable_lost_routes_categories(all_stats, labels_summarized, config,
         all_counts_reachable_lost_but_members_still_connected.append(lost_but_members_still_connected_count)
         all_counts_routes_lost_by_member_departure.append(routes_lost_by_member_departure_count)
         all_counts_routes_lost_member_still_present.append(routes_lost_member_still_present_count)
-    
-    start_date = datetime.strptime(config["start_date"], "%Y-%m-%d")
-    end_date = datetime.strptime(config["end_date"], "%Y-%m-%d")
+
+    if isinstance(config["start_date"], str):
+        start_date = datetime.strptime(config["start_date"], "%Y-%m-%d")
+    else:
+        start_date = config["start_date"]
+
+    if isinstance(config["end_date"], str):
+        end_date = datetime.strptime(config["end_date"], "%Y-%m-%d")
+    else:
+        end_date = config["end_date"]
 
     total_route_loss_map = {}
     for map in all_reachable_lost_routes_but_still_in_ixp_linked_to_path_length_change:
