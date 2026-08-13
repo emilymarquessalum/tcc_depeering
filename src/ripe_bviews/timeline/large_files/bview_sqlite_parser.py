@@ -235,7 +235,7 @@ class LargeBViewParser:
 
     def parse_to_disk(self, file_path: str, chunk_size: int = 100_000, limit: Optional[int] = None):
         self.init_database()
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path)    
         cursor = conn.cursor()
         
         batch = []
@@ -423,6 +423,11 @@ if __name__ == "__main__":
     date_before = "20240616"
  
     asn = 15169
+
+    asn_input = input(f"Enter ASN to analyze (default {asn}): ")
+    if asn_input:
+        asn = int(asn_input)
+        
     alpha = 0.34 
 
     compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after)
