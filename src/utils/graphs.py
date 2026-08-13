@@ -505,6 +505,9 @@ def get_colors():
 def create_colors_for_groups(groups: list[str],
     overrides:dict[str,str]=None
 ) -> tuple[list[str], dict[str, str]]:
+
+    if not groups:
+        return [], {}
     unique_groups = list(set(groups)) 
     color_palette = get_colors()
     if overrides:
