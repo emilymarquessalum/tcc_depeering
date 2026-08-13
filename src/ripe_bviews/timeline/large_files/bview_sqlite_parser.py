@@ -7,6 +7,8 @@ import sys
 
 from matplotlib import pyplot as plt
 
+from src.utils.graphs import save_plot
+
 # Preserving your setup
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from src.ripe_bviews.timeline.render.bview_functionalities import _get_most_recent_caida_data
@@ -440,7 +442,9 @@ def compare_hegemony_for_several_dates(
 
     plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="ASNs")
     plt.tight_layout()
-    plt.show()
+    plt.show() 
+
+    save_plot(fig=plt.gcf(), title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png")
 
 
 
