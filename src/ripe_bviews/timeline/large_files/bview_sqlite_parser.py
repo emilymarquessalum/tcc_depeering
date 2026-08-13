@@ -7,10 +7,10 @@ import sys
 
 from matplotlib import pyplot as plt
 
-from src.utils.graphs import save_plot
 
 # Preserving your setup
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
+from src.utils.graphs import save_plot
 from src.ripe_bviews.timeline.render.bview_functionalities import _get_most_recent_caida_data
 from src.ripe_bviews.timeline.bview_hegemony import _apply_alpha_trimming, get_sorted_asns_from_scores, plot_top5_transit 
 from definitions import ROOT_DIR
