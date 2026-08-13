@@ -404,7 +404,13 @@ def get_most_recent_file():
 def get_most_recent_data():
     most_recent_file = get_most_recent_file()
     if most_recent_file is None:
-        return None
+
+        download_peeringdb_dump("2026_06_30")
+        most_recent_file = get_most_recent_file()
+        if most_recent_file is None:
+            print("Error: No PeeringDB dump files found even after attempting to download the most recent one.")
+            return None  
+     
     return get_data(most_recent_file)
 
 if __name__ == "__main__":
