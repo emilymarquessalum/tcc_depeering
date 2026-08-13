@@ -5,14 +5,18 @@
 # Retrieved 2026-02-12, License - CC BY-SA 4.0
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/data/" 
+
 
 
 #ROOT_DIR = "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/"
 ROOT_DIR2 = "admin:///home/media/test"
 
-ROOT_DIR = os.environ.get("ROOT_DIR", ROOT_DIR)
+ROOT_DIR = os.getenv("ROOT_DIR", ROOT_DIR)
 
 def append_roots(file):
     roots = []
