@@ -419,8 +419,8 @@ if __name__ == "__main__":
     rrc_used = "rrc15"
     ip_version = "v4"
 
-    date_after = "20260130"
-    date_before = "20240616"
+    date_after = "20251112"
+    date_before = "20220601"
  
     asn = 15169
 
