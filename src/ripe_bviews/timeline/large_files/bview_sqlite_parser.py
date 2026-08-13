@@ -271,6 +271,34 @@ class LargeBViewParser:
         print(f"[PARSER] Parsing completed. Records offloaded to {self.db_path}.")
 
 
+def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
+    path = f"{ROOT_DIR}/{rrc_used}/"
+ 
+    files = os.listdir(path)
+ 
+    relevant_files = [f for f in files if f.startswith(f"output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+
+    if not relevant_files:
+        return None, None
+
+    dates = [f.split(".")[1] for f in relevant_files]
+
+    return min(dates), max(dates)
+
+def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version):
+    path = f"{ROOT_DIR}/{rrc_used}/"
+ 
+    files = os.listdir(path)
+ 
+    relevant_files = [f for f in files if f.startswith(f"output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+
+    if not relevant_files:
+        return []
+
+    dates = [f.split(".")[1] for f in relevant_files]
+
+    return sorted(dates)
+
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
     path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
@@ -413,14 +441,13 @@ def compare_hegemony_for_several_dates(
     plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="ASNs")
     plt.tight_layout()
     plt.show()
-    
+
+
 
 if __name__ == "__main__":
     rrc_used = "rrc15"
     ip_version = "v4"
-
-    date_after = "20251112"
-    date_before = "20220601"
+ 
  
     asn = 15169
 
@@ -430,21 +457,10 @@ if __name__ == "__main__":
         
     alpha = 0.34 
 
+    date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
+
     compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after)
 
-    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, [
-        
-        #"20220101",
-        "20220630",
-        "20230625",
-        #"20231222",
-        "20240616",
-        #"20241216",
-
-        "20250614",
-        #"20251201",
-        
-        "20260127"
-        ])
+    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version))
 
  
