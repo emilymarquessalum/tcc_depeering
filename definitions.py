@@ -6,14 +6,14 @@
 
 import os
 
-
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/data/" 
 
 
 #ROOT_DIR = "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/"
 ROOT_DIR2 = "admin:///home/media/test"
 
-ROOT_DIR = "c:\\Users\\Anna_Sales\\"
+ROOT_DIR = os.environ.get("ROOT_DIR", ROOT_DIR)
+
 def append_roots(file):
     roots = []
 
