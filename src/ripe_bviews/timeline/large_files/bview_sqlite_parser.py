@@ -19,7 +19,7 @@ def calculate_as_hegemony_disk(
     alpha: float = 0.34,
     filter_full_feed: bool = True,
     ip_version: str = "v4",
-    v4_threshold: int = 100,
+    v4_threshold: int = 1,
     v6_threshold: int = 50_000,
     allowed_viewpoints: Optional[Set[str]] = None  # <-- Added parameter
 ) -> Tuple[Dict[int, float], Set[str]]:            # <-- Now returns (scores, active_viewpoints)
