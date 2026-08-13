@@ -23,13 +23,16 @@ all_files = get_all_files()
 
 print(all_files[-1])
 data = get_data(all_files[-1])
- 
-with open(Path(__file__).parent / "google_vpps.json", "r") as f:
+
+def get_vpps_list():
+
+    with open(Path(__file__).parent / "google_vpps.json", "r") as f:
         vpps_data = json.load(f)
         vpps_list = vpps_data.get("gold", []) + vpps_data.get("silver", [])
 
+    return vpps_list
 
-
+vpps_list = get_vpps_list()
 
 def get_all_vpps_whose_name_matches_an_ixp_name(vpps, ixps):
     print("total number of vpps to compare with ixps:", len(vpps))

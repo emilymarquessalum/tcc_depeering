@@ -5,8 +5,8 @@
   "loading_method": "data_range",
   "start_folder": "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/",
   "asns_to_search": [
-    [15169, "Google", ["Big Tech", "Cloud", "Search Engine", "FAANG"]],
     [396986, "ByteDance", ["Big Tech", "Cloud", "Social Media"]],
+    [15169, "Google", ["Big Tech", "Cloud", "Search Engine", "FAANG"]],
     [16509, "Amazon", ["Big Tech", "Cloud", "Streaming", "FAANG"]],
     [15133, "EdgeCast", ["Cloud"]],
     [54113, "Fastly", ["CDN"]], 

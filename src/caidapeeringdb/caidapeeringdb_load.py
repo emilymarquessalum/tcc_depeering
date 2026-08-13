@@ -384,7 +384,14 @@ def get_all_files():
 
 def get_file_from_date(date):
     return _folder + f"peeringdb_2_dump_{date}.json"
-    
+
+def get_dates_from_files(all_files):
+    file_date_pattern = re.compile(r"peeringdb_2_dump_(.*?)\.json")
+    dates = []
+    for file in all_files:
+        match = file_date_pattern.search(file)
+        dates.append(match.group(1) if match else "unknown")
+    return dates
 
 def get_most_recent_file():
     all_files = get_all_files()

@@ -1,8 +1,148 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import re
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
-from src.utils.graphs import save_plot
+from src.caidapeeringdb.caidapeeringdb_load import get_asn_from_net
+from src.utils.graphs import clean_title_name, save_plot
 
+
+
+
+def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, route_server_mode="all"):
+   
+    if ixp_ids is None or len(ixp_ids) == 0:
+        raise ValueError("ixp_ids cannot be None or empty")
+    if not isinstance(ixp_ids, (list, tuple, set)):
+        ixp_ids = [ixp_ids]
+
+    target_ixp_ids = [int(ixp_id) for ixp_id in ixp_ids]
+    if not target_ixp_ids:
+        raise ValueError("ixp_ids cannot be empty")
+
+    ixp_name_map = {}
+    if isinstance(ixp_names, dict):
+        for key, value in ixp_names.items():
+            ixp_name_map[int(key)] = value
+    elif isinstance(ixp_names, (list, tuple)):
+        for index, ixp_id in enumerate(target_ixp_ids):
+            if index < len(ixp_names):
+                ixp_name_map[ixp_id] = ixp_names[index]
+    elif isinstance(ixp_names, str) and len(target_ixp_ids) == 1:
+        ixp_name_map[target_ixp_ids[0]] = ixp_names
+
+    snapshot_count = min(len(all_data), len(dates))
+    dates = dates[:snapshot_count]
+    all_data = all_data[:snapshot_count]
+
+    target_ixp_id_set = set(target_ixp_ids)
+    timeline_data = {ixp_id: [] for ixp_id in target_ixp_ids}
+
+    for snapshot_data in all_data:
+        rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
+        non_rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
+
+        for conn in snapshot_data.get("netixlan", {}).get("data", []):
+            ix_id = conn.get("ix_id")
+            if ix_id is None:
+                continue
+
+            try:
+                ix_id = int(ix_id)
+            except (TypeError, ValueError):
+                continue
+
+            if ix_id not in target_ixp_id_set:
+                continue
+
+            asn = get_asn_from_net(conn)
+            if not asn:
+                continue
+
+            if conn.get("is_rs_peer", False):
+                rs_asns_by_ixp[ix_id].add(asn)
+            else:
+                non_rs_asns_by_ixp[ix_id].add(asn)
+
+        for ixp_id in target_ixp_ids:
+            rs_asns = rs_asns_by_ixp[ixp_id]
+            non_rs_asns = non_rs_asns_by_ixp[ixp_id]
+            non_rs_asns.difference_update(rs_asns)
+
+            if route_server_mode == "only_routeserver":
+                peer_count = len(rs_asns)
+            elif route_server_mode == "only_non_routeserver":
+                peer_count = len(non_rs_asns)
+            else:
+                peer_count = len(rs_asns) + len(non_rs_asns)
+
+            timeline_data[ixp_id].append(peer_count)
+
+    plt.figure(figsize=(12, 6))
+
+    for ixp_id in target_ixp_ids:
+        display_name = ixp_name_map.get(ixp_id, f"IXP {ixp_id}")
+        plt.plot(
+            range(len(dates)),
+            timeline_data[ixp_id],
+            alpha=0.2,
+            linewidth=1.2,
+            label=display_name,
+        )
+
+    average_values = []
+    median_values = []
+    for index in range(len(dates)):
+        values_at_index = [timeline_data[ixp_id][index] for ixp_id in target_ixp_ids if index < len(timeline_data[ixp_id])]
+        if values_at_index:
+            average_values.append(float(np.mean(values_at_index)))
+            median_values.append(float(np.median(values_at_index)))
+        else:
+            average_values.append(0.0)
+            median_values.append(0.0)
+
+    plt.plot(range(len(dates)), average_values, color="black", linewidth=3, label="Average")
+    plt.plot(range(len(dates)), median_values, color="dimgray", linewidth=2, linestyle="--", label="Median")
+
+    if route_server_mode == "only_routeserver":
+        mode_label = "RS Peers"
+    elif route_server_mode == "only_non_routeserver":
+        mode_label = "Non-RS Peers"
+    else:
+        mode_label = "Peers"
+
+    ixp_labels = [ixp_name_map.get(ixp_id, f"IXP {ixp_id}") for ixp_id in target_ixp_ids]
+    if len(ixp_labels) == 1:
+        ixp_label = ixp_labels[0]
+    elif len(ixp_labels) <= 3:
+        ixp_label = ", ".join(ixp_labels)
+    else:
+        ixp_label = ", ".join(ixp_labels[:3]) + f" +{len(ixp_labels) - 3} more"
+
+    title = f"Number of {mode_label} at {title_info} Over Time"
+    if ixp_label:
+        title += f" ({ixp_label})"
+
+    if len(dates) > 8:
+        step = max(1, len(dates) // 8)
+        tick_positions = list(range(0, len(dates), step))
+        tick_labels = [dates[i] for i in tick_positions]
+        plt.xticks(tick_positions, tick_labels, rotation=45)
+    else:
+        plt.xticks(range(len(dates)), dates, rotation=45)
+
+    plt.title(title)
+    plt.xlabel("Date")
+    plt.ylabel("Number of Peers")
+    plt.legend()
+    plt.grid(True)
+
+    id_suffix = "_".join(str(ixp_id) for ixp_id in target_ixp_ids)
+    save_plot(
+        plt,
+        clean_title_name(title),
+        subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_overtime/"
+    )
+    plt.close()
 
 def plot_ixp_connections_over_time_by_category(dates, timeline_data, completely_lost_ixp_ids, 
                                                 depeered_nonpeered_ixp_ids,

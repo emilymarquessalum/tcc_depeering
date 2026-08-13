@@ -22,6 +22,10 @@ warnings.filterwarnings('ignore', category=UserWarning, message='.*FigureCanvasA
 # Track graphs rendered in this session
 _session_rendered_graphs = []
 
+
+def clean_title_name(title):
+    return title.replace(" ", "_").replace("(", "-").replace(")", "-").lower()
+
 def save_plot(fig, title, subfolder=None):
     if not os.path.exists(starting_folder):
         os.makedirs(starting_folder)
@@ -36,7 +40,7 @@ def save_plot(fig, title, subfolder=None):
     else:
         with open(folder + "README.txt", "a") as f:
             f.write("Graph generated on: {}\n".format(__import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-    save_fig_file = f'{folder}{title.replace(" ", "_").replace("(", "-").replace(")", "-").lower()}.png'
+    save_fig_file = f'{folder}{clean_title_name(title)}.png'
 
     # windows doesnt accept saving files with >
     save_fig_file = save_fig_file.replace(">", "gt").replace("<", "lt") 

@@ -272,8 +272,8 @@ class LargeBViewParser:
 
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
-    db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}.db"
-    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.txt"
+    db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
+    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)

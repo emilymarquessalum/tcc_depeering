@@ -159,11 +159,11 @@ class OscillationMetrics:
         assert len(self.all_added_asns_over_time) == len(self.all_stats) - 1
         assert len(self.all_removed_asns_over_time) == len(self.all_stats) - 1
         
-        for asns_removed in self.all_removed_asns_over_time:
-            oscillating_count = sum(1 for asn in asns_removed if asn in self.oscillation_info)
-            non_oscillating_count = len(asns_removed) - oscillating_count
-            self.removed_oscillating_asns_over_time.append(oscillating_count)
-            self.removed_non_oscillating_asns_over_time.append(non_oscillating_count)
+        #for asns_removed in self.all_removed_asns_over_time:
+        #    oscillating_count = sum(1 for asn in asns_removed if asn in self.oscillation_info)
+        #    non_oscillating_count = len(asns_removed) - oscillating_count
+        #    self.removed_oscillating_asns_over_time.append(oscillating_count)
+        #    self.removed_non_oscillating_asns_over_time.append(non_oscillating_count)
     
 
 

@@ -1,5 +1,6 @@
 import re
 import numpy as np
+from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
 from src.caidapeeringdb.ixp_overtime import plot_ixp_connections_over_time_by_category
 
@@ -70,11 +71,8 @@ def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_
                 depeered_nonpeered_by_range[range_label].append(ixp_id)
             all_relevant_ixp_ids.add(str(ixp_id))
             
-    # 2. Extract dates from filenames
-    dates = []
-    for file in all_files:
-        match = re.search(r"peeringdb_2_dump_(.*?)\.json", file)
-        dates.append(match.group(1) if match else "unknown")
+   
+    dates = get_dates_from_files(all_files)
         
     # 3. Collect connections over time (efficient pass)
     # Track both completely lost and depeered with non-peered separately

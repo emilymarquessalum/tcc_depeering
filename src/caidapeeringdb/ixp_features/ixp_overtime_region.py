@@ -1,4 +1,5 @@
 import re
+from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
 from src.caidapeeringdb.continent_logic import get_continent_for_ixp
 from src.caidapeeringdb.ixp_overtime import plot_ixp_connections_over_time_by_category
@@ -6,20 +7,7 @@ from src.caidapeeringdb.ixp_overtime import plot_ixp_connections_over_time_by_ca
 
 def plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
                                                depeered_completely_lost_ixp_ids=None, depeered_with_nonpeered_ixp_ids=None):
-    """
-    Plots the number of connections over time for IXPs that were de-peered, 
-    grouped by their region/continent.
-    
-    Args:
-        all_data: List of PeeringDB data snapshots (dicts)
-        all_files: List of filenames corresponding to all_data (to extract dates)
-        depeered_ixp_ids: Set of IXP IDs that were de-peered
-        asn_to_analyze: The ASN that de-peered
-        all_ixps: List of all IXP information dicts
-        depeered_completely_lost_ixp_ids: Set of de-peered IXPs with no connections after de-peering
-        depeered_with_nonpeered_ixp_ids: Set of de-peered IXPs that still have non-peered connections
-    """
-    
+ 
     if depeered_completely_lost_ixp_ids is None:
         depeered_completely_lost_ixp_ids = set()
     if depeered_with_nonpeered_ixp_ids is None:
@@ -50,12 +38,8 @@ def plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_i
             with_nonpeered_by_region[continent] = []
         with_nonpeered_by_region[continent].append(ixp_id)
         all_relevant_ixp_ids.add(str(ixp_id))
-    
-    # 3. Extract dates from filenames
-    dates = []
-    for file in all_files:
-        match = re.search(r"peeringdb_2_dump_(.*?)\.json", file)
-        dates.append(match.group(1) if match else "unknown")
+     
+    dates = get_dates_from_files(all_files)
     
     # 4. Collect connections over time for both groups
     timeline_data = {str(ixp_id): [] for ixp_id in all_relevant_ixp_ids}

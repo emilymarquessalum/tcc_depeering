@@ -7,7 +7,15 @@ from collections import defaultdict
 import numpy as np
 
 
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from src.utils.user_input import confirm_action, finish_actions, start_actions
+
+from src.caidapeeringdb.ixp_features.ixp_over_time_never_connected import plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases
+#from src.google.vpps.vpp_ixps import get_all_vpps_whose_name_matches_an_ixp_name, get_vpps_list
+
+
 
 from src.caidapeeringdb.ixp_region import analyze_depeering_by_continent
 from src.caidapeeringdb.utils import COMPLETELY_LOST_LABEL, DEPEERED_IXPS_YLABEL, PEERINGDB_SUBFOLDER_PREFIX, PLOT_COLORS, STILL_CONNECTED_LABEL
@@ -21,8 +29,10 @@ from src.caidapeeringdb.ixp_size import analyze_depeering_by_size_ranges, get_la
 from src.caidapeeringdb.loaders import load_all_files, config
  
 from src.caidapeeringdb.asns import plot_asns_analysis
-from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
+from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_all_ixps, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
 from src.caidapeeringdb.continent_logic import get_continent_for_ixp, get_data_structures_excluding_continent
+
+
 
 group_focused = config.get("group_focused")
 
@@ -225,7 +235,8 @@ def get_depeered_ixp_sizes(depeered_ixp_ids, before_data, all_data=None,
     return depeered_ixp_sizes
 
 
-def get_all_content_providers_asns(): # this will be needed to analyze cases where an ICP left 1 specific IXP but not others 
+ 
+#def get_all_content_providers_asns(): # this will be needed to analyze cases where an ICP left 1 specific IXP but not others 
 
 
 if __name__ == "__main__":
@@ -246,8 +257,8 @@ if __name__ == "__main__":
     asn_to_analyze = asns_to_search_for_analysis[0][0]  # Get the ASN number from tuple
 
 
-    print(f"Analyzing ASN {asn_to_analyze} ({asns_to_search_for_analysis[0][1]})")
-    all_ixps = get_unique_ixps_from_data_list([after_data])
+    print(f"Analyzing ASN {asn_to_analyze} ({asns_to_search_for_analysis[0][1]})") 
+    all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
     
 
     # Get IXP distribution by continent
@@ -256,7 +267,8 @@ if __name__ == "__main__":
     # Plot IXP distribution
     #plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage)
  
-    plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None)
+    start_actions()
+    confirm_action("Plot asns analysis", lambda: plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None))
      
     #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
     
@@ -269,8 +281,11 @@ if __name__ == "__main__":
     #print_depeering_summary(asn_to_analyze, data_structures)
     
     # Analyze and plot by continent
-    analyze_depeering_by_continent(data_structures, asn_to_analyze, all_ixps)
-    
+
+    confirm_action("Plot depeering by continent", 
+                   lambda: analyze_depeering_by_continent(data_structures, asn_to_analyze, all_ixps))
+        
+  
     
     if False:
         #conns = before_data.get("netixlan", {}).get("data", [])
@@ -313,27 +328,51 @@ if __name__ == "__main__":
         
 
         
-        depeered_ixp_ids
-        completely_lost_ixp_ids
+        
+        
+        #depeered_ixp_ids
+        #completely_lost_ixp_ids
+        
 
-        ixps_that_are_vpps = 
+                
+        all_files = get_all_files()
+
+        print(all_files[-1])
+        data = get_data(all_files[-1])
+
+        #vpps_list = get_vpps_list()
+        #vpps, vpp_names_that_are_ixps, vpp_ixp_ids = get_all_vpps_whose_name_matches_an_ixp_name(vpps_list, get_all_ixps(data))
+         
 
 
         all_files = all_files_before_depeering + all_files_after_depeering
         completely_lost_ixp_ids = data_structures["completely_lost_ixp_ids"]
         depeered_with_nonpeered_ixp_ids = data_structures["depeered_with_nonpeered_ixp_ids"]
+
         
-        # Plot IXP connections over time with de-peering events
-        plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
-                                                     completely_lost_ixp_ids=completely_lost_ixp_ids,
-                                                     depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
+        confirm_action("Plot connections over time by size ranges", lambda: plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
+                                                             completely_lost_ixp_ids=completely_lost_ixp_ids,
+                                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids))
+            
+
         
-        plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
+        confirm_action("Plot connections over time by region", lambda: plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
                                             depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,
                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
+        )
         
-        plot_ixp_connections_over_time_by_age_ranges(all_data, all_files, depeered_ixp_ids, asn_to_analyze,
+        confirm_action("Plot connections over time by time-in-IXP ranges", lambda: 
+            plot_ixp_connections_over_time_by_age_ranges(all_data, all_files, depeered_ixp_ids, asn_to_analyze,
                                                      depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,
                                                      depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)  
-     
+        )
+
+
+
+        confirm_action("Plot connections over time for IXP's that never connected to specific ASNs", lambda:
+            plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases(all_data, all_files, asn_to_analyze, all_ixps)
+        )
+
+        finish_actions()
+
     ixps_features_analysis() 
