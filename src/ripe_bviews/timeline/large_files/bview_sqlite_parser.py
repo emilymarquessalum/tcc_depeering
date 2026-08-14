@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from typing import Tuple, Optional, Dict, Set
+from typing import Tuple, Optional, Dict, Set, List
 from collections import defaultdict
 from pathlib import Path
 import sys
@@ -23,8 +23,8 @@ def calculate_as_hegemony_disk(
     ip_version: str = "v4",
     v4_threshold: int = 1,
     v6_threshold: int = 50_000,
-    allowed_viewpoints: Optional[Set[str]] = None  # <-- Added parameter
-) -> Tuple[Dict[int, float], Set[str]]:            # <-- Now returns (scores, active_viewpoints)
+    allowed_viewpoints: Optional[Set[str]] = None
+) -> Tuple[Dict[int, float], Set[str]]:
     """
     Computes AS Hegemony over huge disk-cached datasets using indexed queries.
     Handles both IPv4 (Path-Weighted) and IPv6 (Unweighted/Classical) protocols dynamically.
@@ -61,22 +61,17 @@ def calculate_as_hegemony_disk(
 
     candidate_vps = set(vp_total_weights.keys())
     if allowed_viewpoints is not None:
-        candidate_vps.update(allowed_viewpoints)
+        candidate_vps.intersection_update(allowed_viewpoints)
 
     for vp in candidate_vps:
-        # 1. Filter against fixed baseline if allowed_viewpoints was specified
-        if allowed_viewpoints is not None and vp not in allowed_viewpoints:
-            dropped_viewpoints += 1
-            continue
-
-        # 2. Check if peer is completely absent from this date's dataset
+        # Check if peer is present
         if vp not in vp_total_weights:
             dropped_viewpoints += 1
             continue
 
         actual_table_size = vp_table_sizes.get(vp, 0)
         
-        # 3. Apply full feed threshold filter
+        # Apply full feed threshold filter
         if filter_full_feed and actual_table_size < chosen_threshold:
             dropped_viewpoints += 1
             continue  
@@ -122,14 +117,10 @@ def calculate_as_hegemony_disk(
             except ValueError:
                 continue
             
-	    
             unique_transits = set(as_path)
             if target_asn is not None and target_asn in unique_transits:
                 unique_transits.remove(target_asn)
-            if len(unique_transits) > 1:
-               pass#unique_transits = list(unique_transits)[1:]
-            else:
-                pass#continue
+
             for transit_node in unique_transits:
                 transit_vp_weights[transit_node][vp] += weight
                 all_transit_asns.add(transit_node)
@@ -138,7 +129,6 @@ def calculate_as_hegemony_disk(
     print("[HEGEMONY] Finalizing distribution trimming mechanics...")
     hegemony_scores = {}
     
-    # Keep ordering consistent for alpha trimming lists
     active_peers_list = list(all_active_peers)
     for asn in all_transit_asns:
         scores = []
@@ -285,30 +275,24 @@ class LargeBViewParser:
 
 def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
     path = f"{ROOT_DIR}/{rrc_used}/"
- 
     files = os.listdir(path)
- 
-    relevant_files = [f for f in files if f.startswith(f"output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
 
     if not relevant_files:
         return None, None
 
     dates = [f.split(".")[1] for f in relevant_files]
-
     return min(dates), max(dates)
 
 def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version):
     path = f"{ROOT_DIR}/{rrc_used}/"
- 
     files = os.listdir(path)
- 
-    relevant_files = [f for f in files if f.startswith(f"output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
 
     if not relevant_files:
         return []
 
     dates = [f.split(".")[1] for f in relevant_files]
-
     return sorted(dates)
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
@@ -323,17 +307,80 @@ def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewp
         db_path, target_asn=asn, alpha=alpha, ip_version=ip_version, allowed_viewpoints=allowed_viewpoints
     ) 
 
-
-def compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after):
-    # 1. Load data for "Before" date and capture its active viewpoints
-    hegemony_scores_before, viewpoints_before = load_hegemony_for_date(
-        asn, alpha, rrc_used, date_before, ip_version
-    )
+def get_active_viewpoints_for_date(
+    asn: int, 
+    rrc_used: str, 
+    date: str, 
+    ip_version: str, 
+    filter_full_feed: bool = True,
+    v4_threshold: int = 1,
+    v6_threshold: int = 50_000
+) -> Set[str]:
+    """Helper to retrieve active viewpoints for a given snapshot without computing full hegemony scores."""
+    db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
+    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
     
-    # 2. Load data for "After" date, restricting it to use ONLY the viewpoints from "Before"
-    hegemony_scores_after, _ = load_hegemony_for_date(
-        asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=viewpoints_before
-    )
+    if not os.path.exists(db_path):
+        parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
+        parser.parse_to_disk(path)
+        
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT viewpoint_peer, COUNT(DISTINCT prefix) 
+        FROM bgp_mappings 
+        GROUP BY viewpoint_peer
+    """)
+    vp_table_sizes = {vp: size for vp, size in cursor.fetchall()}
+
+    query_baseline = "SELECT viewpoint_peer, prefix_weight FROM bgp_mappings WHERE reachable_as = ?"
+    cursor.execute(query_baseline, (asn,))
+
+    vp_total_weights = defaultdict(float)
+    for vp, weight in cursor.fetchall():
+        vp_total_weights[vp] += weight
+
+    conn.close()
+
+    chosen_threshold = v4_threshold if ip_version == "v4" else v6_threshold
+    active_vps = set()
+
+    for vp, total_weight in vp_total_weights.items():
+        actual_table_size = vp_table_sizes.get(vp, 0)
+        if filter_full_feed and actual_table_size < chosen_threshold:
+            continue
+        active_vps.add(vp)
+
+    return active_vps
+
+
+def compare_hegemony_for_two_dates(
+    asn, alpha, rrc_used, ip_version, date_before, date_after, use_strict_viewpoint_filtering: bool = False
+):
+    if use_strict_viewpoint_filtering:
+        print("[VIEWPOINTS] Finding strict intersection of active viewpoints across both dates...")
+        vp_before = get_active_viewpoints_for_date(asn, rrc_used, date_before, ip_version)
+        vp_after = get_active_viewpoints_for_date(asn, rrc_used, date_after, ip_version)
+        strict_allowed_viewpoints = vp_before.intersection(vp_after)
+        print(f"[VIEWPOINTS] Strict filtering retained {len(strict_allowed_viewpoints)} viewpoints present in both dates.")
+
+        hegemony_scores_before, _ = load_hegemony_for_date(
+            asn, alpha, rrc_used, date_before, ip_version, allowed_viewpoints=strict_allowed_viewpoints
+        )
+        hegemony_scores_after, _ = load_hegemony_for_date(
+            asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=strict_allowed_viewpoints
+        )
+    else:
+        # 1. Load data for "Before" date and capture its active viewpoints
+        hegemony_scores_before, viewpoints_before = load_hegemony_for_date(
+            asn, alpha, rrc_used, date_before, ip_version
+        )
+        
+        # 2. Load data for "After" date, restricting it to use ONLY the viewpoints from "Before"
+        hegemony_scores_after, _ = load_hegemony_for_date(
+            asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=viewpoints_before
+        )
 
     sorted_asns_before = get_sorted_asns_from_scores(hegemony_scores_before)
     sorted_asns_after = get_sorted_asns_from_scores(hegemony_scores_after)
@@ -349,39 +396,61 @@ def compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before
 
     caida_data = None
     try:
-       caida_data = _get_most_recent_caida_data(None, None)
+        caida_data = _get_most_recent_caida_data(None, None)
     except:
-       pass
+        pass
 
     plot_top5_transit(hegemony_scores_before, caida_data, asn,  
         ip_version, "", extra_label=f"{date_before} for {rrc_used} - α={alpha}") 
     
     plot_top5_transit(hegemony_scores_after, caida_data, asn,  
         ip_version, "", extra_label=f"{date_after} for {rrc_used} - α={alpha}") 
-    
+
 
 def compare_hegemony_for_several_dates(
-    asn, alpha, rrc_used, ip_version, date_list
+    asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False
 ):
     hegemony_scores_dict = {}
     viewpoints_dict = {}
 
-    first_date = date_list[0]
+    allowed_viewpoints_baseline = None
 
-    first_score, first_viewpoints = load_hegemony_for_date(
-        asn, alpha, rrc_used, first_date, ip_version
-    )
+    if use_strict_viewpoint_filtering:
+        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
+        active_sets = []
+        for d in date_list:
+            vps = get_active_viewpoints_for_date(asn, rrc_used, d, ip_version)
+            active_sets.append(vps)
+        
+        allowed_viewpoints_baseline = set.intersection(*active_sets)
+        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints present across ALL snapshots.")
 
-    hegemony_scores_dict[first_date] = first_score
-    viewpoints_dict[first_date] = first_viewpoints
-
-    for date in date_list[1:]:
-        scores, viewpoints = load_hegemony_for_date(
-            asn, alpha, rrc_used, date, ip_version,
-            allowed_viewpoints=first_viewpoints
+    if allowed_viewpoints_baseline is not None:
+        # Use strict intersection for all dates
+        for date in date_list:
+            scores, viewpoints = load_hegemony_for_date(
+                asn, alpha, rrc_used, date, ip_version,
+                allowed_viewpoints=allowed_viewpoints_baseline
+            )
+            hegemony_scores_dict[date] = scores
+            viewpoints_dict[date] = viewpoints
+    else:
+        # Legacy/Default mode: Use viewpoints active in first date as baseline
+        first_date = date_list[0]
+        first_score, first_viewpoints = load_hegemony_for_date(
+            asn, alpha, rrc_used, first_date, ip_version
         )
-        hegemony_scores_dict[date] = scores
-        viewpoints_dict[date] = viewpoints
+
+        hegemony_scores_dict[first_date] = first_score
+        viewpoints_dict[first_date] = first_viewpoints
+
+        for date in date_list[1:]:
+            scores, viewpoints = load_hegemony_for_date(
+                asn, alpha, rrc_used, date, ip_version,
+                allowed_viewpoints=first_viewpoints
+            )
+            hegemony_scores_dict[date] = scores
+            viewpoints_dict[date] = viewpoints
 
     all_unique_top_fives = set()
     for date in date_list:
@@ -407,11 +476,9 @@ def compare_hegemony_for_several_dates(
     # --- Line Plot Implementation with Anti-Occlusion Visual Tricks ---
     plt.figure(figsize=(12, 6))
 
-    # Line styles and markers to rotate through
     line_styles = ["-", "--", ":", "-."]
     markers = ["o", "s", "^", "v", "D", "X", "P"]
 
-    # Calculate small step decreases in linewidth so earlier lines peek out beneath later ones
     base_linewidth = 6.0
     width_step = 0.8
 
@@ -420,21 +487,16 @@ def compare_hegemony_for_several_dates(
             top_fives_over_time[d_idx][i] for d_idx in range(len(date_list))
         ]
 
-        # Trick 1: Decreasing linewidth for each successive line
         lw = max(1.5, base_linewidth - (i * width_step))
-
-        # Trick 2: Cycle through styles (solid, dashed, dotted, dash-dot)
         ls = line_styles[i % len(line_styles)]
         mk = markers[i % len(markers)]
-
-        # Trick 3: Slight alpha transparency on thicker base lines
         alpha_val = 0.75 if lw > 3.0 else 1.0
 
         plt.plot(
             date_list,
             scores_for_asn,
             marker=mk,
-            markersize=7 - (i * 0.4),  # Decreasing marker size
+            markersize=7 - (i * 0.4),
             linewidth=lw,
             linestyle=ls,
             alpha=alpha_val,
@@ -457,12 +519,9 @@ def compare_hegemony_for_several_dates(
     save_plot(fig=plt.gcf(), title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png")
 
 
-
 if __name__ == "__main__":
     rrc_used = "rrc15"
     ip_version = "v4"
- 
- 
     asn = 15169
 
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
@@ -470,11 +529,16 @@ if __name__ == "__main__":
         asn = int(asn_input)
         
     alpha = 0.34 
+    use_strict_viewpoint_filtering = True   
 
     date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
 
-    compare_hegemony_for_two_dates(asn, alpha, rrc_used, ip_version, date_before, date_after)
+    compare_hegemony_for_two_dates(
+        asn, alpha, rrc_used, ip_version, date_before, date_after, 
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+    )
 
-    compare_hegemony_for_several_dates(asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version))
-
- 
+    compare_hegemony_for_several_dates(
+        asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+    )
