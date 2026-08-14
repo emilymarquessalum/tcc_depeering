@@ -30,6 +30,14 @@ def get_asn_from_net(net):
         print(f"Warning: No ASN found for net entry: {net}")
         return None
     
+def get_ixp_from_net(net):
+    if "ix_id" in net:
+        return net["ix_id"]
+    if "ix" in net:
+        return net["ix"]
+    else:
+        print(f"Warning: No IXP found for net entry: {net}")
+        return None
 
 def ixp_name_short_format(ixp_name):
    return ixp_name.replace("Digital Realty", "DR").replace("New York","NY")[:11]
@@ -165,7 +173,7 @@ def get_all_data(files):
 
 # This function gives us the connections to 
 # IXPs for specific ASNs over time.
-def load_connections_over_time_for_asns(all_files, asns_to_search, connections_should_be="all"):
+def load_connections_over_time_for_asns(all_files, asns_to_search, connections_should_be="all") -> dict[int, list[tuple[str, list[dict]]]]:
     # Normalize asns_to_search to a set for O(1) lookup
     search_ids = {a[0] if isinstance(a, tuple) else a for a in asns_to_search}
     
@@ -206,6 +214,28 @@ def get_connections_for_ixp(ixp_id: int, data, key="netixlan", connections_shoul
 
     return process_connections(ixp_connections, connections_should_be, one_connection_per_ix=False)
 
+
+def get_connections_for_ixp_over_time(ixp_id: int, all_files=None, all_data=None, base_path=None, key="netixlan", connections_should_be="peered"):
+    if base_path is None:
+        base_path = f"{ROOT_DIR}/caida-peeringdb/"
+
+    connections_over_time = []
+
+    assert(all_files is not None or all_data is not None), "Either all_files or all_data must be provided."
+
+    if all_data is None:
+        all_data = []
+        for file in all_files:
+            full_path = os.path.join(base_path, file)
+            with open(full_path, "r") as f:
+                data = json.load(f)
+                all_data.append(data)
+
+    for data in all_data: 
+            ixp_connections = get_connections_for_ixp(ixp_id, data, key=key, connections_should_be=connections_should_be)
+            connections_over_time.append(ixp_connections)
+
+    return connections_over_time
 
 def process_connections(ixp_connections, connections_should_be, one_connection_per_ix=True) -> list[dict]: 
     if not ixp_connections:
@@ -410,7 +440,7 @@ def get_most_recent_data():
         if most_recent_file is None:
             print("Error: No PeeringDB dump files found even after attempting to download the most recent one.")
             return None  
-     
+
     return get_data(most_recent_file)
 
 if __name__ == "__main__":

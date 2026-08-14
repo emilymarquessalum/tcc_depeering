@@ -8,7 +8,8 @@ from src.utils.graphs import clean_title_name, save_plot
 
 
 
-def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, route_server_mode="all"):
+def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, route_server_mode="all",
+                                    title_info="IXPs"):
    
     if ixp_ids is None or len(ixp_ids) == 0:
         raise ValueError("ixp_ids cannot be None or empty")
@@ -140,9 +141,254 @@ def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, ro
     save_plot(
         plt,
         clean_title_name(title),
-        subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_overtime/"
+        subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_overtime"
     )
     plt.close()
+
+def plot_ixp_statistics_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, 
+                                                route_server_mode="all", title_info="IXPs"):
+    """
+    Plots aggregate statistics (average, median, max, and total trend) for IXP connections over time.
+    Individual IXP timelines are plotted lightly in the background without legend entries.
+    """
+    if ixp_ids is None or len(ixp_ids) == 0:
+        raise ValueError("ixp_ids cannot be None or empty")
+    if not isinstance(ixp_ids, (list, tuple, set)):
+        ixp_ids = [ixp_ids]
+
+    target_ixp_ids = [int(ixp_id) for ixp_id in ixp_ids]
+    if not target_ixp_ids:
+        raise ValueError("ixp_ids cannot be empty")
+
+    # Map IXP names for clean title labeling
+    ixp_name_map = {}
+    if isinstance(ixp_names, dict):
+        for key, value in ixp_names.items():
+            ixp_name_map[int(key)] = value
+    elif isinstance(ixp_names, (list, tuple)):
+        for index, ixp_id in enumerate(target_ixp_ids):
+            if index < len(ixp_names):
+                ixp_name_map[ixp_id] = ixp_names[index]
+    elif isinstance(ixp_names, str) and len(target_ixp_ids) == 1:
+        ixp_name_map[target_ixp_ids[0]] = ixp_names
+
+    snapshot_count = min(len(all_data), len(dates))
+    dates = dates[:snapshot_count]
+    all_data = all_data[:snapshot_count]
+
+    target_ixp_id_set = set(target_ixp_ids)
+    timeline_data = {ixp_id: [] for ixp_id in target_ixp_ids}
+
+    # Extract peer connection counts per snapshot
+    for snapshot_data in all_data:
+        rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
+        non_rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
+
+        for conn in snapshot_data.get("netixlan", {}).get("data", []):
+            ix_id = conn.get("ix_id")
+            if ix_id is None:
+                continue
+
+            try:
+                ix_id = int(ix_id)
+            except (TypeError, ValueError):
+                continue
+
+            if ix_id not in target_ixp_id_set:
+                continue
+
+            asn = get_asn_from_net(conn)
+            if not asn:
+                continue
+
+            if conn.get("is_rs_peer", False):
+                rs_asns_by_ixp[ix_id].add(asn)
+            else:
+                non_rs_asns_by_ixp[ix_id].add(asn)
+
+        for ixp_id in target_ixp_ids:
+            rs_asns = rs_asns_by_ixp[ixp_id]
+            non_rs_asns = non_rs_asns_by_ixp[ixp_id]
+            non_rs_asns.difference_update(rs_asns)
+
+            if route_server_mode == "only_routeserver":
+                peer_count = len(rs_asns)
+            elif route_server_mode == "only_non_routeserver":
+                peer_count = len(non_rs_asns)
+            else:
+                peer_count = len(rs_asns) + len(non_rs_asns)
+
+            timeline_data[ixp_id].append(peer_count)
+
+    fig, ax1 = plt.subplots(figsize=(12, 6))
+
+    # Plot individual IXP lines softly in the background on primary axis
+    for ixp_id in target_ixp_ids:
+        ax1.plot(
+            range(len(dates)),
+            timeline_data[ixp_id],
+            color="steelblue",
+            alpha=0.15,
+            linewidth=1.0,
+            zorder=1
+        )
+
+    # Calculate statistical metrics across all target IXPs per snapshot
+    average_values = []
+    median_values = []
+    max_values = []
+    total_values = []
+
+    for index in range(len(dates)):
+        values_at_index = [
+            timeline_data[ixp_id][index] 
+            for ixp_id in target_ixp_ids 
+            if index < len(timeline_data[ixp_id])
+        ]
+        if values_at_index:
+            average_values.append(float(np.mean(values_at_index)))
+            median_values.append(float(np.median(values_at_index)))
+            max_values.append(float(np.max(values_at_index)))
+            total_values.append(float(np.sum(values_at_index)))
+        else:
+            average_values.append(0.0)
+            median_values.append(0.0)
+            max_values.append(0.0)
+            total_values.append(0.0)
+
+    # Plot Max, Average, and Median lines on the Primary Y-Axis
+    line_max = ax1.plot(
+        range(len(dates)), 
+        max_values, 
+        color="darkorange", 
+        linewidth=2.0, 
+        linestyle=":", 
+        label="Max (Highest IXP)",
+        zorder=3
+    )
+    line_avg = ax1.plot(
+        range(len(dates)), 
+        average_values, 
+        color="crimson", 
+        linewidth=2.5, 
+        label=f"Average ({len(target_ixp_ids)} IXPs)",
+        zorder=4
+    )
+    line_med = ax1.plot(
+        range(len(dates)), 
+        median_values, 
+        color="black", 
+        linewidth=2.0, 
+        linestyle="--", 
+        label=f"Median ({len(target_ixp_ids)} IXPs)",
+        zorder=5
+    )
+
+    # Plot Overall Total/Growth Trend on Secondary Y-Axis to preserve visual scale
+    ax2 = ax1.twinx()
+    line_tot = ax2.plot(
+        range(len(dates)), 
+        total_values, 
+        color="forestgreen", 
+        linewidth=2.5, 
+        linestyle="-.", 
+        label="Overall Total (Growth)",
+        zorder=2
+    )
+
+    # Label mode configuration
+    if route_server_mode == "only_routeserver":
+        mode_label = "RS Peers"
+    elif route_server_mode == "only_non_routeserver":
+        mode_label = "Non-RS Peers"
+    else:
+        mode_label = "Peers"
+
+    # Axis Labels
+    ax1.set_xlabel("Date")
+    ax1.set_ylabel(f"Number of {mode_label} (per IXP)")
+    ax2.set_ylabel(f"Total Cumulative {mode_label} (All IXPs)", color="forestgreen")
+    ax2.tick_params(axis='y', labelcolor="forestgreen")
+
+    # Combine handles and labels from both axes for a unified legend
+    lines = line_max + line_avg + line_med + line_tot
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc="upper left")
+
+    # Dynamic Title creation
+    ixp_labels = [ixp_name_map.get(ixp_id, f"IXP {ixp_id}") for ixp_id in target_ixp_ids]
+    if len(ixp_labels) == 1:
+        ixp_label = ixp_labels[0]
+    elif len(ixp_labels) <= 3:
+        ixp_label = ", ".join(ixp_labels)
+    else:
+        ixp_label = f"{len(target_ixp_ids)} IXPs"
+
+    title = f"Statistical Summary of {mode_label} at {title_info} Over Time ({ixp_label})"
+
+    # Date formatting on X axis
+    if len(dates) > 8:
+        step = max(1, len(dates) // 8)
+        tick_positions = list(range(0, len(dates), step))
+        tick_labels = [dates[i] for i in tick_positions]
+        ax1.set_xticks(tick_positions)
+        ax1.set_xticklabels(tick_labels, rotation=45)
+    else:
+        ax1.set_xticks(range(len(dates)))
+        ax1.set_xticklabels(dates, rotation=45)
+
+    plt.title(title)
+    ax1.grid(True, linestyle=":", alpha=0.6)
+
+    # Save and cleanup
+    save_plot(
+        plt,
+        clean_title_name(title),
+        subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_stats_overtime"
+    )
+    plt.close()
+
+def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_ids):
+    """
+    Returns the IXP ID with the highest de-peering ratio at any single snapshot in time.
+    De-peering ratio is defined as (completely lost connections) / (total connections).
+    """
+    if ixp_ids is None or len(ixp_ids) == 0:
+        raise ValueError("ixp_ids cannot be None or empty")
+    if not isinstance(ixp_ids, (list, tuple, set)):
+        ixp_ids = [ixp_ids]
+
+    target_ixp_ids = [int(ixp_id) for ixp_id in ixp_ids]
+    if not target_ixp_ids:
+        raise ValueError("ixp_ids cannot be empty")
+
+    max_depeering_ratio = -1
+    ixp_with_max_ratio = None
+
+    for i in range(1, len(all_data)):
+        snapshot_data = all_data[i]
+        previous_snapshot_data = all_data[i - 1]
+
+        for ixp_id in target_ixp_ids:
+            current_connections = sum(
+                1 for conn in snapshot_data.get("netixlan", {}).get("data", [])
+                if conn.get("ix_id") == ixp_id
+            )
+            previous_connections = sum( 
+                1 for conn in previous_snapshot_data.get("netixlan", {}).get("data", [])
+                if conn.get("ix_id") == ixp_id
+            )
+
+            if previous_connections > 0:
+                depeering_ratio = (previous_connections - current_connections) / previous_connections
+                if depeering_ratio > max_depeering_ratio:
+                    max_depeering_ratio = depeering_ratio
+                    ixp_with_max_ratio = ixp_id
+
+    return ixp_with_max_ratio, max_depeering_ratio
+
+    
+
 
 def plot_ixp_connections_over_time_by_category(dates, timeline_data, completely_lost_ixp_ids, 
                                                 depeered_nonpeered_ixp_ids,

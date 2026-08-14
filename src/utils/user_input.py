@@ -5,7 +5,7 @@ import inquirer
 
 
 lazy_mode_with_menu = True
-
+auto_confirm = True
 
 built_in_menu = []
 
@@ -18,6 +18,10 @@ def start_actions():
 def confirm_action(action, function):
 
 
+    if auto_confirm:
+        print(f"Running: {action}")
+        function()
+        return
     if lazy_mode_with_menu:
             built_in_menu.append((action, function)) 
     else: 
@@ -55,3 +59,28 @@ def finish_actions():
         function()
 
     built_in_menu = []
+
+
+
+def choose_option(options, message, can_give_custom_text=False):
+    choices = options.copy()
+    if can_give_custom_text:
+        choices.append("Custom")
+    
+    question = [
+        inquirer.List(
+            'option',
+            message=message,
+            choices=choices,
+            carousel=True,
+        )
+    ]
+    
+    answer = inquirer.prompt(question)
+    selected_option = answer['option']
+    
+    if selected_option == "Custom":
+        custom_text = input("Enter: ")
+        return custom_text
+    else:
+        return selected_option

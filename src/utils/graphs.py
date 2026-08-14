@@ -24,7 +24,7 @@ _session_rendered_graphs = []
 
 
 def clean_title_name(title):
-    return title.replace(" ", "_").replace("(", "-").replace(")", "-").lower()
+    return title.replace(" ", "_").replace("(", "-").replace(":", "dotdot").replace(")", "-").lower().replace(",", "_and_").replace("//", "/")
 
 def save_plot(fig, title, subfolder=None):
     if not os.path.exists(starting_folder):

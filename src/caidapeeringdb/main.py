@@ -10,7 +10,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.utils.user_input import confirm_action, finish_actions, start_actions
+from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
+from src.utils.user_input import choose_option, confirm_action, finish_actions, start_actions
 
 from src.caidapeeringdb.ixp_features.ixp_over_time_never_connected import plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases
 #from src.google.vpps.vpp_ixps import get_all_vpps_whose_name_matches_an_ixp_name, get_vpps_list
@@ -29,7 +30,7 @@ from src.caidapeeringdb.ixp_size import analyze_depeering_by_size_ranges, get_la
 from src.caidapeeringdb.loaders import load_all_files, config
  
 from src.caidapeeringdb.asns import plot_asns_analysis
-from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_all_ixps, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
+from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_all_ixps, get_connections_for_ixp_over_time, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
 from src.caidapeeringdb.continent_logic import get_continent_for_ixp, get_data_structures_excluding_continent
 
 
@@ -236,7 +237,105 @@ def get_depeered_ixp_sizes(depeered_ixp_ids, before_data, all_data=None,
 
 
  
-#def get_all_content_providers_asns(): # this will be needed to analyze cases where an ICP left 1 specific IXP but not others 
+def get_all_content_providers_asns(asns_to_search):
+    """Get all ASNs that are content providers based on the config."""
+    content_provider_asns = []
+    for asn_tuple in asns_to_search:
+        asn, name, categories = asn_tuple
+        if "ICP" in categories:
+            content_provider_asns.append(asn_tuple)
+    return content_provider_asns
+
+
+def get_depeerings_from_connections_over_time(connections_over_time):
+
+    depeerings = []
+    for i in range(1, len(connections_over_time)):
+        prev_connections = connections_over_time[i-1][1]
+        curr_connections = connections_over_time[i][1]
+        
+        # Check if any previously peered connection is now lost
+        lost_connections = [conn for conn in prev_connections if conn not in curr_connections]
+        
+        if lost_connections:
+            depeerings.append((i, lost_connections))
+
+    return depeerings
+
+
+def find_ixps_that_were_individually_depeered_from_content_providers(all_files, asns_to_search):
+
+    print(asns_to_search)
+    content_providers = get_all_content_providers_asns(asns_to_search)
+
+    connections_over_time_for_asns = load_connections_over_time_for_asns(all_files=all_files, asns_to_search=content_providers, connections_should_be="peered")
+
+    individual_depeerings_by_asn = {}
+    individual_depeerings_by_year = {}
+    for content_provider in content_providers:
+
+        connections_over_time = connections_over_time_for_asns.get(content_provider[0], [])
+
+        depeerings_over_time = get_depeerings_from_connections_over_time(connections_over_time)
+
+        if depeerings_over_time:
+            all_individual_depeerings = []
+
+            for depeering in depeerings_over_time:
+
+                date_from_depeering = all_files[depeering[0]].split("/")[-1].split(".")[0]  # Extract date from filename
+                if len(depeering[1]) == 1:  # Only consider single IXP depeerings
+                    connection = depeering[1][0]
+                    all_individual_depeerings.append((date_from_depeering, connection['name'], connection['ix_id']))  # Store date and lost connection
+                    individual_depeerings_by_year[date_from_depeering] = all_individual_depeerings
+                    individual_depeerings_by_asn[content_provider[0]] = all_individual_depeerings
+
+        print("For content provider ASN", content_provider[0], "(", content_provider[1], "):", len(all_individual_depeerings), "individual depeerings found.")
+        print("Details of individual depeerings (data snapshot index, lost connection):", all_individual_depeerings)
+
+    ixps_that_were_depeered_per_year = defaultdict(set)
+    for date, lost_connections in individual_depeerings_by_year.items():
+        for lost_connection in lost_connections:
+            ixps_that_were_depeered_per_year[date].add(lost_connection[2])  
+
+    for year in sorted(ixps_that_were_depeered_per_year.keys()):
+        plot_ixps_connections_over_time(
+        all_data=get_all_data(all_files),
+        dates=[file.split("/")[-1].split(".")[0] for file in all_files],
+        ixp_ids=ixps_that_were_depeered_per_year[year],
+        title_info="IXPs individually depeered from ICPs in " + year,
+        )
+
+def identify_dead_ixps(all_files, all_ixps) -> set[int]: 
+    dead_ixps = set()
+
+    all_data = get_all_data(all_files[-3:])  
+    
+    for ixp in all_ixps:
+        ixp_id = ixp.get("id")
+        connections_over_time = get_connections_for_ixp_over_time(
+            ixp_id,
+            all_data=all_data,
+            connections_should_be="all"
+        )
+           
+        if all(len(conns) == 0 for conns in connections_over_time):
+            dead_ixps.add(ixp_id)
+
+    return dead_ixps
+
+def bview_analyze_depeering_by_continent(all_required_data):
+
+    before_data = all_required_data["before_data_peeringdb"]
+    after_data = all_required_data["after_data_peeringdb"]
+    all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
+
+
+    asn_to_analyze = choose_option([asn[0] for asn in asns_to_search], "ASN to analyze", can_give_custom_text=True)
+    
+    data_structures = build_asn_ixp_data_structures(asn_to_analyze, before_data, after_data, all_ixps)
+
+    analyze_depeering_by_continent(data_structures, asn_to_analyze, all_required_data["all_ixps"])
 
 
 if __name__ == "__main__":
@@ -257,9 +356,17 @@ if __name__ == "__main__":
     asn_to_analyze = asns_to_search_for_analysis[0][0]  # Get the ASN number from tuple
 
 
+
+    #find_ixps_that_were_individually_depeered_from_content_providers(all_files, asns_to_search)
+    #sys.exit(0)  
+
     print(f"Analyzing ASN {asn_to_analyze} ({asns_to_search_for_analysis[0][1]})") 
     all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
-    
+    print(f"Total unique IXPs in both snapshots: {len(all_ixps)}")
+
+    #print(f"Dead IXPs (no connections for >3 snapshots): {len(dead_ixps)}")
+    #sys.exit(0)  
+
 
     # Get IXP distribution by continent
     #ixp_by_continent_count, ixp_by_continent_count_percentage, _ = get_ixps_by_continent_count(all_files_after_depeering)
@@ -352,6 +459,7 @@ if __name__ == "__main__":
         
         confirm_action("Plot connections over time by size ranges", lambda: plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
                                                              completely_lost_ixp_ids=completely_lost_ixp_ids,
+                                                             ixp_names={ixp["id"]: ixp["name"] for ixp in all_ixps},
                                                              depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids))
             
 
@@ -368,11 +476,12 @@ if __name__ == "__main__":
         )
 
 
-
-        confirm_action("Plot connections over time for IXP's that never connected to specific ASNs", lambda:
-            plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases(all_data, all_files, asn_to_analyze, all_ixps)
+        dead_ixps = identify_dead_ixps(all_files, all_ixps)
+        all_ixps_valid = [ixp for ixp in all_ixps if ixp.get("id") not in dead_ixps]
+        confirm_action("Plot connections over time for IXP's that never connected to specific ASNs", lambda: 
+            plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases(all_data, all_files, asn_to_analyze, all_ixps_valid)
         )
 
-        finish_actions()
+        finish_actions() 
 
     ixps_features_analysis() 

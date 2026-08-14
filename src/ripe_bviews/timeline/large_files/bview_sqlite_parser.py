@@ -59,19 +59,29 @@ def calculate_as_hegemony_disk(
     dropped_viewpoints = 0
     chosen_threshold = v4_threshold if ip_version == "v4" else v6_threshold
 
-    for vp, total_weight in vp_total_weights.items():
-        # FILTER: If an allowed list is provided, drop any collector not in it
+    candidate_vps = set(vp_total_weights.keys())
+    if allowed_viewpoints is not None:
+        candidate_vps.update(allowed_viewpoints)
+
+    for vp in candidate_vps:
+        # 1. Filter against fixed baseline if allowed_viewpoints was specified
         if allowed_viewpoints is not None and vp not in allowed_viewpoints:
+            dropped_viewpoints += 1
+            continue
+
+        # 2. Check if peer is completely absent from this date's dataset
+        if vp not in vp_total_weights:
             dropped_viewpoints += 1
             continue
 
         actual_table_size = vp_table_sizes.get(vp, 0)
         
+        # 3. Apply full feed threshold filter
         if filter_full_feed and actual_table_size < chosen_threshold:
             dropped_viewpoints += 1
             continue  
             
-        vp_active_weights[vp] = total_weight
+        vp_active_weights[vp] = vp_total_weights[vp]
         
     all_active_peers = set(vp_active_weights.keys())
     n_viewpoints = len(all_active_peers)
@@ -365,7 +375,7 @@ def compare_hegemony_for_several_dates(
     hegemony_scores_dict[first_date] = first_score
     viewpoints_dict[first_date] = first_viewpoints
 
-    for date in date_list:
+    for date in date_list[1:]:
         scores, viewpoints = load_hegemony_for_date(
             asn, alpha, rrc_used, date, ip_version,
             allowed_viewpoints=first_viewpoints

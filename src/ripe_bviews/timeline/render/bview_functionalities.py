@@ -1,6 +1,7 @@
 import sys 
 from pathlib import Path
 
+from src.caidapeeringdb.main import bview_analyze_depeering_by_continent, load_timeline_data
 from src.ripe_bviews.routeserver.bview_timeline_lookingglass import bview_looking_glass
 from src.ripe_bviews.timeline.bview_new_members import bview_new_members 
 
@@ -17,7 +18,7 @@ from src.ripe_bviews.timeline.bview_timeline_by_ip_version import bview_timeline
 from src.ripe_bviews.timeline.bview_timeline_as import check_asn_connection, check_asn_connection_for_relevant_ases
 from src.ripe_bviews.timeline.bview_timeline_reachable_metrics import bview_reachable_metrics
 from src.ripe_bviews.oscillations.bview_timeline_oscillation_metrics import bview_oscillations
-from src.caidapeeringdb.caidapeeringdb_load import get_most_recent_data
+from src.caidapeeringdb.caidapeeringdb_load import get_data, get_most_recent_data
 from src.ripe_bviews.timeline.bview_hegemony import bview_as_hegemony_analysis, bview_hegemony_of_current_ixp
 from src.ripe_bviews.timeline.bview_as_depeer_relevance import bview_depeering, bview_depeering_routes_impact 
 from src.ripe_bviews.timeline.bview_timeline_routes import bview_timeline_routes
@@ -33,12 +34,32 @@ def _get_most_recent_caida_data(config, ip_version, all_stats=None):
 
 
 
+def _get_before_data(config, ip_version, all_stats=None):
+
+    config_path = str(Path(__file__).parent.parent.parent) + "/caidapeeringdb/"
+    all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
+    
+    before_data = get_data(all_files_before_depeering[-1])
+
+    return before_data
+
+
+
+def _get_after_data(config, ip_version, all_stats=None):
+    config_path = str(Path(__file__).parent.parent.parent) + "/caidapeeringdb/"
+    all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
+    after_data = get_data(all_files_after_depeering[-1])
+
+    return after_data
+
  
 requirement_functions = {
     "timeline": load_timeline,
     "timeline_weekly": load_timeline_weekly,
     "all_routeviews_timelines_first_date": load_all_routeviews_timelines_first_date,
     "oscillations": load_oscillations,
+    "before_data_peeringdb": _get_before_data,
+    "after_data_peeringdb": _get_after_data, 
     "caida_data": _get_most_recent_caida_data,
     "load_bview_asn_data_timeline_from_configs": load_bview_asn_data_timeline_from_configs,
 }
@@ -53,6 +74,16 @@ functionalities = [
             {"name": "load-first-date-of-routeviews-timelines", "function": load_all_routeviews_timelines_first_date_function, "description": "Load first date of all RouteViews timelines (used for AS Hegemony analysis)", "requirements": []},
 
             {"name": "load_asn_collector_rrc_data", "function": load_asn_collector_rrc_data, "description": "Load data from current collector, filtered by ASN", "requirements": []},
+        ]
+    },
+    {
+        "name": "PeeringDB Peering",
+        "submenu": [
+
+            {"name": "depeering-by-continent", "function": bview_analyze_depeering_by_continent, "description": "Analyze depeering events by continent", "requirements": [
+                "before_data_peeringdb", "after_data_peeringdb", 
+            ]},
+
         ]
     },
    # {"name": "temp-LACNICtest",     "function": lacnic_delegation_analysis,       "requirements": ["timeline", "caida_data"]},
