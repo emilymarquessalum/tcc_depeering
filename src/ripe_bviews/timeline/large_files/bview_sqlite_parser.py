@@ -506,7 +506,7 @@ def compare_hegemony_for_several_dates(
     plt.xlabel("Date", fontsize=12)
     plt.ylabel("Hegemony Score", fontsize=12)
     plt.title(
-        f"Hegemony Scores Over Time for Top ASNs (Target ASN: {asn})",
+        f"Hegemony Scores Over Time for Top ASNs (Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})",
         fontsize=14,
     )
     plt.xticks(rotation=45)
