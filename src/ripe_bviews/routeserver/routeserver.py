@@ -27,25 +27,28 @@ def load_all_routeserver_data_from_date(date, ixp, routeserver_name) -> dict[str
 
     path = ROUTESERVER_PATH + date + "/" + ixp + "/neighbors"
 
-    
-    available_dates = os.listdir(path)
+    try:
 
-    if len(available_dates) == 0:
+        available_dates = os.listdir(path)
+
+        if len(available_dates) == 0:
+            return None
+        
+        asn_to_data_mapping = {}
+
+        for available_date_file in available_dates:
+            with open(path + "/" + available_date_file) as f:
+                file_data = json.load(f)
+                asns_data = file_data[routeserver_name]["neighbors"]
+
+                for asn_specific_data in asns_data:
+
+                    asn = asn_specific_data["asn"]
+                    asn_to_data_mapping[asn] = asn_specific_data # asn, routes_received, routes_filtered, routes_accepted, routes_exported
+
+        return asn_to_data_mapping
+    except:
         return None
-    
-    asn_to_data_mapping = {}
-
-    for available_date_file in available_dates:
-        with open(path + "/" + available_date_file) as f:
-            file_data = json.load(f)
-            asns_data = file_data[routeserver_name]["neighbors"]
-
-            for asn_specific_data in asns_data:
-
-                asn = asn_specific_data["asn"]
-                asn_to_data_mapping[asn] = asn_specific_data # asn, routes_received, routes_filtered, routes_accepted, routes_exported
-
-    return asn_to_data_mapping
 
 def get_empty_asn_data(asn):
     return {
