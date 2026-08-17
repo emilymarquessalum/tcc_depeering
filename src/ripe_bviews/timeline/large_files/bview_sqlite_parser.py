@@ -564,27 +564,26 @@ def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version,
     plt.plot(
         date_list,
         [hegemony[0] for hegemony in hegemony_over_time_vpp_or_not_vpp], # vpp
-        label="VPP Hegemony",
-        marker="o", 
+        label="VPP Hegemony", 
     )
 
     plt.plot(
         date_list,
         [hegemony[1] for hegemony in hegemony_over_time_vpp_or_not_vpp], # not vpp
-        label="Non-VPP Hegemony",
-        marker="0"
+        label="Non-VPP Hegemony", 
     )
 
     plt.ylabel("Hegemony")
     plt.xlabel("Date")
     plt.grid(True, linestyle="--", alpha=0.5)
+    plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="Is-VPP")
     plt.show()
     save_plot(fig=plt.gcf(), title=f"hegemony_over_time_by_vpp_feature_{asn}_{rrc_used}_{ip_version}.png")
 
 
 
 if __name__ == "__main__":
-    rrc_used = "rrc15"
+    rrc_used = "rrc03"
     ip_version = "v4"
     asn = 15169
 
