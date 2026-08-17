@@ -37,7 +37,7 @@ def load_all_routeserver_data_from_date(date, ixp, routeserver_name) -> dict[str
 
     for available_date_file in available_dates:
         with open(path + "/" + available_date_file) as f:
-            file_data = json.loads(f)
+            file_data = json.load(f)
             asns_data = file_data[routeserver_name]["neighbors"]
 
             for asn_specific_data in asns_data:
