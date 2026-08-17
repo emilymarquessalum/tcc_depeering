@@ -46,10 +46,10 @@ def create_list_of_vpp_asns_from_names():
         if index_of_underline != -1:
             isp_name_first_line = isp_name_first_line[:index_of_underline]
 
-        index_of_hyphen = isp_name_first_line.find("-")
-
-        if index_of_hyphen != -1:
-            isp_name_first_line = isp_name_first_line[:index_of_hyphen]
+        # cant remove "-". Example: "DE-CIX" becomes "DE".
+        #index_of_hyphen = isp_name_first_line.find("-")
+        #if index_of_hyphen != -1:
+        #    isp_name_first_line = isp_name_first_line[:index_of_hyphen]
 
         isp_name_first_line_without_as_in_the_start = isp_name_first_line[2:] if isp_name_first_line[:2] == "AS" else None 
 

@@ -53,11 +53,11 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "KBP+"
     },
-    "13646": {
-        "isp_name": "Consorzio Topix - Torino e Piemonte Exchange Point\ntop-ix.org",
-        "isp_link": "https://www.top-ix.org/en/",
-        "sales_region": "Europe",
-        "metros_with_multiple_pnis": "MIL+"
+    "6066": {
+        "isp_name": "Media Cepat Indonesia (RAPIDNET)\nrapid.net.id",
+        "isp_link": "https://rapid.net.id/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+, SIN"
     },
     "19029": {
         "isp_name": "Dataforest GmbH",
@@ -143,11 +143,11 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "FRA+"
     },
-    "4436": {
-        "isp_name": "T-Mobile USA\nt-mobile.com",
-        "isp_link": "https://www.t-mobile.com/business",
-        "sales_region": "North America",
-        "metros_with_multiple_pnis": "ATL+, DEN+, DFW, IAD+, LAX+, LGA+, MIA, ORD, PHX, SEA, SFO"
+    "3300": {
+        "isp_name": "I-ON Internet\ni-on.in",
+        "isp_link": "https://i-on.in/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "BOM+"
     },
     "134858": {
         "isp_name": "iForce Networks\nmylink.co.in",
@@ -203,13 +203,13 @@
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "DEL+"
     },
-    "25394": {
-        "isp_name": "MK-NETZDIENSTE-AS\nmk.de",
-        "isp_link": "https://www.mk.de/",
-        "sales_region": "Europe",
-        "metros_with_multiple_pnis": "FRA+"
+    "4436": {
+        "isp_name": "GTT\ngtt.net",
+        "isp_link": "https://www.gtt.net/us-en/services/managed-networking/internet/ip-transit/",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",
+        "metros_with_multiple_pnis": "AMS, ATL, DFW, FRA+, IAD+, LAX+, LGA+, LHR+, MIA, MIL, MRS, ORD, PAR, PRG, SEA, SFO, YYZ"
     },
-    "22957": {
+    "894": {
         "isp_name": "Ninja-Connect\nninja-ix.net",
         "isp_link": "http://www.ninja-ix.net/connect.html",
         "sales_region": "North America",
@@ -280,6 +280,12 @@
         "isp_link": "https://smartnetgroup.gr/tier-2-carrier-services/",
         "sales_region": "Africa,\nEurope",
         "metros_with_multiple_pnis": "MRS+"
+    },
+    "328959": {
+        "isp_name": "SoftCall\nzessnetworks.com",
+        "isp_link": "https://www.zessnetworks.com/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "BOM+"
     },
     "264262": {
         "isp_name": "Somcable Submarine Network\nsomcablesubnet.com",
@@ -359,7 +365,7 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "LHR+"
     },
-    "7132": {
+    "50263": {
         "isp_name": "1-IX EU\n1-ix.eu",
         "isp_link": "https://1-ix.eu/",
         "sales_region": "Europe",
@@ -437,6 +443,12 @@
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
         "metros_with_multiple_pnis": "CGK, SIN+"
     },
+    "13646": {
+        "isp_name": "Chief Telecom\nen.chief.com.tw",
+        "isp_link": "https://en.chief.com.tw/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "NRT+, TSA+"
+    },
     "23951": {
         "isp_name": "Citranet\ncitra.net.id",
         "isp_link": "https://www.citra.net.id/",
@@ -467,7 +479,7 @@
         "sales_region": "North America",
         "metros_with_multiple_pnis": "ATL, DEN, DFW, IAD+, LAX+, LGA+, MIA, ORD+, SEA+, SFO+, SLC"
     },
-    "36824": {
+    "33891": {
         "isp_name": "CORE-BACKBONE\ncore-backbone.com",
         "isp_link": "https://www.core-backbone.com/",
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
@@ -497,7 +509,7 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "FRA, KBP+"
     },
-    "5769": {
+    "6695": {
         "isp_name": "DE-CIX (Layer 3 Service)\nde-cix.net",
         "isp_link": "https://www.de-cix.net/en/services/google-verified-peering-provider",
         "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America",
@@ -672,10 +684,10 @@
         "metros_with_multiple_pnis": "FRA, SOF+"
     },
     "6762": {
-        "isp_name": "Telecom Italia Sparkle\ntisparkle.com",
-        "isp_link": "https://www.tisparkle.com/contact-us/contact-us",
-        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America",
-        "metros_with_multiple_pnis": "ARN, BOG, EZE, FRA+, GRU, IAD, LAX, LIS, MAD, MIA, MIL, MRS, PAR, SCL, SIN, SOF+"
+        "isp_name": "TELEHOUSE AD\ntelehouse.bg",
+        "isp_link": "http://www.telehouse.bg/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+, MIL, SOF+"
     },
     "55685": {
         "isp_name": "Jala Lintas Media\njlm.net.id",
@@ -736,12 +748,6 @@
         "isp_link": "https://www.lwlcom.net/ip-transit",
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "AMS, FRA+, HAM, MUC"
-    },
-    "6066": {
-        "isp_name": "Media Cepat Indonesia (RAPIDNET)\nrapid.net.id",
-        "isp_link": "https://rapid.net.id/",
-        "sales_region": "Asia-Pacific",
-        "metros_with_multiple_pnis": "CGK+, SIN"
     },
     "131293": {
         "isp_name": "National Telecom Public Company Limited (NT)\nntplc.co.th",
@@ -863,6 +869,12 @@
         "sales_region": "Asia-Pacific,\nOceania",
         "metros_with_multiple_pnis": "MEL, SIN, SYD+"
     },
+    "21928": {
+        "isp_name": "T-Mobile USA\nt-mobile.com",
+        "isp_link": "https://www.t-mobile.com/business",
+        "sales_region": "North America",
+        "metros_with_multiple_pnis": "ATL+, DEN+, DFW, IAD+, LAX+, LGA+, MIA, ORD, PHX, SEA, SFO"
+    },
     "8400": {
         "isp_name": "Telekom Srbija\ntelekomsrbija.com",
         "isp_link": "https://telekomsrbija.com/",
@@ -952,12 +964,6 @@
         "isp_link": "https://vtal.com/",
         "sales_region": "Latin America",
         "metros_with_multiple_pnis": "BOG, EZE, GRU+, MIA, RIO+"
-    },
-    "24961": {
-        "isp_name": "WIIT - THE PREMIUM CLOUD\nwiit.cloud",
-        "isp_link": "https://www.wiit.cloud/",
-        "sales_region": "Europe",
-        "metros_with_multiple_pnis": "AMS, FRA+, MIL, MUC, ZRH+"
     },
     "203090": {
         "isp_name": "Windstream Communication Ltd\nwindstreamcommunication.net",
