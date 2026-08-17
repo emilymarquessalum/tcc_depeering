@@ -242,7 +242,7 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
 
     no_routes_exported = 0
     for asn in completely_silent_asns:
-        routes_exported = asn_to_routes_map[asn]['routes_exported']
+        routes_exported = [asn_to_routes_map[asn]]['routes_exported']
         if routes_exported == 0:
             no_routes_exported += 1
     #followup question, how many have more than 50% visibility 

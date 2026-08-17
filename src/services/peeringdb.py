@@ -1,3 +1,5 @@
+from time import sleep
+
 import requests
 
  
@@ -16,7 +18,22 @@ def get_asns_by_name(isp_name):
         return data
     else:
         print("Error fetching data")
- 
+
+
+def get_asns_by_name_options(isp_names):
+
+    for isp in isp_names:
+
+        if isp is None:
+            continue
+
+        data = get_asns_by_name(isp)
+
+        if data is not None and len(data) > 0:
+            return data
+
+        sleep(3)
+        
 
 
 def get_peeringdb_info(asn):

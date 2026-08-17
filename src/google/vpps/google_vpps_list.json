@@ -1,9 +1,33 @@
 {
+    "28283": {
+        "isp_name": "Adylnet Telecom\nadyl.com.br",
+        "isp_link": "https://adyl.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
+    },
+    "137085": {
+        "isp_name": "Anonet Communications Private Limited\nanonet.in",
+        "isp_link": "https://anonet.in/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "BOM, DEL+, MAA"
+    },
     "52780": {
         "isp_name": "AP telecom\nap-telecom.cl",
         "isp_link": "https://www.ap-telecom.cl/",
         "sales_region": "Latin America",
         "metros_with_multiple_pnis": "SCL+"
+    },
+    "12735": {
+        "isp_name": "ASTURKNET_AS12735\nturk.net",
+        "isp_link": "https://www.turk.net/wholesale",
+        "sales_region": "Asia-Pacific,\nEurope",
+        "metros_with_multiple_pnis": "SOF+"
+    },
+    "57367": {
+        "isp_name": "ATMAN (Poland)\natman.pl",
+        "isp_link": "https://atman.pl/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "WAW+"
     },
     "15669": {
         "isp_name": "BIX.BG\nbix.bg",
@@ -11,11 +35,59 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "SOF+"
     },
+    "5400": {
+        "isp_name": "BR.Digital Telecom\nbr.digital",
+        "isp_link": "https://br.digital/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
+    },
+    "29512": {
+        "isp_name": "Budapest Internet Exchange\nbix.hu",
+        "isp_link": "https://www.bix.hu/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
+    },
     "50392": {
         "isp_name": "Campus Networks\ncampus.rv.ua",
         "isp_link": "https://campus.rv.ua/",
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "KBP+"
+    },
+    "13646": {
+        "isp_name": "Consorzio Topix - Torino e Piemonte Exchange Point\ntop-ix.org",
+        "isp_link": "https://www.top-ix.org/en/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "MIL+"
+    },
+    "19029": {
+        "isp_name": "Dataforest GmbH",
+        "isp_link": null,
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
+    },
+    "134640": {
+        "isp_name": "DCI Indonesia\ndci-indonesia.com",
+        "isp_link": "https://dci-indonesia.com/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+"
+    },
+    "8607": {
+        "isp_name": "Desktop Internet\ndesktop.com.br",
+        "isp_link": "https://www.desktop.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
+    },
+    "30063": {
+        "isp_name": "Digital Edge DC\nedge.id",
+        "isp_link": "https://edge.id/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+"
+    },
+    "263569": {
+        "isp_name": "Direct Internet\ndirectwifi.com.br",
+        "isp_link": "https://directwifi.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
     },
     "51069": {
         "isp_name": "Dnepronet\ndnepro.net",
@@ -23,11 +95,29 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "KBP+"
     },
-    "24224": {
-        "isp_name": "EdgeIX\nedgeix.net",
-        "isp_link": "https://edgeix.net/",
+    "24305": {
+        "isp_name": "EdgeIX",
+        "isp_link": null,
         "sales_region": "Oceania",
         "metros_with_multiple_pnis": "SYD+"
+    },
+    "10670": {
+        "isp_name": "ENTEGA Medianet GmbH\nentega-medianet.de",
+        "isp_link": "https://www.entega-medianet.de/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
+    },
+    "29396": {
+        "isp_name": "Eurofiber\neurofiber.com",
+        "isp_link": "https://www.eurofiber.com/solutions/connectivity",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "AMS+"
+    },
+    "211299": {
+        "isp_name": "France IX L3 Services",
+        "isp_link": null,
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "MRS+"
     },
     "34912": {
         "isp_name": "Fusion Net\nfusionnet.in",
@@ -35,17 +125,59 @@
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "DEL+"
     },
-    "45701": {
-        "isp_name": "GlobalXtreme\nglobalxtreme.net",
-        "isp_link": "https://globalxtreme.net/",
+    "269599": {
+        "isp_name": "Gigantic Infotel Pvt. Ltd.\ngtel.in",
+        "isp_link": "https://www.gtel.in/",
         "sales_region": "Asia-Pacific",
-        "metros_with_multiple_pnis": "SIN+"
+        "metros_with_multiple_pnis": "DEL+"
+    },
+    "20940": {
+        "isp_name": "Herotel\nherotel.com",
+        "isp_link": "https://www.herotel.com/",
+        "sales_region": "Africa",
+        "metros_with_multiple_pnis": "JNB+"
+    },
+    "6805": {
+        "isp_name": "htp GmbH\nhtp.net",
+        "isp_link": "https://htp.net/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
+    },
+    "4436": {
+        "isp_name": "T-Mobile USA\nt-mobile.com",
+        "isp_link": "https://www.t-mobile.com/business",
+        "sales_region": "North America",
+        "metros_with_multiple_pnis": "ATL+, DEN+, DFW, IAD+, LAX+, LGA+, MIA, ORD, PHX, SEA, SFO"
+    },
+    "134858": {
+        "isp_name": "iForce Networks\nmylink.co.in",
+        "isp_link": "https://www.mylink.co.in/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL+"
+    },
+    "13030": {
+        "isp_name": "Init7\ninit7.net",
+        "isp_link": "https://www.init7.net/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "ZRH+"
+    },
+    "262865": {
+        "isp_name": "Ired Internet\niredinternet.com.br",
+        "isp_link": "https://iredinternet.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
+    },
+    "48940": {
+        "isp_name": "KyivLink\nkyivlink.com",
+        "isp_link": "https://kyivlink.com/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "KBP+"
     },
     "135709": {
         "isp_name": "Lightstorm Telecom Connectivity Private Limited\nlightstorm.net",
         "isp_link": "http://www.lightstorm.net/",
         "sales_region": "Asia-Pacific",
-        "metros_with_multiple_pnis": "DEL+"
+        "metros_with_multiple_pnis": "BOM, DEL+"
     },
     "15704": {
         "isp_name": "MasMovil\neuskaltel.com",
@@ -53,17 +185,41 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "MAD+"
     },
+    "55818": {
+        "isp_name": "Matrix\nnapinfo.co.id",
+        "isp_link": "https://napinfo.co.id/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "SIN+"
+    },
+    "25562": {
+        "isp_name": "Megalink Piaui\nmegalinkempresas.com.br",
+        "isp_link": "https://megalinkempresas.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
+    },
     "146904": {
         "isp_name": "MicroNet Gigafiber Pvt Ltd\nmicronet.in",
         "isp_link": "https://www.micronet.in/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "DEL+"
     },
-    "894": {
+    "25394": {
+        "isp_name": "MK-NETZDIENSTE-AS\nmk.de",
+        "isp_link": "https://www.mk.de/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
+    },
+    "22957": {
         "isp_name": "Ninja-Connect\nninja-ix.net",
         "isp_link": "http://www.ninja-ix.net/connect.html",
         "sales_region": "North America",
         "metros_with_multiple_pnis": "PHX+"
+    },
+    "36089": {
+        "isp_name": "OpenX\nopenx.com.br",
+        "isp_link": "https://www.openx.com.br/",
+        "sales_region": "Latin America",
+        "metros_with_multiple_pnis": "GRU+"
     },
     "12479": {
         "isp_name": "Orange Spain\norange.es",
@@ -89,11 +245,35 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "KBP+"
     },
+    "3327": {
+        "isp_name": "PlatformX Communications (PXC)\npxc.co.uk",
+        "isp_link": "https://www.pxc.co.uk/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "LHR+"
+    },
+    "3265": {
+        "isp_name": "rain Networks (Pty) Ltd\nrain.co.za",
+        "isp_link": "https://www.rain.co.za/work",
+        "sales_region": "Africa",
+        "metros_with_multiple_pnis": "JNB+"
+    },
+    "135799": {
+        "isp_name": "Rapidnet\nrapidnet.in",
+        "isp_link": "https://www.rapidnet.in/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL+"
+    },
     "268556": {
         "isp_name": "RG CORREA TELECOM\nrgcorrea.com.br",
         "isp_link": "https://rgcorrea.com.br/",
         "sales_region": "Latin America",
         "metros_with_multiple_pnis": "GRU+"
+    },
+    "55518": {
+        "isp_name": "SGIX\nsgix.sg",
+        "isp_link": "https://www.sgix.sg/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "SIN+"
     },
     "48449": {
         "isp_name": "SMARTNET I.K.E\nsmartnetgroup.gr",
@@ -101,11 +281,47 @@
         "sales_region": "Africa,\nEurope",
         "metros_with_multiple_pnis": "MRS+"
     },
+    "264262": {
+        "isp_name": "Somcable Submarine Network\nsomcablesubnet.com",
+        "isp_link": "https://somcablesubnet.com/",
+        "sales_region": "Africa",
+        "metros_with_multiple_pnis": "MRS+"
+    },
+    "29452": {
+        "isp_name": "Source Telecommunications Inc.",
+        "isp_link": null,
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "MNL+"
+    },
     "4648": {
-        "isp_name": "Spark New Zealand\nwww.sparkwholesale.co.nz",
+        "isp_name": "Spark New Zealand\nsparkwholesale.co.nz",
         "isp_link": "https://www.sparkwholesale.co.nz/",
         "sales_region": "Asia-Pacific,\nOceania",
         "metros_with_multiple_pnis": "SYD+"
+    },
+    "64103": {
+        "isp_name": "Tejays Dynamic Ltd",
+        "isp_link": null,
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL+"
+    },
+    "9002": {
+        "isp_name": "RETN\nretn.net",
+        "isp_link": "https://retn.net/products/internet",
+        "sales_region": "Asia-Pacific,\nEurope",
+        "metros_with_multiple_pnis": "AMS, ARN+, BUD, FRA+, KBP+, LHR+, MIL+, WAW"
+    },
+    "24163": {
+        "isp_name": "TFN (Taiwan Mobile)\ntaiwanmobile.com",
+        "isp_link": "https://www.taiwanmobile.com/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "TSA+"
+    },
+    "47690": {
+        "isp_name": "Th\u00fcringer Netkom GmbH\nnetkom.de",
+        "isp_link": "https://www.netkom.de/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA+"
     },
     "13188": {
         "isp_name": "Triolan\ntriolan.com",
@@ -113,20 +329,14 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "KBP+"
     },
-    "12735": {
-        "isp_name": "TurkNet\nwww.turk.net/wholesale",
-        "isp_link": "https://www.turk.net/wholesale",
-        "sales_region": "Europe,\nAsia-Pacific",
-        "metros_with_multiple_pnis": "SOF+"
-    },
     "20406": {
-        "isp_name": "Ultranet\nultranet.co.id",
-        "isp_link": "https://ultranet.co.id/",
+        "isp_name": "Ultranet",
+        "isp_link": null,
         "sales_region": "Asia-Pacific",
-        "metros_with_multiple_pnis": "CGK+"
+        "metros_with_multiple_pnis": "DEL+"
     },
     "28343": {
-        "isp_name": "Unifique\nwww.unifique.com.br",
+        "isp_name": "Unifique\nunifique.com.br",
         "isp_link": "https://www.unifique.com.br/",
         "sales_region": "Latin America",
         "metros_with_multiple_pnis": "GRU+"
@@ -137,7 +347,19 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "LHR+"
     },
-    "50263": {
+    "23148": {
+        "isp_name": "Zeonet\nzeonet.co.in",
+        "isp_link": "https://www.zeonet.co.in/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL+"
+    },
+    "57162": {
+        "isp_name": "Zzoomm PLC",
+        "isp_link": null,
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "LHR+"
+    },
+    "7132": {
         "isp_name": "1-IX EU\n1-ix.eu",
         "isp_link": "https://1-ix.eu/",
         "sales_region": "Europe",
@@ -147,19 +369,31 @@
         "isp_name": "Aire Networks\nairenetworks.es",
         "isp_link": "https://airenetworks.es/",
         "sales_region": "Europe",
-        "metros_with_multiple_pnis": "MAD+, MRS,"
+        "metros_with_multiple_pnis": "MAD+, MRS"
+    },
+    "7503": {
+        "isp_name": "Airtel India\nairtel.in",
+        "isp_link": "https://www.airtel.in/b2b/",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",
+        "metros_with_multiple_pnis": "BOM+, DEL+, LAX, LHR, MAA+, MRS+, SIN"
     },
     "1299": {
-        "isp_name": "Arelion\nwww.arelion.com/products-and-services/internet-and-cloud/google-gold-tier-vpp",
+        "isp_name": "Arelion\narelion.com",
         "isp_link": "https://www.arelion.com/products-and-services/internet-and-cloud/google-gold-tier-vpp",
         "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America",
         "metros_with_multiple_pnis": "AMS+, ARN+, ATL+, BUD, DEN, DFW, FRA+, HAM, HEM, HKG+, IAD, LAX+, LGA+, LHR+, MAD+, MIA, MIL+, MRS, MUC, ORD, PAR+, PHX+, PRG, QRO, SEA, SFO, SIN+, WAW, YUL, YYZ+, ZRH+"
     },
-    "4436": {
-        "isp_name": "GTT\ngtt.net",
-        "isp_link": "https://www.gtt.net/us-en/services/managed-networking/internet/ip-transit/",
-        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",
-        "metros_with_multiple_pnis": "AMS, ATL, DFW, FRA+, IAD+, LAX+, LGA+, LHR+, MIA, MIL, MRS, ORD, PAR, PRG, SEA, SFO, YYZ"
+    "42910": {
+        "isp_name": "Asimo Networks B.V.\nasimonetworks.com",
+        "isp_link": "https://asimonetworks.com/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "AMS+, FRA"
+    },
+    "38016": {
+        "isp_name": "Astound Business Solutions\nastound.com",
+        "isp_link": "https://www.astound.com/business/internet/dedicated-internet-access/",
+        "sales_region": "North America",
+        "metros_with_multiple_pnis": "DFW, IAD, LGA+, ORD, SEA, SFO"
     },
     "4764": {
         "isp_name": "Aussie Broadband\naussiebroadband.com.au",
@@ -167,8 +401,20 @@
         "sales_region": "Asia-Pacific,\nNorth America,\nOceania",
         "metros_with_multiple_pnis": "MEL, SIN, SYD+"
     },
+    "138033": {
+        "isp_name": "BBIX, Inc.(Layer 3 Service)\nbbix.net",
+        "isp_link": "https://www.bbix.net/en/service/",
+        "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+        "metros_with_multiple_pnis": "KIX, NRT+"
+    },
+    "24916": {
+        "isp_name": "Bezeq International Tech\nbezeqint.net",
+        "isp_link": "https://www.bezeqint.net/business/gcp",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA, MRS, TLV+"
+    },
     "2518": {
-        "isp_name": "BIGLOBE\nbiz.biglobe.ne.jp/transit/index-e.html",
+        "isp_name": "BIGLOBE\nbiz.biglobe.ne.jp",
         "isp_link": "https://biz.biglobe.ne.jp/transit/index-e.html",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "KIX+, NRT+"
@@ -185,7 +431,7 @@
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "MAA+, SIN"
     },
-    "38158": {
+    "4787": {
         "isp_name": "CBN\ncbn.id",
         "isp_link": "https://www.cbn.id/",
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
@@ -196,6 +442,12 @@
         "isp_link": "https://www.citra.net.id/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "CGK+, SIN"
+    },
+    "13335": {
+        "isp_name": "Cloudflare\ncloudflare.com",
+        "isp_link": "https://www.cloudflare.com/",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",
+        "metros_with_multiple_pnis": "AMS, ARN, ATL+, BOM, BUD, CGK, DEN, DFW, FRA, GRU+, HKG, IAD+, JNB, KIX, KUL, LAX+, LGA, LHR, LIS, MAD, MIA, MIL, MRS, NRT+, ORD, PAR, PHX, SCL, SEA, SFO, SIN, SLC, SOF, SYD, TSA, WAW, YYZ, ZRH"
     },
     "62240": {
         "isp_name": "Clouvider\nclouvider.com",
@@ -210,12 +462,12 @@
         "metros_with_multiple_pnis": "KIX, NRT+"
     },
     "7922": {
-        "isp_name": "Comcast\nwww.comcasttechnologysolutions.com/wholesale-internet",
+        "isp_name": "Comcast\ncomcasttechnologysolutions.com",
         "isp_link": "https://www.comcasttechnologysolutions.com/wholesale-internet",
         "sales_region": "North America",
         "metros_with_multiple_pnis": "ATL, DEN, DFW, IAD+, LAX+, LGA+, MIA, ORD+, SEA+, SFO+, SLC"
     },
-    "33891": {
+    "36824": {
         "isp_name": "CORE-BACKBONE\ncore-backbone.com",
         "isp_link": "https://www.core-backbone.com/",
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
@@ -228,19 +480,31 @@
         "metros_with_multiple_pnis": "ATL, DEN, LAX+, ORD, SFO"
     },
     "9886": {
-        "isp_name": "CTCSCI TECH LIMITED\nctcsci.com",
-        "isp_link": "https://www.ctcsci.com/",
+        "isp_name": "CTCSCI TECH LIMITED",
+        "isp_link": null,
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "HKG+, NRT+, SIN+"
     },
     "146919": {
-        "isp_name": "CtrlS Connect\nwww.ctrls.com/network-connectivity-services/",
+        "isp_name": "CtrlS Connect\nctrls.com",
         "isp_link": "https://www.ctrls.com/network-connectivity-services/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "BOM+, DEL+, MAA"
     },
+    "6666": {
+        "isp_name": "DATALINE LLC\ndataline.ua",
+        "isp_link": "https://www.dataline.ua/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA, KBP+"
+    },
+    "5769": {
+        "isp_name": "DE-CIX (Layer 3 Service)\nde-cix.net",
+        "isp_link": "https://www.de-cix.net/en/services/google-verified-peering-provider",
+        "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America",
+        "metros_with_multiple_pnis": "AMS+, BOM+, DEL+, DFW, FRA+, GRU, KUL, LGA+, MAA+, MAD+, ORD+, PHX+, QRO, RIO, SIN+"
+    },
     "3320": {
-        "isp_name": "Deutsche Telekom\nbusiness.telekom.com/products-and-solutions/magentabusiness-networks/premium-internet-underlay",
+        "isp_name": "Deutsche Telekom\nbusiness.telekom.com",
         "isp_link": "https://business.telekom.com/products-and-solutions/magentabusiness-networks/premium-internet-underlay",
         "sales_region": "Europe,\nNorth America",
         "metros_with_multiple_pnis": "AMS, FRA+, HAM, MUC"
@@ -263,6 +527,24 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "FRA+, HEM+"
     },
+    "15830": {
+        "isp_name": "Equinix\nequinix.com",
+        "isp_link": "https://www.equinix.com/",
+        "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",
+        "metros_with_multiple_pnis": "AMS+, ARN+, ATL, BOG, BOM, DFW, FRA, GRU+, HEM, HKG, IAD, KIX, LAX, LHR+, MAD, MEL, MIA, NRT+, ORD, SEA, SFO, SIN, SYD, WAW, YYZ, ZRH"
+    },
+    "16245": {
+        "isp_name": "EWE TEL GmbH\nbusiness.ewe.de",
+        "isp_link": "https://business.ewe.de/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "AMS, FRA+, HAM"
+    },
+    "20634": {
+        "isp_name": "Extreme Infocom\nextreme-ix.org",
+        "isp_link": "https://extreme-ix.org/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "BOM+, DEL+, MAA+"
+    },
     "10075": {
         "isp_name": "Fiber@Home Global Limited\nfiberathomeglobal.net",
         "isp_link": "https://www.fiberathomeglobal.net/",
@@ -282,7 +564,7 @@
         "metros_with_multiple_pnis": "HKG+, NRT, SIN+"
     },
     "5650": {
-        "isp_name": "Frontier Communications\ngo.frontier.com/business/fiber-internet",
+        "isp_name": "Frontier Communications\ngo.frontier.com",
         "isp_link": "https://go.frontier.com/business/fiber-internet",
         "sales_region": "North America",
         "metros_with_multiple_pnis": "DFW, IAD+, LAX, LGA+, MIA, ORD"
@@ -305,17 +587,29 @@
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America,\nOceania",
         "metros_with_multiple_pnis": "HKG, LAX+, MEL, NRT, SIN"
     },
-    "31500": {
+    "31027": {
+        "isp_name": "Globalconnect\nglobalconnect.net",
+        "isp_link": "http://globalconnect.net/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "AMS, ARN+, FRA+, HAM+"
+    },
+    "45701": {
+        "isp_name": "GlobalXtreme\nglobalxtreme.net",
+        "isp_link": "https://globalxtreme.net/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+, SIN+"
+    },
+    "13657": {
+        "isp_name": "GNC Alfa (Armenia)\novio.am",
+        "isp_link": "https://www.ovio.am/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "SOF+"
+    },
+    "212914": {
         "isp_name": "GNM\ngnm-ix.net",
         "isp_link": "https://gnm-ix.net/",
         "sales_region": "Asia-Pacific,\nEurope",
         "metros_with_multiple_pnis": "AMS+, FRA+"
-    },
-    "31027": {
-        "isp_name": "GlobalConnect\nglobalconnect.net",
-        "isp_link": "http://globalconnect.net/",
-        "sales_region": "Europe",
-        "metros_with_multiple_pnis": "ARN+, FRA+, HAM+, AMS"
     },
     "62513": {
         "isp_name": "GoCodeIT Inc",
@@ -323,11 +617,17 @@
         "sales_region": "North America",
         "metros_with_multiple_pnis": "IAD, YYZ+"
     },
-    "28007": {
+    "394684": {
         "isp_name": "Gold Data\ngolddata.net",
         "isp_link": "https://golddata.net/contact/",
         "sales_region": "Latin America,\nNorth America",
         "metros_with_multiple_pnis": "DFW, LAX+, MIA, QRO"
+    },
+    "42993": {
+        "isp_name": "Greenmax Technologies Ltd (Gmax)",
+        "isp_link": null,
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL, SIN"
     },
     "142435": {
         "isp_name": "HGC Global Communications\nhgc-intl.com",
@@ -335,17 +635,29 @@
         "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
         "metros_with_multiple_pnis": "HKG+, LAX, LHR, MNL, SIN, TSA"
     },
+    "60339": {
+        "isp_name": "HiNet Internet Service\nhinet.net",
+        "isp_link": "https://www.hinet.net/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "LAX+, TSA+"
+    },
     "29075": {
         "isp_name": "IELO\nielo.net",
         "isp_link": "https://www.ielo.net/#/",
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "FRA, PAR+"
     },
-    "137367": {
+    "137366": {
         "isp_name": "Iforte Solusi Infotek\niforte.id",
         "isp_link": "https://iforte.id/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "CGK+, SIN+"
+    },
+    "135607": {
+        "isp_name": "INFINIVAN\ninfinivan.com",
+        "isp_link": "https://www.infinivan.com/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "HKG, MNL+, SIN"
     },
     "47865": {
         "isp_name": "Inter.link\ninter.link",
@@ -354,10 +666,16 @@
         "metros_with_multiple_pnis": "FRA+, SOF"
     },
     "44217": {
-        "isp_name": "IQ Networks for Data and Internet Services Ltd\niq.group/",
+        "isp_name": "IQ Networks for Data and Internet Services Ltd\niq.group",
         "isp_link": "https://iq.group/",
         "sales_region": "Europe",
-        "metros_with_multiple_pnis": "SOF+, FRA"
+        "metros_with_multiple_pnis": "FRA, SOF+"
+    },
+    "6762": {
+        "isp_name": "Telecom Italia Sparkle\ntisparkle.com",
+        "isp_link": "https://www.tisparkle.com/contact-us/contact-us",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nNorth America",
+        "metros_with_multiple_pnis": "ARN, BOG, EZE, FRA+, GRU, IAD, LAX, LIS, MAD, MIA, MIL, MRS, PAR, SCL, SIN, SOF+"
     },
     "55685": {
         "isp_name": "Jala Lintas Media\njlm.net.id",
@@ -366,7 +684,7 @@
         "metros_with_multiple_pnis": "CGK+, SIN"
     },
     "64049": {
-        "isp_name": "Jio\nwww.jio.com",
+        "isp_name": "Jio\njio.com",
         "isp_link": "https://www.jio.com/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "BOM+, DEL+, MAA+"
@@ -377,8 +695,20 @@
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "CGK, SIN+"
     },
+    "23815": {
+        "isp_name": "JPIX (Layer 3 Service)\njpix.ad.jp",
+        "isp_link": "https://www.jpix.ad.jp/en/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "KIX+, NRT"
+    },
+    "4725": {
+        "isp_name": "Softbank\nsoftbank.jp",
+        "isp_link": "https://www.softbank.jp/biz/services/network/vpn-internet/smart-intenet/lineup/suite-ether/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
     "4716": {
-        "isp_name": "KDDI\nbiz.kddi.com/english/service/global-internet",
+        "isp_name": "KDDI\nbiz.kddi.com",
         "isp_link": "https://biz.kddi.com/english/service/global-internet/",
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "KIX+, LAX+, NRT+, SFO"
@@ -387,19 +717,49 @@
         "isp_name": "Leaptel",
         "isp_link": null,
         "sales_region": "Oceania",
-        "metros_with_multiple_pnis": "MEL+, SYD+,"
+        "metros_with_multiple_pnis": "MEL+, SYD+"
     },
     "6830": {
-        "isp_name": "Liberty Global\nwww.libertyglobal.com/operations/business-services/ip-transit-services",
+        "isp_name": "Liberty Global\nlibertyglobal.com",
         "isp_link": "https://www.libertyglobal.com/operations/business-services/ip-transit-services/",
         "sales_region": "Europe,\nNorth America",
         "metros_with_multiple_pnis": "AMS+, DUB, FRA+, IAD, LHR, MIA, MUC, ORD, ZRH+"
+    },
+    "36937": {
+        "isp_name": "Liquid Telecom\nliquidc2.com",
+        "isp_link": "https://liquidc2.com/google/",
+        "sales_region": "Africa,\nEurope",
+        "metros_with_multiple_pnis": "JNB+, MBA"
     },
     "50629": {
         "isp_name": "LWL\nlwlcom.net",
         "isp_link": "https://www.lwlcom.net/ip-transit",
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "AMS, FRA+, HAM, MUC"
+    },
+    "6066": {
+        "isp_name": "Media Cepat Indonesia (RAPIDNET)\nrapid.net.id",
+        "isp_link": "https://rapid.net.id/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+, SIN"
+    },
+    "131293": {
+        "isp_name": "National Telecom Public Company Limited (NT)\nntplc.co.th",
+        "isp_link": "https://ntplc.co.th/en/home",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "BKK+, HKG, KUL+, SIN"
+    },
+    "4713": {
+        "isp_name": "OCN\nntt.com",
+        "isp_link": "https://www.ntt.com/business/services/network/internet-connect/ocn-business.html#",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
+    "20976": {
+        "isp_name": "Omega Telecom LLC\nomegatelecom.ua",
+        "isp_link": "https://omegatelecom.ua/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "KBP+, WAW"
     },
     "44306": {
         "isp_name": "OMONIA\nomonia.com",
@@ -413,6 +773,30 @@
         "sales_region": "Africa,\nAsia-Pacific",
         "metros_with_multiple_pnis": "DIA+, MCT, MRS+, SIN"
     },
+    "33845": {
+        "isp_name": "OPTAGE Inc.\noptage.co.jp",
+        "isp_link": "https://optage.co.jp/en/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "KIX, NRT+"
+    },
+    "12654": {
+        "isp_name": "Orange Jordan\norange.jo",
+        "isp_link": "https://www.orange.jo/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "FRA, MRS+"
+    },
+    "18740": {
+        "isp_name": "Orange Wholesale\nwholesale.orange.com",
+        "isp_link": "https://wholesale.orange.com/international/en/our-solutions/ip-transit.html",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nNorth America",
+        "metros_with_multiple_pnis": "AMS, FRA+, IAD, JNB, LHR, MAD, MIA, MRS, PAR+, SIN"
+    },
+    "41114": {
+        "isp_name": "Orne THD\nornethd.net",
+        "isp_link": "https://ornethd.net/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "FRA, PAR+"
+    },
     "46450": {
         "isp_name": "Pilot\npilotfiber.com",
         "isp_link": "https://pilotfiber.com/",
@@ -423,7 +807,19 @@
         "isp_name": "PIT\npit.net",
         "isp_link": "https://www.pit.net/",
         "sales_region": "Latin America,\nNorth America",
-        "metros_with_multiple_pnis": "BOG, SCL+"
+        "metros_with_multiple_pnis": "BOG, EZE, SCL+"
+    },
+    "1290": {
+        "isp_name": "Telstra International\ntelstrainternational.com",
+        "isp_link": "https://www.telstrainternational.com/en/products/global-networks/global-internet",
+        "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+        "metros_with_multiple_pnis": "HKG+, LAX+, NRT+, SIN+, TSA"
+    },
+    "55821": {
+        "isp_name": "Radius Telecom\nradius.ph",
+        "isp_link": "https://www.radius.ph/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "HKG, MNL+, SIN"
     },
     "138384": {
         "isp_name": "Rakuten Mobile\nbusiness.mobile.rakuten.co.jp",
@@ -431,17 +827,17 @@
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "KIX+, NRT+"
     },
-    "9002": {
-        "isp_name": "RETN\nretn.net/products/internet",
-        "isp_link": "https://retn.net/products/internet",
-        "sales_region": "Asia-Pacific,\nEurope",
-        "metros_with_multiple_pnis": "AMS, ARN+, BUD, FRA+, KBP+, LHR+, MIL+, WAW"
+    "38511": {
+        "isp_name": "Remala Abadi\nremala.co.id",
+        "isp_link": "https://www.remala.co.id/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "CGK+, SIN"
     },
     "6730": {
         "isp_name": "RISE\nrise.ph",
         "isp_link": "https://rise.ph/",
         "sales_region": "Asia-Pacific",
-        "metros_with_multiple_pnis": "MNL, SIN, HKG+"
+        "metros_with_multiple_pnis": "HKG+, MNL, SIN"
     },
     "8399": {
         "isp_name": "SEWAN SAS\nsewan.eu",
@@ -449,17 +845,29 @@
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "MAD+, PAR"
     },
-    "21928": {
-        "isp_name": "T-Mobile USA\nwww.t-mobile.com/business",
-        "isp_link": "https://www.t-mobile.com/business",
+    "4922": {
+        "isp_name": "Shentel\nshentel.com",
+        "isp_link": "https://shentel.com/",
         "sales_region": "North America",
-        "metros_with_multiple_pnis": "ATL+, DEN+, DFW, IAD+, LAX+, LGA+, MIA, ORD, PHX, SEA, SFO"
+        "metros_with_multiple_pnis": "ATL, IAD+"
     },
-    "1290": {
-        "isp_name": "Telstra International\nwww.telstrainternational.com/en/products/global-networks/global-internet",
-        "isp_link": "https://www.telstrainternational.com/en/products/global-networks/global-internet",
-        "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
-        "metros_with_multiple_pnis": "HKG+, LAX+, NRT+, SIN+, TSA"
+    "17559": {
+        "isp_name": "Spectrum (Charter Communications)\nspectrum.com",
+        "isp_link": "https://www.spectrum.com/business/",
+        "sales_region": "North America",
+        "metros_with_multiple_pnis": "ATL, DEN, DFW, IAD+, LAX+, LGA, MIA, ORD, SEA, SFO"
+    },
+    "12322": {
+        "isp_name": "Superloop Australia\nsuperloop.com",
+        "isp_link": "https://superloop.com/",
+        "sales_region": "Asia-Pacific,\nOceania",
+        "metros_with_multiple_pnis": "MEL, SIN, SYD+"
+    },
+    "8400": {
+        "isp_name": "Telekom Srbija\ntelekomsrbija.com",
+        "isp_link": "https://telekomsrbija.com/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "BUD, FRA+, SOF+"
     },
     "852": {
         "isp_name": "TELUS\ntelus.com",
@@ -468,8 +876,8 @@
         "metros_with_multiple_pnis": "ORD, SEA, YYZ+"
     },
     "12956": {
-        "isp_name": "Telxius\nwww.telxius.com",
-        "isp_link": "https://telxius.com/",
+        "isp_name": "Telxius\ntelxius.com",
+        "isp_link": "https://www.telxius.com/",
         "sales_region": "Europe,\nLatin America,\nNorth America",
         "metros_with_multiple_pnis": "GRU, MAD+, MIA, SCL"
     },
@@ -497,19 +905,31 @@
         "sales_region": "Latin America,\nNorth America",
         "metros_with_multiple_pnis": "BOG, GRU+, MIA, RIO, SCL"
     },
-    "38794": {
-        "isp_name": "United Information Highway (UIH)\nuih.co.th",
-        "isp_link": "https://www.uih.co.th/",
+    "45796": {
+        "isp_name": "United Information Highway (UIH)",
+        "isp_link": null,
         "sales_region": "Asia-Pacific",
         "metros_with_multiple_pnis": "BKK+, KUL, SIN"
     },
     "13760": {
-        "isp_name": "Uniti Fiber\nuniti.com/enterprise/internet-services/",
+        "isp_name": "Uniti Fiber\nuniti.com",
         "isp_link": "https://uniti.com/enterprise/internet-services/",
         "sales_region": "North America",
-        "metros_with_multiple_pnis": "DFW, MIA, ATL+"
+        "metros_with_multiple_pnis": "ATL+, DFW, MIA"
     },
-    "7552": {
+    "6167": {
+        "isp_name": "Verizon Business\nverizon.com",
+        "isp_link": "https://www.verizon.com/business/products/internet/internet-dedicated/",
+        "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+        "metros_with_multiple_pnis": "AMS, ARN+, ATL, DFW, FRA, IAD+, LAX+, LGA, LHR, MIA, ORD, PAR, SEA, SFO"
+    },
+    "34144": {
+        "isp_name": "Vodafone Business\nbusiness.vodafone.com",
+        "isp_link": "https://business.vodafone.com/GoogleVPPprogram_GCPpeering?utm_medium=external_website&utm_source=website&utm_campaign=fy25_non_program_google_vpp&utm_term=google_vpp&utm_content=google_vpp_website&aid=a001fl&did=d002ii&elqCampaignId=13187",
+        "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+        "metros_with_multiple_pnis": "AMS, ARN+, FRA+, HKG, LHR, MIL, SIN, SOF+"
+    },
+    "38623": {
         "isp_name": "Viettel\ninternational.viettel.vn",
         "isp_link": "http://international.viettel.vn/",
         "sales_region": "Africa,\nAsia-Pacific,\nLatin America",
@@ -533,13 +953,37 @@
         "sales_region": "Latin America",
         "metros_with_multiple_pnis": "BOG, EZE, GRU+, MIA, RIO+"
     },
+    "24961": {
+        "isp_name": "WIIT - THE PREMIUM CLOUD\nwiit.cloud",
+        "isp_link": "https://www.wiit.cloud/",
+        "sales_region": "Europe",
+        "metros_with_multiple_pnis": "AMS, FRA+, MIL, MUC, ZRH+"
+    },
+    "203090": {
+        "isp_name": "Windstream Communication Ltd\nwindstreamcommunication.net",
+        "isp_link": "https://www.windstreamcommunication.net/",
+        "sales_region": "Asia-Pacific",
+        "metros_with_multiple_pnis": "DEL+, MAA+, SIN"
+    },
+    "18104": {
+        "isp_name": "Windstream Communications\nwindstream.com",
+        "isp_link": "https://www.windstream.com/",
+        "sales_region": "North America",
+        "metros_with_multiple_pnis": "ATL, DEN, DFW, IAD+, LAX+, LGA, MIA, ORD, SEA, SFO"
+    },
     "9136": {
         "isp_name": "WOBCOM\nwobcom.net",
         "isp_link": "https://wobcom.net/",
         "sales_region": "Europe",
         "metros_with_multiple_pnis": "AMS, FRA+"
     },
-    "6461": {
+    "8529": {
+        "isp_name": "Zain Omantel International\nzainomantel.com",
+        "isp_link": "https://zainomantel.com/products/",
+        "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nOceania",
+        "metros_with_multiple_pnis": "FJR, FRA, LHR, MCT, MRS+, SIN"
+    },
+    "19092": {
         "isp_name": "Zayo\nzayo.com",
         "isp_link": "https://www.zayo.com/services/network-connectivity/ip-transit/",
         "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America,\nOceania",

@@ -12,15 +12,15 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent
 
-from src.services.peeringdb import get_asns_by_name
+from src.services.peeringdb import get_asns_by_name, get_asns_by_name_options
 
 
 # dont use it, we dont need it.
 def create_list_of_vpp_asns_from_names():
     vpps_silver = []
     vpps_gold = []
-
-    vpps_data = json.loads(open(SCRIPT_DIR / "google_vpps.json", "r").read())
+ 
+    vpps_data = json.loads((SCRIPT_DIR / "google_vpps.json").read_text(encoding="utf-8"))
 
     vpps_silver = vpps_data.get("silver", [])
     vpps_gold = vpps_data.get("gold", [])
@@ -29,7 +29,7 @@ def create_list_of_vpp_asns_from_names():
 
     for provider in vpps_silver + vpps_gold:
         isp_name = provider.get("isp_name", "")
-        isp_name_first_line = isp_name.split("\n")[0]
+        isp_name_first_line: str  = isp_name.split("\n")[0]
         isp_name_first_line_parenthesis_section = isp_name_first_line.split("(")[1] + isp_name_first_line.split(")")[0] if "(" in isp_name_first_line and ")" in isp_name_first_line else None
         if isp_name_first_line_parenthesis_section:
             split = isp_name_first_line.split(isp_name_first_line_parenthesis_section)
@@ -37,8 +37,33 @@ def create_list_of_vpp_asns_from_names():
         
         isp_name_first_line = isp_name_first_line.strip()
 
-        #sleep(3)
-        data = get_asns_by_name(isp_name_first_line)
+        index_of_parenthesis = isp_name_first_line.find("(")
+        if index_of_parenthesis != -1:
+            isp_name_first_line = isp_name_first_line[:index_of_parenthesis]
+
+        index_of_underline = isp_name_first_line.find("_")
+
+        if index_of_underline != -1:
+            isp_name_first_line = isp_name_first_line[:index_of_underline]
+
+        index_of_hyphen = isp_name_first_line.find("-")
+
+        if index_of_hyphen != -1:
+            isp_name_first_line = isp_name_first_line[:index_of_hyphen]
+
+        isp_name_first_line_without_as_in_the_start = isp_name_first_line[2:] if isp_name_first_line[:2] == "AS" else None 
+
+        isp_name_initials = ''.join([s[0] for s in isp_name_first_line.split()]).upper()
+        sleep(3)
+        
+        data = get_asns_by_name_options([
+        isp_name_first_line, 
+        isp_name_first_line_without_as_in_the_start,
+        isp_name_initials,
+        isp_name_first_line.replace("Internet", ""),
+        #isp_name_first_line.replace("Business", ""), for some reason didnt work
+    
+         ]) 
         if data and len(data) > 0:
             best_name_match = None
             for entry in data:
@@ -65,4 +90,7 @@ def get_google_vpp_asns() -> list[str]:
 
 
 if __name__ == "__main__":
+
+    print(len(get_google_vpp_asns()))
     create_list_of_vpp_asns_from_names()
+    print(len(get_google_vpp_asns()))
