@@ -552,7 +552,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version,
         for i, asn in enumerate(unique_asns_list):
 
             asn_score = top_fives_over_time[date][i]
-            if asn in google_vpps_asns:
+            if str(asn) in google_vpps_asns:
                 hegemony_vpp += asn_score
             else:
                 hegemony_not_vpp += asn_score
