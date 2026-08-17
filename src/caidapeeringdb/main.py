@@ -10,6 +10,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+from src.caidapeeringdb.grouped_asns import get_ixps_by_continent_count
 from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
 from src.utils.user_input import choose_option, confirm_action, finish_actions, start_actions
 
@@ -369,7 +370,7 @@ if __name__ == "__main__":
 
 
     # Get IXP distribution by continent
-    #ixp_by_continent_count, ixp_by_continent_count_percentage, _ = get_ixps_by_continent_count(all_files_after_depeering)
+    ixp_by_continent_count, ixp_by_continent_count_percentage, _ = get_ixps_by_continent_count(all_files_after_depeering)
 
     # Plot IXP distribution
     #plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage)
@@ -377,7 +378,7 @@ if __name__ == "__main__":
     start_actions()
     confirm_action("Plot asns analysis", lambda: plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None))
      
-    #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
+    plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
     
     
    

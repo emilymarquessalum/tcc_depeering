@@ -10,7 +10,8 @@ from matplotlib import pyplot as plt
 
 # Preserving your setup
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
-from src.utils.graphs import save_plot
+from src.google.vpps.google_vpps_list import get_google_vpp_asns
+from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
 from src.ripe_bviews.timeline.render.bview_functionalities import _get_most_recent_caida_data
 from src.ripe_bviews.timeline.bview_hegemony import _apply_alpha_trimming, get_sorted_asns_from_scores, plot_top5_transit 
 from definitions import ROOT_DIR
@@ -407,74 +408,86 @@ def compare_hegemony_for_two_dates(
         ip_version, "", extra_label=f"{date_after} for {rrc_used} - α={alpha}") 
 
 
+
+def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering):
+
+    hegemony_scores_dict = {} 
+    
+    allowed_viewpoints_baseline = None
+    
+    if use_strict_viewpoint_filtering:
+            print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
+            active_sets = []
+            for snapshot in date_list:
+                viewpoints = get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
+                active_sets.append(viewpoints)
+            
+            allowed_viewpoints_baseline = set.intersection(*active_sets)
+            print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints present across ALL snapshots.")
+    
+    if allowed_viewpoints_baseline is not None:
+            # Use strict intersection for all dates
+            for date in date_list:
+                scores, viewpoints = load_hegemony_for_date(
+                    asn, alpha, rrc_used, date, ip_version,
+                    allowed_viewpoints=allowed_viewpoints_baseline
+                )
+                hegemony_scores_dict[date] = scores 
+    else:
+            # Legacy/Default mode: Use viewpoints active in first date as baseline
+            first_date = date_list[0]
+            first_score, first_viewpoints = load_hegemony_for_date(
+                asn, alpha, rrc_used, first_date, ip_version
+            )
+    
+            hegemony_scores_dict[first_date] = first_score 
+    
+            for date in date_list[1:]:
+                scores, viewpoints = load_hegemony_for_date(
+                    asn, alpha, rrc_used, date, ip_version,
+                    allowed_viewpoints=first_viewpoints
+                )
+                hegemony_scores_dict[date] = scores 
+
+    return hegemony_scores_dict
+
+
+def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
+    all_unique_top_fives = set()
+    for date in date_list:
+            print(f"Hegemony scores for {date}:")
+            sorted_asns = get_sorted_asns_from_scores(hegemony_scores_dict[date])
+            all_unique_top_fives.update(sorted_asns[:3])
+    
+    unique_asns_list = sorted(list(all_unique_top_fives))
+    
+    top_fives_over_time: list[list[int]] = []
+    
+    for date in date_list:
+            all_top_fives_but_in_current_date = []
+            for target_asn in unique_asns_list:
+                if target_asn in hegemony_scores_dict[date]:
+                    all_top_fives_but_in_current_date.append(
+                        hegemony_scores_dict[date][target_asn]
+                    )
+                else:
+                    all_top_fives_but_in_current_date.append(0.0)
+            top_fives_over_time.append(all_top_fives_but_in_current_date)
+
+    return top_fives_over_time, unique_asns_list
+
+
 def compare_hegemony_for_several_dates(
     asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False
 ):
-    hegemony_scores_dict = {}
-    viewpoints_dict = {}
+    
 
-    allowed_viewpoints_baseline = None
+    hegemony_scores_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
 
-    if use_strict_viewpoint_filtering:
-        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
-        active_sets = []
-        for d in date_list:
-            vps = get_active_viewpoints_for_date(asn, rrc_used, d, ip_version)
-            active_sets.append(vps)
-        
-        allowed_viewpoints_baseline = set.intersection(*active_sets)
-        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints present across ALL snapshots.")
-
-    if allowed_viewpoints_baseline is not None:
-        # Use strict intersection for all dates
-        for date in date_list:
-            scores, viewpoints = load_hegemony_for_date(
-                asn, alpha, rrc_used, date, ip_version,
-                allowed_viewpoints=allowed_viewpoints_baseline
-            )
-            hegemony_scores_dict[date] = scores
-            viewpoints_dict[date] = viewpoints
-    else:
-        # Legacy/Default mode: Use viewpoints active in first date as baseline
-        first_date = date_list[0]
-        first_score, first_viewpoints = load_hegemony_for_date(
-            asn, alpha, rrc_used, first_date, ip_version
-        )
-
-        hegemony_scores_dict[first_date] = first_score
-        viewpoints_dict[first_date] = first_viewpoints
-
-        for date in date_list[1:]:
-            scores, viewpoints = load_hegemony_for_date(
-                asn, alpha, rrc_used, date, ip_version,
-                allowed_viewpoints=first_viewpoints
-            )
-            hegemony_scores_dict[date] = scores
-            viewpoints_dict[date] = viewpoints
-
-    all_unique_top_fives = set()
-    for date in date_list:
-        print(f"Hegemony scores for {date}:")
-        sorted_asns = get_sorted_asns_from_scores(hegemony_scores_dict[date])
-        all_unique_top_fives.update(sorted_asns[:3])
-
-    unique_asns_list = sorted(list(all_unique_top_fives))
-
-    top_fives_over_time = []
-
-    for date in date_list:
-        all_top_fives_but_in_current_date = []
-        for target_asn in unique_asns_list:
-            if target_asn in hegemony_scores_dict[date]:
-                all_top_fives_but_in_current_date.append(
-                    hegemony_scores_dict[date][target_asn]
-                )
-            else:
-                all_top_fives_but_in_current_date.append(0.0)
-        top_fives_over_time.append(all_top_fives_but_in_current_date)
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, date_list)
 
     # --- Line Plot Implementation with Anti-Occlusion Visual Tricks ---
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
 
     line_styles = ["-", "--", ":", "-."]
     markers = ["o", "s", "^", "v", "D", "X", "P"]
@@ -519,6 +532,57 @@ def compare_hegemony_for_several_dates(
     save_plot(fig=plt.gcf(), title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png")
 
 
+
+def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False):
+
+    google_vpps_asns = get_google_vpp_asns()
+    
+    hegemony_scores_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
+
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, date_list)
+
+    hegemony_over_time_vpp_or_not_vpp: list[tuple[int,int]] = []
+
+
+    for date in range(len(date_list)):
+
+        hegemony_vpp = 0
+        hegemony_not_vpp = 0
+
+        for i, asn in enumerate(unique_asns_list):
+
+            asn_score = top_fives_over_time[date][i]
+            if asn in google_vpps_asns:
+                hegemony_vpp += asn_score
+            else:
+                hegemony_not_vpp += asn_score
+
+        hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
+
+    plt.figure(figsize=DEFAULT_FIGSIZE)
+
+    plt.plot(
+        date_list,
+        [hegemony[0] for hegemony in hegemony_over_time_vpp_or_not_vpp], # vpp
+        label="VPP Hegemony",
+        marker="o", 
+    )
+
+    plt.plot(
+        date_list,
+        [hegemony[1] for hegemony in hegemony_over_time_vpp_or_not_vpp], # not vpp
+        label="Non-VPP Hegemony",
+        marker="0"
+    )
+
+    plt.ylabel("Hegemony")
+    plt.xlabel("Date")
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.show()
+    save_plot(fig=plt.gcf(), title=f"hegemony_over_time_by_vpp_feature_{asn}_{rrc_used}_{ip_version}.png")
+
+
+
 if __name__ == "__main__":
     rrc_used = "rrc15"
     ip_version = "v4"
@@ -529,7 +593,7 @@ if __name__ == "__main__":
         asn = int(asn_input)
         
     alpha = 0.34 
-    use_strict_viewpoint_filtering = True   
+    use_strict_viewpoint_filtering = True # only viewpoints that existed in all snapshots
 
     date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
 
@@ -539,6 +603,12 @@ if __name__ == "__main__":
     )
 
     compare_hegemony_for_several_dates(
+        asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+    )
+
+
+    compare_vpp_and_non_vpp_hegemony_over_time(
         asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
     )

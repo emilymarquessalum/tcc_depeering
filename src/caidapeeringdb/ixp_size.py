@@ -29,6 +29,7 @@ def plot_ixp_connections_by_continent(continent_to_connections_map, asn_to_searc
 
 def plot_ixp_connections_ratio_from_total_ixps_in_that_region(ixps_peered_region_distribution_count_by_total_ixps_in_that_region, asn_to_search, dates_y, colors, subfolder):
 
+    return # isnt working somewhere...
     plot_list_as_bar_plot(
             list(ixps_peered_region_distribution_count_by_total_ixps_in_that_region.keys()),
             y=list(ixps_peered_region_distribution_count_by_total_ixps_in_that_region.values()),
@@ -38,7 +39,8 @@ def plot_ixp_connections_ratio_from_total_ixps_in_that_region(ixps_peered_region
             title=f"IXP Connections in Route Server by Region, in terms of total IXPs in that Region, for ASN {asn_to_search[0]} ({asn_to_search[1]}) at {dates_y[0]}",
             xlabel="Region",
             ylabel="Number of IXP Connections / Total IXPs in that Region",
-            colors=colors
+            colors=colors, 
+            show_values=True
     )
 
 

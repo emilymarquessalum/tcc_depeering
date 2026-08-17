@@ -136,7 +136,7 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
             create_text_report=True
         )
 
-        plot_ixp_sizes = False
+        plot_ixp_sizes = True
 
         if plot_ixp_sizes:
             ixps_peered_info_at_first_date = connections_over_time[0][1]

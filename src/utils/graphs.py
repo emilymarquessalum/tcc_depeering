@@ -22,6 +22,7 @@ warnings.filterwarnings('ignore', category=UserWarning, message='.*FigureCanvasA
 # Track graphs rendered in this session
 _session_rendered_graphs = []
 
+DEFAULT_FIGSIZE = (12,6)
 
 def clean_title_name(title):
     return title.replace(" ", "_").replace("(", "-").replace(":", "dotdot").replace(")", "-").lower().replace(",", "_and_").replace("//", "/")
@@ -126,7 +127,7 @@ def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='In
     
      
     plt.rcdefaults()
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
     x_indices = np.arange(len(data_list))  # Converted to numpy array for easier masking
     y_values = np.array(data_list)
     x_labels = list(y) if y is not None else list(x_indices)
@@ -218,7 +219,7 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
     
     # Reset internal canvas settings
     plt.rcdefaults()
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
     
     # Generate index baselines
     x_indices = np.arange(first_line_len)
@@ -383,10 +384,11 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
                           title='Data Bar Plot', xlabel='Index', ylabel='Value', subfolder=None, 
                           max_x_value=None, max_labels=None, use_colors=False, colors=None, 
                           color_labels=None, is_percentage=False, do_top_n=None, sort_by_size=False,
-                          sort_by_size_cut=None, range_of_bar_group_subdivisions=None, use_rotated_labels=False):
+                          sort_by_size_cut=None, range_of_bar_group_subdivisions=None, use_rotated_labels=False,
+                          show_values=False, value_format=None):
     
     plt.rcdefaults()
-    plt.figure(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
     
     # Assertions
     assert y is None or len(data_list) == len(y), f"Length mismatch: data_list ({len(data_list)}) != y ({len(y)})"
@@ -396,9 +398,6 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
         assert len(extra_labels) == len(data_list), "Length of extra_labels must match data_list."
 
     # Process & Clean Data State
-    # Note: If your internal `_prepare_and_filter_data` function doesn't automatically handle `extra_labels`,
-    # we can zip them here or ensure they match indices after filtering. 
-    # Assuming standard behavior, we map extra_labels tracking by indexing the original data_list structure:
     items = _prepare_and_filter_data(data_list, y, colors, data_annotated_values, use_colors, do_top_n, sort_by_size, sort_by_size_cut)
     
     if y is not None and max_x_value is not None:
@@ -410,37 +409,47 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
     x_labels = [item['x'] for item in items]
     plot_colors = [item['c'] for item in items]
 
-    # Handle Extra Labels Processing (mapping back to filtered items if necessary)
+    # Handle Extra Labels Processing
     if extra_labels is not None:
-        # Create a lookup mapping from original data_list elements to their extra labels
-        # (This protects integrity if _prepare_and_filter_data sorts or filters items)
         label_lookup = {orig_x: extra for orig_x, extra in zip(data_list, extra_labels)}
-        
-        # Combine the original x_label with the extra label using a newline
         x_labels = [f"{x}\n{label_lookup.get(x, '')}" for x in x_labels]
 
     # Draw Bars
-    bars = plt.bar(x_positions, y_values, color=plot_colors)
+    bars = ax.bar(x_positions, y_values, color=plot_colors)
     
     # Handle X Ticks & Labels 
     if max_labels and len(items) > max_labels:
         step = len(items) // max_labels
         tick_positions = x_positions[::step]
         tick_labels = x_labels[::step]
-        plt.xticks(tick_positions, tick_labels, rotation=45 if use_rotated_labels else 0)
+        ax.set_xticks(tick_positions)
+        ax.set_xticklabels(tick_labels, rotation=45 if use_rotated_labels else 0)
     else:
-        plt.xticks(x_positions, x_labels, rotation=45 if use_rotated_labels else 0)
+        ax.set_xticks(x_positions)
+        ax.set_xticklabels(x_labels, rotation=45 if use_rotated_labels else 0)
 
-    # Add Annotations
-    if data_annotated_values is not None:
+    # Add Annotations / Bar Values
+    if show_values or data_annotated_values is not None:
         for bar, item in zip(bars, items):
-            if item['a'] is None: continue
             height = bar.get_height()
             va_dir = 'bottom' if height >= 0 else 'top'
             offset = 3 if height >= 0 else -3
-            
-            plt.annotate(
-                f"{item['a']}",
+
+            # Determine label text: priority to custom annotations, then bar height
+            if data_annotated_values is not None and item.get('a') is not None:
+                label_text = str(item['a'])
+            elif show_values:
+                if value_format:
+                    label_text = value_format.format(height)
+                elif is_percentage:
+                    label_text = f"{height:.1%}"
+                else:
+                    label_text = f"{int(height)}" if height.is_integer() else f"{height:.2f}"
+            else:
+                continue
+
+            ax.annotate(
+                label_text,
                 xy=(bar.get_x() + bar.get_width() / 2, height),
                 xytext=(0, offset),
                 textcoords="offset points",
@@ -449,27 +458,27 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
 
     # Draw Separation Lines
     for sep_pos in adjusted_seps:
-        plt.axvline(x=sep_pos, color='gray', linestyle='--', linewidth=1)
+        ax.axvline(x=sep_pos, color='gray', linestyle='--', linewidth=1)
 
     # Formatting & Styling
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
     if not is_tcc_mode():
-        plt.title(title)
+        ax.set_title(title)
         
-    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     if is_percentage:
-        plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda val, _: f'{val:.0%}'))
-    plt.grid(axis='y') 
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda val, _: f'{val:.0%}'))
+    ax.grid(axis='y') 
  
     # Legend
     if color_labels:
         color_label_mapping = {color: label for label, color in color_labels.items()}
-        legend_patches = [mpatches.Patch(color=c, label=l) for l,c in color_label_mapping.items()]
-        plt.legend(handles=legend_patches, loc='best') 
+        legend_patches = [mpatches.Patch(color=c, label=l) for l, c in color_label_mapping.items()]
+        ax.legend(handles=legend_patches, loc='best') 
  
     save_plot(plt, title, subfolder=subfolder)
-    plt.close()
+    plt.close(fig)
 
 def plot_list_as_heat_map(data: list[list[float]], title='Heat Map', x_labels=None, y_labels=None, subfolder=None):
     plt.figure(figsize=(10, 8))
@@ -650,7 +659,7 @@ def plot_stacked_bar_plot(data_lists, labels, x_labels=None, title='Stacked Bar 
     # Sort data lists and labels by total if requested
     data_lists, labels = sort_data_and_labels_by_total(data_lists, labels, sort_by_size=sort_by_size)
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
     
     # If sort_by_size, sort the x-axis bars by their total height
     if sort_by_size:
@@ -743,7 +752,7 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
     
     labels = format_labels_if_they_are_dates(labels)
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
     x_indices = range(len(data_lists[0]))
     
     if colors is None:
@@ -820,7 +829,7 @@ def plot_list_as_win_loss_bar_plot(list_to_plot, title, y=None, xlabel='Index', 
     gains = [gain for gain, loss in win_and_losses_over_time]
     losses = [loss for gain, loss in win_and_losses_over_time]
     
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=DEFAULT_FIGSIZE)
     
     x_indices = list(range(len(gains)))
     bar_width = 0.35
