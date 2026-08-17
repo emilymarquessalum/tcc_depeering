@@ -36,7 +36,7 @@ def load_all_routeserver_data_from_date(date, ixp, routeserver_name) -> dict[str
     asn_to_data_mapping = {}
 
     for available_date_file in available_dates:
-        with open(available_date_file) as f:
+        with open(path + available_date_file) as f:
             file_data = json.loads(f)
             asns_data = file_data[routeserver_name]["neighbors"]
 
