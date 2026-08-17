@@ -8,7 +8,7 @@ from pathlib import Path
  
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent)) 
 
-from src.utils.graphs import create_window_with_all_rendered_graphs_this_session, plot_list_as_line_plot
+from src.utils.graphs import plot_list_as_line_plot
  
 
 ROUTESERVER_PATH = "jfpereira/routeservers_json/"
@@ -378,7 +378,7 @@ if __name__ == "__main__":
 
     
     
-    create_window_with_all_rendered_graphs_this_session()
+    #create_window_with_all_rendered_graphs_this_session()
     
 
     
