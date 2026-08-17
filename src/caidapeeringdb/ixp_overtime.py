@@ -3,14 +3,21 @@ import numpy as np
 import re
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
 from src.caidapeeringdb.caidapeeringdb_load import get_asn_from_net
-from src.utils.graphs import clean_title_name, save_plot
+from src.utils.graphs import clean_title_name, plot_list_as_line_plot, save_plot
 
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
-
-
-def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, route_server_mode="all",
-                                    title_info="IXPs"):
-   
+def plot_ixps_connections_over_time(
+    all_data, 
+    dates, 
+    ixp_ids, 
+    ixp_names=None, 
+    route_server_mode="all",
+    title_info="IXPs",
+    index_of_focused_asn_depeering=None  # <-- NEW PARAMETER
+):
+    # --- 1. Validation and Setup ---
     if ixp_ids is None or len(ixp_ids) == 0:
         raise ValueError("ixp_ids cannot be None or empty")
     if not isinstance(ixp_ids, (list, tuple, set)):
@@ -38,6 +45,7 @@ def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, ro
     target_ixp_id_set = set(target_ixp_ids)
     timeline_data = {ixp_id: [] for ixp_id in target_ixp_ids}
 
+    # --- 2. Data Processing ---
     for snapshot_data in all_data:
         rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
         non_rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
@@ -78,18 +86,7 @@ def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, ro
 
             timeline_data[ixp_id].append(peer_count)
 
-    plt.figure(figsize=(12, 6))
-
-    for ixp_id in target_ixp_ids:
-        display_name = ixp_name_map.get(ixp_id, f"IXP {ixp_id}")
-        plt.plot(
-            range(len(dates)),
-            timeline_data[ixp_id],
-            alpha=0.2,
-            linewidth=1.2,
-            label=display_name,
-        )
-
+    # Calculate Average and Median time series
     average_values = []
     median_values = []
     for index in range(len(dates)):
@@ -101,9 +98,7 @@ def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, ro
             average_values.append(0.0)
             median_values.append(0.0)
 
-    plt.plot(range(len(dates)), average_values, color="black", linewidth=3, label="Average")
-    plt.plot(range(len(dates)), median_values, color="dimgray", linewidth=2, linestyle="--", label="Median")
-
+    # --- 3. Build Title and Labels ---
     if route_server_mode == "only_routeserver":
         mode_label = "RS Peers"
     elif route_server_mode == "only_non_routeserver":
@@ -123,28 +118,65 @@ def plot_ixps_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, ro
     if ixp_label:
         title += f" ({ixp_label})"
 
-    if len(dates) > 8:
-        step = max(1, len(dates) // 8)
-        tick_positions = list(range(0, len(dates), step))
-        tick_labels = [dates[i] for i in tick_positions]
-        plt.xticks(tick_positions, tick_labels, rotation=45)
-    else:
-        plt.xticks(range(len(dates)), dates, rotation=45)
+    # --- 4. Build Custom Lines & Annotations ---
+    x_indices = np.arange(len(dates))
+    extra_artists = []
 
-    plt.title(title)
-    plt.xlabel("Date")
-    plt.ylabel("Number of Peers")
-    plt.legend()
-    plt.grid(True)
+    # Individual IXP lines
+    for ixp_id in target_ixp_ids:
+        display_name = ixp_name_map.get(ixp_id, f"IXP {ixp_id}")
+        line = mlines.Line2D(
+            x_indices, 
+            timeline_data[ixp_id], 
+            color="tab:blue", 
+            alpha=0.2, 
+            linewidth=1.2, 
+            label=display_name
+        )
+        extra_artists.append(line)
 
-    id_suffix = "_".join(str(ixp_id) for ixp_id in target_ixp_ids)
-    save_plot(
-        plt,
-        clean_title_name(title),
-        subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_overtime"
+    # Median line
+    median_line = mlines.Line2D(
+        x_indices, 
+        median_values, 
+        color="dimgray", 
+        linewidth=2, 
+        linestyle="--", 
+        label="Median"
     )
-    plt.close()
+    extra_artists.append(median_line)
 
+    # --- De-peering Vertical Line Marker ---
+    if index_of_focused_asn_depeering is not None and 0 <= index_of_focused_asn_depeering < len(dates):
+        # Line2D with transform=plt.gca().get_xaxis_transform() spans the full vertical Y height
+        depeering_line = plt.axvline(
+            x=index_of_focused_asn_depeering, 
+            color="red", 
+            linestyle=":", 
+            linewidth=2, 
+            label="de-peering"
+        )
+        extra_artists.append(depeering_line)
+
+    subfolder_path = PEERINGDB_SUBFOLDER_PREFIX + "ixp_overtime"
+
+    # --- 5. Delegate Plotting ---
+    plot_list_as_line_plot(
+        data_list=average_values,
+        y=dates,
+        title=title,
+        xlabel="Date",
+        ylabel="Number of Peers",
+        positive_color=None,
+        negative_color=None,
+        use_fill=False,
+        subfolder=subfolder_path,
+        max_labels=8 if len(dates) > 8 else None,
+        use_rotated_labels=True,
+        annotations=extra_artists
+    )
+    
+    
 def plot_ixp_statistics_connections_over_time(all_data, dates, ixp_ids, ixp_names=None, 
                                                 route_server_mode="all", title_info="IXPs"):
     """
@@ -347,13 +379,14 @@ def plot_ixp_statistics_connections_over_time(all_data, dates, ixp_ids, ixp_name
         subfolder=PEERINGDB_SUBFOLDER_PREFIX + "ixp_stats_overtime"
     )
     plt.close()
+ 
 
-def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_ids):
+def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_ids, type_of_depeering="completely_lost"):
     """
     Returns the IXP ID with the highest de-peering ratio at any single snapshot in time.
     De-peering ratio is defined as (completely lost connections) / (total connections).
     """
-    if ixp_ids is None or len(ixp_ids) == 0:
+    if ixp_ids is None or len(ixp_ids) == 0: 
         raise ValueError("ixp_ids cannot be None or empty")
     if not isinstance(ixp_ids, (list, tuple, set)):
         ixp_ids = [ixp_ids]
@@ -364,30 +397,69 @@ def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_id
 
     max_depeering_ratio = -1
     ixp_with_max_ratio = None
+    index_of_max_ratio = -1
 
     for i in range(1, len(all_data)):
         snapshot_data = all_data[i]
         previous_snapshot_data = all_data[i - 1]
 
         for ixp_id in target_ixp_ids:
-            current_connections = sum(
-                1 for conn in snapshot_data.get("netixlan", {}).get("data", [])
-                if conn.get("ix_id") == ixp_id
-            )
-            previous_connections = sum( 
+
+            if type_of_depeering == "completely_lost":
+                # Calculate de-peering ratio for completely lost connections
+                current_connections = sum(
+                    1 for conn in snapshot_data.get("netixlan", {}).get("data", [])
+                    if conn.get("ix_id") == ixp_id
+                )
+                previous_connections = sum( 
                 1 for conn in previous_snapshot_data.get("netixlan", {}).get("data", [])
                 if conn.get("ix_id") == ixp_id
-            )
+                )
+            elif type_of_depeering == "rs_to_non_rs":
+                # passed from rs to not-rs (was rs in the past, isnt anymore). For both cases we get all the rs ones, 
+                # this way we then filter to find the ones that existed as RS but dont exist as RS in the future
+                current_connections = sum( 
+                    1 for conn in snapshot_data.get("netixlan", {}).get("data", [])
+                    if conn.get("ix_id") == ixp_id and conn.get("is_rs_peer", False)
+                ) 
+                previous_connections = sum(
+                    1 for conn in previous_snapshot_data.get("netixlan", {}).get("data", [])
+                    if conn.get("ix_id") == ixp_id and conn.get("is_rs_peer", False)
+                ) 
+            else:
+                raise ValueError("Invalid type_of_depeering. Must be 'completely_lost' or 'rs_to_non_rs'.")
 
             if previous_connections > 0:
                 depeering_ratio = (previous_connections - current_connections) / previous_connections
                 if depeering_ratio > max_depeering_ratio:
+                    index_of_max_ratio = i
                     max_depeering_ratio = depeering_ratio
                     ixp_with_max_ratio = ixp_id
 
-    return ixp_with_max_ratio, max_depeering_ratio
+    return ixp_with_max_ratio, max_depeering_ratio, index_of_max_ratio
 
-    
+
+def get_ases_that_depeered_at_ixp_at_depeering_peak(all_data, ixp_id, index_of_max_depeering):
+    """
+    Returns the list of ASNs that de-peered at a specific IXP during the snapshot with the highest de-peering ratio.
+    """
+    if index_of_max_depeering <= 0 or index_of_max_depeering >= len(all_data):
+        raise ValueError("index_of_max_depeering must be within the range of available snapshots.")
+
+    current_snapshot = all_data[index_of_max_depeering]
+    previous_snapshot = all_data[index_of_max_depeering - 1]
+
+    current_asns = {
+        get_asn_from_net(conn) for conn in current_snapshot.get("netixlan", {}).get("data", [])
+        if conn.get("ix_id") == ixp_id
+    }
+    previous_asns = {
+        get_asn_from_net(conn) for conn in previous_snapshot.get("netixlan", {}).get("data", [])
+        if conn.get("ix_id") == ixp_id
+    }
+
+    depeered_asns = previous_asns - current_asns
+    return list(depeered_asns)
 
 
 def plot_ixp_connections_over_time_by_category(dates, timeline_data, completely_lost_ixp_ids, 

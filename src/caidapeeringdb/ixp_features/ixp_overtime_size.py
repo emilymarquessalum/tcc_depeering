@@ -2,7 +2,7 @@ import re
 import numpy as np
 from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
-from src.caidapeeringdb.ixp_overtime import get_ixp_with_most_depeering_ratio_at_a_single_point_in_time, plot_ixp_connections_over_time_by_category, plot_ixps_connections_over_time
+from src.caidapeeringdb.ixp_overtime import get_ases_that_depeered_at_ixp_at_depeering_peak, get_ixp_with_most_depeering_ratio_at_a_single_point_in_time, plot_ixp_connections_over_time_by_category, plot_ixps_connections_over_time
 
 DEFAULT_SIZE_RANGE_THRESHOLDS = [50, 100, 150, 200]
 
@@ -36,6 +36,7 @@ def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_
     completely_lost_by_range = {label: [] for label in range_labels}
     depeered_nonpeered_by_range = {label: [] for label in range_labels}
     all_relevant_ixp_ids = set()
+    depeered_at_peak_ases_by_ixp = {}
     
     for ixp_id, size in depeered_ixp_sizes.items():
         if ixp_id not in depeered_ixp_ids:
@@ -129,20 +130,25 @@ def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_
             plot_name_suffix=f"size_range_{label}",
             depeering_event_timelines=depeering_event_timelines
         )
+ 
 
-        # --- B. Plot individual IXP with highest de-peering ratio in this size group ---
-        max_ixp_id, max_ratio = get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(
+        max_ixp_id_in_the_size_range, max_ratio, index_of_max_ratio = get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(
             all_data=all_data, 
-            ixp_ids=combined_range_ixp_ids
+            ixp_ids=combined_range_ixp_ids,
+            type_of_depeering="rs_to_non_rs"
         )
+
+        depeered_at_peak_ases_by_ixp[max_ixp_id_in_the_size_range] = get_ases_that_depeered_at_ixp_at_depeering_peak(all_data, max_ixp_id_in_the_size_range, index_of_max_ratio)
         
-        if max_ixp_id is not None:
+        if max_ixp_id_in_the_size_range is not None:
             plot_ixps_connections_over_time(
                 all_data=all_data,
                 dates=dates,
-                ixp_ids=[max_ixp_id],
+                ixp_ids=[max_ixp_id_in_the_size_range],
                 ixp_names=ixp_names,
                 title_info=f"Size Group {label} (Highest De-Peering Ratio: {max_ratio:.2%})"
             )
         else:
             print(f"No IXP found with de-peering events in size range {label}...")
+
+    return depeered_at_peak_ases_by_ixp

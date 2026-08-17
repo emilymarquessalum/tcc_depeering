@@ -456,19 +456,33 @@ if __name__ == "__main__":
         completely_lost_ixp_ids = data_structures["completely_lost_ixp_ids"]
         depeered_with_nonpeered_ixp_ids = data_structures["depeered_with_nonpeered_ixp_ids"]
 
+
+        index_the_asn_analyzed_mass_depeered = None
         
-        confirm_action("Plot connections over time by size ranges", lambda: plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
+
+        depeered_at_peak_ases_by_size_range = plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
                                                              completely_lost_ixp_ids=completely_lost_ixp_ids,
                                                              ixp_names={ixp["id"]: ixp["name"] for ixp in all_ixps},
-                                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids))
+                                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
+         
             
 
-        
-        confirm_action("Plot connections over time by region", lambda: plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
+        depeered_at_peak_ases_by_region = plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
                                             depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,
+                                            index_the_asn_analyzed_mass_depeered=index_the_asn_analyzed_mass_depeered,
                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
-        )
+
         
+        print("From the de-peered ASes in peaks of de-peering by region and size range, how much % of ASes show up in more than one IXP?")
+        percentage_of_ases_in_multiple_ixps_by_size_range = {}
+
+        all_depeered_ases_lists = list(depeered_at_peak_ases_by_size_range.values()) + list(depeered_at_peak_ases_by_region.values())
+        all_depeered_ases = [asn for sublist in all_depeered_ases_lists for asn in sublist]
+        unique_depeered_ases = set(all_depeered_ases)
+        ases_in_multiple_ixps = [asn for asn in unique_depeered_ases if all_depeered_ases.count(asn) > 1]
+        percentage_of_ases_in_multiple_ixps = (len(ases_in_multiple_ixps) / len(unique_depeered_ases)) * 100 if unique_depeered_ases else 0
+        print(f"Percentage of ASes in multiple IXPs: {percentage_of_ases_in_multiple_ixps:.2f}% ({len(ases_in_multiple_ixps)} out of {len(unique_depeered_ases)} unique de-peered ASes)")
+
         confirm_action("Plot connections over time by time-in-IXP ranges", lambda: 
             plot_ixp_connections_over_time_by_age_ranges(all_data, all_files, depeered_ixp_ids, asn_to_analyze,
                                                      depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,

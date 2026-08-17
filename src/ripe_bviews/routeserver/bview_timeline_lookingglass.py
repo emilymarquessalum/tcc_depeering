@@ -4,7 +4,7 @@ import datetime
 from pathlib import Path
 import sys
 
-from src.ripe_bviews.routeserver.routeserver import asn_participations, depeering_analysis, get_asn_to_routes_map 
+from src.ripe_bviews.routeserver.routeserver import asn_participations, depeering_analysis, load_routeserver_data_from_range 
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent)) 
@@ -37,7 +37,7 @@ def bview_looking_glass(all_required_data):
     start_time = datetime.datetime.strptime(config["start_date"], "%Y-%m-%d")
     end_time = datetime.datetime.strptime(config["end_date"], "%Y-%m-%d")
 
-    asn_to_routes_map = get_asn_to_routes_map(start_time, end_time)
+    asn_to_routes_map = load_routeserver_data_from_range(start_time, end_time)
     
     asn_participations(asn_to_routes_map, start_time, end_time)
     depeering_analysis(asn_to_routes_map)

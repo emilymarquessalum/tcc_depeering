@@ -3,6 +3,7 @@ from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
 from src.caidapeeringdb.continent_logic import get_continent_for_ixp
 from src.caidapeeringdb.ixp_overtime import (
+    get_ases_that_depeered_at_ixp_at_depeering_peak,
     plot_ixp_connections_over_time_by_category,
     get_ixp_with_most_depeering_ratio_at_a_single_point_in_time,
     plot_ixps_connections_over_time,
@@ -15,6 +16,7 @@ def plot_ixp_connections_over_time_by_region(
     depeered_ixp_ids,
     asn_to_analyze,
     all_ixps,
+    index_the_asn_analyzed_mass_depeered=None,
     depeered_completely_lost_ixp_ids=None,
     depeered_with_nonpeered_ixp_ids=None,
     ixp_names=None,
@@ -36,6 +38,8 @@ def plot_ixp_connections_over_time_by_region(
     completely_lost_by_region = {}
     with_nonpeered_by_region = {}
     all_relevant_ixp_ids = set()
+
+    depeered_at_peak_ases_by_ixp = {}
 
     for ixp_id in depeered_completely_lost_ixp_ids:
         ixp_info = ixp_lookup.get(ixp_id)
@@ -122,18 +126,25 @@ def plot_ixp_connections_over_time_by_region(
         )
 
         # --- B. Find & Plot the IXP with Highest De-peering Ratio in this Region ---
-        max_ixp_id, max_ratio = get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(
+        max_ixp_id_in_the_region, max_ratio, index_of_max_ratio = get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(
             all_data=all_data, 
-            ixp_ids=combined_region_ixp_ids
+            ixp_ids=combined_region_ixp_ids,
+            type_of_depeering="rs_to_non_rs"
         )
 
-        if max_ixp_id is not None:
+        depeered_at_peak_ases_by_ixp[max_ixp_id_in_the_region] = get_ases_that_depeered_at_ixp_at_depeering_peak(all_data, max_ixp_id_in_the_region, index_of_max_ratio)
+
+        if max_ixp_id_in_the_region is not None:
             plot_ixps_connections_over_time(
                 all_data=all_data,
                 dates=dates,
-                ixp_ids=[max_ixp_id],
+                ixp_ids=[max_ixp_id_in_the_region],
                 ixp_names=ixp_names,
                 title_info=f"Region {region} (Highest De-Peering Ratio: {max_ratio:.2%})",
+                index_of_focused_asn_depeering=index_the_asn_analyzed_mass_depeered,
             )
         else:
             print(f"No IXP found with de-peering events in region {region}...")
+ 
+
+    return depeered_at_peak_ases_by_ixp

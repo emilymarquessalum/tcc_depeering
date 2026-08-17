@@ -9,7 +9,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent)) 
 
 from src.utils.graphs import create_window_with_all_rendered_graphs_this_session, plot_list_as_line_plot
+ 
 
+ROUTESERVER_PATH = "jfpereira/routeservers_json/"
 
 # routes_received: routes neighbour is trying to announce to the route server
 # routes_filtered: not accepted
@@ -17,24 +19,77 @@ from src.utils.graphs import create_window_with_all_rendered_graphs_this_session
 # routes_exported: routes it has access to because of the RouteServer.
 
 
-def get_routeserver(routeserver_name, date):
+# loads all route server data from a single date (different hours of that date),
+# stores the latest information of an AS (if the AS was visible at any time of that day that our snapshots acquired, it will be in the resulting data, even if it 
+# de-peered that day, to avoid cases where the AS simply left the IXP for a few hours due to outtages and etc)
+def load_all_routeserver_data_from_date(date, ixp, routeserver_name) -> dict[str, list[dict]]:
 
 
-    folder_path = "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/routeservers/{routeserver_name}/{date}/neighbors/".format(routeserver_name=routeserver_name, date=date)
+    path = ROUTESERVER_PATH + date + "/" + ixp + "/neighbors"
 
-    if not os.path.exists(folder_path):
-       return None
     
-    first_file = None
-    for file_name in os.listdir(folder_path):
-        if file_name.endswith(".json"):
-            first_file = file_name
-            break
+    available_dates = os.listdir(path)
+
+    if len(available_dates) == 0:
+        return None
     
-    with open(os.path.join(folder_path, first_file), "r") as f:
-        data = json.load(f)
-    
-    return data
+    asn_to_data_mapping = {}
+
+    for available_date_file in available_dates:
+        with open(available_date_file) as f:
+            file_data = json.loads(f)
+            asns_data = file_data[routeserver_name]["neighbors"]
+
+            for asn_specific_data in asns_data:
+
+                asn = asn_specific_data["asn"]
+                asn_to_data_mapping[asn] = asn_specific_data # asn, routes_received, routes_filtered, routes_accepted, routes_exported
+
+    return asn_to_data_mapping
+
+def get_empty_asn_data(asn):
+    return {
+        "asn": asn,
+        "routes_received": -1, # -1 means didnt exist
+        "routes_filtered": -1,
+        "routes_accepted": -1,
+        "routes_exported": -1
+    }
+
+def load_routeserver_data_from_range(ixp, routeserver, start_time, end_time, interval):
+
+    current_time = start_time
+
+    asn_to_routes_over_time_map = {}
+
+    while current_time <= end_time:
+
+        date_str = current_time.strftime("%Y%m%d")
+        print(f"Processing data for date: {date_str}")
+        route_server_data = load_all_routeserver_data_from_date(date_str, ixp, routeserver)
+
+        if route_server_data is None:
+            print(f"  No data found for {date_str}")
+            current_time += interval
+            continue
+        
+        for asn in route_server_data.keys():
+            if asn not in asn_to_routes_over_time_map:
+                asn_to_routes_over_time_map[asn] = []
+
+            asn_to_routes_over_time_map[asn].append(route_server_data[asn]) 
+
+        asns_missing = set(asn_to_routes_over_time_map.keys()) - set(route_server_data.keys())
+
+        for asn in asns_missing:
+            asn_to_routes_over_time_map[asn].append(
+                get_empty_asn_data(asn)
+            )
+
+        current_time += interval
+
+    return asn_to_routes_over_time_map
+
 
 
 
@@ -100,81 +155,42 @@ def get_change_percentage_of_asn(neighbor_asn, neighbours_before, neighbours_aft
     return change_percentage
 
 
-def get_asn_to_routes_map(start_time, end_time):
-
-    current_time = start_time
-
-    asn_to_routes_map = {}
-
-    while current_time <= end_time:
-        date_str = current_time.strftime("%Y%m%d")
-        print(f"Processing data for date: {date_str}")
-        route_server_data = get_routeserver("ix-br", date_str)
-        if route_server_data is None:
-            print(f"  No data found for {date_str}")
-            current_time += datetime.timedelta(days=1)
-            continue
-        neighbours = route_server_data["SP-rs2-v4"]["neighbors"]
- 
-        asns_missing = [k for k in (asn_to_routes_map).keys()]
-        asns_processed_today = set()
-        for neighbor in neighbours:
-            asn = neighbor["asn"]
-            if asn in asns_processed_today:
-                continue  # Skip duplicates for the same day
-            asns_processed_today.add(asn)
-            asns_missing.remove(asn) if asn in asns_missing else None
-            routes_accepted = neighbor["routes_accepted"]
-            routes_exported = neighbor["routes_exported"]
-            if asn not in asn_to_routes_map:
-                asn_to_routes_map[asn] = []
-                for i in range((current_time - start_time).days):
-                    asn_to_routes_map[asn].append((start_time + datetime.timedelta(days=i), -1))
-            asn_to_routes_map[asn].append((current_time, routes_accepted))
-        
-        for asn in asns_missing:
-            asn_to_routes_map[asn].append((current_time, -1))
-        current_time += datetime.timedelta(days=1)
-
-    return asn_to_routes_map
-
-
-def depeering_analysis(asn_to_routes_map):
+def depeering_analysis(asn_to_routes_over_time_map):
     asns_that_left_at_some_point = set()
     asns_that_had_routes_but_then_had_zero_routes = set()
-    for asn, routes_data in asn_to_routes_map.items():
-        index_of_first_zero = next((i for i, (_, routes) in enumerate(routes_data) if routes == 0), None)
+    for asn, routes_data in asn_to_routes_over_time_map.items():
+        index_of_first_zero = next((i for i, routes in enumerate(routes_data) if routes["routes_accepted"] == 0), None)
         if index_of_first_zero is not None:
-            if any(routes > 0 for _, routes in routes_data[:index_of_first_zero]):
+            if any(routes["routes_accepted"] > 0 for routes in routes_data[:index_of_first_zero]):
                 asns_that_had_routes_but_then_had_zero_routes.add(asn)
-        if any(routes == -1 for _, routes in routes_data):
+        if any(routes["routes_accepted"] == -1 for routes in routes_data):
             asns_that_left_at_some_point.add(asn)
     
     print(f"ASNs that left at some point (total: {len(asns_that_left_at_some_point)}):")
     if len(asns_that_left_at_some_point) <= 5:
         for asn in asns_that_left_at_some_point:
             print(f"ASN: {asn}")
-            for date, routes in asn_to_routes_map[asn]:
-                print(f"  Date: {date.strftime('%Y-%m-%d')}, Accepted Routes: {routes}")
+            for i, routes in enumerate(asn_to_routes_over_time_map[asn]):
+                print(f"  i: {i}, Accepted Routes: {routes["routes_accepted"]}")
     
     #asns_that_had_routes_but_then_had_zero_routes_and_has_increase_of_
     print(f"Sample of 3 ASNs that had routes but then had zero routes (total: {len(asns_that_had_routes_but_then_had_zero_routes)}):")
     for asn in list(asns_that_had_routes_but_then_had_zero_routes)[:3]:
         print(f"ASN: {asn}")
-        for date, routes in asn_to_routes_map[asn]:
-            print(f"  Date: {date.strftime('%Y-%m-%d')}, Accepted Routes: {routes}")
+        for i, routes in enumerate(asn_to_routes_over_time_map[asn]):
+            print(f"  i: {i}, Accepted Routes: {routes}")
     #get_top_changes(neighbours, neighbours_two)
 
     asns_that_lost_more_than_ten_percent_between_i_minus_two_and_i_minus_one = []
     asns_that_did_not_lose_more_than_ten_percent_between_i_minus_two_and_i_minus_one = []
     for asn in asns_that_had_routes_but_then_had_zero_routes:
 
-        all_indexes_of_zero = [i for i, (_, routes) in enumerate(asn_to_routes_map[asn]) if routes == 0]
+        all_indexes_of_zero = [i for i, routes in enumerate(asn_to_routes_over_time_map[asn]) if routes["routes_accepted"] == 0]
 
         for index_of_zero in all_indexes_of_zero:
             if index_of_zero >= 2:
-                routes_i_minus_two = asn_to_routes_map[asn][index_of_zero - 2][1]
-                routes_i_minus_one = asn_to_routes_map[asn][index_of_zero - 1][1]
+                routes_i_minus_two = asn_to_routes_over_time_map[asn][index_of_zero - 2]["routes_accepted"]
+                routes_i_minus_one = asn_to_routes_over_time_map[asn][index_of_zero - 1]["routes_accepted"]
                 values_are_higher_than_zero = routes_i_minus_two > 0 and routes_i_minus_one > 0
 
                 there_was_a_decrement = routes_i_minus_one < routes_i_minus_two
@@ -193,9 +209,9 @@ def depeering_analysis(asn_to_routes_map):
     print(f"Top 3 ASNs that lost more than 10% between i-2 and i-1 (total: {len(asns_that_lost_more_than_ten_percent_between_i_minus_two_and_i_minus_one)}):")
     for asn, percentage_loss, routes_i_minus_two, routes_i_minus_one in asns_that_lost_more_than_ten_percent_between_i_minus_two_and_i_minus_one[:3]:
         print(f"ASN: {asn}, Percentage Loss: {percentage_loss:.2f}%")
-        for date, routes in asn_to_routes_map[asn]:
-            print(f"  Date: {date.strftime('%Y-%m-%d')}, Accepted Routes: {routes}")
-            print(f"    Routes i-2: {routes_i_minus_two}, Routes i-1: {routes_i_minus_one}")
+        for  routes in asn_to_routes_over_time_map[asn]:
+            #print(f"  Date: {date.strftime('%Y-%m-%d')}, Accepted Routes: {routes}")
+            print(f"    Routes i-2: {routes_i_minus_two}, Routes i-1: {routes_i_minus_one}") 
 
 
 
@@ -209,33 +225,36 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
     consistent_asns = set()
     
     for asn, routes_data in asn_to_routes_map.items():
-        if all(routes > 0 for _, routes in routes_data):
+        if all(routes["routes_accepted"] > 0 for  routes in routes_data):
             consistent_asns.add(asn)
     
     print(f"ASNs that consistently had routes accepted: {len(consistent_asns)} ({len(consistent_asns)/len(asn_to_routes_map)*100:.2f}%)")
 
     completely_silent_asns = set()
     for asn, routes_data in asn_to_routes_map.items():
-        if all(routes == 0 for _, routes in routes_data):
+        if all(routes["routes_accepted"] == 0 for routes in routes_data):
             completely_silent_asns.add(asn)
 
     print(f"ASNs with zero routes accepted always: {len(completely_silent_asns)} ({len(completely_silent_asns)/len(asn_to_routes_map)*100:.2f}%)")
 
-    print("For those ASNs, how many don't have 'routes exported'?")
-    completely_silent_asns
+    no_routes_exported = 0
+    for asn in completely_silent_asns:
+        routes_exported = asn_to_routes_map[asn]['routes_exported']
+        if routes_exported == 0:
+            no_routes_exported += 1
     #followup question, how many have more than 50% visibility 
 
-    print()
+    print(f"For those ASNs, how many don't have 'routes exported': {no_routes_exported}") 
 
     asns_that_had_zero_routes_only_once = set()
     for asn, routes_data in asn_to_routes_map.items():
-        if sum(1 for _, routes in routes_data if routes == 0) == 1 and all(routes >= 0 for _, routes in routes_data):
+        if sum(1 for routes in routes_data if routes["routes_accepted"] == 0) == 1 and all(routes["routes_accepted"] >= 0 for routes in routes_data):
             asns_that_had_zero_routes_only_once.add(asn)
     print(f"ASNs that had zero routes only once: {len(asns_that_had_zero_routes_only_once)} ({len(asns_that_had_zero_routes_only_once)/len(asn_to_routes_map)*100:.2f}%)")
 
     asns_that_had_zero_routes_more_than_once = set()
     for asn, routes_data in asn_to_routes_map.items():
-        if sum(1 for _, routes in routes_data if routes == 0) > 1 and all(routes >= 0 for _, routes in routes_data):
+        if sum(1 for routes in routes_data if routes["routes_accepted"] == 0) > 1 and all(routes["routes_accepted"] >= 0 for routes in routes_data):
             asns_that_had_zero_routes_more_than_once.add(asn)
     print(f"ASNs that had zero routes more than once: {len(asns_that_had_zero_routes_more_than_once)} ({len(asns_that_had_zero_routes_more_than_once)/len(asn_to_routes_map)*100:.2f}%)")
 
@@ -247,13 +266,11 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
         total_routes_for_date = 0
         asns_with_data_for_date = 0
         
-        for asn in asn_to_routes_map:
-            # Check if this ASN has data at this index
-            if date_index < len(asn_to_routes_map[asn]):
-                routes = asn_to_routes_map[asn][date_index][1]
-                if routes >= 0:  # Only count valid routes (exclude -1 for missing data)
-                    total_routes_for_date += routes
-                    asns_with_data_for_date += 1
+        for asn in asn_to_routes_map: 
+            routes = asn_to_routes_map[asn][date_index]["routes_accepted"]
+            if routes >= 0:  # Only count valid routes (exclude -1 for missing data)
+                total_routes_for_date += routes
+                asns_with_data_for_date += 1
 
         if total_routes_for_date == 0:
             continue
@@ -265,18 +282,7 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
                            title="Total Accepted Routes Over Time", 
                         )
 
-    for asn in consistent_asns:
-        routes_data = asn_to_routes_map[asn]
-        if routes_data[0][1] <= 0 or routes_data[-1][1] <= 0:
-            continue  # Skip if first or last entry is invalid
-        change_percentage = ((routes_data[-1][1] - routes_data[0][1]) / routes_data[0][1]) * 100
-        most_changed_consistent_asns.append((asn, change_percentage))
-    
-    for asn, change_percentage in sorted(most_changed_consistent_asns, key=lambda x: -abs(x[1]))[:3]:
-        print(f"ASN: {asn}, Change Percentage: {change_percentage:.2f}%")
 
-        for date, routes in asn_to_routes_map[asn]:
-            print(f"  Date: {date.strftime('%Y-%m-%d')}, Accepted Routes: {routes}")
         
     
 
@@ -285,9 +291,9 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
 
     for asn in consistent_asns:
         routes_data = asn_to_routes_map[asn]
-        changes = [routes_data[i][1] - routes_data[i-1][1] for i in range(1, len(routes_data))]
+        changes = [routes_data[i]["routes_accepted"] - routes_data[i-1]["routes_accepted"] for i in range(1, len(routes_data))]
         if all(change >= 0 for change in changes) or all(change <= 0 for change in changes):
-            total_change_percentage = ((routes_data[-1][1] - routes_data[0][1]) / routes_data[0][1]) * 100
+            total_change_percentage = ((routes_data[-1]["routes_accepted"] - routes_data[0]["routes_accepted"]) / routes_data[0]["routes_accepted"]) * 100
             consistent_asns_with_most_straightforward_change.append((asn, total_change_percentage))
     
     print("Consistent ASNs with the most straightforward change (always increasing or always decreasing):")
@@ -305,12 +311,12 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
     for asn in consistent_asns:
         routes_data = asn_to_routes_map[asn]
         # Filter out entries with -1 (missing data) for calculating changes
-        valid_routes_data = [(date, routes) for date, routes in routes_data if routes >= 0]
+        valid_routes_data = [routes["routes_accepted"] for routes in routes_data if routes["routes_accepted"] >= 0]
         
         if len(valid_routes_data) < 2:
             continue  # Skip if not enough valid data points
         
-        changes = [valid_routes_data[i][1] - valid_routes_data[i-1][1] for i in range(1, len(valid_routes_data))]
+        changes = [valid_routes_data[i] - valid_routes_data[i-1] for i in range(1, len(valid_routes_data))]
         max_consecutive_changes = 0
         current_consecutive_changes = 1
         current_streak_start = 0
@@ -335,9 +341,9 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
 
         if max_consecutive_changes >= 3:
             routes_data = asn_to_routes_map[asn]
-            valid_routes_data_full = [(date, routes) for date, routes in routes_data if routes >= 0]
+            valid_routes_data_full = [routes["routes_accepted"] for routes in routes_data if routes >= 0]
             if len(valid_routes_data_full) >= 2:
-                total_change_percentage = ((valid_routes_data_full[-1][1] - valid_routes_data_full[0][1]) / valid_routes_data_full[0][1]) * 100
+                total_change_percentage = ((valid_routes_data_full[-1] - valid_routes_data_full[0]) / valid_routes_data_full[0]) * 100
                 streak_indices_map[asn] = (max_consecutive_changes, start_index_of_best_streak, end_index_of_best_streak)
                 consistent_asns_with_long_period_of_straightforward_change.append((asn, total_change_percentage))
     
@@ -365,7 +371,7 @@ if __name__ == "__main__":
     start_time = datetime.datetime.strptime("2025-08-16 00:00", "%Y-%m-%d %H:%M")
     end_time = datetime.datetime.strptime("2025-10-16 00:00", "%Y-%m-%d %H:%M")
 
-    asn_to_routes_map = get_asn_to_routes_map(start_time, end_time)
+    asn_to_routes_map = load_routeserver_data_from_range("ix-br", "SP-rs2-v4", start_time, end_time, datetime.timedelta(days=1))
     
     asn_participations(asn_to_routes_map, start_time, end_time)
     depeering_analysis(asn_to_routes_map)
