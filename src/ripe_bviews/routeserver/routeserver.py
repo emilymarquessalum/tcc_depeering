@@ -351,7 +351,7 @@ def asn_participations(asn_to_routes_map, start_time, end_time):
 
         if max_consecutive_changes >= 3:
             routes_data = asn_to_routes_map[asn]
-            valid_routes_data_full = [routes['routes_accepted'] for routes in routes_data if routes >= 0]
+            valid_routes_data_full = [routes['routes_accepted'] for routes in routes_data if routes['routes_accepted'] >= 0]
             if len(valid_routes_data_full) >= 2:
                 total_change_percentage = ((valid_routes_data_full[-1] - valid_routes_data_full[0]) / valid_routes_data_full[0]) * 100
                 streak_indices_map[asn] = (max_consecutive_changes, start_index_of_best_streak, end_index_of_best_streak)
@@ -379,7 +379,7 @@ if __name__ == "__main__":
 
 
     start_time = datetime.datetime.strptime("2025-08-16 00:00", "%Y-%m-%d %H:%M")
-    end_time = datetime.datetime.strptime("2025-10-16 00:00", "%Y-%m-%d %H:%M")
+    end_time = datetime.datetime.strptime("2025-08-19 00:00", "%Y-%m-%d %H:%M")
 
     asn_to_routes_map = load_routeserver_data_from_range("ix-br", "SP-rs2-v4", start_time, end_time, datetime.timedelta(days=1))
     
