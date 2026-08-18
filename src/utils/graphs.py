@@ -385,7 +385,7 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
                           max_x_value=None, max_labels=None, use_colors=False, colors=None, 
                           color_labels=None, is_percentage=False, do_top_n=None, sort_by_size=False,
                           sort_by_size_cut=None, range_of_bar_group_subdivisions=None, use_rotated_labels=False,
-                          show_values=False, value_format=None):
+                          show_values=True, value_format=None):
     
     plt.rcdefaults()
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)

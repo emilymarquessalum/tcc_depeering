@@ -328,9 +328,9 @@ def render_peering_recency_grid(
     if save_path is not None:
         output_path = Path(save_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-		fig.savefig(output_path, bbox_inches="tight")
+        fig.savefig(output_path, bbox_inches="tight")
 
-	return fig, ax, grid
+    return fig, ax, grid
 
 if __name__ == "__main__":
 	# Example usage

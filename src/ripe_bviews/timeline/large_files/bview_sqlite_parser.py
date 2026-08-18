@@ -535,7 +535,7 @@ def compare_hegemony_for_several_dates(
 
 def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False):
 
-    google_vpps_asns = get_google_vpp_asns()
+    google_vpps_asns = get_google_vpp_asns(include_alternatives=True)
     
     hegemony_scores_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
 

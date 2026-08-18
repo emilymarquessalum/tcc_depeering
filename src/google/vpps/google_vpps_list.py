@@ -66,15 +66,21 @@ def create_list_of_vpp_asns_from_names():
          ]) 
         if data and len(data) > 0:
             best_name_match = None
+            alternatives = []
             for entry in data:
                 entry_name = entry.get("name", "").lower()
                 if isp_name_first_line.lower() in entry_name or entry_name in isp_name_first_line.lower():
-                    best_name_match = entry
-                    break
+                    if best_name_match is None:
+                        best_name_match = entry
+                    else:
+                        alternatives.append(entry)
+                    
             if best_name_match:
                 data = [best_name_match]
-            asn = data[0].get("asn")
+            asn = data[0].get("asn") 
             vpps_asn_map[asn] = provider
+
+            provider["alternatives"] = alternatives
 
     with open(SCRIPT_DIR / "google_vpps_list.json", "w") as f:
         json.dump(vpps_asn_map, f, indent=4)
@@ -83,9 +89,17 @@ def create_list_of_vpp_asns_from_names():
     total_quantity = len(vpps_silver) + len(vpps_gold)  
     print(f"Successfully mapped {quantity_of_success} out of {total_quantity} VPPS to ASNs.")
 
-def get_google_vpp_asns() -> list[str]:
+def get_google_vpp_asns(include_alternatives=False) -> list[str]:
     with open(SCRIPT_DIR / "google_vpps_list.json", "r") as f:
         vpps_asn_map = json.load(f)
+        
+    if include_alternatives:
+        all_asns = []
+        for asn, provider in vpps_asn_map.items():
+            all_asns.append(asn)
+            if "alternatives" in provider:
+                all_asns.extend([alt.get("asn") for alt in provider["alternatives"]])
+        return all_asns
     return list(vpps_asn_map.keys())
 
 
