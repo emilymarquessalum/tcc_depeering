@@ -92,13 +92,13 @@ def create_list_of_vpp_asns_from_names():
 def get_google_vpp_asns(include_alternatives=False) -> list[str]:
     with open(SCRIPT_DIR / "google_vpps_list.json", "r") as f:
         vpps_asn_map = json.load(f)
-        
+
     if include_alternatives:
         all_asns = []
         for asn, provider in vpps_asn_map.items():
             all_asns.append(asn)
             if "alternatives" in provider:
-                all_asns.extend([alt.get("asn") for alt in provider["alternatives"]])
+                all_asns.extend([str(alt.get("asn")) for alt in provider["alternatives"]])
         return all_asns
     return list(vpps_asn_map.keys())
 
