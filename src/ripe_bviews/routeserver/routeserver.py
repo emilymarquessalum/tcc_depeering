@@ -65,6 +65,8 @@ def load_routeserver_data_from_range(ixp, routeserver, start_time, end_time, int
 
     asn_to_routes_over_time_map = {}
 
+
+
     while current_time <= end_time:
 
         date_str = current_time.strftime("%Y%m%d")
@@ -82,7 +84,7 @@ def load_routeserver_data_from_range(ixp, routeserver, start_time, end_time, int
         for asn in route_server_data.keys(): 
             if asn not in asn_to_routes_over_time_map:
                 asn_to_routes_over_time_map[asn] = [
-                    get_empty_asn_data(asn) for _ in range((end_time - start_time).days + 1)
+                    get_empty_asn_data(asn) for _ in range((current_time - start_time).days)
                 ]
 
             asn_to_routes_over_time_map[asn].append(route_server_data[asn]) 
