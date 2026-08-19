@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 import warnings
 
+from src.ripe_bviews.timeline.reachable.bview_reachable import calculate_reachables_oscillation_came_back_info 
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -13,12 +15,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from src.ripe_bviews.download_and_parse.load_configs import load_configs
 from src.ripe_bviews.timeline.bview_vars import get_ip_version
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data_timeline_from_configs
-from src.ripe_bviews.timeline.bview_timeline_reachable_metrics import calculate_reachables_oscillation_came_back_info
 
 
 config = load_configs("ixbr.json")
 ip_version = get_ip_version(config)
 all_stats, labels = load_bview_data_timeline_from_configs(config, ip_version=ip_version)     
+
+
 
 came_back_info = calculate_reachables_oscillation_came_back_info(all_stats)
 

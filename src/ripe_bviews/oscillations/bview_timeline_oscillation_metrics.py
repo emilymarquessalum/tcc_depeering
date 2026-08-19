@@ -3,9 +3,7 @@
 
 
 import sys
-from pathlib import Path
-
-from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
+from pathlib import Path 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -18,8 +16,11 @@ from src.ripe_bviews.download_and_parse.load_configs import load_configs
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data_timeline_from_configs
 from src.ripe_bviews.oscillations.bview_oscillation_logic import calculate_oscillation_metrics, OscillationMetrics, get_comeback_times_count_from_oscillation_info
 from src.ripe_bviews.timeline.bview_vars import get_annotations, get_ip_version, get_labels_info, get_subfolder, get_title_start
-from src.utils.graphs import create_window_with_all_rendered_graphs_this_session, plot_list_as_bar_plot, plot_list_as_line_plot, plot_stacked_line_plot
+from src.utils.graphs import create_window_with_all_rendered_graphs_this_session, plot_list_as_bar_plot, plot_list_as_line_plot, plot_map_as_bar_plot, plot_stacked_line_plot
 
+
+
+# growth if we were to ignore oscillations 
 def calculate_non_oscillating_growth_metrics(metrics: OscillationMetrics):
     net_non_oscillating_growth = []
     for i in range(len(metrics.added_non_oscillating_asns_over_time)):
@@ -33,6 +34,8 @@ def calculate_non_oscillating_growth_metrics(metrics: OscillationMetrics):
         net_non_oscillating_growth_accumulated.append(cumulative_sum)
     
     return net_non_oscillating_growth, net_non_oscillating_growth_accumulated
+
+
 
 def calculate_comeback_time_metrics(metrics: OscillationMetrics):
     all_comeback_times = []
@@ -262,12 +265,6 @@ def plot_oscillations_by_time_of_day(metrics, labels, config, title_start, ip_ve
                         subfolder=subfolder,
                         title=title_start + f"Accumulated ASes Ending Oscillation by Time String (UTC) {date_range_title_str}")
 
-def plot_depeerings_over_time(all_stats, labels_summarized, subfolder, max_labels, title_start=''):
-    metrics = calculate_oscillation_metrics(all_stats, snapshots_for_real_depeering=7)
-    metrics.load_oscillating_lists()
-    plot_list_as_line_plot([len(asns) for asns in metrics.all_removed_asns_over_time], labels_summarized[1:], 
-
-                           title=f"{title_start}Depeerings Over Time", xlabel="Time", ylabel="Number of Depeerings", subfolder=subfolder, max_labels=max_labels, annotations=get_annotations())
 
 
 
@@ -374,303 +371,10 @@ def bview_oscillation_metrics():
     #plot_oscillating_start_end_over_time(metrics, labels_summarized, max_labels, title_start, subfolder)
 
     #plot_oscillations_by_time_of_day(metrics, labels, config, title_start, ip_version, date_range_title_str, subfolder)
-
-
-
-
-def get_came_back_metrics_from_reachables_that_left_and_came_back(reachable_oscillation_metrics, all_stats, remove_prepend=True) -> dict:
-    reachables_left_and_came_back = {}
-     
-    for reachable_asn, osc_info in reachable_oscillation_metrics.oscillation_info.items():
-        start_idx = osc_info.get("start_idx")
-        end_idx = osc_info.get("end_idx")
-        
-        if start_idx is None or end_idx is None:
-            continue
  
-        prev_idx = max(0, start_idx - 1)
-        previous_stat = all_stats[prev_idx]
-        current_stat = all_stats[end_idx]
-         
-        prev_m = previous_stat.get_all_members_that_allow_asn_to_be_reachable(reachable_asn)
-        curr_m = current_stat.get_all_members_that_allow_asn_to_be_reachable(reachable_asn)
-        
-        if not prev_m: 
-            continue 
-        reachables_left_and_came_back[reachable_asn] = { 
-            "lost_members": prev_m - curr_m,
-            "new_members": curr_m - prev_m,
-            "still_members": prev_m & curr_m,
-            "oscillations": osc_info["oscillations"],
-            "previous_shortest_path_length": previous_stat.get_shortest_as_path_length_for_reachable(reachable_asn, remove_prepend)[0],
-            "current_shortest_path_length": current_stat.get_shortest_as_path_length_for_reachable(reachable_asn, remove_prepend)[0],
-            "current_shortest_path": current_stat.get_shortest_as_path_length_for_reachable(reachable_asn, remove_prepend)[1],
-            "previous_shortest_path": previous_stat.get_shortest_as_path_length_for_reachable(reachable_asn, remove_prepend)[1]
-        }
-
-    return reachables_left_and_came_back
-
-
-class ReachableOscillationCameBackMetrics:
-    def __init__(self, came_back_with_same_members, came_back_with_different_members, came_back_with_only_new_members):
-        self.came_back_with_same_members: ReachableLeftAndCameBackASPathInfo  = came_back_with_same_members
-        self.came_back_with_different_members: ReachableLeftAndCameBackASPathInfo = came_back_with_different_members
-        self.came_back_with_only_new_members: ReachableLeftAndCameBackASPathInfo = came_back_with_only_new_members
-
-    def summed_same_members(self):
-        same_members_same_as_path = self.came_back_with_same_members.came_back_with_same_length
-        same_members_better_as_path = self.came_back_with_same_members.came_back_with_better_length
-        same_members_worse_as_path = self.came_back_with_same_members.came_back_with_worse_length
-        return len(same_members_same_as_path) + len(same_members_better_as_path) + len(same_members_worse_as_path)  
-
-    def summed_different_members(self):
-        different_members_same_as_path = self.came_back_with_different_members.came_back_with_same_length
-        different_members_better_as_path = self.came_back_with_different_members.came_back_with_better_length
-        different_members_worse_as_path = self.came_back_with_different_members.came_back_with_worse_length
-        return len(different_members_same_as_path) + len(different_members_better_as_path) + len(different_members_worse_as_path)
-    
-    def summed_only_new_members(self):
-        only_new_members_same_as_path = self.came_back_with_only_new_members.came_back_with_same_length
-        only_new_members_better_as_path = self.came_back_with_only_new_members.came_back_with_better_length
-        only_new_members_worse_as_path = self.came_back_with_only_new_members.came_back_with_worse_length
-        return len(only_new_members_same_as_path) + len(only_new_members_better_as_path) + len(only_new_members_worse_as_path)
-
-    def get_all_came_back_categories(self):
-        return [
-            self.came_back_with_same_members,
-            self.came_back_with_different_members,
-            self.came_back_with_only_new_members
-        ]
-
-    def print_and_plot(self, title_start, title_end, subfolder):
-
-        
-        plot_list_as_bar_plot(
-           [
-                "Same Members",
-                "Different Members",
-                "Only New Members"
-            ] ,
-            y=[
-                self.summed_same_members(), 
-                self.summed_different_members(),
-                self.summed_only_new_members()
-            ],
-            title=title_start + "Count of Oscillating Reachable ASes - By how they came back" + title_end,
-            subfolder=subfolder
-        )
-        all_categories = self.get_all_came_back_categories()
-
-        total_net = 0
-        for category in all_categories:
-            total_net += category.get_net_as_path_length_change_counts()
-            category.print_came_back_categories()
-            category.plot_came_back_categories(title_start=title_start, title_end=title_end, subfolder=subfolder)
-            category.plot_came_back_length_changes(title_start=title_start, title_end=title_end, subfolder=subfolder)
-            print("---") 
-        print("Total from all categories")
-        print(f"Net AS path length change: {total_net}")
 
 
 
-class ReachableLeftAndCameBackASPathInfo:
-    def __init__(self,
-                  category_name,
-                  came_back_linked_to_path_length_change,
-                  came_back_with_same_path,
-                  came_back_with_same_length, came_back_with_better_length, came_back_with_worse_length):
-        
-        self.category_name = category_name
-        self.came_back_linked_to_path_length_change = came_back_linked_to_path_length_change
-        self.came_back_with_same_length = came_back_with_same_length
-        self.came_back_with_same_path = came_back_with_same_path
-        self.came_back_with_better_length = came_back_with_better_length
-        self.came_back_with_worse_length = came_back_with_worse_length
-    
-    def get_net_as_path_length_change_counts(self):
-        change_counts = 0
-        for item in self.came_back_linked_to_path_length_change:
-            change = item["change"]
-
-            change_counts += change
-        return change_counts
-
-    def print_came_back_categories(self):
-    
-        total = len(self.came_back_with_same_length) + len(self.came_back_with_better_length) + len(self.came_back_with_worse_length)
-        print(f"\n--- {self.category_name} ---")
-        print(f"Total: {total}")
-        print(f"with same AS path length: {len(self.came_back_with_same_length)}")
-        print(f"with same AS path: {len(self.came_back_with_same_path)}")
-        print(f"with better AS path length: {len(self.came_back_with_better_length)}")
-        print(f"with worse AS path length: {len(self.came_back_with_worse_length)}")
-        print(f"Net AS path length change (sum of all changes): {self.get_net_as_path_length_change_counts()}")
- 
-    def plot_came_back_categories(self, title_start, title_end, subfolder):
-        plot_list_as_bar_plot(
-            ["Same AS Path Length", "Better AS Path Length", "Worse AS Path Length"],
-            [len(self.came_back_with_same_length), len(self.came_back_with_better_length), len(self.came_back_with_worse_length)],
-            title=title_start + "AS Path Length Categories for Reachables that Left and Came Back with " + self.category_name + title_end,
-            xlabel="AS Path Length Change Category",
-            ylabel="Count of Reachables",
-            subfolder=subfolder
-        ) 
-
-    def plot_came_back_length_changes(self, title_start, title_end, subfolder):
-
-        length_changes = {}
-
-        for item in self.came_back_linked_to_path_length_change:
-            change = item["change"]
-            if change not in length_changes:
-                length_changes[change] = 0
-            length_changes[change] += 1
-
-        plot_map_as_bar_plot(
-            length_changes,
-            title=title_start + "AS Path Length Changes (Shortest Path) for Oscillating Reachables with " + self.category_name + title_end,
-            ylabel="Count of Reachables", 
-            xlabel="Path-Length Change (Previous - Current, n>0 is better)", 
-            use_colors=True,
-            subfolder=subfolder
-        )
-
-
-def get_came_back_through_count_categories(category_name, matched_reachables) -> ReachableLeftAndCameBackASPathInfo:
-
-    came_back_with_same_length: list = []
-    came_back_with_same_path: list = []
-    came_back_with_better_length: list = []
-    came_back_with_worse_length: list = []
-    came_back_linked_to_path_length_change: list = []
-    
-    for r in matched_reachables:
-        previous_shortest_path_length = r.get("previous_shortest_path_length")
-        current_shortest_path_length = r.get("current_shortest_path_length")
-        if previous_shortest_path_length is not None and current_shortest_path_length is not None:
-            if current_shortest_path_length == previous_shortest_path_length:
-                came_back_with_same_length.append(r)
-                if r["previous_shortest_path"] == r["current_shortest_path"]:
-                    came_back_with_same_path.append(r) 
-                continue
-            came_back_linked_to_path_length_change.append(
-                {
-                    "reachable": r,
-                    "previous_shortest_path_length": previous_shortest_path_length,
-                    "current_shortest_path_length": current_shortest_path_length,
-                    "change": previous_shortest_path_length - current_shortest_path_length,
-                    "previous_shortest_path": r.get("previous_shortest_path"),
-                    "current_shortest_path": r.get("current_shortest_path")
-                }
-            )
-            if current_shortest_path_length < previous_shortest_path_length:
-                came_back_with_better_length.append(r)
-            else:
-                came_back_with_worse_length.append(r)
-    result = ReachableLeftAndCameBackASPathInfo(
-        category_name=category_name,
-        came_back_linked_to_path_length_change=came_back_linked_to_path_length_change,
-        came_back_with_same_length=came_back_with_same_length,
-        came_back_with_better_length=came_back_with_better_length,
-        came_back_with_worse_length=came_back_with_worse_length,
-        came_back_with_same_path=came_back_with_same_path
-    )
-    return result
-    #return came_back_with_same_length, came_back_with_better_length, came_back_with_worse_length
-
-
-
-
-
-
-def calculate_reachables_oscillation_came_back_info(all_stats: list[BGPDumpSnapshotStats], title_start: str, title_end: str, subfolder: str) -> ReachableOscillationCameBackMetrics:
-    """Analyze reachables that left and came back, tracking member changes during oscillation."""
-    # Use the existing oscillation logic for reachables
-    reachable_oscillation_metrics = calculate_oscillation_metrics(all_stats, use_reachables=True )
-    
-    print(f"Total reachables that oscillated (left and came back): {len(reachable_oscillation_metrics.oscillation_info)}")
-
-    reachables_left_and_came_back = get_came_back_metrics_from_reachables_that_left_and_came_back(reachable_oscillation_metrics, all_stats,
-    remove_prepend=True)
-
-    came_back_through_any_members = get_came_back_through_count_categories(
-        "Any Members",
-        [r for r in reachables_left_and_came_back.values()]
-    )
-
-    came_back_through_any_members.plot_came_back_length_changes(title_start=title_start, title_end=title_end, subfolder=subfolder)
-    came_back_through_any_members.print_came_back_categories()
-
-    came_back_through_only_same_members = get_came_back_through_count_categories(
-        "Only Same Members",
-        [r for r in reachables_left_and_came_back.values() 
-        # no changes in members detected
-        if not r["new_members"] and r["still_members"] and not r["lost_members"]]
-    )
-
-    came_back_through_different_members = get_came_back_through_count_categories(
-        "Different Members",
-        [r for r in reachables_left_and_came_back.values() 
-        # any change in members detected (either lost or new members)                                    
-        if r["new_members"] or r["lost_members"]]
-    )
-
-    came_back_through_only_new_members = get_came_back_through_count_categories(
-        "Only New Members",
-        [r for r in reachables_left_and_came_back.values()
-        # only new members providing access, all previous members lost                                      
-        if r["new_members"] and not r["still_members"]]
-    )
-
-    
-    
-    all_metrics = ReachableOscillationCameBackMetrics( 
-        came_back_with_same_members=came_back_through_only_same_members,
-        came_back_with_different_members=came_back_through_different_members,
-        came_back_with_only_new_members=came_back_through_only_new_members
-    )
-
-    print(f"\n--- Reachables that Left and Came Back ---") 
-    
-    all_metrics.print_and_plot(title_start=title_start,title_end=title_end, subfolder=subfolder)
-
-    return all_metrics
-
-
-def calculate_routes_oscillation_info(all_stats: list[BGPDumpSnapshotStats], title_start: str, title_end: str, subfolder: str):
-
-    """Analyze routes that were lost and came back, tracking AS path length changes during oscillation."""
-    route_oscillation_metrics = calculate_oscillation_metrics(all_stats, use_reachables=False, calculate_routes=True)
- 
-    bar = Bar(max=len(route_oscillation_metrics.route_oscillation_info))
-    oscillations_start_over_time = [0 for _ in range(len(route_oscillation_metrics.route_oscillation_info))]
-
-
-    for osc_info in route_oscillation_metrics.route_oscillation_info:
-        bar.next()
-        start_id = osc_info.get("start_idx")
-            
-        if start_id is not None and 0 <= start_id < len(oscillations_start_over_time):
-            oscillations_start_over_time[start_id] += 1
-        else:
-            raise ValueError(f"Invalid start_idx {start_id} in oscillation info: {osc_info}")
-    
-    bar.finish()
-
-    plot_list_as_line_plot(
-        [i for i in range(len(route_oscillation_metrics.route_oscillation_info))],
-        y=oscillations_start_over_time,
-        title=title_start + "Count of Oscillating Routes Start oscillation" + title_end,
-        xlabel="Date",
-        ylabel="Count of Routes",
-        subfolder=subfolder,
-        max_labels=30
-    ) 
-
-
-# calculate_reachables_oscillation_came_back_info(all_stats, title_start, title_end, subfolder)
-
-#    calculate_routes_oscillation_info(all_stats, title_start, title_end, subfolder)
 
 def bview_oscillations(all_required_data):
 

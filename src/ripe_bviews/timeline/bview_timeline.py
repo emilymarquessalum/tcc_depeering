@@ -5,7 +5,8 @@ from functools import reduce
 import sys
 from pathlib import Path
 
-from src.ripe_bviews.oscillations.bview_timeline_oscillation_metrics import plot_depeerings_over_time
+from src.ripe_bviews.timeline.bview_timeline_depeering import plot_depeering_over_time_by_type, plot_depeerings_over_time
+ 
 
 
 
@@ -377,6 +378,7 @@ def bview_timeline(all_required_data):
                            max_labels=max_labels, annotations=get_annotations()
                            )
 
+    plot_depeering_over_time_by_type(all_stats, labels_summarized, subfolder, max_labels, config, title_start='')
 
     all_stats_summarized_by_union, labels = bview_summarize_via_union_history(all_stats, method="monthly")
 
@@ -388,6 +390,8 @@ def bview_timeline(all_required_data):
     
     #plot_change_over_time(all_stats_summarized_by_union, labels, title_start, title_end, subfolder, max_labels, main_title="Union snapshots")
     plot_depeerings_over_time(all_stats_summarized_by_union, labels, subfolder, max_labels, title_start="Month Union - ")
+
+
 
     
     plot_list_as_line_plot(reachable_history, labels_summarized, title=f'{title_start} Reachable ASes Over Time {title_end}', xlabel='Time', ylabel='Number of Reachable ASes', subfolder=subfolder,

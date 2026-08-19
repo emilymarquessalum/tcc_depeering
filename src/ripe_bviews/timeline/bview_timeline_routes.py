@@ -3,9 +3,11 @@
  
  
 
+from collections import defaultdict
 import sys
 from pathlib import Path
 
+from src.ripe_bviews.oscillations.bview_oscillation_logic import calculate_oscillation_metrics
 from src.ripe_bviews.timeline.path_improvements.bview_routes_improvements import plot_route_changes_and_shortest_path_delta_over_time, plot_routes_added_that_improved_shortest_path, plot_routes_lost_that_made_shortest_path_worse, plot_shortest_path_average_over_time
  
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent)) 
@@ -80,6 +82,41 @@ def plot_member_routes_lost_that_did_not_remove_new_ases(number_of_routes_lost_t
             subfolder=subfolder, 
             max_labels=max_labels
         )
+
+
+
+
+def calculate_routes_oscillation_info(all_stats: list[BGPDumpSnapshotStats], title_start: str, title_end: str, subfolder: str):
+
+    """Analyze routes that were lost and came back, tracking AS path length changes during oscillation."""
+    route_oscillation_metrics = calculate_oscillation_metrics(all_stats, use_reachables=False, calculate_routes=True)
+ 
+    bar = Bar(max=len(route_oscillation_metrics.route_oscillation_info))
+    oscillations_start_over_time = [0 for _ in range(len(route_oscillation_metrics.route_oscillation_info))]
+
+
+    for osc_info in route_oscillation_metrics.route_oscillation_info:
+        bar.next()
+        start_id = osc_info.get("start_idx")
+            
+        if start_id is not None and 0 <= start_id < len(oscillations_start_over_time):
+            oscillations_start_over_time[start_id] += 1
+        else:
+            raise ValueError(f"Invalid start_idx {start_id} in oscillation info: {osc_info}")
+    
+    bar.finish()
+
+    plot_list_as_line_plot(
+        [i for i in range(len(route_oscillation_metrics.route_oscillation_info))],
+        y=oscillations_start_over_time,
+        title=title_start + "Count of Oscillating Routes Start oscillation" + title_end,
+        xlabel="Date",
+        ylabel="Count of Routes",
+        subfolder=subfolder,
+        max_labels=30
+    ) 
+
+
 
 def plot_new_routes_over_time_by_member_that_added_it_optimized(all_stats, labels_summarized, name, ip_version, subfolder, max_labels):
     if not all_stats:

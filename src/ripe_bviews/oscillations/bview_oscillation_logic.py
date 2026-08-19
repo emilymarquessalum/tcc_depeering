@@ -376,3 +376,4 @@ def get_comeback_times_count_from_oscillation_info(oscillation_info):
     come_back_set = set(all_comeback_times)
 
     return comeback_times_count, come_back_set
+
