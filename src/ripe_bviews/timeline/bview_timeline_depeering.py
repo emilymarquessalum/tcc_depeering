@@ -1,9 +1,8 @@
 
 
-
-from annotationlib import get_annotations
-
+ 
 from src.ripe_bviews.oscillations.bview_oscillation_logic import calculate_oscillation_metrics
+from src.ripe_bviews.timeline.bview_vars import get_annotations
 from src.utils.graphs import plot_list_as_line_plot, plot_stacked_line_plot
 
 def plot_depeering_over_time_by_type(all_stats, labels_summarized, subfolder, max_labels, config=None, title_start=''):
