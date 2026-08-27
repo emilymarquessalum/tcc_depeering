@@ -317,7 +317,6 @@ def get_active_viewpoints_for_date(
     v4_threshold: int = 1,
     v6_threshold: int = 50_000
 ) -> Set[str]:
-    """Helper to retrieve active viewpoints for a given snapshot without computing full hegemony scores."""
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
     path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
     
@@ -328,6 +327,7 @@ def get_active_viewpoints_for_date(
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
+    # 1. Total prefixes seen per viewpoint in this snapshot (unfiltered by reachable_as)
     cursor.execute("""
         SELECT viewpoint_peer, COUNT(DISTINCT prefix) 
         FROM bgp_mappings 
@@ -335,23 +335,21 @@ def get_active_viewpoints_for_date(
     """)
     vp_table_sizes = {vp: size for vp, size in cursor.fetchall()}
 
-    query_baseline = "SELECT viewpoint_peer, prefix_weight FROM bgp_mappings WHERE reachable_as = ?"
-    cursor.execute(query_baseline, (asn,))
-
-    vp_total_weights = defaultdict(float)
-    for vp, weight in cursor.fetchall():
-        vp_total_weights[vp] += weight
-
+    # 2. Query ALL viewpoints present in the snapshot
+    cursor.execute("SELECT DISTINCT viewpoint_peer FROM bgp_mappings")
+    all_vps = {row[0] for row in cursor.fetchall()}
     conn.close()
 
-    chosen_threshold = v4_threshold if ip_version == "v4" else v6_threshold
-    active_vps = set()
+    if not filter_full_feed:
+        return all_vps
 
-    for vp, total_weight in vp_total_weights.items():
-        actual_table_size = vp_table_sizes.get(vp, 0)
-        if filter_full_feed and actual_table_size < chosen_threshold:
-            continue
-        active_vps.add(vp)
+    # If parsing origin-filtered files, lower thresholds or check presence
+    chosen_threshold = v4_threshold if ip_version == "v4" else 1  # Adjusted for single-origin files
+    
+    active_vps = {
+        vp for vp, size in vp_table_sizes.items() 
+        if size >= chosen_threshold
+    }
 
     return active_vps
 
@@ -419,57 +417,44 @@ def compare_hegemony_for_two_dates(
         ip_version, "", extra_label=f"{date_after} for {rrc_used} - α={alpha}") 
 
 
-
 def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering, use_free_viewpoint_filtering=False):
-
     hegemony_scores_dict = {} 
+    viewpoint_counts_dict = {}
     
     allowed_viewpoints_baseline = None
     
     if use_strict_viewpoint_filtering:
-            print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
-            active_sets = []
-            for snapshot in date_list:
-                viewpoints = get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
-                active_sets.append(viewpoints)
-            
-            allowed_viewpoints_baseline = set.intersection(*active_sets)
-            print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints present across ALL snapshots.")
-    
-    if allowed_viewpoints_baseline is not None:
-            # Use strict intersection for all dates
-            for date in date_list:
-                scores, viewpoints = load_hegemony_for_date(
-                    asn, alpha, rrc_used, date, ip_version,
-                    allowed_viewpoints=allowed_viewpoints_baseline
-                )
-                hegemony_scores_dict[date] = scores 
-    else:
-            if use_free_viewpoint_filtering:
-                print("[VIEWPOINTS] Free viewpoint filtering enabled: Using all active viewpoints for each date independently.")
-                for date in date_list:
-                    scores, viewpoints = load_hegemony_for_date(
-                        asn, alpha, rrc_used, date, ip_version
-                    )
-                    hegemony_scores_dict[date] = scores
+        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
+        active_sets = [
+            get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
+            for snapshot in date_list
+        ]
+        allowed_viewpoints_baseline = set.intersection(*active_sets)
+        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across ALL snapshots.")
+
+    for date in date_list:
+        if allowed_viewpoints_baseline is not None:
+            scores, active_vps = load_hegemony_for_date(
+                asn, alpha, rrc_used, date, ip_version,
+                allowed_viewpoints=allowed_viewpoints_baseline
+            )
+        elif use_free_viewpoint_filtering:
+            scores, active_vps = load_hegemony_for_date(
+                asn, alpha, rrc_used, date, ip_version
+            )
+        else:
+            if 'first_vps' not in locals():
+                scores, active_vps = load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version)
+                first_vps = active_vps
             else:
-                # Legacy/Default mode: Use viewpoints active in first date as baseline
-                first_date = date_list[0]
-                first_score, first_viewpoints = load_hegemony_for_date(
-                    asn, alpha, rrc_used, first_date, ip_version
+                scores, active_vps = load_hegemony_for_date(
+                    asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=first_vps
                 )
-        
-                hegemony_scores_dict[first_date] = first_score 
-        
-                for date in date_list[1:]:
-                    scores, viewpoints = load_hegemony_for_date(
-                        asn, alpha, rrc_used, date, ip_version,
-                        allowed_viewpoints=first_viewpoints
-                    )
-                    hegemony_scores_dict[date] = scores 
 
-    return hegemony_scores_dict
+        hegemony_scores_dict[date] = scores
+        viewpoint_counts_dict[date] = len(active_vps)
 
+    return hegemony_scores_dict, viewpoint_counts_dict
 
 def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
     all_unique_top_fives = set()
@@ -501,7 +486,7 @@ def compare_hegemony_for_several_dates(
     
     use_free_viewpoint_filtering=False
 ):
-    hegemony_scores_dict = get_hegemony_scores(
+    hegemony_scores_dict, viewpoint_counts_dict = get_hegemony_scores(
         asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=use_free_viewpoint_filtering
     )
@@ -511,7 +496,7 @@ def compare_hegemony_for_several_dates(
     )
 
     # Calculate monitor count for each snapshot date
-    monitor_counts = [len(hegemony_scores_dict[date]) for date in date_list]
+    monitor_counts = [viewpoint_counts_dict[date] for date in date_list]
 
     # Create figure and primary y-axis
     fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
