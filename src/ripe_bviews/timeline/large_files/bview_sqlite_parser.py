@@ -506,27 +506,31 @@ def compare_hegemony_for_several_dates(
     asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False,
     use_free_viewpoint_filtering=False
 ):
+    # 1. Unpack valid_date_list alongside scores and counts
     hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_hegemony_scores(
         asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=use_free_viewpoint_filtering
     )
-    
+
     if not valid_date_list:
-        print("[WARNING] No snapshots left to plot.")
+        print("[WARNING] No valid snapshots available to process.")
         return
 
+    # 2. Pass valid_date_list (not date_list) to compute top ASNs over time
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_date_list
     )
 
-    # Use valid_date_list instead of date_list for plotting
+    # 3. Use valid_date_list to build monitor counts
     monitor_counts = [viewpoint_counts_dict[date] for date in valid_date_list]
 
+    # Create figure and primary y-axis
     fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
-    
+
+    # --- Secondary Y-Axis for AS Monitors (Bar Plot) ---
     ax2 = ax1.twinx()
     bars = ax2.bar(
-        valid_date_list,
+        valid_date_list,  # Changed from date_list
         monitor_counts,
         color="tab:gray",
         alpha=0.3,
@@ -535,7 +539,6 @@ def compare_hegemony_for_several_dates(
     )
     ax2.set_ylabel("Number of AS Monitors", fontsize=12, color="tab:gray")
     ax2.tick_params(axis="y", labelcolor="tab:gray")
-    # Hide secondary grid to avoid grid clutter
     ax2.grid(False)
 
     # --- Line Plot for Top AS Hegemony Scores ---
@@ -547,8 +550,9 @@ def compare_hegemony_for_several_dates(
     lines = []
 
     for i, target_asn in enumerate(unique_asns_list):
+        # FIX: Iterate over range(len(valid_date_list)) instead of range(len(date_list))
         scores_for_asn = [
-            top_fives_over_time[d_idx][i] for d_idx in range(len(date_list))
+            top_fives_over_time[d_idx][i] for d_idx in range(len(valid_date_list))
         ]
 
         lw = max(1.5, base_linewidth - (i * width_step))
@@ -557,7 +561,7 @@ def compare_hegemony_for_several_dates(
         alpha_val = 0.75 if lw > 3.0 else 1.0
 
         (line,) = ax1.plot(
-            date_list,
+            valid_date_list,  # Changed from date_list
             scores_for_asn,
             marker=mk,
             markersize=7 - (i * 0.4),
@@ -596,26 +600,28 @@ def compare_hegemony_for_several_dates(
         fig=fig, title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png"
     )
 
-
-
 def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False):
-
     google_vpps_asns = get_google_vpp_asns(include_alternatives=True)
     
-    hegemony_scores_dict, viewpoint_counts_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
+    # 1. Unpack valid_date_list
+    hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_hegemony_scores(
+        asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering
+    )
 
-    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, date_list)
+    if not valid_date_list:
+        print("[WARNING] No valid snapshots available to process.")
+        return
+
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, valid_date_list)
 
     hegemony_over_time_vpp_or_not_vpp: list[tuple[int,int]] = []
 
-
-    for date in range(len(date_list)):
-
+    # 2. Iterate over valid_date_list length
+    for date in range(len(valid_date_list)):
         hegemony_vpp = 0
         hegemony_not_vpp = 0
 
         for i, asn_for_hegemony in enumerate(unique_asns_list):
-
             asn_score = top_fives_over_time[date][i]
             if str(asn_for_hegemony) in google_vpps_asns:
                 hegemony_vpp += asn_score
@@ -627,14 +633,14 @@ def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version,
     plt.figure(figsize=DEFAULT_FIGSIZE)
 
     plt.plot(
-        date_list,
-        [hegemony[0] for hegemony in hegemony_over_time_vpp_or_not_vpp], # vpp
+        valid_date_list,  # Changed from date_list
+        [hegemony[0] for hegemony in hegemony_over_time_vpp_or_not_vpp],
         label="VPP Hegemony", 
     )
 
     plt.plot(
-        date_list,
-        [hegemony[1] for hegemony in hegemony_over_time_vpp_or_not_vpp], # not vpp
+        valid_date_list,  # Changed from date_list
+        [hegemony[1] for hegemony in hegemony_over_time_vpp_or_not_vpp],
         label="Non-VPP Hegemony", 
     )
 
