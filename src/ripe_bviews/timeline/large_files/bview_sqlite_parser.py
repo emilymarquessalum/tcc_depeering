@@ -421,18 +421,39 @@ def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_
     hegemony_scores_dict = {} 
     viewpoint_counts_dict = {}
     
+    # Track the active dates after dropping any snapshots with <= 3 monitors in strict mode
+    valid_date_list = list(date_list)
     allowed_viewpoints_baseline = None
     
     if use_strict_viewpoint_filtering:
         print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
-        active_sets = [
-            get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
+        
+        # 1. Fetch active viewpoints per snapshot date
+        date_to_vps = {
+            snapshot: get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
             for snapshot in date_list
+        }
+        
+        # 2. Filter out snapshots with 3 or fewer monitors to prevent visual degradation
+        valid_date_list = [
+            date for date in date_list 
+            if len(date_to_vps[date]) > 3
         ]
-        allowed_viewpoints_baseline = set.intersection(*active_sets)
-        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across ALL snapshots.")
+        
+        dropped_count = len(date_list) - len(valid_date_list)
+        if dropped_count > 0:
+            print(f"[VIEWPOINTS] Strict mode dropped {dropped_count} snapshot(s) with 3 or fewer monitors.")
+            
+        if not valid_date_list:
+            print("[VIEWPOINTS] All snapshots were dropped under strict mode filtering.")
+            return {}, {}, []
 
-    for date in date_list:
+        # 3. Compute strict intersection over remaining valid snapshots
+        active_sets = [date_to_vps[date] for date in valid_date_list]
+        allowed_viewpoints_baseline = set.intersection(*active_sets)
+        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across {len(valid_date_list)} snapshots.")
+
+    for date in valid_date_list:
         if allowed_viewpoints_baseline is not None:
             scores, active_vps = load_hegemony_for_date(
                 asn, alpha, rrc_used, date, ip_version,
@@ -454,7 +475,7 @@ def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_
         hegemony_scores_dict[date] = scores
         viewpoint_counts_dict[date] = len(active_vps)
 
-    return hegemony_scores_dict, viewpoint_counts_dict
+    return hegemony_scores_dict, viewpoint_counts_dict, valid_date_list
 
 def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
     all_unique_top_fives = set()
@@ -483,28 +504,29 @@ def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
 
 def compare_hegemony_for_several_dates(
     asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False,
-    
     use_free_viewpoint_filtering=False
 ):
-    hegemony_scores_dict, viewpoint_counts_dict = get_hegemony_scores(
+    hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_hegemony_scores(
         asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=use_free_viewpoint_filtering
     )
+    
+    if not valid_date_list:
+        print("[WARNING] No snapshots left to plot.")
+        return
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
-        hegemony_scores_dict, date_list
+        hegemony_scores_dict, valid_date_list
     )
 
-    # Calculate monitor count for each snapshot date
-    monitor_counts = [viewpoint_counts_dict[date] for date in date_list]
+    # Use valid_date_list instead of date_list for plotting
+    monitor_counts = [viewpoint_counts_dict[date] for date in valid_date_list]
 
-    # Create figure and primary y-axis
     fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
-
-    # --- Secondary Y-Axis for AS Monitors (Bar Plot) ---
+    
     ax2 = ax1.twinx()
     bars = ax2.bar(
-        date_list,
+        valid_date_list,
         monitor_counts,
         color="tab:gray",
         alpha=0.3,
@@ -580,7 +602,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version,
 
     google_vpps_asns = get_google_vpp_asns(include_alternatives=True)
     
-    hegemony_scores_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
+    hegemony_scores_dict, viewpoint_counts_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, date_list)
 
