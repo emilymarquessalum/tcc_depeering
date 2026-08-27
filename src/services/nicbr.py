@@ -28,7 +28,7 @@ def get_prefix_to_asn_mapping_data():
 
   data = []
 
-  with open(cache_path_name_prefix_to_asn_mapping, "r") as f:
+  with open(cache_path_name_prefix_to_asn_mapping, "r", encoding="utf-8") as f:
     for line in f:
         parts = line.strip().split("|")
         row = parts[:3]

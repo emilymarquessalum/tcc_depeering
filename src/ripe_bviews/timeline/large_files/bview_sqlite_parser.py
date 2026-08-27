@@ -357,7 +357,8 @@ def get_active_viewpoints_for_date(
 
 
 def compare_hegemony_for_two_dates(
-    asn, alpha, rrc_used, ip_version, date_before, date_after, use_strict_viewpoint_filtering: bool = False
+    asn, alpha, rrc_used, ip_version, date_before, date_after, use_strict_viewpoint_filtering: bool = False,
+    use_free_viewpoint_filtering: bool = False,
 ):
     if use_strict_viewpoint_filtering:
         print("[VIEWPOINTS] Finding strict intersection of active viewpoints across both dates...")
@@ -373,15 +374,25 @@ def compare_hegemony_for_two_dates(
             asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=strict_allowed_viewpoints
         )
     else:
-        # 1. Load data for "Before" date and capture its active viewpoints
-        hegemony_scores_before, viewpoints_before = load_hegemony_for_date(
-            asn, alpha, rrc_used, date_before, ip_version
-        )
-        
-        # 2. Load data for "After" date, restricting it to use ONLY the viewpoints from "Before"
-        hegemony_scores_after, _ = load_hegemony_for_date(
-            asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=viewpoints_before
-        )
+        if use_free_viewpoint_filtering:
+            print("[VIEWPOINTS] Free viewpoint filtering enabled: Using all active viewpoints for each date independently.")
+            hegemony_scores_before, _ = load_hegemony_for_date(
+                        asn, alpha, rrc_used, date_before, ip_version
+                    )
+                    
+            hegemony_scores_after, _ = load_hegemony_for_date(
+                        asn, alpha, rrc_used, date_after, ip_version
+            )
+        else:
+            # 1. Load data for "Before" date and capture its active viewpoints
+            hegemony_scores_before, viewpoints_before = load_hegemony_for_date(
+                asn, alpha, rrc_used, date_before, ip_version
+            )
+            
+            # 2. Load data for "After" date, restricting it to use ONLY the viewpoints from "Before"
+            hegemony_scores_after, _ = load_hegemony_for_date(
+                asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=viewpoints_before
+            )
 
     sorted_asns_before = get_sorted_asns_from_scores(hegemony_scores_before)
     sorted_asns_after = get_sorted_asns_from_scores(hegemony_scores_after)
@@ -409,7 +420,7 @@ def compare_hegemony_for_two_dates(
 
 
 
-def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering):
+def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering, use_free_viewpoint_filtering=False):
 
     hegemony_scores_dict = {} 
     
@@ -434,20 +445,28 @@ def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_
                 )
                 hegemony_scores_dict[date] = scores 
     else:
-            # Legacy/Default mode: Use viewpoints active in first date as baseline
-            first_date = date_list[0]
-            first_score, first_viewpoints = load_hegemony_for_date(
-                asn, alpha, rrc_used, first_date, ip_version
-            )
-    
-            hegemony_scores_dict[first_date] = first_score 
-    
-            for date in date_list[1:]:
-                scores, viewpoints = load_hegemony_for_date(
-                    asn, alpha, rrc_used, date, ip_version,
-                    allowed_viewpoints=first_viewpoints
+            if use_free_viewpoint_filtering:
+                print("[VIEWPOINTS] Free viewpoint filtering enabled: Using all active viewpoints for each date independently.")
+                for date in date_list:
+                    scores, viewpoints = load_hegemony_for_date(
+                        asn, alpha, rrc_used, date, ip_version
+                    )
+                    hegemony_scores_dict[date] = scores
+            else:
+                # Legacy/Default mode: Use viewpoints active in first date as baseline
+                first_date = date_list[0]
+                first_score, first_viewpoints = load_hegemony_for_date(
+                    asn, alpha, rrc_used, first_date, ip_version
                 )
-                hegemony_scores_dict[date] = scores 
+        
+                hegemony_scores_dict[first_date] = first_score 
+        
+                for date in date_list[1:]:
+                    scores, viewpoints = load_hegemony_for_date(
+                        asn, alpha, rrc_used, date, ip_version,
+                        allowed_viewpoints=first_viewpoints
+                    )
+                    hegemony_scores_dict[date] = scores 
 
     return hegemony_scores_dict
 
@@ -478,22 +497,47 @@ def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
 
 
 def compare_hegemony_for_several_dates(
-    asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False
-):
+    asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False,
     
+    use_free_viewpoint_filtering=False
+):
+    hegemony_scores_dict = get_hegemony_scores(
+        asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering
+    )
 
-    hegemony_scores_dict = get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering)
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
+        hegemony_scores_dict, date_list
+    )
 
-    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(hegemony_scores_dict, date_list)
+    # Calculate monitor count for each snapshot date
+    monitor_counts = [len(hegemony_scores_dict[date]) for date in date_list]
 
-    # --- Line Plot Implementation with Anti-Occlusion Visual Tricks ---
-    plt.figure(figsize=DEFAULT_FIGSIZE)
+    # Create figure and primary y-axis
+    fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
 
+    # --- Secondary Y-Axis for AS Monitors (Bar Plot) ---
+    ax2 = ax1.twinx()
+    bars = ax2.bar(
+        date_list,
+        monitor_counts,
+        color="tab:gray",
+        alpha=0.3,
+        width=0.4,
+        label="AS Monitors Count",
+    )
+    ax2.set_ylabel("Number of AS Monitors", fontsize=12, color="tab:gray")
+    ax2.tick_params(axis="y", labelcolor="tab:gray")
+    # Hide secondary grid to avoid grid clutter
+    ax2.grid(False)
+
+    # --- Line Plot for Top AS Hegemony Scores ---
     line_styles = ["-", "--", ":", "-."]
     markers = ["o", "s", "^", "v", "D", "X", "P"]
 
     base_linewidth = 6.0
     width_step = 0.8
+    lines = []
 
     for i, target_asn in enumerate(unique_asns_list):
         scores_for_asn = [
@@ -505,7 +549,7 @@ def compare_hegemony_for_several_dates(
         mk = markers[i % len(markers)]
         alpha_val = 0.75 if lw > 3.0 else 1.0
 
-        plt.plot(
+        (line,) = ax1.plot(
             date_list,
             scores_for_asn,
             marker=mk,
@@ -515,21 +559,35 @@ def compare_hegemony_for_several_dates(
             alpha=alpha_val,
             label=f"ASN {target_asn}",
         )
+        lines.append(line)
 
-    plt.xlabel("Date", fontsize=12)
-    plt.ylabel("Hegemony Score", fontsize=12)
-    plt.title(
-        f"Hegemony Scores Over Time for Top ASNs (Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})",
+    # Axis Labels & Aesthetics
+    ax1.set_xlabel("Date", fontsize=12)
+    ax1.set_ylabel("Hegemony Score", fontsize=12)
+    ax1.set_title(
+        f"Hegemony Scores Over Time for Top ASNs & Monitor Count\n(Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})",
         fontsize=14,
     )
-    plt.xticks(rotation=45)
-    plt.grid(True, linestyle="--", alpha=0.5)
+    ax1.tick_params(axis="x", rotation=45)
+    ax1.grid(True, linestyle="--", alpha=0.5)
 
-    plt.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="ASNs")
+    # Combine legends from both axes into a single legend box
+    all_handles = lines + [bars]
+    all_labels = [h.get_label() for h in all_handles]
+    ax1.legend(
+        all_handles,
+        all_labels,
+        bbox_to_anchor=(1.15, 1),
+        loc="upper left",
+        title="Metrics",
+    )
+
     plt.tight_layout()
-    plt.show() 
+    plt.show()
 
-    save_plot(fig=plt.gcf(), title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png")
+    save_plot(
+        fig=fig, title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png"
+    )
 
 
 
@@ -593,21 +651,26 @@ if __name__ == "__main__":
         
     alpha = 0.34 
     use_strict_viewpoint_filtering = True # only viewpoints that existed in all snapshots
+    use_free_viewpoint_filtering = False # all viewpoints available for each snapshot independently
 
     date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
 
     compare_hegemony_for_two_dates(
         asn, alpha, rrc_used, ip_version, date_before, date_after, 
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )
 
     compare_hegemony_for_several_dates(
         asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )
 
 
     compare_vpp_and_non_vpp_hegemony_over_time(
         asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+        
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )

@@ -10,17 +10,17 @@ import json
 
 def get_asn_lookup_from_ipverse():
     JSON_FILE = 'as.json'
-    
-    with open(JSON_FILE, 'r') as f:
-        # Load the full list
+
+
+ 
+    with open(JSON_FILE, 'r', encoding="utf-8") as f:
+
         raw_data = json.load(f)
         
-        # Transform into a dictionary for O(1) lookup
-        # Key: ASN (int), Value: The metadata dict
         asn_lookup = {item['asn']: item['metadata'] for item in raw_data}
     return asn_lookup
 def get_asn_type_from_ipverse(asn_lookup, asn):
-    # Standardize input (handle "AS123" or 123)
+    # Standardize input (handle "AS123" or 123) 
 
 
     error_result = {

@@ -64,7 +64,20 @@ def load_all_files(timeline_config):
                     load_missing_files = user_input == 'y'
                 if load_missing_files:
                     print("Loading missing file...")
-                    download_peeringdb_dump(date_to_load)  
+                    try:
+                        download_peeringdb_dump(date_to_load)  
+                    except Exception as e:
+                        print(f"Error downloading file for {date_to_load}: {e}")
+                        print("Will try again but with a different day in the date")
+
+                        new_date = current_date + datetime.timedelta(days=12)
+                        new_date_to_load = new_date.strftime('%Y_%m_%d')
+                        try:
+                            download_peeringdb_dump(new_date_to_load, save_date=date_to_load)
+                        except Exception as e:
+                            print(f"Error downloading file for {new_date_to_load}: {e}")
+                            print("Skipping this date.")
+
 
             # Increment by the specified number of months
             month = current_date.month - 1 + intervals_in_months
