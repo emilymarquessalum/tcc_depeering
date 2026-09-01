@@ -285,7 +285,7 @@ def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
     dates = [f.split(".")[1] for f in relevant_files]
     return min(dates), max(dates)
 
-def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version):
+def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=None):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
     relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
@@ -294,6 +294,10 @@ def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version):
         return []
 
     dates = [f.split(".")[1] for f in relevant_files]
+
+    if start_date:
+        dates = [d for d in dates if d >= start_date]
+
     return sorted(dates)
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
@@ -657,6 +661,8 @@ if __name__ == "__main__":
     rrc_used = "rrc03"
     ip_version = "v4"
     asn = 15169
+    start_date = None
+    
 
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
     if asn_input:
@@ -674,16 +680,18 @@ if __name__ == "__main__":
         use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )
 
+    
+    dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
+
     compare_hegemony_for_several_dates(
-        asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
+        asn, alpha, rrc_used, ip_version, dates,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )
 
-
     compare_vpp_and_non_vpp_hegemony_over_time(
-        asn, alpha, rrc_used, ip_version, get_all_dates_available_for_asn_data(asn, rrc_used, ip_version),
+        asn, alpha, rrc_used, ip_version, dates,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        #use_free_viewpoint_filtering=use_free_viewpoint_filtering,
     )
