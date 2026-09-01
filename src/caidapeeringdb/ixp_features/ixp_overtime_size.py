@@ -2,7 +2,7 @@ import re
 import numpy as np
 from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
-from src.caidapeeringdb.ixp_overtime import get_ases_that_depeered_at_ixp_at_depeering_peak, get_ixp_with_most_depeering_ratio_at_a_single_point_in_time, plot_ixp_connections_over_time_by_category, plot_ixps_connections_over_time
+from src.caidapeeringdb.ixp_overtime import get_ases_that_depeered_at_ixp_at_depeering_peak, get_ixp_with_most_depeering_loss_at_a_single_point_in_time, plot_ixp_connections_over_time_by_category, plot_ixps_connections_over_time
 
 DEFAULT_SIZE_RANGE_THRESHOLDS = [50, 100, 150, 200]
 
@@ -132,7 +132,7 @@ def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_
         )
  
 
-        max_ixp_id_in_the_size_range, max_ratio, index_of_max_ratio = get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(
+        max_ixp_id_in_the_size_range, max_ratio, index_of_max_ratio = get_ixp_with_most_depeering_loss_at_a_single_point_in_time(
             all_data=all_data, 
             ixp_ids=combined_range_ixp_ids,
             type_of_depeering="rs_to_non_rs"
@@ -150,5 +150,25 @@ def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_
             )
         else:
             print(f"No IXP found with de-peering events in size range {label}...")
+
+        
+        max_ixp_id_in_the_size_range, max_ratio, index_of_max_ratio = get_ixp_with_most_depeering_loss_at_a_single_point_in_time(
+            all_data=all_data, 
+            ixp_ids=combined_range_ixp_ids,
+            type_of_depeering="rs_to_non_rs",
+            as_ratio=False
+        )
+  
+        if max_ixp_id_in_the_size_range is not None:
+            plot_ixps_connections_over_time(
+                all_data=all_data,
+                dates=dates,
+                ixp_ids=[max_ixp_id_in_the_size_range],
+                ixp_names=ixp_names,
+                title_info=f"Size Group {label} (Highest De-Peering Value: {max_ratio:.2%})"
+            )
+        else:
+            print(f"No IXP found with de-peering events in size range {label}...")
+                    
 
     return depeered_at_peak_ases_by_ixp

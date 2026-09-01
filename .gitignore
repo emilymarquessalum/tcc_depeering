@@ -10,6 +10,7 @@ __pycache__/
 *.db
 */cache/*/*.json
 */caida-peeringdb/*.json
+*/*.parquet
 
 # C extensions
 *.so

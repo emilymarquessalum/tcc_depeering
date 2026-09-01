@@ -359,6 +359,7 @@ def get_active_viewpoints_for_date(
 
     return active_vps
 
+
 def select_best_date_in_window(
     asn: int,
     rrc_used: str,
@@ -370,22 +371,33 @@ def select_best_date_in_window(
 ) -> str: 
     if window_size <= 0:
         return all_dates[current_idx]
- 
+
+    # Look ahead up to `window_size` available entries in all_dates
     candidate_dates = all_dates[current_idx : current_idx + window_size + 1]
 
     best_date = candidate_dates[0]
     max_monitors = -1
 
     for d in candidate_dates:
-        vps = get_active_viewpoints_for_date(
-            asn, rrc_used, d, ip_version, filter_full_feed=filter_full_feed
-        )
-        monitor_count = len(vps)
-        if monitor_count > max_monitors:
-            max_monitors = monitor_count
-            best_date = d
+        # Verify raw text file exists before trying to parse/count viewpoints
+        raw_path = f"{ROOT_DIR}/{rrc_used}/output_bview.{d}.0000.origin_as.{asn}.txt"
+        if not os.path.exists(raw_path):
+            continue
+
+        try:
+            vps = get_active_viewpoints_for_date(
+                asn, rrc_used, d, ip_version, filter_full_feed=filter_full_feed
+            )
+            monitor_count = len(vps)
+            if monitor_count > max_monitors:
+                max_monitors = monitor_count
+                best_date = d
+        except Exception as e:
+            print(f"[WARNING] Could not count monitors for date {d}: {e}")
+            continue
 
     return best_date
+
 
 def compare_hegemony_for_two_dates(
     asn, alpha, rrc_used, ip_version, date_before, date_after, use_strict_viewpoint_filtering: bool = False,

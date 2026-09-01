@@ -44,8 +44,7 @@ def plot_ixps_connections_over_time(
 
     target_ixp_id_set = set(target_ixp_ids)
     timeline_data = {ixp_id: [] for ixp_id in target_ixp_ids}
-
-    # --- 2. Data Processing ---
+ 
     for snapshot_data in all_data:
         rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
         non_rs_asns_by_ixp = {ixp_id: set() for ixp_id in target_ixp_ids}
@@ -85,8 +84,7 @@ def plot_ixps_connections_over_time(
                 peer_count = len(rs_asns) + len(non_rs_asns)
 
             timeline_data[ixp_id].append(peer_count)
-
-    # Calculate Average and Median time series
+ 
     average_values = []
     median_values = []
     for index in range(len(dates)):
@@ -381,7 +379,7 @@ def plot_ixp_statistics_connections_over_time(all_data, dates, ixp_ids, ixp_name
     plt.close()
  
 
-def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_ids, type_of_depeering="completely_lost"):
+def get_ixp_with_most_depeering_loss_at_a_single_point_in_time(all_data, ixp_ids, type_of_depeering="completely_lost", as_ratio=True):
     """
     Returns the IXP ID with the highest de-peering ratio at any single snapshot in time.
     De-peering ratio is defined as (completely lost connections) / (total connections).
@@ -420,7 +418,7 @@ def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_id
                 # this way we then filter to find the ones that existed as RS but dont exist as RS in the future
                 current_connections = sum( 
                     1 for conn in snapshot_data.get("netixlan", {}).get("data", [])
-                    if conn.get("ix_id") == ixp_id and conn.get("is_rs_peer", False)
+                    if conn.get("ix_id") == ixp_id and conn.get("is_rs_peer", False) # default as False if we dont know that the connection is rs or not.
                 ) 
                 previous_connections = sum(
                     1 for conn in previous_snapshot_data.get("netixlan", {}).get("data", [])
@@ -430,9 +428,13 @@ def get_ixp_with_most_depeering_ratio_at_a_single_point_in_time(all_data, ixp_id
                 raise ValueError("Invalid type_of_depeering. Must be 'completely_lost' or 'rs_to_non_rs'.")
 
             if previous_connections > 0:
-                depeering_ratio = (previous_connections - current_connections) / previous_connections
+                if as_ratio:
+                    depeering_ratio = (previous_connections - current_connections) / previous_connections
+                else:
+                    depeering_ratio = previous_connections - current_connections
+
                 if depeering_ratio > max_depeering_ratio:
-                    index_of_max_ratio = i
+                    index_of_max_ratio = i 
                     max_depeering_ratio = depeering_ratio
                     ixp_with_max_ratio = ixp_id
 

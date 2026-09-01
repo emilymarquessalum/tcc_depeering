@@ -11,24 +11,46 @@ from cache_manager import (
 )
 
 
-def fetch_measurement_data(asn, start_date, end_date): 
-    # pass date to Unix timestamp
+def fetch_measurement_data(asn, start_date, end_date, max_results=None, max_iterations=None): 
+    # Pass date to Unix timestamp
     start_date_ts = int(start_date.timestamp())
     end_date_ts = int(end_date.timestamp())  
-    fields = "type,"
-    route = f"https://atlas.ripe.net/api/v2/measurements/?target_asn={asn}&start_time__gte={start_date_ts}&start_time__lte={end_date_ts}&fields={fields}"
+    fields = "type,id,status"
+    
+    # Base URL for initial request
+    url = f"https://atlas.ripe.net/api/v2/measurements/?target_asn={asn}&start_time__gte={start_date_ts}&start_time__lte={end_date_ts}&fields={fields}&page_size=500"
  
-    print(route)    
-    #return {'count': 0, 'results': []}
+    all_results = []
 
-    response = requests.get(route)
-    if response.status_code == 200:
+    i = 0
+    
+    while url:
+        if max_iterations is not None and i >= max_iterations:
+            break
+        i += 1
+        print(f"Fetching: {url}")
+        response = requests.get(url)
+        
+        if response.status_code != 200:
+            print(f"Error fetching data: {response.status_code}")
+            break
+            
         data = response.json()
-        #print(data) 
-        return data 
-    else:
-        print(f"Error fetching data: {response.status_code}")
-    return {'count': 0, 'results': []}
+        results = data.get("results", [])
+        all_results.extend(results)
+        
+        # Stop early if max_results is set and reached
+        if max_results and len(all_results) >= max_results:
+            all_results = all_results[:max_results]
+            break
+            
+        # RIPE Atlas API provides the complete URL for the next page in data['next']
+        url = data.get("next")
+
+    return {
+        'count': len(all_results), 
+        'results': all_results
+    }
 
 
 def load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_delta, sample_size=50, seed_offset=0):
@@ -51,7 +73,7 @@ def load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_
         i = 0
         bar = Bar(max=number_of_intervals)
         while i < number_of_intervals:
-            data = fetch_measurement_data(asn, current_date, current_date + day_delta)
+            data = fetch_measurement_data(asn, current_date, current_date + day_delta, max_results=1000, max_iterations=10)
             results = data["results"]
             filtered_results = []
             
@@ -180,17 +202,7 @@ def extract_latencies_and_failed_measurements(measurement_data):
     return latencies, endtimes, failed_measurements_over_time
 
 
-def group_measurement_data_by_viewpoint(measurement_data):
-    """
-    Organizes measurement data by viewpoint (probe).
-    
-    Args:
-        measurement_data: A list of measurement lists to be grouped by viewpoint
-        
-    Returns:
-        measurement_data_by_viewpoint: A dictionary with viewpoint IDs as keys 
-                                       and lists of measurements from that viewpoint as values
-    """
+def group_measurement_data_by_viewpoint(measurement_data): 
     measurement_data_by_viewpoint = {}
     #print(len(measurement_data))
 

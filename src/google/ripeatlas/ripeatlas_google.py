@@ -116,7 +116,6 @@ for asn in google_ases_for_search:
     print_prefix_diversity(measurement_data)
       
 
-    sys.exit(0)
 
     
     cached_latency_data = load_latency_cache(asn, start_date, end_date, SAMPLE_SEED_OFFSET)
@@ -136,6 +135,7 @@ for asn in google_ases_for_search:
     print("Sum of all measurements that are traceroute or ping:", sum(measurement_counts))
     print("Total Failed Measurements from those:", failed_measurements_over_time_count)
      
+    sys.exit(0)
     print_average_latency_stats(latencies)
     
     if latencies:
