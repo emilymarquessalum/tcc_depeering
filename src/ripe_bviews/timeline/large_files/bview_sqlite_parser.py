@@ -312,6 +312,8 @@ def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewp
         db_path, target_asn=asn, alpha=alpha, ip_version=ip_version, allowed_viewpoints=allowed_viewpoints
     ) 
 
+
+
 def get_active_viewpoints_for_date(
     asn: int, 
     rrc_used: str, 
@@ -357,6 +359,33 @@ def get_active_viewpoints_for_date(
 
     return active_vps
 
+def select_best_date_in_window(
+    asn: int,
+    rrc_used: str,
+    ip_version: str,
+    current_idx: int,
+    all_dates: List[str],
+    window_size: int,
+    filter_full_feed: bool = True
+) -> str: 
+    if window_size <= 0:
+        return all_dates[current_idx]
+ 
+    candidate_dates = all_dates[current_idx : current_idx + window_size + 1]
+
+    best_date = candidate_dates[0]
+    max_monitors = -1
+
+    for d in candidate_dates:
+        vps = get_active_viewpoints_for_date(
+            asn, rrc_used, d, ip_version, filter_full_feed=filter_full_feed
+        )
+        monitor_count = len(vps)
+        if monitor_count > max_monitors:
+            max_monitors = monitor_count
+            best_date = d
+
+    return best_date
 
 def compare_hegemony_for_two_dates(
     asn, alpha, rrc_used, ip_version, date_before, date_after, use_strict_viewpoint_filtering: bool = False,
@@ -421,30 +450,49 @@ def compare_hegemony_for_two_dates(
         ip_version, "", extra_label=f"{date_after} for {rrc_used} - α={alpha}") 
 
 
-def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering, use_free_viewpoint_filtering=False):
+def get_hegemony_scores(
+    asn, 
+    rrc_used, 
+    ip_version, 
+    date_list, 
+    alpha, 
+    use_strict_viewpoint_filtering, 
+    use_free_viewpoint_filtering=False,
+    use_best_next_days: int = 0
+):
     hegemony_scores_dict = {} 
     viewpoint_counts_dict = {}
-    
-    # Track the active dates after dropping any snapshots with <= 3 monitors in strict mode
-    valid_date_list = list(date_list)
+     
+    selected_dates = []
+    if use_best_next_days > 0:
+        print(f"[BEST DAYS] Evaluating next {use_best_next_days} days to select snapshot with max monitors...")
+        for i, current_date in enumerate(date_list):
+            best_d = select_best_date_in_window(
+                asn, rrc_used, ip_version, i, date_list, use_best_next_days
+            )
+            selected_dates.append(best_d)
+            print(f"[BEST DAYS] Date {current_date} -> Selected {best_d}")
+    else:
+        selected_dates = list(date_list)
+
+    # Track valid dates
+    valid_date_list = selected_dates
     allowed_viewpoints_baseline = None
     
     if use_strict_viewpoint_filtering:
-        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(date_list)} dates...")
+        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(valid_date_list)} dates...")
         
-        # 1. Fetch active viewpoints per snapshot date
         date_to_vps = {
             snapshot: get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
-            for snapshot in date_list
+            for snapshot in valid_date_list
         }
         
-        # 2. Filter out snapshots with 3 or fewer monitors to prevent visual degradation
         valid_date_list = [
-            date for date in date_list 
+            date for date in valid_date_list 
             if len(date_to_vps[date]) > 3
         ]
         
-        dropped_count = len(date_list) - len(valid_date_list)
+        dropped_count = len(selected_dates) - len(valid_date_list)
         if dropped_count > 0:
             print(f"[VIEWPOINTS] Strict mode dropped {dropped_count} snapshot(s) with 3 or fewer monitors.")
             
@@ -452,7 +500,6 @@ def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_
             print("[VIEWPOINTS] All snapshots were dropped under strict mode filtering.")
             return {}, {}, []
 
-        # 3. Compute strict intersection over remaining valid snapshots
         active_sets = [date_to_vps[date] for date in valid_date_list]
         allowed_viewpoints_baseline = set.intersection(*active_sets)
         print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across {len(valid_date_list)} snapshots.")
@@ -481,6 +528,7 @@ def get_hegemony_scores(asn, rrc_used, ip_version, date_list, alpha, use_strict_
 
     return hegemony_scores_dict, viewpoint_counts_dict, valid_date_list
 
+
 def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
     all_unique_top_fives = set()
     for date in date_list:
@@ -508,12 +556,14 @@ def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
 
 def compare_hegemony_for_several_dates(
     asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False,
-    use_free_viewpoint_filtering=False
+    use_free_viewpoint_filtering=False,
+    use_best_next_days: int = 0
 ):
     # 1. Unpack valid_date_list alongside scores and counts
     hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_hegemony_scores(
         asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        use_best_next_days=use_best_next_days
     )
 
     if not valid_date_list:
@@ -604,12 +654,14 @@ def compare_hegemony_for_several_dates(
         fig=fig, title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png"
     )
 
-def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False):
+def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version, date_list, use_strict_viewpoint_filtering: bool = False,
+                                               use_best_next_days: int = 0
+                                               ):
     google_vpps_asns = get_google_vpp_asns(include_alternatives=True)
-    
-    # 1. Unpack valid_date_list
+     
     hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_hegemony_scores(
-        asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering
+        asn, rrc_used, ip_version, date_list, alpha, use_strict_viewpoint_filtering,
+        use_best_next_days=use_best_next_days
     )
 
     if not valid_date_list:
@@ -657,11 +709,15 @@ def compare_vpp_and_non_vpp_hegemony_over_time(asn, alpha, rrc_used, ip_version,
 
 
 
+
+
 if __name__ == "__main__":
+
     rrc_used = "rrc03"
     ip_version = "v4"
     asn = 15169
     start_date = None
+    use_best_next_days = 2
     
 
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
@@ -687,11 +743,11 @@ if __name__ == "__main__":
         asn, alpha, rrc_used, ip_version, dates,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        use_best_next_days=use_best_next_days
     )
 
     compare_vpp_and_non_vpp_hegemony_over_time(
         asn, alpha, rrc_used, ip_version, dates,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-        
-        #use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        use_best_next_days=use_best_next_days
     )
