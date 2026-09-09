@@ -1,0 +1,15 @@
+{
+    
+    "rrc": "rrc04",
+    "name": "CIXP",
+    "routeserver-folder-name": "cixp",
+    
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-16",
+    "day_delta": 15,
+    
+    "asn_and_prefix": {
+        "asn": "_",
+        "prefix": "_"
+    }
+}

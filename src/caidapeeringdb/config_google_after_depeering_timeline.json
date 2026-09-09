@@ -1,8 +1,9 @@
 {
   
   "note": "one month after google mass de-peering",
-  "start_date": "20240401", 
+  "start_date": "20240901", 
 
-  "end_date": "20260701",
-  "intervals_in_months": 1
+  "end_date": "20250601",
+  "intervals_in_months": 0,
+  "intervals_in_days": 14
 } 

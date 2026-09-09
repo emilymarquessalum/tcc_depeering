@@ -3,7 +3,8 @@ import datetime
 import os
 from pathlib import Path
 import json
-from src.caidapeeringdb.caidapeeringdb_load import download_peeringdb_dump
+import re
+from src.caidapeeringdb.caidapeeringdb_load import download_peeringdb_dump, get_data
 from definitions import ROOT_DIR
 
 # Load configuration from JSON file
@@ -21,6 +22,8 @@ def load_all_files(timeline_config):
 
     load_missing_files = None
 
+    dates = []
+    
     if loading_method == "all":
         date_skips = timeline_config.get("date_skips", 3)
         all_files = [
@@ -35,15 +38,21 @@ def load_all_files(timeline_config):
         if focused_date:
             all_files = [file for file in all_files if focused_date in file]
     else:
-        start_date = timeline_config.get("start_date", "20240101")
-        end_date = timeline_config.get("end_date", "20240401")
-        intervals_in_months = timeline_config.get("intervals_in_months", 3)
+        start_date = timeline_config.get("start_date", "20240101").replace("-", "")
+        end_date = timeline_config.get("end_date", "20240401").replace("-", "")
+        intervals_in_months = timeline_config.get("intervals_in_months", 0)
+        intervals_in_days = timeline_config.get("intervals_in_days", 0)
+
+        if intervals_in_months == 0 and intervals_in_days == 0:
+            raise ValueError("Both intervals_in_months and intervals_in_days cannot be zero.")
+        
         current_date = datetime.datetime.strptime(start_date, "%Y%m%d")
         all_files = []
 
         while current_date.strftime("%Y%m%d") <= end_date:
 
             date_to_load = current_date.strftime('%Y_%m_%d')
+            dates.append(date_to_load)
             
             file_name = f"peeringdb_2_dump_{date_to_load}.json"
             alternative_date = current_date + datetime.timedelta(days=5)
@@ -66,6 +75,11 @@ def load_all_files(timeline_config):
                     print("Loading missing file...")
                     try:
                         download_peeringdb_dump(date_to_load)  
+                        file_path = os.path.join(start_folder, file_name)
+                        if os.path.exists(file_path):
+                            all_files.append(file_name)
+                        else:
+                            print(f"Error: File {file_name} still not found after download.")
                     except Exception as e:
                         print(f"Error downloading file for {date_to_load}: {e}")
                         print("Will try again but with a different day in the date")
@@ -84,5 +98,29 @@ def load_all_files(timeline_config):
             year = current_date.year + month // 12
             month = month % 12 + 1
             current_date = current_date.replace(year=year, month=month)
+            current_date += datetime.timedelta(days=intervals_in_days)
 
-    return all_files
+    return all_files, dates 
+
+
+def load_all_data(config):
+
+    all_files, _ = load_all_files(config)
+
+    all_data = []
+    dates = []
+    
+    for file in all_files:  
+        # Extract date from filename
+        match = re.search(r"peeringdb_2_dump_(.*?)\.json", file)
+        if match:
+            date_str = match.group(1)
+            dates.append(date_str)
+        else:
+            continue
+        
+        data = get_data(file)
+        all_data.append(data)
+
+    return all_data, dates
+ 

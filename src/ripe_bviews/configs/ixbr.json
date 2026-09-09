@@ -20,7 +20,7 @@
         "prefix": "187.16.216.253"
     },
     "note": "rrc, ipv4 and ipv6",
-    "day_delta": 1,
+    "day_delta": 7,
 
     "asn_and_prefix_v6": {
         "asn": "26162",

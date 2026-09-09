@@ -91,6 +91,7 @@ def print_prefix_diversity(measurement_data):
 
     
 google_ases_for_search = [15169]
+probe_ids = [10515, 10704]
 
 start_date = datetime.datetime(2024, 1, 1)
 end_date = datetime.datetime.now()#datetime.datetime(2022, 1, 1)#datetime.datetime.now()
@@ -106,10 +107,11 @@ day_delta = datetime.timedelta(days=31)
 
 for asn in google_ases_for_search:
      
-    measurement_counts, dates_in_plot, measurement_data = load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_delta, seed_offset=SAMPLE_SEED_OFFSET)
+    measurement_counts, dates_in_plot, measurement_data = load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_delta, seed_offset=SAMPLE_SEED_OFFSET,
+                                                                                probe_ids=probe_ids)
 
 
-    
+     
     #print_viewpoints(measurement_data)
         
     #print_route_diversity(measurement_data)
@@ -135,7 +137,7 @@ for asn in google_ases_for_search:
     print("Sum of all measurements that are traceroute or ping:", sum(measurement_counts))
     print("Total Failed Measurements from those:", failed_measurements_over_time_count)
      
-    sys.exit(0)
+    #sys.exit(0)
     print_average_latency_stats(latencies)
     
     if latencies:
@@ -152,7 +154,7 @@ for asn in google_ases_for_search:
 
     #print(f"Dominant Path Count: {route_diversity['dominant_path_count']}")
     
-    # Calculate per-interval diversity
+    # Calculate per-interval diversity 
     '''
     interval_diversities = calculate_route_diversity_per_interval(measurement_data)
     print("\nDiversity per Time Interval:")
@@ -168,13 +170,4 @@ for asn in google_ases_for_search:
     #    print(f"  ASN {asn_num}: {count} occurrences")
     
 
-
-    # Calculate prefix diversity (/24 networks)
-    print("\n" + "="*60)
-    print("Prefix Diversity Analysis (/24 networks)")
-    print("="*60)
-    print("Top 10 Most Common /24 Prefixes:")
-    for prefix, count in prefix_diversity['most_common_prefixes']:
-        print(f"  {prefix}: {count} occurrences")
-
-
+ 

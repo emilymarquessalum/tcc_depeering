@@ -53,9 +53,26 @@ def fetch_measurement_data(asn, start_date, end_date, max_results=None, max_iter
     }
 
 
-def load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_delta, sample_size=50, seed_offset=0):
- 
-    measurement_list_cache = load_measurements_list_cache(asn, start_date, end_date, sample_size)
+def load_measurement_data(
+    start_date,
+    end_date,
+    asn,
+    type_exclusion_filter,
+    day_delta,
+    sample_size=50,
+    seed_offset=0,
+    probe_ids=None  # <-- NEW: Optional list of probe IDs
+):
+    # Normalize probe_ids to a set for O(1) lookup speed
+    probe_set = set(probe_ids) if probe_ids is not None else None
+    
+    # Create a suffix tag for file naming/caching
+    cache_suffix = f"_probes_{'_'.join(map(str, sorted(probe_set)))}" if probe_set else ""
+
+    # Pass the suffix or probe-aware identifier to cache manager
+    measurement_list_cache = load_measurements_list_cache(
+        asn, start_date, end_date, sample_size, cache_suffix=cache_suffix
+    )
     
     if measurement_list_cache is not None:
         print(f"Loading measurement list from cache for ASN {asn}")
@@ -80,6 +97,14 @@ def load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_
             for result in results: 
                 if result.get("type") == type_exclusion_filter:
                     continue
+                
+                # <-- NEW: Filter by probe IDs if provided
+                if probe_set is not None:
+                    # Check probe ID directly or inside result attributes
+                    prb_id = result.get("prb_id") or result.get("probe_id")
+                    if prb_id and prb_id not in probe_set:
+                        continue
+
                 filtered_results.append(result)
             
             measurement_counts.append(len(filtered_results))
@@ -102,8 +127,8 @@ def load_measurement_data(start_date, end_date, asn, type_exclusion_filter, day_
             'measurement_counts': measurement_counts,
             'dates_in_plot': dates_in_plot,
             'filtered_results_per_interval': filtered_results_per_interval
-        }, sample_size  )
-     
+        }, sample_size, cache_suffix=cache_suffix)
+
     measurement_data = []
     bar = Bar(max=len(filtered_results_per_interval))
      

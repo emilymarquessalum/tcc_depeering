@@ -3,14 +3,16 @@ import json
 import pandas as pd
 
 
-def get_measurements_list_cache_path(asn, start_date, end_date, sample_size): 
+
+def get_measurements_list_cache_path(asn, start_date, end_date, sample_size, cache_suffix=''): 
     cache_dir = Path(__file__).parent / "cache"
     cache_dir.mkdir(exist_ok=True)
-    return cache_dir / f"measurements_list_{asn}_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_{sample_size}.parquet"
+    return cache_dir / f"measurements_list_{asn}_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}_{sample_size}{cache_suffix}.parquet"
 
 
-def load_measurements_list_cache(asn, start_date, end_date, sample_size):
-    cache_path = get_measurements_list_cache_path(asn, start_date, end_date, sample_size)
+def load_measurements_list_cache(asn, start_date, end_date, sample_size, cache_suffix=''):
+    cache_path = get_measurements_list_cache_path(asn, start_date, end_date, sample_size, cache_suffix)
+   
     if cache_path.exists():
         df = pd.read_parquet(cache_path) 
         return {
@@ -23,8 +25,8 @@ def load_measurements_list_cache(asn, start_date, end_date, sample_size):
     return None
 
 
-def save_measurements_list_cache(asn, start_date, end_date, data, sample_size):
-    cache_path = get_measurements_list_cache_path(asn, start_date, end_date, sample_size)
+def save_measurements_list_cache(asn, start_date, end_date, data, sample_size, cache_suffix=''):
+    cache_path = get_measurements_list_cache_path(asn, start_date, end_date, sample_size, cache_suffix)
      
     df = pd.DataFrame({
         'measurement_counts': data['measurement_counts'],
