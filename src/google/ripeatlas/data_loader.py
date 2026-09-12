@@ -9,6 +9,7 @@ from cache_manager import (
     load_individual_result,
     save_individual_result
 )
+from src.google.ripeatlas.ripeatlas_probe_status import check_probe_changes
 
 
 def fetch_measurement_data(asn, start_date, end_date, max_results=None, max_iterations=None): 
@@ -61,15 +62,14 @@ def load_measurement_data(
     day_delta,
     sample_size=50,
     seed_offset=0,
-    probe_ids=None  # <-- NEW: Optional list of probe IDs
+    probe_ids=None,
+    check_for_probe_info_matching=False
 ):
-    # Normalize probe_ids to a set for O(1) lookup speed
     probe_set = set(probe_ids) if probe_ids is not None else None
     
-    # Create a suffix tag for file naming/caching
-    cache_suffix = f"_probes_{'_'.join(map(str, sorted(probe_set)))}" if probe_set else ""
-
-    # Pass the suffix or probe-aware identifier to cache manager
+    # Change cache suffix to invalidate previous cache that lacked probe filtering
+    cache_suffix = f"_probes_v2_{'_'.join(map(str, sorted(probe_set)))}" if probe_set else "_v2"
+ 
     measurement_list_cache = load_measurements_list_cache(
         asn, start_date, end_date, sample_size, cache_suffix=cache_suffix
     )
@@ -84,26 +84,47 @@ def load_measurement_data(
         measurement_counts = []
         filtered_results_per_interval = []
         dates_in_plot = []
+         
+        invalid_probes = set()
+        valid_probes = set()
+        
+        probe_changes_filtered_count = 0
         
         current_date = start_date
         number_of_intervals = ((end_date - start_date).days) // 30
         i = 0
         bar = Bar(max=number_of_intervals)
         while i < number_of_intervals:
-            data = fetch_measurement_data(asn, current_date, current_date + day_delta, max_results=1000, max_iterations=10)
+            interval_end_date = current_date + day_delta
+            data = fetch_measurement_data(asn, current_date, interval_end_date, max_results=1000, max_iterations=10)
             results = data["results"]
             filtered_results = []
             
             for result in results: 
                 if result.get("type") == type_exclusion_filter:
-                    continue
-                
-                # <-- NEW: Filter by probe IDs if provided
+                    continue 
+
+                probe_id = result.get("prb_id") or result.get("probe_id")
                 if probe_set is not None:
-                    # Check probe ID directly or inside result attributes
-                    prb_id = result.get("prb_id") or result.get("probe_id")
-                    if prb_id and prb_id not in probe_set:
+                    # Check probe ID directly or inside result attributes 
+                    if probe_id and probe_id not in probe_set:
                         continue
+
+                # Global probe change check across overall start_date and end_date
+                if probe_id and check_for_probe_info_matching:
+                    if probe_id in invalid_probes:
+                        probe_changes_filtered_count += 1
+                        continue
+                    
+                    if probe_id not in valid_probes:
+                        # Perform check across entire overall timeframe
+                        change_happened = check_probe_changes(probe_id, start_date, end_date)
+                        if change_happened:
+                            invalid_probes.add(probe_id)
+                            probe_changes_filtered_count += 1
+                            continue
+                        else:
+                            valid_probes.add(probe_id)
 
                 filtered_results.append(result)
             
@@ -122,6 +143,9 @@ def load_measurement_data(
             i += 1
             bar.next()
         bar.finish()
+        
+        print(f"Total measurements filtered away due to probe changes across all intervals: {probe_changes_filtered_count}")
+        print(f"Total unique probes excluded due to changes: {len(invalid_probes)}")
          
         save_measurements_list_cache(asn, start_date, end_date, {
             'measurement_counts': measurement_counts,

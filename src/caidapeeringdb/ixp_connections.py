@@ -1,5 +1,6 @@
  
 import heapq
+import re
 import sys
 from pathlib import Path
 from collections import Counter, defaultdict
@@ -14,51 +15,50 @@ from src.caidapeeringdb.caidapeeringdb_load import get_all_files, get_all_files,
 
 
 from src.caidapeeringdb.main import load_earliest_data, load_timeline_data
-
 def _count_connections_by_asn(data, connection_type="peered"):
     conns = data.get("netixlan", {}).get("data", [])
     if not conns:
         return Counter()
         
-    if connection_type == "peered":
-        valid_conn = lambda c: c.get("is_rs_peer", False)
-    elif connection_type == "non-peered":
-        valid_conn = lambda c: not c.get("is_rs_peer", False)
-    else: 
-        valid_conn = lambda c: True
-
-    # Use a set to deduplicate (asn, ix_id) pairs upfront
+    # Pre-calculate state outside the loop to avoid lambda overhead
+    check_peered = connection_type == "peered"
+    check_non_peered = connection_type == "non-peered"
+    
     unique_ixp_presences = set()
     
     for conn in conns:
         asn = get_asn_from_net(conn)
-        # Get the unique identifier for the IXP (e.g., 'ix_id')
-        ix_id = conn.get("ix_id") 
-        
-        if asn is not None and ix_id is not None and valid_conn(conn):
-            unique_ixp_presences.add((asn, ix_id))
+        if asn is None:
+            continue
             
-    # Now count how many unique IXPs each ASN has
+        ix_id = conn.get("ix_id")
+        if ix_id is None:
+            continue
+            
+        # Inline boolean logic is faster than a lambda call in a tight loop
+        is_rs_peer = conn.get("is_rs_peer", False)
+        if check_peered and not is_rs_peer:
+            continue
+        if check_non_peered and is_rs_peer:
+            continue
+            
+        unique_ixp_presences.add((asn, ix_id))
+            
     return Counter(asn for asn, _ in unique_ixp_presences)
 
 def get_top_n_ixp_changes(before_data, after_data, n=10, connection_type="peered"):
     """
-    Returns a tuple of (top_losses, top_gains) while parsing the raw data 
-    only once for maximum performance.
+    Returns a tuple of (top_losses, top_gains) parsed optimally.
     """
-    # 1. Parse the data once 
     before_counts = _count_connections_by_asn(before_data, connection_type)
     after_counts = _count_connections_by_asn(after_data, connection_type)
     
-    # 2. Do the math using Counter subtraction
+    # Counter subtraction natively drops zero and negative counts
     losses = before_counts - after_counts
     gains = after_counts - before_counts
     
-    # 3. Extract the top N using Heaps
-    top_losses = heapq.nlargest(n, losses.items(), key=lambda x: x[1])
-    top_gains = heapq.nlargest(n, gains.items(), key=lambda x: x[1])
-    
-    return top_losses, top_gains
+    # most_common handles the heap/sorting optimizations internally
+    return losses.most_common(n), gains.most_common(n)
 
 
 asn_to_name_mapping = {
@@ -82,7 +82,7 @@ def _get_asn_display_name(asn):
 
 def plot_top_3(before_data, after_data, all_files_before, all_files_after, display_dates_as_year_only=True):
     
-    top_n = 3
+    top_n = 10
     # Get top 3 losses and gains
     top_3_losses, top_3_gains = get_top_n_ixp_changes(before_data, after_data, n=top_n, connection_type="peered")
     
@@ -97,9 +97,10 @@ def plot_top_3(before_data, after_data, all_files_before, all_files_after, displ
     # Format losses for plotting
     losses_display_names = [_get_asn_display_name(asn) for asn, _ in top_3_losses]
     losses_values = [loss for _, loss in top_3_losses]
-    
+
+    asns =  [asn_to_name_mapping[str(asn[0])] if str(asn[0]) in asn_to_name_mapping else asn for asn in top_3_losses]
     plot_list_as_bar_plot(
-        [asn_to_name_mapping[str(asn[0])] if str(asn[0]) in asn_to_name_mapping else asn for asn in top_3_losses],
+        asns,
         extra_labels=[f"AS{asn[0]}" for asn in top_3_losses],
         y=losses_values,
         subfolder="peeringdb_connections/top3",
@@ -150,6 +151,7 @@ def plot_top_3_per_year(all_files):
         year_start_date = f"{year}_01_01"
         year_end_date = f"{year}_12_01"
         subtitute_end_date = f"{year}_11_01"
+        subtitute_end_date = f"{year}_06_01"
         
         # Check if both required files exist
         if year_start_date not in file_date_map or (year_end_date not in file_date_map and subtitute_end_date not in file_date_map):
@@ -180,8 +182,8 @@ def plot_top_3_per_year(all_files):
         )
 
         # Format gains for plotting
-        gains_display_names = [_get_asn_display_name(asn) for asn, _ in top_3_gains]
-        gains_values = [gain for _, gain in top_3_gains]
+        gains_display_names = [_get_asn_display_name(asn) for asn, _ in top_n_gains]
+        gains_values = [gain for _, gain in top_n_gains]
         
         plot_list_as_bar_plot(
             gains_display_names,
@@ -191,6 +193,65 @@ def plot_top_3_per_year(all_files):
             xlabel="ASN",
             ylabel="Number of Gained Route Server Connections"
         )
+
+
+def plot_top1_depeering_number_over_time(all_files, loss_type="peered"):
+    """
+    Plots the number of de-peerings for the top ASN over time.
+    """ 
+     
+    dates = [f.split('peeringdb_2_dump_')[1].split('.json')[0] for f in all_files]
+    years_available = set()
+    file_date_map = {}
+        
+    for filename in all_files:
+            match = re.search(r"peeringdb_2_dump_((\d{4})_(\d{2})_(\d{2}))\.json", filename)
+            if match:
+                date_str = match.group(1)  # YYYY_MM_DD
+                year = match.group(2)       # YYYY
+                file_date_map[date_str] = filename
+                years_available.add(year)
+            else:
+                print(f"Warning: Filename {filename} does not match expected pattern and will be skipped.")
+        
+    top_asn_depeerings = []
+    
+    for year in sorted(years_available):
+            year_start_date = f"{year}_01_01"
+            year_end_date = f"{year}_12_01"
+            subtitute_end_date = f"{year}_11_01"
+            subtitute_end_date = f"{year}_06_01"
+
+            if year_start_date not in file_date_map or (year_end_date not in file_date_map and subtitute_end_date not in file_date_map):
+                print(f"Skipping year {year} because required snapshots are missing.")
+                continue
+
+            start_file = file_date_map[year_start_date]
+            end_file = file_date_map[year_end_date] if year_end_date in file_date_map else file_date_map[subtitute_end_date]
+
+            start_data = get_data(start_file)
+            end_data = get_data(end_file)
+
+            top_n_losses, _ = get_top_n_ixp_changes(start_data, end_data, n=1, connection_type=loss_type)
+            if top_n_losses:
+                top_asn_depeerings.append(top_n_losses[0])  # Append the top ASN and its loss count
+            
+            
+
+    # Prepare data for plotting
+    asns = [asn for asn, _ in top_asn_depeerings]
+    depeering_counts = [count for _, count in top_asn_depeerings]
+
+    # Plotting
+    plot_list_as_bar_plot(
+        sorted(years_available),
+        y=depeering_counts, 
+        subfolder="peeringdb_connections/top1_depeering_over_time_" + loss_type,
+        title="Number of De-Peerings for Top ASN Over Time - " + loss_type.capitalize(),
+        xlabel="Year",
+        ylabel="Number of De-Peerings", 
+    ) 
+
 
 if __name__ == "__main__":
 
@@ -219,4 +280,6 @@ if __name__ == "__main__":
     
     # Plot top 3 per year
     all_files = get_all_files()
-    #plot_top_3_per_year(all_files)
+    # plot_top_3_per_year(all_files)
+
+    plot_top1_depeering_number_over_time(all_files, loss_type='any')

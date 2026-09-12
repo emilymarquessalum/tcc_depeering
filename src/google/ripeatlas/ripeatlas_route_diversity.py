@@ -133,6 +133,8 @@ def calculate_route_diversity(measurement_data: List[List[Dict]]) -> Dict:
     """
     
     as_paths = []
+    unique_ases = set()
+
     hop_sequences = []
     as_path_frequencies = defaultdict(int)
     hop_sequence_frequencies = defaultdict(int)
@@ -159,6 +161,7 @@ def calculate_route_diversity(measurement_data: List[List[Dict]]) -> Dict:
                 as_path_frequencies[as_path_tuple] += 1
                 path_lengths.append(len(as_path))
                 paths_over_time.append((endtime, as_path_tuple))
+                unique_ases.update(as_path)
             
             # Extract hop sequence
             hop_seq, _ = extract_hop_sequence_from_measurement(measurement)
@@ -191,6 +194,7 @@ def calculate_route_diversity(measurement_data: List[List[Dict]]) -> Dict:
     )
     
     return {
+        'unique_ases': unique_ases,
         'unique_as_paths': unique_as_paths,
         'unique_hop_sequences': unique_hop_sequences,
         'total_measurements': total_measurements,
@@ -204,6 +208,7 @@ def calculate_route_diversity(measurement_data: List[List[Dict]]) -> Dict:
         'paths_over_time': paths_over_time_sorted,
         'avg_path_length': sum(path_lengths) / len(path_lengths) if path_lengths else 0,
     }
+
 
 
 def calculate_route_diversity_per_interval(measurement_data: List[List[Dict]]) -> List[Dict]:
@@ -236,6 +241,7 @@ def calculate_route_diversity_per_interval(measurement_data: List[List[Dict]]) -
         
         # Calculate metrics for this interval
         unique_as_paths = len(set(as_paths))
+        unique_ases = set(asn for path in as_paths for asn in path)
         unique_hop_sequences = len(set(hop_sequences))
         total_measurements = len(measurement_list)
         
@@ -245,6 +251,7 @@ def calculate_route_diversity_per_interval(measurement_data: List[List[Dict]]) -
         
         interval_diversity = {
             'unique_as_paths': unique_as_paths,
+            'unique_ases': unique_ases,
             'unique_hop_sequences': unique_hop_sequences,
             'total_measurements': total_measurements,
             'diversity_score': diversity_score,

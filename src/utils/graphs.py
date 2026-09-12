@@ -393,9 +393,9 @@ def plot_list_as_bar_plot(data_list, y=None, data_annotated_values=None,
     # Assertions
     assert y is None or len(data_list) == len(y), f"Length mismatch: data_list ({len(data_list)}) != y ({len(y)})"
     if data_annotated_values is not None:
-        assert len(data_annotated_values) == len(data_list), "Length of data_annotated_values must match data_list."
+        assert len(data_annotated_values) == len(data_list), f"Length of data_annotated_values ({len(data_annotated_values)}) must match data_list ({len(data_list)})."
     if extra_labels is not None:
-        assert len(extra_labels) == len(data_list), "Length of extra_labels must match data_list."
+        assert len(extra_labels) == len(data_list), f"Length of extra_labels ({len(extra_labels)}) must match data_list ({len(data_list)})."
 
     # Process & Clean Data State
     items = _prepare_and_filter_data(data_list, y, colors, data_annotated_values, use_colors, do_top_n, sort_by_size, sort_by_size_cut)

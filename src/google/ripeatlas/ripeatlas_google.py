@@ -2,6 +2,8 @@
 import datetime
 from pathlib import Path
 import sys
+
+from matplotlib import pyplot as plt
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from src.utils.graphs import plot_list_as_line_plot
@@ -54,6 +56,52 @@ def plot_latency_over_time(latencies, endtimes, asn, start_date, end_date):
     )
 
 
+def plot_latency_boxplot_over_time(
+    latencies, endtimes, asn, start_date, end_date
+):
+    endtime_to_latencies = {}
+
+    # Group raw latencies by each unique endtime
+    for latency, endtime in zip(latencies, endtimes):
+        if endtime not in endtime_to_latencies:
+            endtime_to_latencies[endtime] = []
+        endtime_to_latencies[endtime].append(latency)
+
+    # Preserve order of timestamps and extract corresponding latency lists
+    end_times = list(endtime_to_latencies.keys())
+    data = [endtime_to_latencies[et] for et in end_times]
+
+    # Create the figure
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Plot the boxplots for each timestamp group
+    ax.boxplot(data, tick_labels=[str(et) for et in end_times])
+
+    # Title and Labels
+    start_str = (
+        start_date.strftime("%Y-%m-%d")
+        if hasattr(start_date, "strftime")
+        else start_date
+    )
+    end_str = (
+        end_date.strftime("%Y-%m-%d")
+        if hasattr(end_date, "strftime")
+        else end_date
+    )
+
+    ax.set_title(
+        f"Latency Distribution Over Time for ASN {asn} - From {start_str} to {end_str} - Exclude DNS"
+    )
+    ax.set_xlabel("Time Intervals")
+    ax.set_ylabel("Latency (ms)")
+
+    # Formatting options for readability
+    ax.tick_params(axis="x", rotation=45)
+    ax.grid(True, linestyle="--", alpha=0.6)
+
+    plt.tight_layout()
+    plt.show()
+
 
 
 def print_viewpoints(measurement_data):
@@ -69,6 +117,7 @@ def print_viewpoints(measurement_data):
 
 def print_route_diversity(measurement_data):
     route_diversity = calculate_route_diversity(measurement_data)
+    print(f"Unique ASes: {route_diversity['unique_ases']}")
     print(f"Unique Paths: {route_diversity['unique_as_paths']}")
     #print(f"Unique Hop Sequences: {route_diversity['unique_hop_sequences']}")
     print(f"Total Measurements: {route_diversity['total_measurements']}") 
@@ -116,9 +165,6 @@ for asn in google_ases_for_search:
         
     #print_route_diversity(measurement_data)
     print_prefix_diversity(measurement_data)
-      
-
-
     
     cached_latency_data = load_latency_cache(asn, start_date, end_date, SAMPLE_SEED_OFFSET)
     
@@ -141,7 +187,11 @@ for asn in google_ases_for_search:
     print_average_latency_stats(latencies)
     
     if latencies:
+        print("Total measurements:", len(endtimes))
+        print("Unique timestamps:", len(set(endtimes)))
+        print("Sample timestamps:", endtimes[:5])
         plot_latency_over_time(latencies, endtimes, asn, start_date, end_date)
+        plot_latency_boxplot_over_time(latencies, endtimes, asn, start_date, end_date)
     
     # Calculate route diversity metrics
     print("\n" + "="*60)
@@ -155,13 +205,19 @@ for asn in google_ases_for_search:
     #print(f"Dominant Path Count: {route_diversity['dominant_path_count']}")
     
     # Calculate per-interval diversity 
-    '''
     interval_diversities = calculate_route_diversity_per_interval(measurement_data)
-    print("\nDiversity per Time Interval:")
-    for i, diversity in enumerate(interval_diversities):
-        print(f"  Interval {i}: {diversity['unique_as_paths']} unique paths, "
-              f"diversity score: {diversity['diversity_score']:.4f}")
-    '''
+    metric_key = 'diversity_score'
+
+    # Extract the selected metric across all time intervals
+    metric_values = [interval[metric_key] for interval in interval_diversities]
+
+    # Plot the extracted metric over time
+    plot_list_as_line_plot(
+        metric_values, 
+        title=f'{metric_key.replace("_", " ").title()} Over Time for ASN {asn} - From {start_date.strftime("%Y-%m-%d")} to {end_date.strftime("%Y-%m-%d")}',
+        xlabel='Time Intervals',
+        ylabel=metric_key.replace('_', ' ').title()
+    ) 
     # Calculate ASN diversity
     asn_diversity = calculate_asn_diversity(measurement_data)
     #print(f"\nUnique ASNs in Paths: {asn_diversity['asn_count']}")

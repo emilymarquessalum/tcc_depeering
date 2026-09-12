@@ -413,7 +413,9 @@ def get_all_organizations_that_own_ixps(data, key="org"):
 
 _folder = f"{ROOT_DIR}/caida-peeringdb/"
 def get_all_files():
-    return [f for f in os.listdir(_folder) if f.startswith("peeringdb_2_dump_") and f.endswith(".json")]
+    files = [f for f in os.listdir(_folder) if f.startswith("peeringdb_2_dump_") and f.endswith(".json")]
+    files.sort()
+    return files
 
 def get_file_from_date(date):
     return _folder + f"peeringdb_2_dump_{date}.json"

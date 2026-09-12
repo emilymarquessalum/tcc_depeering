@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.caidapeeringdb.grouped_asns import get_ixps_by_continent_count, plot_ixps_distribution_by_continent
 from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
+from src.caidapeeringdb.ases_overtime import plot_ases_heatmap_over_time
 from src.utils.user_input import choose_option, confirm_action, finish_actions, start_actions
 
 from src.caidapeeringdb.ixp_features.ixp_over_time_never_connected import plot_ixp_connections_over_time_for_ixps_that_never_connected_to_ases
@@ -68,7 +69,7 @@ def load_timeline_data(config_path):
     all_files_before_depeering = load_all_files(config_google_before_depeering)
     all_files_after_depeering = load_all_files(config_google_after_depeering) 
     
-    return all_files_before_depeering, all_files_after_depeering
+    return all_files_before_depeering[0], all_files_after_depeering[0]
 
 
 def build_asn_ixp_data_structures(asn_to_analyze, before_data, after_data, all_ixps):
@@ -364,6 +365,44 @@ if __name__ == "__main__":
     print(f"Analyzing ASN {asn_to_analyze} ({asns_to_search_for_analysis[0][1]})") 
     all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
     print(f"Total unique IXPs in both snapshots: {len(all_ixps)}")
+
+    # Generate a heatmap of presence for ASN 
+    try:
+        all_data = get_all_data(all_files_before_depeering) + get_all_data(all_files_after_depeering)
+        dates = [file.split("/")[-1].split(".")[0] for file in all_files]
+
+        # Collect IXPs where ASN 32934 appears in any snapshot
+        ixp_ids_set = set()
+        target_asn = 32934
+        for snapshot in all_data:
+            for conn in snapshot.get("netixlan", {}).get("data", []):
+                asn = conn.get("asn")
+                local_asn = conn.get("local_asn")
+                if asn == target_asn or local_asn == target_asn:
+                    ix_id = conn.get("ix_id")
+                    if ix_id is not None:
+                        try:
+                            ixp_ids_set.add(int(ix_id))
+                        except (TypeError, ValueError):
+                            continue
+
+        if not ixp_ids_set:
+            print(f"No IXPs found where ASN {target_asn} appears — skipping heatmap.")
+        else:
+            ixp_ids = sorted(list(ixp_ids_set))
+            ixp_names_map = {ixp["id"]: ixp.get("name") for ixp in all_ixps if ixp.get("id") in ixp_ids_set}
+
+            plot_ases_heatmap_over_time(
+                all_data=all_data,
+                dates=dates,
+                ixp_ids=ixp_ids,
+                asn_to_analyze=target_asn,
+                ixp_names=ixp_names_map,
+                mode="binary",
+                title_info="IXPs connected at some point"
+            )
+    except Exception as e:
+        print("Failed to generate heatmap for ASN 32934:", e)
 
     #print(f"Dead IXPs (no connections for >3 snapshots): {len(dead_ixps)}")
     #sys.exit(0)  
