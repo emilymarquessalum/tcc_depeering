@@ -327,7 +327,9 @@ def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=N
     return sorted(dates)
 
 
-def get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval, start_date=None):
+def get_interval_dates_for_asn_data(
+    asn, rrc_used, ip_version, month_interval, start_date=None, time_interval_acceptance=10
+):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
     relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
@@ -345,26 +347,38 @@ def get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval, s
 
     sorted_dates = sorted(dates)
     
+    # Convert string dates to datetime objects for easy distance math
+    available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
+    
     final_dates = []
-    # Parse the earliest available date to set our initial target
-    current_target = datetime.strptime(sorted_dates[0], "%Y%m%d")
-
-    for d_str in sorted_dates:
-        d_obj = datetime.strptime(d_str, "%Y%m%d")
+    
+    # 1. Always append the first available valid date
+    final_dates.append(available_dts[0].strftime("%Y%m%d"))
+    
+    # 2. Set the first ideal target (e.g., exactly +6 months from the first date)
+    current_target = available_dts[0] + relativedelta(months=month_interval)
+    max_date = available_dts[-1]
+    
+    # Keep generating targets until we exceed our available dataset
+    while current_target <= max_date + timedelta(days=time_interval_acceptance):
         
-        # If the actual available date is on or after our target, we keep it
-        if d_obj >= current_target:
-            final_dates.append(d_str)
+        # Find the single closest available date to our ideal current_target
+        closest_dt = min(available_dts, key=lambda d: abs((d - current_target).days))
+        
+        # Check if the closest date falls within our acceptance window
+        if abs((closest_dt - current_target).days) <= time_interval_acceptance:
+            closest_str = closest_dt.strftime("%Y%m%d")
             
-            # Advance the target by the specified number of months
-            current_target += relativedelta(months=month_interval)
-            
-            # Fast-forward the target if there are massive gaps in the available files
-            # to prevent keeping consecutive dates when data resumes
-            while current_target <= d_obj:
-                current_target += relativedelta(months=month_interval)
+            # Prevent adding duplicates or going backwards (can happen if intervals/windows overlap)
+            last_added_dt = datetime.strptime(final_dates[-1], "%Y%m%d")
+            if closest_dt > last_added_dt:
+                final_dates.append(closest_str)
+                
+        # Advance the ideal target perfectly to the next interval (prevents drifting)
+        current_target += relativedelta(months=month_interval)
 
     return final_dates
+
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
@@ -802,7 +816,7 @@ if __name__ == "__main__":
     ip_version = "v4"
     asn = 15169
     start_date = None
-    use_best_next_days = 2
+    use_best_next_days = 0
     
 
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
