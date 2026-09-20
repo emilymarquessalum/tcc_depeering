@@ -677,13 +677,18 @@ def compare_hegemony_for_several_dates(
     # 3. Use valid_date_list to build monitor counts
     monitor_counts = [viewpoint_counts_dict[date] for date in valid_date_list]
 
+    # Check if monitor count is strictly constant across all dates
+    is_monitor_constant = len(set(monitor_counts)) == 1 if monitor_counts else False
+    constant_monitor_val = monitor_counts[0] if is_monitor_constant else None
+
     # Create figure and primary y-axis
     fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
 
     # --- Secondary Y-Axis for AS Monitors (Bar Plot) ---
-    ax2 = ax1.twinx()
-
-    if show_collector_count_over_time:
+    bars = None
+    # Only draw bars if enabled AND the count actually varies over time
+    if show_collector_count_over_time and not is_monitor_constant:
+        ax2 = ax1.twinx()
         bars = ax2.bar(
             valid_date_list,
             monitor_counts,
@@ -736,16 +741,28 @@ def compare_hegemony_for_several_dates(
     ax1.set_ylabel(y_label, fontsize=12)
     
     title_metric = "Hegemony Percentage" if show_as_percentage else "Hegemony Scores"
-    ax1.set_title(
-        f"{title_metric} Over Time for Top ASNs & Monitor Count\n(Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})",
-        fontsize=14,
-    )
+    
+    # Adapt title depending on whether monitor count is static or dynamic
+    if is_monitor_constant:
+        title_str = (
+            f"{title_metric} Over Time for Top ASNs [Monitors Constant: {constant_monitor_val}]\n"
+            f"(Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})"
+        )
+    else:
+        title_str = (
+            f"{title_metric} Over Time for Top ASNs & Monitor Count\n"
+            f"(Target ASN: {asn}, RRC: {rrc_used}, IP: {ip_version}, α={alpha})"
+        )
+
+    ax1.set_title(title_str, fontsize=14)
     ax1.tick_params(axis="x", rotation=45)
     ax1.grid(True, linestyle="--", alpha=0.5)
 
-    all_handles = lines 
-    if show_collector_count_over_time:
-        all_handles += [bars]
+    # Combine legends
+    all_handles = list(lines)
+    if bars is not None:
+        all_handles.append(bars)
+        
     all_labels = [h.get_label() for h in all_handles]
     ax1.legend(
         all_handles,
