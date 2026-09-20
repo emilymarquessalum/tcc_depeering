@@ -120,4 +120,4 @@ def delete_asn_collector_for_all_rrcs(all_required_data):
     for rrc_config in all_rrc_configs:
         rrc_config["start_date"] = config.get("start_date", None)
         rrc_config["end_date"] = config.get("end_date", None)
-        delete_bview_asn_data_from_collector_api(rrc_config, origin_asn, ip_version=ip_version, load_from_routeviews=False, delete_data=True)
+        delete_bview_asn_data_from_collector_api(rrc_config, origin_asn, ip_version=ip_version, load_from_routeviews=False)
