@@ -8,8 +8,12 @@ import numpy as np
 
 
 
+
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+from src.utils.graphs import plot_list_as_bar_plot
+from src.caidapeeringdb.ixp_depeering_compare import check_external_ixp_depeering_for_peak_ases
 from src.caidapeeringdb.grouped_asns import get_ixps_by_continent_count, plot_ixps_distribution_by_continent
 from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
 from src.caidapeeringdb.ases_overtime import plot_ases_heatmap_over_time
@@ -20,20 +24,17 @@ from src.caidapeeringdb.ixp_features.ixp_over_time_never_connected import plot_i
 
 
 
-from src.caidapeeringdb.ixp_region import analyze_depeering_by_continent
-from src.caidapeeringdb.utils import COMPLETELY_LOST_LABEL, DEPEERED_IXPS_YLABEL, PEERINGDB_SUBFOLDER_PREFIX, PLOT_COLORS, STILL_CONNECTED_LABEL
+from src.caidapeeringdb.ixp_features.ixp_region import analyze_depeering_by_continent
 
 from src.caidapeeringdb.ixp_times import get_ixp_connections_time_delta, plot_time_in_ixp_distribution
 from src.caidapeeringdb.ixp_features.ixp_overtime_size import plot_ixp_connections_over_time_by_size_ranges
 from src.caidapeeringdb.ixp_features.ixp_overtime_region import plot_ixp_connections_over_time_by_region
 from src.caidapeeringdb.ixp_features.ixp_overtime_times import plot_ixp_connections_over_time_by_age_ranges
-from src.utils.graphs import plot_stacked_bar_plot
-from src.caidapeeringdb.ixp_size import analyze_depeering_by_size_ranges, get_largest_ixps_per_continent_of_an_asn, plot_ixp_size_ranges_by_percentage_of_total_loss_connections, plot_ixps_by_size_ranges
 from src.caidapeeringdb.loaders import load_all_files, config
  
 from src.caidapeeringdb.asns import plot_asns_analysis
-from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_all_ixps, get_connections_for_ixp_over_time, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
-from src.caidapeeringdb.continent_logic import get_continent_for_ixp, get_data_structures_excluding_continent
+from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_connections_for_ixp_over_time, get_data, get_unique_ixps_from_data_list, get_connections_for_ixp, load_connections_over_time_for_asns
+from src.caidapeeringdb.ixp_features.continent_logic import get_continent_for_ixp
 
 
 
@@ -498,27 +499,72 @@ if __name__ == "__main__":
 
 
         index_the_asn_analyzed_mass_depeered = None
-        
+ 
+    
+        connections_over_time_for_asns = load_connections_over_time_for_asns(all_files=all_files, asns_to_search=[asn_to_analyze], connections_should_be="peered")
 
         depeered_at_peak_ases_by_size_range = plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
                                                              completely_lost_ixp_ids=completely_lost_ixp_ids,
-                                                             ixp_names={ixp["id"]: ixp["name"] for ixp in all_ixps},
+                                                             ixp_names={ixp["id"]: ixp["name"] for ixp in all_ixps}, 
+                                                             connections_over_time_for_asns=connections_over_time_for_asns,
                                                              depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
-         
-            
+    
+           
+                    
 
         depeered_at_peak_ases_by_region = plot_ixp_connections_over_time_by_region(all_data, all_files, depeered_ixp_ids, asn_to_analyze, all_ixps,
                                             depeered_completely_lost_ixp_ids=completely_lost_ixp_ids,
                                             index_the_asn_analyzed_mass_depeered=index_the_asn_analyzed_mass_depeered,
                                             depeered_with_nonpeered_ixp_ids=depeered_with_nonpeered_ixp_ids)
 
-        
+        depeered_at_peak_ases_by_region = {}
         print("From the de-peered ASes in peaks of de-peering by region and size range, how much % of ASes show up in more than one IXP?")
         percentage_of_ases_in_multiple_ixps_by_size_range = {}
 
         all_depeered_ases_lists = list(depeered_at_peak_ases_by_size_range.values()) + list(depeered_at_peak_ases_by_region.values())
         all_depeered_ases = [asn for sublist in all_depeered_ases_lists for asn in sublist]
         unique_depeered_ases = set(all_depeered_ases)
+
+        depeered_at_peak_ases = {}
+        for i, (ixp_id, ases) in enumerate(depeered_at_peak_ases_by_size_range.items()):
+            depeered_at_peak_ases[ixp_id] = set(ases)
+        for i, (ixp_id, ases) in enumerate(depeered_at_peak_ases_by_region.items()):
+            if ixp_id in depeered_at_peak_ases:
+                depeered_at_peak_ases[ixp_id].update(ases)
+            else:
+                depeered_at_peak_ases[ixp_id] = set(ases)
+
+        results = check_external_ixp_depeering_for_peak_ases(
+                    depeered_at_peak_ases_by_ixp=depeered_at_peak_ases,
+                    all_data=all_data,
+                    connections_over_time_for_asns=connections_over_time_for_asns,
+                    target_asn=15169  
+        ) 
+        categories = [
+            "Peak ASes",
+            "Connected External",
+            "De-peered (After/Same Snapshot)",
+            "De-peered (Same Snapshot)"
+        ]
+
+        values = [
+            results["unique_peak_ases_count"],
+            results["connected_to_external_count"],
+            results["depeered_from_external_count"],
+            results["depeered_from_external_at_same_time_count"]
+        ]
+
+        # 3. Render bar plot using your function
+        plot_list_as_bar_plot(
+            data_list=categories,
+            y=values,
+            title=f"External IXP De-Peering Scope (Target ASN: {target_asn})",
+            xlabel="De-Peering Category",
+            ylabel="AS Count",
+            use_rotated_labels=False,
+            show_values=True
+        )
+        
         ases_in_multiple_ixps = [asn for asn in unique_depeered_ases if all_depeered_ases.count(asn) > 1]
         percentage_of_ases_in_multiple_ixps = (len(ases_in_multiple_ixps) / len(unique_depeered_ases)) * 100 if unique_depeered_ases else 0
         print(f"Percentage of ASes in multiple IXPs: {percentage_of_ases_in_multiple_ixps:.2f}% ({len(ases_in_multiple_ixps)} out of {len(unique_depeered_ases)} unique de-peered ASes)")

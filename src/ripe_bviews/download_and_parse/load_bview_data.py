@@ -58,6 +58,24 @@ def load_bview_asn_data_from_collector_api(configs, origin_asn, ip_version="v4",
         return None
 
 
+def delete_bview_asn_data_from_collector_api(configs, origin_asn, ip_version="v4", load_from_routeviews=False):
+
+    start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
+    end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")
+    day_delta = timedelta(days=configs.get("day_delta", 7))
+    time_str = configs.get("time_str", "0000")
+    time_delta = configs.get("time_delta_hours", 0)
+    origin_asn = origin_asn
+    rrc = configs['routeserver-folder-name'] if load_from_routeviews else configs["rrc"] 
+    path = f"{URL_ELIXIR}/bview/delete?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
+ 
+    response = requests.delete(path) 
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to delete data from API. Status code: {response.status_code}")
+        return None
+
 def load_bview_asn_data_timeline_from_configs(configs, origin_asn, ip_version="v4", load_from_routeviews=False):
     start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
     end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")

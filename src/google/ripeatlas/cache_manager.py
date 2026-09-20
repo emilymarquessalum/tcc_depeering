@@ -4,6 +4,37 @@ import pandas as pd
 
 
 
+# UPDATED APPROACH
+# CONSIDERS INTERVALS
+def get_interval_cache_path(asn, interval_start, interval_end, cache_suffix=''): 
+    cache_dir = Path(__file__).parent / "cache" / f"intervals_asn_{asn}{cache_suffix}"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir / f"interval_{interval_start.strftime('%Y%m%d')}_{interval_end.strftime('%Y%m%d')}.parquet"
+
+def load_interval_cache(asn, interval_start, interval_end, cache_suffix=''):
+    cache_path = get_interval_cache_path(asn, interval_start, interval_end, cache_suffix)
+    if cache_path.exists():
+        df = pd.read_parquet(cache_path)
+        return {
+            'measurement_count': df['measurement_count'].iloc[0],
+            'date_str': df['date_str'].iloc[0],
+            'filtered_results': json.loads(df['filtered_results'].iloc[0])
+        }
+    return None
+
+def save_interval_cache(asn, interval_start, interval_end, data, cache_suffix=''):
+    cache_path = get_interval_cache_path(asn, interval_start, interval_end, cache_suffix)
+    df = pd.DataFrame([{
+        'measurement_count': data['measurement_count'],
+        'date_str': data['date_str'],
+        'filtered_results': json.dumps(data['filtered_results'])
+    }])
+    df.to_parquet(cache_path, index=False)
+
+
+# THE CODE BELOW MAY OR MAY NOT BE USED.
+
+
 def get_measurements_list_cache_path(asn, start_date, end_date, sample_size, cache_suffix=''): 
     cache_dir = Path(__file__).parent / "cache"
     cache_dir.mkdir(exist_ok=True)
@@ -38,30 +69,23 @@ def save_measurements_list_cache(asn, start_date, end_date, data, sample_size, c
     df.to_parquet(cache_path, index=False)
 
 
-def get_results_cache_dir(asn, start_date, end_date): 
-    cache_dir = Path(__file__).parent / "cache" / f"results_{asn}_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}"
+def get_results_cache_dir(asn):
+    cache_dir = Path(__file__).parent / "cache" / f"results_asn_{asn}"
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir
 
 
-def load_individual_result(asn, start_date, end_date, measurement_id): 
-    cache_dir = get_results_cache_dir(asn, start_date, end_date)
-    cache_file = cache_dir / f"measurement_{measurement_id}.parquet"
+def load_individual_result(asn, measurement_id):
+    cache_file = get_results_cache_dir(asn) / f"measurement_{measurement_id}.parquet"
     if cache_file.exists():
-        df = pd.read_parquet(cache_file) 
+        df = pd.read_parquet(cache_file)
         return df.to_dict(orient='records')
     return None
 
 
-def save_individual_result(asn, start_date, end_date, measurement_id, result_data): 
-    cache_dir = get_results_cache_dir(asn, start_date, end_date)
-    cache_file = cache_dir / f"measurement_{measurement_id}.parquet"
-     
-    if isinstance(result_data, list):
-        df = pd.DataFrame(result_data)
-    else:
-        df = pd.DataFrame([result_data])
-        
+def save_individual_result(asn, measurement_id, result_data):
+    cache_file = get_results_cache_dir(asn) / f"measurement_{measurement_id}.parquet"
+    df = pd.DataFrame(result_data if isinstance(result_data, list) else [result_data])
     df.to_parquet(cache_file, index=False)
 
 

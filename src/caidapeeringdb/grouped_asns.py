@@ -1,5 +1,11 @@
  
 from collections import defaultdict
+from pathlib import Path
+import sys 
+
+
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.utils.graphs import (
     plot_list_as_bar_plot,
@@ -8,7 +14,7 @@ from src.utils.graphs import (
     plot_stacked_line_plot,
     plot_stacked_win_loss_bar_plot_by_continent,
 )
-from src.caidapeeringdb.continent_logic import (
+from src.caidapeeringdb.ixp_features.continent_logic import (
     continent_colors,
     get_continent_for_ixp,
 )

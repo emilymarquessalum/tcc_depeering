@@ -6,10 +6,11 @@ import sys
 from matplotlib import pyplot as plt
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
+from src.google.ripeatlas.ripeatlas_latency import plot_enhanced_latency, plot_latency_over_time
 from src.utils.graphs import plot_list_as_line_plot
 from cache_manager import load_latency_cache, save_latency_cache
-from data_loader import group_measurement_data_by_viewpoint, load_measurement_data, extract_latencies_and_failed_measurements, check_if_measurement_passed_through_ixp
-from ripeatlas_route_diversity import calculate_route_diversity, calculate_route_diversity_per_interval, calculate_asn_diversity, calculate_prefix_diversity
+from data_loader import group_measurement_data_by_viewpoint, load_measurement_data, extract_latencies_and_failed_measurements
+from ripeatlas_route_diversity import calculate_route_diversity, calculate_route_diversity_per_interval, calculate_asn_diversity, calculate_prefix_diversity, print_prefix_diversity
 from src.services.caida_prefix_to_as.caida_prefix_to_AS import caida_prefix_to_AS
 
 
@@ -23,37 +24,6 @@ def print_average_latency_stats(latencies):
     print(f"Total successful measurements with latency data: {len(latencies)}")
 
 
-def plot_latency_over_time(latencies, endtimes, asn, start_date, end_date): 
-    latency_for_each_endtime = []
-    end_times = []
-    endtime_to_latencies = {}
-     
-    for latency, endtime in zip(latencies, endtimes):
-        if endtime not in endtime_to_latencies:
-            endtime_to_latencies[endtime] = []
-        endtime_to_latencies[endtime].append(latency)
-     
-    for endtime, latencies_list in endtime_to_latencies.items():
-        average_latency_for_endtime = sum(latencies_list) / len(latencies_list)
-        latency_for_each_endtime.append(average_latency_for_endtime)
-        end_times.append(endtime)
-     
-    plot_list_as_line_plot(
-        latency_for_each_endtime,
-        y=end_times,
-        title=f'Average Latency Over Time for ASN {asn} - From {start_date.strftime("%Y-%m-%d")} to {end_date.strftime("%Y-%m-%d")} - Exclude DNS',
-        xlabel='Time Intervals',
-        ylabel='Average Latency (ms)'
-    )
-
-
-    plot_list_as_line_plot(
-        latency_for_each_endtime,
-        y=[i for i in range(len(latency_for_each_endtime))],
-        title=f'Latency Of each Measurement for ASN {asn} - From {start_date.strftime("%Y-%m-%d")} to {end_date.strftime("%Y-%m-%d")} - Exclude DNS',
-        xlabel='Index',
-        ylabel='Latency'
-    )
 
 
 def plot_latency_boxplot_over_time(
@@ -115,27 +85,6 @@ def print_viewpoints(measurement_data):
     for viewpoint, measurements in ordered_by_measurements_viewpoints:
         print(f"Viewpoint {viewpoint} has {len(measurements)} measurements")
 
-def print_route_diversity(measurement_data):
-    route_diversity = calculate_route_diversity(measurement_data)
-    print(f"Unique ASes: {route_diversity['unique_ases']}")
-    print(f"Unique Paths: {route_diversity['unique_as_paths']}")
-    #print(f"Unique Hop Sequences: {route_diversity['unique_hop_sequences']}")
-    print(f"Total Measurements: {route_diversity['total_measurements']}") 
-    print(f"Diversity ratio (unique_routes/total_measurements): {route_diversity['diversity_score']:.4f}")
-
-def print_prefix_diversity(measurement_data):
-    prefix_diversity = calculate_prefix_diversity(measurement_data, prefix_length=24)
-    print(f"Unique /24 Prefixes: {prefix_diversity['unique_prefixes']}")
-    print(f"Total Unique IPs: {prefix_diversity['total_unique_ips']}")
-    print(f"Total IPs Seen: {prefix_diversity['total_ips_seen']}")
-    print(f"Prefix Diversity Ratio (prefixes seen / measurements): {prefix_diversity['prefix_diversity_score']:.4f}")
-    
-    prefixes_to_asn_mapping = {}
-
-    for prefix, count in prefix_diversity['most_common_prefixes']:
-        asn = caida_prefix_to_AS(prefix)
-        prefixes_to_asn_mapping[prefix] = asn
-        print(f"  {prefix}: {count} occurrences, ASN: {asn}")
 
 
     
@@ -144,7 +93,7 @@ probe_ids = [10515, 10704]
 
 start_date = datetime.datetime(2024, 1, 1)
 end_date = datetime.datetime.now()#datetime.datetime(2022, 1, 1)#datetime.datetime.now()
-end_date = datetime.datetime(2024, 6, 1)
+#end_date = datetime.datetime(2024, 6, 1)
 type_exclusion_filter = "dns"
 
 SAMPLE_SEED_OFFSET = 10
@@ -174,7 +123,10 @@ for asn in google_ases_for_search:
         endtimes = cached_latency_data['endtimes']
         failed_measurements_over_time_count = cached_latency_data['failed_measurements_count']
     else: 
-        latencies, endtimes, failed_measurements_over_time = extract_latencies_and_failed_measurements(measurement_data)
+        latencies, endtimes, failed_measurements_over_time = extract_latencies_and_failed_measurements(
+            measurement_data, 
+            dates_in_plot=dates_in_plot
+        )
         failed_measurements_over_time_count = sum(len(f) for f in failed_measurements_over_time)
          
         save_latency_cache(asn, start_date, end_date, latencies, endtimes, failed_measurements_over_time_count, SAMPLE_SEED_OFFSET)
@@ -190,8 +142,9 @@ for asn in google_ases_for_search:
         print("Total measurements:", len(endtimes))
         print("Unique timestamps:", len(set(endtimes)))
         print("Sample timestamps:", endtimes[:5])
-        plot_latency_over_time(latencies, endtimes, asn, start_date, end_date)
-        plot_latency_boxplot_over_time(latencies, endtimes, asn, start_date, end_date)
+        plot_enhanced_latency(latencies, endtimes, event_date=None)
+        #plot_latency_over_time(latencies, endtimes, asn, start_date, end_date)
+        #plot_latency_boxplot_over_time(latencies, endtimes, asn, start_date, end_date)
     
     # Calculate route diversity metrics
     print("\n" + "="*60)

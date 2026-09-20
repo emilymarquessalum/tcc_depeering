@@ -147,8 +147,17 @@ def plot_ixps_connections_over_time(
     # --- De-peering Vertical Line Marker ---
     if index_of_focused_asn_depeering is not None and 0 <= index_of_focused_asn_depeering < len(dates):
         # Line2D with transform=plt.gca().get_xaxis_transform() spans the full vertical Y height
-        depeering_line = plt.axvline(
+        '''depeering_line = plt.axvline(
             x=index_of_focused_asn_depeering, 
+            color="red", 
+            linestyle=":", 
+            linewidth=2, 
+            label="de-peering"
+        )'''
+        depeering_line = mlines.Line2D(
+            xdata=[index_of_focused_asn_depeering, index_of_focused_asn_depeering],
+            ydata=[0, 1],
+            transform=plt.gca().get_xaxis_transform(),  # Uses Y coordinate as 0 to 1 (full axes height)
             color="red", 
             linestyle=":", 
             linewidth=2, 

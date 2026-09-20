@@ -1,10 +1,13 @@
  
+from datetime import datetime
 import random
 import requests
 from progress.bar import Bar
 
 from cache_manager import (
+    load_interval_cache,
     load_measurements_list_cache,
+    save_interval_cache,
     save_measurements_list_cache,
     load_individual_result,
     save_individual_result
@@ -66,107 +69,84 @@ def load_measurement_data(
     check_for_probe_info_matching=False
 ):
     probe_set = set(probe_ids) if probe_ids is not None else None
-    
-    # Change cache suffix to invalidate previous cache that lacked probe filtering
     cache_suffix = f"_probes_v2_{'_'.join(map(str, sorted(probe_set)))}" if probe_set else "_v2"
- 
-    measurement_list_cache = load_measurements_list_cache(
-        asn, start_date, end_date, sample_size, cache_suffix=cache_suffix
-    )
+
+    measurement_counts = []
+    filtered_results_per_interval = []
+    dates_in_plot = []
+
+    current_date = start_date
+    number_of_intervals = ((end_date - start_date).days) // 30
     
-    if measurement_list_cache is not None:
-        print(f"Loading measurement list from cache for ASN {asn}")
-        measurement_counts = measurement_list_cache['measurement_counts']
-        dates_in_plot = measurement_list_cache['dates_in_plot']
-        filtered_results_per_interval = measurement_list_cache['filtered_results_per_interval']
-    else:
-        print(f"Fetching measurement list from API for ASN {asn}")
-        measurement_counts = []
-        filtered_results_per_interval = []
-        dates_in_plot = []
-         
-        invalid_probes = set()
-        valid_probes = set()
-        
-        probe_changes_filtered_count = 0
-        
-        current_date = start_date
-        number_of_intervals = ((end_date - start_date).days) // 30
-        i = 0
-        bar = Bar(max=number_of_intervals)
-        while i < number_of_intervals:
-            interval_end_date = current_date + day_delta
-            data = fetch_measurement_data(asn, current_date, interval_end_date, max_results=1000, max_iterations=10)
-            results = data["results"]
+    print(f"Processing {number_of_intervals} intervals for ASN {asn}...")
+    bar = Bar(max=number_of_intervals)
+
+    for i in range(number_of_intervals):
+        interval_start = current_date
+        interval_end = current_date + day_delta
+
+        # 1. Try loading interval from cache (Interval-Granular)
+        cached_interval = load_interval_cache(asn, interval_start, interval_end, cache_suffix)
+
+        if cached_interval is not None:
+            filtered_results = cached_interval['filtered_results']
+            date_str = cached_interval['date_str']
+        else:
+            # 2. Cache miss -> Fetch ONLY this specific interval from RIPE API
+            data = fetch_measurement_data(asn, interval_start, interval_end, max_results=1000, max_iterations=10)
+            results = data.get("results", [])
             filtered_results = []
-            
-            for result in results: 
+
+            for result in results:
                 if result.get("type") == type_exclusion_filter:
-                    continue 
+                    continue
 
                 probe_id = result.get("prb_id") or result.get("probe_id")
-                if probe_set is not None:
-                    # Check probe ID directly or inside result attributes 
-                    if probe_id and probe_id not in probe_set:
-                        continue
-
-                # Global probe change check across overall start_date and end_date
-                if probe_id and check_for_probe_info_matching:
-                    if probe_id in invalid_probes:
-                        probe_changes_filtered_count += 1
-                        continue
-                    
-                    if probe_id not in valid_probes:
-                        # Perform check across entire overall timeframe
-                        change_happened = check_probe_changes(probe_id, start_date, end_date)
-                        if change_happened:
-                            invalid_probes.add(probe_id)
-                            probe_changes_filtered_count += 1
-                            continue
-                        else:
-                            valid_probes.add(probe_id)
+                if probe_set is not None and probe_id and probe_id not in probe_set:
+                    continue
 
                 filtered_results.append(result)
-            
-            measurement_counts.append(len(filtered_results))
-            filtered_results_per_interval.append(filtered_results)
-             
-            date_value = start_date + i * day_delta
-            if date_value.month == 1:
-                date_str = date_value.strftime('%Y')
-            else:
-                date_str = date_value.strftime('%b %M')[:-2]
-                date_str = date_str + date_value.strftime('%Y')[2:]
-            dates_in_plot.append(date_str)
-            
-            current_date += day_delta
-            i += 1
-            bar.next()
-        bar.finish()
-        
-        print(f"Total measurements filtered away due to probe changes across all intervals: {probe_changes_filtered_count}")
-        print(f"Total unique probes excluded due to changes: {len(invalid_probes)}")
-         
-        save_measurements_list_cache(asn, start_date, end_date, {
-            'measurement_counts': measurement_counts,
-            'dates_in_plot': dates_in_plot,
-            'filtered_results_per_interval': filtered_results_per_interval
-        }, sample_size, cache_suffix=cache_suffix)
 
+            # Date string formatting
+            if interval_start.month == 1:
+                date_str = interval_start.strftime('%Y')
+            else:
+                date_str = interval_start.strftime('%b %M')[:-2] + interval_start.strftime('%Y')[2:]
+
+            # Save individual interval cache
+            save_interval_cache(asn, interval_start, interval_end, {
+                'measurement_count': len(filtered_results),
+                'date_str': date_str,
+                'filtered_results': filtered_results
+            }, cache_suffix)
+
+        measurement_counts.append(len(filtered_results))
+        filtered_results_per_interval.append(filtered_results)
+        dates_in_plot.append(date_str)
+
+        current_date += day_delta
+        bar.next()
+    bar.finish()
+
+    # 3. Sample and fetch detailed results per interval
     measurement_data = []
     bar = Bar(max=len(filtered_results_per_interval))
-     
-    seed = (hash((asn, start_date.date(), end_date.date())) + seed_offset) % (2**32)
-    rng = random.Random(seed)
-    
-    for filtered_results in filtered_results_per_interval: 
-        sample = rng.sample(filtered_results, min(sample_size, len(filtered_results)))
+
+    for idx, filtered_results in enumerate(filtered_results_per_interval):
+        interval_start = start_date + idx * day_delta
         
-        for result in sample: 
+        # Seed depends ONLY on ASN + Interval Start Date (Stable across range extensions)
+        seed = (hash((asn, interval_start.date())) + seed_offset) % (2**32)
+        rng = random.Random(seed)
+
+        sample = rng.sample(filtered_results, min(sample_size, len(filtered_results)))
+
+        for result in sample:
             measurement_id = result.get("id")
-            if measurement_id: 
-                cached_result = load_individual_result(asn, start_date, end_date, measurement_id)
-                
+            if measurement_id:
+                # Global lookup: decoupled from overall start/end dates
+                cached_result = load_individual_result(asn, measurement_id)
+
                 if cached_result is not None:
                     result["result"] = cached_result
                 else:
@@ -174,16 +154,16 @@ def load_measurement_data(
                         results_url = f"https://atlas.ripe.net/api/v2/measurements/{measurement_id}/results/"
                         response = requests.get(results_url)
                         if response.status_code == 200:
-                            measurement_results = response.json() 
-                            result["result"] = measurement_results 
-                            save_individual_result(asn, start_date, end_date, measurement_id, measurement_results)
+                            measurement_results = response.json()
+                            result["result"] = measurement_results
+                            save_individual_result(asn, measurement_id, measurement_results)
                     except Exception as e:
                         print(f"Error fetching results for measurement {measurement_id}: {e}")
-        
+
         measurement_data.append(filtered_results)
         bar.next()
     bar.finish()
-    
+
     return measurement_counts, dates_in_plot, measurement_data
 
 
@@ -199,52 +179,71 @@ def calculate_latency(measurement) -> tuple[float, float]:
         return None, None
      
     first_result = results[0]
-    if not isinstance(first_result, dict) or "result" not in first_result:
+    if not isinstance(first_result, dict):
         return None, None
+
+    # Extract timestamp from result structure
+    raw_ts = (
+        first_result.get("endtime") 
+        or first_result.get("timestamp") 
+        or measurement.get("start_time")
+        or measurement.get("timestamp")
+    )
     
-    hops = first_result["result"]
+    # Convert epoch integer/float to datetime object
+    if raw_ts is not None:
+        try:
+            timestamp = datetime.fromtimestamp(int(raw_ts))
+        except (ValueError, TypeError):
+            timestamp = raw_ts
+    else:
+        timestamp = None
+    
+    hops = first_result.get("result", [])
     if not isinstance(hops, list) or len(hops) == 0:
         return None, None
-    
-    endtime = first_result.get("endtime")
- 
+
+    # Iterate hops backwards to get the target/final destination RTT
     for hop in reversed(hops):
-        if isinstance(hop, dict) and "rtt" in hop:
-            rtt = hop["rtt"]
-            return rtt, endtime
+        if isinstance(hop, dict):
+            # Ping results store RTT directly or in result array
+            if "rtt" in hop:
+                return hop["rtt"], timestamp
+            elif "result" in hop and isinstance(hop["result"], list):
+                for sub_hop in hop["result"]:
+                    if isinstance(sub_hop, dict) and "rtt" in sub_hop:
+                        return sub_hop["rtt"], timestamp
     
     return None, None
 
-
-def extract_latencies_and_failed_measurements(measurement_data): 
+def extract_latencies_and_failed_measurements(measurement_data, dates_in_plot=None): 
     failed_measurements_over_time = []
     latencies = []
     endtimes = []
-    debug_count = 0
-     
-    total_measurements = sum(len(ml) for ml in measurement_data)
-    measurements_with_results = sum(1 for ml in measurement_data for m in ml if "result" in m)
-    print(f"DEBUG: Total measurements: {total_measurements}, with results: {measurements_with_results}")
     
-    for measurement_list in measurement_data:
+    for interval_idx, measurement_list in enumerate(measurement_data):
+        fallback_date = dates_in_plot[interval_idx] if (dates_in_plot and interval_idx < len(dates_in_plot)) else None
         failed_measurements = []
+        
         for measurement in measurement_list:
+            # Skip items where execution details were not fetched
+            if "result" not in measurement:
+                continue
+
             status = measurement.get("status", {})
             status_name = status.get("name") if isinstance(status, dict) else str(status)
             
             if status_name == "Failed":
                 failed_measurements.append(measurement)
             else: 
-                if debug_count < 2:
-                    print(f"DEBUG: Measurement {debug_count} keys: {measurement.keys()}")
-                    if "result" in measurement:
-                        print(f"DEBUG: Result type: {type(measurement['result'])}, length: {len(measurement['result']) if isinstance(measurement['result'], list) else 'N/A'}")
-                    debug_count += 1
-                 
                 latency, endtime = calculate_latency(measurement)
-                if latency is not None:
+                
+                # If timestamp is missing or raw epoch integer, resolve to string/datetime
+                resolved_endtime = endtime if endtime is not None else fallback_date
+                
+                if latency is not None and resolved_endtime is not None:
                     latencies.append(latency)
-                    endtimes.append(endtime)
+                    endtimes.append(resolved_endtime)
                     
         failed_measurements_over_time.append(failed_measurements)
     

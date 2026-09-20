@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from src.caidapeeringdb.ixp_region import plot_ixps_by_region
-from src.caidapeeringdb.ixp_size import plot_ixps_by_size_ranges
+from src.caidapeeringdb.ixp_features.ixp_region import plot_ixps_by_region
+from src.caidapeeringdb.ixp_features.ixp_size import plot_ixps_by_size_ranges
 from src.caidapeeringdb.caidapeeringdb_load import get_all_files, get_all_ixps, get_all_ixps_from_organization, get_all_organizations, get_all_organizations_that_own_ixps, get_asinfo_from_asn, get_asns_of_info_type, get_asns_types_peeringdb, get_data
 
 from src.google.vpps.vpp_region import plot_vpp_count_by_region

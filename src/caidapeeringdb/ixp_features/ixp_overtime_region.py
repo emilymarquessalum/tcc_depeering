@@ -1,7 +1,12 @@
+from pathlib import Path
 import re
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+
 from src.caidapeeringdb.caidapeeringdb_load import get_dates_from_files
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
-from src.caidapeeringdb.continent_logic import get_continent_for_ixp
+from src.caidapeeringdb.ixp_features.continent_logic import get_continent_for_ixp
 from src.caidapeeringdb.ixp_overtime import (
     get_ases_that_depeered_at_ixp_at_depeering_peak,
     plot_ixp_connections_over_time_by_category,

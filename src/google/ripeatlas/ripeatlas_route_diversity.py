@@ -13,6 +13,8 @@ from typing import List, Dict, Tuple, Set
 import datetime
 import ipaddress
 
+from src.services.caida_prefix_to_as.caida_prefix_to_AS import caida_prefix_to_AS
+
 
 def extract_as_path_from_measurement(measurement: Dict, debug: bool = False) -> Tuple[List[str], int]:
     """
@@ -448,3 +450,26 @@ def calculate_prefix_diversity_per_interval(measurement_data: List[List[Dict]], 
     
     return interval_prefix_diversities
 
+
+
+def print_route_diversity(measurement_data):
+    route_diversity = calculate_route_diversity(measurement_data)
+    print(f"Unique ASes: {route_diversity['unique_ases']}")
+    print(f"Unique Paths: {route_diversity['unique_as_paths']}")
+    #print(f"Unique Hop Sequences: {route_diversity['unique_hop_sequences']}")
+    print(f"Total Measurements: {route_diversity['total_measurements']}") 
+    print(f"Diversity ratio (unique_routes/total_measurements): {route_diversity['diversity_score']:.4f}")
+
+def print_prefix_diversity(measurement_data):
+    prefix_diversity = calculate_prefix_diversity(measurement_data, prefix_length=24)
+    print(f"Unique /24 Prefixes: {prefix_diversity['unique_prefixes']}")
+    print(f"Total Unique IPs: {prefix_diversity['total_unique_ips']}")
+    print(f"Total IPs Seen: {prefix_diversity['total_ips_seen']}")
+    print(f"Prefix Diversity Ratio (prefixes seen / measurements): {prefix_diversity['prefix_diversity_score']:.4f}")
+    
+    prefixes_to_asn_mapping = {}
+
+    for prefix, count in prefix_diversity['most_common_prefixes']:
+        asn = caida_prefix_to_AS(prefix)
+        prefixes_to_asn_mapping[prefix] = asn
+        print(f"  {prefix}: {count} occurrences, ASN: {asn}")

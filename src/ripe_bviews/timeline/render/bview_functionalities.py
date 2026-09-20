@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_asn_data_timeline_from_configs
 from src.ripe_bviews.timeline.as_info_type.bview_timeline_by_as_info_type import analyze_bview_by_as_info_type
 
-from src.ripe_bviews.timeline.bview_load import bview_load_data, bview_load_data_routeviews, load_asn_collector_for_all_rrcs, load_asn_collector_rrc_data
+from src.ripe_bviews.timeline.bview_load import bview_load_data, bview_load_data_routeviews, delete_asn_collector_for_all_rrcs, load_asn_collector_for_all_rrcs, load_asn_collector_rrc_data
 from src.ripe_bviews.timeline.bview_timeline_prefixes import bview_prefix_check, bview_prefixes, bview_prefixes_ranking   
 from src.ripe_bviews.timeline.bview_timeline_by_ip_version import bview_timeline_ip_version 
 from src.ripe_bviews.timeline.bview_timeline_as import check_asn_connection, check_asn_connection_for_relevant_ases
@@ -75,6 +75,7 @@ functionalities = [
 
             {"name": "load_asn_collector_rrc_data", "function": load_asn_collector_rrc_data, "description": "Load data from current collector, filtered by ASN", "requirements": []},
             {"name": "load_asn_collector_for_all_rrcs", "function": load_asn_collector_for_all_rrcs, "description": "Load data from all collectors, filtered by ASN (takes start and end date from current configs).", "requirements": []},
+            {"name": "delete_asn_collector_for_all_rrcs", "function": delete_asn_collector_for_all_rrcs, "description": "Delete data from all collectors, filtered by ASN (takes start and end date from current configs).", "requirements": []},
         ]
     },
     {

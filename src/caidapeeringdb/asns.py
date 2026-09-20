@@ -1,5 +1,12 @@
 """Plotting functions for individual ASN analysis."""
-from src.caidapeeringdb.ixp_size import plot_ixp_connections_by_continent, plot_ixp_connections_ratio_from_total_ixps_in_that_region
+
+from pathlib import Path
+import sys
+
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+
+from src.caidapeeringdb.ixp_features.ixp_size import plot_ixp_connections_by_continent, plot_ixp_connections_ratio_from_total_ixps_in_that_region
 from src.utils.graphs import (
     plot_list_as_bar_plot,
     plot_list_as_line_plot,
@@ -7,7 +14,7 @@ from src.utils.graphs import (
     plot_stacked_line_plot,
     plot_stacked_win_loss_bar_plot_by_continent,
 )
-from src.caidapeeringdb.continent_logic import (
+from src.caidapeeringdb.ixp_features.continent_logic import (
     continent_colors,
     organize_connections_by_continent,
     get_continent_for_ixp,
