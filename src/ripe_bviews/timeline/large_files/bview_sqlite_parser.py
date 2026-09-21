@@ -854,7 +854,7 @@ if __name__ == "__main__":
     start_date = None 
     
     configs = [ 
-        {"rrc_used": "rrc03", "ip_version": "v6", "asn": 15169, "start_date": None, "use_best_next_days": 0} for rrc in [
+        {"rrc_used": rrc, "ip_version": "v6", "asn": 15169, "start_date": None, "use_best_next_days": 0} for rrc in [
             "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08", "rrc09", "rrc10",
             "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16", "rrc17", "rrc18",
             "rrc19", "rrc20", "rrc21", "rrc22",
