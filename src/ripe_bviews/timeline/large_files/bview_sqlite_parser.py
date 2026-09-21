@@ -904,7 +904,7 @@ if __name__ == "__main__":
         compare_vpp_and_non_vpp_hegemony_over_time(
             asn, alpha, rrc_used, ip_version, dates,
             use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+            #use_free_viewpoint_filtering=use_free_viewpoint_filtering,
             use_best_next_days=use_best_next_days,
             show_as_percentage=show_as_percentage,
         )
