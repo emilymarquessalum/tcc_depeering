@@ -303,7 +303,8 @@ class LargeBViewParser:
 def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
+    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
 
     if not relevant_files:
         return None, None
@@ -314,7 +315,8 @@ def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
 def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=None):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
+    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
 
     if not relevant_files:
         return []
@@ -332,7 +334,8 @@ def get_interval_dates_for_asn_data(
 ):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(f"0000.origin_as.{asn}.txt")]
+    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
+    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
 
     if not relevant_files:
         return []
@@ -382,7 +385,7 @@ def get_interval_dates_for_asn_data(
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
-    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
+    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
@@ -404,7 +407,7 @@ def get_active_viewpoints_for_date(
     v6_threshold: int = 50_000
 ) -> Set[str]:
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
-    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.origin_as.{asn}.txt"
+    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
@@ -460,7 +463,7 @@ def select_best_date_in_window(
 
     for d in candidate_dates:
         # Verify raw text file exists before trying to parse/count viewpoints
-        raw_path = f"{ROOT_DIR}/{rrc_used}/output_bview.{d}.0000.origin_as.{asn}.txt"
+        raw_path = f"{ROOT_DIR}/{rrc_used}/output_bview.{d}.0000.{ip_version}.origin_as.{asn}.txt"
         if not os.path.exists(raw_path):
             continue
 
@@ -846,14 +849,18 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
 
 
 if __name__ == "__main__":
-
-    rrc_used = "rrc03"
-    ip_version = "v4"
+ 
     asn = 15169
-    start_date = None
-    use_best_next_days = 0
+    start_date = None 
     
+    configs = [ 
+        {"rrc_used": "rrc03", "ip_version": "v6", "asn": 15169, "start_date": None, "use_best_next_days": 0} for rrc in [
+            "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08", "rrc09", "rrc10",
+            "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16", "rrc17", "rrc18",
+            "rrc19", "rrc20", "rrc21", "rrc22",
+        ]
 
+    ]
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
     if asn_input:
         asn = int(asn_input)
@@ -864,31 +871,40 @@ if __name__ == "__main__":
     show_collector_count_over_time = False 
     show_as_percentage = True
 
-    date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
+    for config in configs:
+        rrc_used = config["rrc_used"]
+        ip_version = config["ip_version"]
+        asn = config["asn"]
+        start_date = config["start_date"]
+        use_best_next_days = config["use_best_next_days"]
 
-    compare_hegemony_for_two_dates(
-        asn, alpha, rrc_used, ip_version, date_before, date_after, 
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-    )
+        print(f"\n[INFO] Processing ASN {asn} for RRC {rrc_used} ({ip_version.upper()}) with start date {start_date} and best next days {use_best_next_days}...")
 
-    
-    # dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
-    dates = get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval=6, start_date=start_date)
+        date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
 
-    compare_hegemony_for_several_dates(
-        asn, alpha, rrc_used, ip_version, dates,
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-        use_best_next_days=use_best_next_days,
-        show_collector_count_over_time=show_collector_count_over_time,
-        show_as_percentage=show_as_percentage,
-    )
+        compare_hegemony_for_two_dates(
+            asn, alpha, rrc_used, ip_version, date_before, date_after, 
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        )
 
-    compare_vpp_and_non_vpp_hegemony_over_time(
-        asn, alpha, rrc_used, ip_version, dates,
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-        use_best_next_days=use_best_next_days,
-        show_as_percentage=show_as_percentage,
-    )
+        
+        # dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
+        dates = get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval=6, start_date=start_date)
+
+        compare_hegemony_for_several_dates(
+            asn, alpha, rrc_used, ip_version, dates,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+            use_best_next_days=use_best_next_days,
+            show_collector_count_over_time=show_collector_count_over_time,
+            show_as_percentage=show_as_percentage,
+        )
+
+        compare_vpp_and_non_vpp_hegemony_over_time(
+            asn, alpha, rrc_used, ip_version, dates,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+            use_best_next_days=use_best_next_days,
+            show_as_percentage=show_as_percentage,
+        )
