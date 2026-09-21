@@ -880,31 +880,35 @@ if __name__ == "__main__":
 
         print(f"\n[INFO] Processing ASN {asn} for RRC {rrc_used} ({ip_version.upper()}) with start date {start_date} and best next days {use_best_next_days}...")
 
-        date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
+        try:
+            date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
 
-        compare_hegemony_for_two_dates(
-            asn, alpha, rrc_used, ip_version, date_before, date_after, 
-            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-        )
+            compare_hegemony_for_two_dates(
+                asn, alpha, rrc_used, ip_version, date_before, date_after, 
+                use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+                use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+            )
 
-        
-        # dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
-        dates = get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval=6, start_date=start_date)
+            
+            # dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
+            dates = get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval=6, start_date=start_date)
 
-        compare_hegemony_for_several_dates(
-            asn, alpha, rrc_used, ip_version, dates,
-            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-            use_best_next_days=use_best_next_days,
-            show_collector_count_over_time=show_collector_count_over_time,
-            show_as_percentage=show_as_percentage,
-        )
+            compare_hegemony_for_several_dates(
+                asn, alpha, rrc_used, ip_version, dates,
+                use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+                use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+                use_best_next_days=use_best_next_days,
+                show_collector_count_over_time=show_collector_count_over_time,
+                show_as_percentage=show_as_percentage,
+            )
 
-        compare_vpp_and_non_vpp_hegemony_over_time(
-            asn, alpha, rrc_used, ip_version, dates,
-            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-            #use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-            use_best_next_days=use_best_next_days,
-            show_as_percentage=show_as_percentage,
-        )
+            compare_vpp_and_non_vpp_hegemony_over_time(
+                asn, alpha, rrc_used, ip_version, dates,
+                use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+                #use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+                use_best_next_days=use_best_next_days,
+                show_as_percentage=show_as_percentage,
+            )
+        except Exception as e:
+            print(f"[ERROR] An error occurred while processing RRC {rrc_used}: {e}")
+            continue
