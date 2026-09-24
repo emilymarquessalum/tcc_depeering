@@ -13,11 +13,12 @@ from typing import Dict, List, Set, Tuple, Optional
 
 import matplotlib.pyplot as plt
 
+
 # Ensure root import path matching ripeatlas_google.py and bview_sqlite_parser.py
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from data_loader import load_measurement_data
-from bview_sqlite_parser import calculate_as_hegemony_from_db
+from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import calculate_as_hegemony_from_db
+from data_loader import load_measurement_data 
 from src.ripe_bviews.timeline.bview_hegemony import get_sorted_asns_from_scores
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
 
@@ -27,10 +28,6 @@ def build_sqlite_db_from_atlas_data(
     target_asn: int, 
     db_path: str = ":memory:"
 ) -> sqlite3.Connection:
-    """
-    Converts RIPE Atlas measurement objects into an in-memory or on-disk 
-    SQLite table adhering to the `bgp_mappings` schema used by hegemony calculations.
-    """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
@@ -47,7 +44,15 @@ def build_sqlite_db_from_atlas_data(
     
     records = []
     
-    for meas in measurement_data:
+    # Flatten measurement list if nested
+    flat_data = []
+    for item in measurement_data:
+        if isinstance(item, list):
+            flat_data.extend(item)
+        else:
+            flat_data.append(item)
+    
+    for meas in flat_data:
         # Extract Probe ID / Viewpoint
         probe_id = meas.get("probe_id") or meas.get("prb_id") or meas.get("msm_id")
         if not probe_id:
@@ -178,7 +183,8 @@ if __name__ == "__main__":
             type_exclusion_filter, 
             day_delta, 
             seed_offset=SAMPLE_SEED_OFFSET,
-            probe_ids=probe_ids
+            sample_size=300
+            #probe_ids=probe_ids
         )
         
         print(f"Loaded {len(measurement_data)} measurements across probes.")
@@ -196,8 +202,3 @@ if __name__ == "__main__":
             print(f"  ASN {t_asn}: {hegemony_scores[t_asn]:.4f}")
 
         plot_ripeatlas_hegemony(hegemony_scores, target_asn=asn, top_n=10)
-
-
-if __name__ == "__main__":
-
-    pass

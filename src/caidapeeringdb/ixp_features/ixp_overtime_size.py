@@ -5,7 +5,7 @@ from src.caidapeeringdb.ixp_depeering_advanced_analysis import look_at_max_loss
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
 from src.caidapeeringdb.ixp_overtime import get_ases_that_depeered_at_ixp_at_depeering_peak, get_ixp_with_most_depeering_loss_at_a_single_point_in_time, plot_ixp_connections_over_time_by_category, plot_ixps_connections_over_time
 
-DEFAULT_SIZE_RANGE_THRESHOLDS = [50, 100, 150, 200]
+DEFAULT_SIZE_RANGE_THRESHOLDS = [50, 100, 150, 200, 400, 800]
 
 def plot_ixp_connections_over_time_by_size_ranges(all_data, all_files, depeered_ixp_ids, depeered_ixp_sizes, asn_to_analyze, 
                                                 size_range_thresholds=None,

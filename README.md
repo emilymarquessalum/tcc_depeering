@@ -1,9 +1,9 @@
 
 
 
-## TCC De-peering (TODO: Rename with official TCC name later)
+## Thesis: Are IXPs still relevant? Impacts from ICP de-peering
 
-Project, created in python, to analyze IXPs, for the paper "".
+Project, created in python, to analyze IXPs.
 Mainly focused on generating metrics and making visualizations.
 [TCC] (Link to TCC here)
 [De-Peering Elixir Side of the Implementation](Link to Elixir system here)

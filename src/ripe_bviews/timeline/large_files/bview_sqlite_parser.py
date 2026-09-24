@@ -26,7 +26,7 @@ def calculate_as_hegemony_from_db(
     filter_full_feed: bool = True,
     ip_version: str = "v4",
     v4_threshold: int = 1,
-    v6_threshold: int = 50_000,
+    v6_threshold: int = 1,
     allowed_viewpoints: Optional[Set[str]] = None
 ) -> Tuple[Dict[int, float], Set[str]]:
     """
@@ -149,7 +149,7 @@ def calculate_as_hegemony_disk(
     filter_full_feed: bool = True,
     ip_version: str = "v4",
     v4_threshold: int = 1,
-    v6_threshold: int = 50_000,
+    v6_threshold: int = 1,
     allowed_viewpoints: Optional[Set[str]] = None
 ) -> Tuple[Dict[int, float], Set[str]]:
     """
@@ -330,7 +330,13 @@ def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=N
 
 
 def get_interval_dates_for_asn_data(
-    asn, rrc_used, ip_version, month_interval, start_date=None, time_interval_acceptance=10
+    asn, 
+    rrc_used, 
+    ip_version, 
+    month_interval=6, 
+    start_date=None, 
+    time_interval_acceptance=10,
+    max_days_forward=220  
 ):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
@@ -349,36 +355,34 @@ def get_interval_dates_for_asn_data(
         return []
 
     sorted_dates = sorted(dates)
-    
-    # Convert string dates to datetime objects for easy distance math
     available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
     
     final_dates = []
-    
-    # 1. Always append the first available valid date
+     
     final_dates.append(available_dts[0].strftime("%Y%m%d"))
     
-    # 2. Set the first ideal target (e.g., exactly +6 months from the first date)
-    current_target = available_dts[0] + relativedelta(months=month_interval)
-    max_date = available_dts[-1]
-    
-    # Keep generating targets until we exceed our available dataset
-    while current_target <= max_date + timedelta(days=time_interval_acceptance):
+    current_dt = available_dts[0]
+      
+    while True: 
+        ideal_target = current_dt + relativedelta(months=month_interval)
         
-        # Find the single closest available date to our ideal current_target
-        closest_dt = min(available_dts, key=lambda d: abs((d - current_target).days))
-        
-        # Check if the closest date falls within our acceptance window
-        if abs((closest_dt - current_target).days) <= time_interval_acceptance:
-            closest_str = closest_dt.strftime("%Y%m%d")
-            
-            # Prevent adding duplicates or going backwards (can happen if intervals/windows overlap)
-            last_added_dt = datetime.strptime(final_dates[-1], "%Y%m%d")
-            if closest_dt > last_added_dt:
-                final_dates.append(closest_str)
-                
-        # Advance the ideal target perfectly to the next interval (prevents drifting)
-        current_target += relativedelta(months=month_interval)
+        # Filter dates that are strictly after the current date
+        future_dts = [d for d in available_dts if d > current_dt]
+        if not future_dts:
+            break
+ 
+        closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
+        days_diff = abs((closest_dt - ideal_target).days)
+        total_span_days = (closest_dt - current_dt).days
+ 
+        if days_diff <= time_interval_acceptance or total_span_days <= max_days_forward:
+            final_dates.append(closest_dt.strftime("%Y%m%d"))
+            current_dt = closest_dt  # Move forward relative to selected date
+        else: 
+            current_dt = ideal_target
+
+        if current_dt >= available_dts[-1]:
+            break
 
     return final_dates
 
@@ -404,7 +408,7 @@ def get_active_viewpoints_for_date(
     ip_version: str, 
     filter_full_feed: bool = True,
     v4_threshold: int = 1,
-    v6_threshold: int = 50_000
+    v6_threshold: int = 1
 ) -> Set[str]:
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
     path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
