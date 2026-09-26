@@ -6,14 +6,18 @@ from datetime import datetime
 
 import os
 import sqlite3
+import sys
 from typing import Dict, List, Tuple, Tuple
 from typing import List
 
+from inquirer import Path
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 from pyparsing import Dict, Optional
-from definitions import ROOT_DIR
 
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
+
+from definitions import ROOT_DIR
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import LargeBViewParser, calculate_as_hegemony_disk, get_active_viewpoints_for_date, get_all_dates_available_for_asn_data, get_top_five_asns_over_time
 
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import LargeBViewParser
