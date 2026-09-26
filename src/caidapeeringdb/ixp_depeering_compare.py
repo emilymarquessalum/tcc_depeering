@@ -168,5 +168,5 @@ if __name__ == "__main__":
                 depeered_at_peak_ases_by_ixp=depeered_at_peak_ases_by_size_range,
                 all_data=all_data,
                 connections_over_time_for_asns=connections_over_time_for_asns,
-                target_asn=15169 # e.g. Google
+                target_asn=15169 
     )

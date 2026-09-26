@@ -22,7 +22,7 @@ def get_ip_version(config) -> str:
 def get_title_start(config):
 
     return f"{config.get('name')} - "
-
+    
 def get_title_end(config):
      return get_date_range_title(config["start_date"], config["end_date"])
 

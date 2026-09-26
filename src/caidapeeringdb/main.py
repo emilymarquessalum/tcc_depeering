@@ -367,12 +367,10 @@ if __name__ == "__main__":
     all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
     print(f"Total unique IXPs in both snapshots: {len(all_ixps)}")
 
-    # Generate a heatmap of presence for ASN 
     try:
         all_data = get_all_data(all_files_before_depeering) + get_all_data(all_files_after_depeering)
         dates = [file.split("/")[-1].split(".")[0] for file in all_files]
 
-        # Collect IXPs where ASN 32934 appears in any snapshot
         ixp_ids_set = set()
         target_asn = 32934
         for snapshot in all_data:
@@ -558,7 +556,7 @@ if __name__ == "__main__":
         plot_list_as_bar_plot(
             data_list=categories,
             y=values,
-            title=f"External IXP De-Peering Scope (Target ASN: {target_asn})",
+            title=f"External IXP De-Peering Scope (Target ASN: {15169})",
             xlabel="De-Peering Category",
             ylabel="AS Count",
             use_rotated_labels=False,
