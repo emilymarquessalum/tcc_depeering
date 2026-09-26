@@ -5,12 +5,12 @@ from collections.abc import Set
 from datetime import datetime
 
 import os
+from pathlib import Path
 import sqlite3
 import sys
 from typing import Dict, List, Tuple, Tuple
 from typing import List
 
-from inquirer import Path
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 from pyparsing import Dict, Optional
