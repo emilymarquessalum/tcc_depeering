@@ -18,6 +18,8 @@ from src.ripe_bviews.timeline.render.bview_functionalities import _get_most_rece
 from src.ripe_bviews.timeline.bview_hegemony import _apply_alpha_trimming, get_sorted_asns_from_scores, plot_top5_transit 
 from definitions import ROOT_DIR
 
+DEBUG_HEGEMONY = False  
+
 def calculate_as_hegemony_from_db(
     conn: sqlite3.Connection,
     target_asn: Optional[int] = None,
@@ -35,7 +37,8 @@ def calculate_as_hegemony_from_db(
     cursor = conn.cursor()
     
     # --- STEP 1: Determine Active Viewpoints & Apply Thresholds ---
-    print(f"[HEGEMONY] Aggregating baseline metrics per Viewpoint ({ip_version.upper()})...")
+    if DEBUG_HEGEMONY:
+        print(f"[HEGEMONY] Aggregating baseline metrics per Viewpoint ({ip_version.upper()})...")
     
     # Track distinct prefix counts for full-feed vetting
     cursor.execute("""
@@ -81,7 +84,7 @@ def calculate_as_hegemony_from_db(
     all_active_peers = set(vp_active_weights.keys())
     n_viewpoints = len(all_active_peers)
     
-    if filter_full_feed:
+    if filter_full_feed and DEBUG_HEGEMONY:
         print(f"[HEGEMONY] Filter/Baseline alignment ENABLED (Threshold: {chosen_threshold} prefixes).")
         print(f"[HEGEMONY] Retained {n_viewpoints} viewpoints. Dropped/Filtered {dropped_viewpoints} views.")
 
@@ -89,7 +92,8 @@ def calculate_as_hegemony_from_db(
         return {}, set()
 
     # --- STEP 2: Discover Transit Intersections ---
-    print("[HEGEMONY] Processing unique Transit AS nodes...")
+    if DEBUG_HEGEMONY:
+        print("[HEGEMONY] Processing unique Transit AS nodes...")
     
     transit_vp_weights = defaultdict(lambda: defaultdict(float))
     all_transit_asns = set()
@@ -125,7 +129,8 @@ def calculate_as_hegemony_from_db(
                 all_transit_asns.add(transit_node)
 
     # --- STEP 3: Apply Alpha-Trimming Mechanics ---
-    print("[HEGEMONY] Finalizing distribution trimming mechanics...")
+    if DEBUG_HEGEMONY:
+        print("[HEGEMONY] Finalizing distribution trimming mechanics...")
     hegemony_scores = {}
     
     active_peers_list = list(all_active_peers)
