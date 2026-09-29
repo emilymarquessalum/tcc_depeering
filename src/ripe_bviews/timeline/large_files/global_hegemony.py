@@ -135,13 +135,12 @@ def analyze_global_hegemony_over_time(
     month_interval: int = 6,
     use_strict_viewpoint_filtering: bool = True,
     use_free_viewpoint_filtering: bool = False,
-    show_as_percentage: bool = True
+    show_as_percentage: bool = True,
+    as_color_map: Optional[Dict[int, str]] = None
 ):
-    """
-    Discovers all available dates across ALL RRCs, aggregates the dataset for each date,
-    and produces a global Hegemony analysis over time.
-    """
-    # 1. Gather union of all available dates across all specified RRCs
+    if as_color_map is None:
+        as_color_map = {}
+
     all_available_dates = set()
     for rrc in rrc_list:
         dates = get_all_dates_available_for_asn_data(asn, rrc, ip_version, start_date=start_date)
@@ -152,8 +151,6 @@ def analyze_global_hegemony_over_time(
         return
 
     sorted_dates = sorted(list(all_available_dates))
-    
-    # Filter dates based on monthly intervals
     available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
     interval_dates = [available_dts[0].strftime("%Y%m%d")]
     current_dt = available_dts[0]
@@ -171,7 +168,6 @@ def analyze_global_hegemony_over_time(
 
     print(f"\n[GLOBAL HEGEMONY] Processing {len(interval_dates)} date snapshots across {len(rrc_list)} RRCs...")
 
-    # 2. Compute Global Hegemony
     hegemony_scores_dict, viewpoint_counts_dict, valid_date_list = get_global_hegemony_scores(
         asn, ip_version, interval_dates, alpha, rrc_list,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
@@ -182,10 +178,17 @@ def analyze_global_hegemony_over_time(
         print("[WARNING] No valid global snapshots available.")
         return
 
-    # 3. Plot Top ASNs over time (Global)
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_date_list
     )
+
+    # Assign distinct colors to unique ASNs if not already mapped
+    cmap = plt.get_cmap("tab20")
+    for target_asn in unique_asns_list:
+        if target_asn not in as_color_map:
+            color_idx = len(as_color_map) % 20
+            as_color_map[target_asn] = cmap(color_idx)
+
     total_hegemony_per_date = [
         sum(hegemony_scores_dict[d].values()) for d in valid_date_list
     ]
@@ -209,6 +212,7 @@ def analyze_global_hegemony_over_time(
             marker=markers[i % len(markers)],
             linestyle=line_styles[i % len(line_styles)],
             linewidth=2.5,
+            color=as_color_map[target_asn],
             label=f"ASN {target_asn}",
         )
 
