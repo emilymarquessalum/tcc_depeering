@@ -495,11 +495,13 @@ def compare_hegemony_for_two_dates(
     use_free_viewpoint_filtering: bool = False,
 ):
     if use_strict_viewpoint_filtering:
-        print("[VIEWPOINTS] Finding strict intersection of active viewpoints across both dates...")
+        if DEBUG_HEGEMONY:
+            print("[VIEWPOINTS] Finding strict intersection of active viewpoints across both dates...")
         vp_before = get_active_viewpoints_for_date(asn, rrc_used, date_before, ip_version)
         vp_after = get_active_viewpoints_for_date(asn, rrc_used, date_after, ip_version)
         strict_allowed_viewpoints = vp_before.intersection(vp_after)
-        print(f"[VIEWPOINTS] Strict filtering retained {len(strict_allowed_viewpoints)} viewpoints present in both dates.")
+        if DEBUG_HEGEMONY:
+            print(f"[VIEWPOINTS] Strict filtering retained {len(strict_allowed_viewpoints)} viewpoints present in both dates.") 
 
         hegemony_scores_before, _ = load_hegemony_for_date(
             asn, alpha, rrc_used, date_before, ip_version, allowed_viewpoints=strict_allowed_viewpoints
@@ -509,7 +511,8 @@ def compare_hegemony_for_two_dates(
         )
     else:
         if use_free_viewpoint_filtering:
-            print("[VIEWPOINTS] Free viewpoint filtering enabled: Using all active viewpoints for each date independently.")
+            if DEBUG_HEGEMONY:
+                print("[VIEWPOINTS] Free viewpoint filtering enabled: Using all active viewpoints for each date independently.")
             hegemony_scores_before, _ = load_hegemony_for_date(
                         asn, alpha, rrc_used, date_before, ip_version
                     )
@@ -583,7 +586,8 @@ def get_hegemony_scores(
     allowed_viewpoints_baseline = None
     
     if use_strict_viewpoint_filtering:
-        print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(valid_date_list)} dates...")
+        if DEBUG_HEGEMONY:
+            print(f"[VIEWPOINTS] Computing strict viewpoint intersection across all {len(valid_date_list)} dates...")
         
         date_to_vps = {
             snapshot: get_active_viewpoints_for_date(asn, rrc_used, snapshot, ip_version)
@@ -597,15 +601,19 @@ def get_hegemony_scores(
         
         dropped_count = len(selected_dates) - len(valid_date_list)
         if dropped_count > 0:
-            print(f"[VIEWPOINTS] Strict mode dropped {dropped_count} snapshot(s) with 3 or fewer monitors.")
+            if DEBUG_HEGEMONY:
+                print(f"[VIEWPOINTS] Strict mode dropped {dropped_count} snapshot(s) with 3 or fewer monitors.")
             
-        if not valid_date_list:
-            print("[VIEWPOINTS] All snapshots were dropped under strict mode filtering.")
+        if not valid_date_list: 
+            if DEBUG_HEGEMONY:
+                print("[VIEWPOINTS] All snapshots were dropped under strict mode filtering.")
             return {}, {}, []
 
         active_sets = [date_to_vps[date] for date in valid_date_list]
         allowed_viewpoints_baseline = set.intersection(*active_sets)
-        print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across {len(valid_date_list)} snapshots.")
+        
+        if DEBUG_HEGEMONY:
+            print(f"[VIEWPOINTS] Strict viewpoint filtering retained {len(allowed_viewpoints_baseline)} viewpoints across {len(valid_date_list)} snapshots.")
 
     for date in valid_date_list:
         if allowed_viewpoints_baseline is not None:
