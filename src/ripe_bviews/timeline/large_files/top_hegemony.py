@@ -17,9 +17,9 @@ def analyze_top5_vs_others_hegemony_over_time(
     asn: int,
     alpha: float,
     ip_version: str,
-    date_list: List[str],
-    rrc_used: Optional[str] = None,
-    rrc_list: Optional[List[str]] = None,
+    date_list ,
+    rrc_used = None,
+    rrc_list: list[str] = None,
     use_strict_viewpoint_filtering: bool = False,
     use_free_viewpoint_filtering: bool = False,
     use_best_next_days: int = 0
