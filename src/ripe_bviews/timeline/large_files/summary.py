@@ -27,9 +27,11 @@ def evaluate_rrc_metrics(
     alpha: float = 0.34,
     use_strict_viewpoint_filtering: bool = True,
     increase_threshold_pct: float = 5.0,
-) -> Tuple[bool, bool, float]:
+) -> Tuple[bool, bool, bool, float]:
     """
-    Evaluates condition 1 and condition 2 for a single RRC and IP version.
+    Evaluates metrics for a single RRC and IP version.
+    Returns:
+        (has_data, top_ases_increased, vpp_wins, last_snapshot_top_ases_pct)
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
@@ -38,21 +40,21 @@ def evaluate_rrc_metrics(
     )
 
     if not dates or len(dates) < 2:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     hegemony_scores_dict, _, valid_dates = get_hegemony_scores(
         asn, rrc, ip_version, dates, alpha, use_strict_viewpoint_filtering
     )
 
     if not valid_dates or len(valid_dates) < 2:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_dates
     )
 
     if not unique_asns_list:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     first_date = valid_dates[0]
     last_date = valid_dates[-1]
@@ -83,7 +85,7 @@ def evaluate_rrc_metrics(
 
     vpp_wins = vpp_hegemony > non_vpp_hegemony
 
-    return top_ases_increased, vpp_wins, last_top_pct
+    return True, top_ases_increased, vpp_wins, last_top_pct
 
 
 def evaluate_global_metrics(
@@ -93,9 +95,11 @@ def evaluate_global_metrics(
     alpha: float = 0.34,
     use_strict_viewpoint_filtering: bool = True,
     increase_threshold_pct: float = 5.0,
-) -> Tuple[bool, bool, float]:
+) -> Tuple[bool, bool, bool, float]:
     """
-    Evaluates condition 1 and condition 2 globally across ALL combined RRCs.
+    Evaluates metrics globally across ALL combined RRCs.
+    Returns:
+        (has_data, top_ases_increased, vpp_wins, last_snapshot_top_ases_pct)
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
@@ -105,7 +109,7 @@ def evaluate_global_metrics(
         all_available_dates.update(dates)
 
     if not all_available_dates:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     sorted_dates = sorted(list(all_available_dates))
 
@@ -115,14 +119,14 @@ def evaluate_global_metrics(
     )
 
     if not valid_dates or len(valid_dates) < 2:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_dates
     )
 
     if not unique_asns_list:
-        return False, False, 0.0
+        return False, False, False, 0.0
 
     first_date = valid_dates[0]
     last_date = valid_dates[-1]
@@ -153,7 +157,7 @@ def evaluate_global_metrics(
 
     vpp_wins = vpp_hegemony > non_vpp_hegemony
 
-    return top_ases_increased, vpp_wins, last_top_pct
+    return True, top_ases_increased, vpp_wins, last_top_pct
 
 
 def generate_summary_plot(
@@ -169,8 +173,8 @@ def generate_summary_plot(
             "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
         ]
 
-    # Shorter category labels
     condition_labels = [
+        "Has v4+v6 Data",
         "v4: Top ASes +5%",
         "v4: VPP Wins",
         "v6: Top ASes +5%",
@@ -184,43 +188,47 @@ def generate_summary_plot(
 
     print(f"[SUMMARY] Processing GLOBAL metrics across {len(rrc_list)} RRCs...")
     try:
-        g_v4_inc, g_v4_vpp_win, g_v4_pct = evaluate_global_metrics(
+        g_v4_has, g_v4_inc, g_v4_vpp_win, g_v4_pct = evaluate_global_metrics(
             asn, rrc_list, "v4", alpha=alpha,
             use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
         )
-        g_v6_inc, g_v6_vpp_win, g_v6_pct = evaluate_global_metrics(
+        g_v6_has, g_v6_inc, g_v6_vpp_win, g_v6_pct = evaluate_global_metrics(
             asn, rrc_list, "v6", alpha=alpha,
             use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
         )
-        g_v6_gt_v4 = g_v6_pct > g_v4_pct
+        
+        has_both = g_v4_has and g_v6_has
+        g_v6_gt_v4 = (g_v6_pct > g_v4_pct) if has_both else False
 
-        results_matrix.append([g_v4_inc, g_v4_vpp_win, g_v6_inc, g_v6_vpp_win, g_v6_gt_v4])
+        results_matrix.append([has_both, g_v4_inc, g_v4_vpp_win, g_v6_inc, g_v6_vpp_win, g_v6_gt_v4])
     except Exception as e:
         print(f"[WARNING] Could not process GLOBAL: {e}")
-        results_matrix.append([False, False, False, False, False])
+        results_matrix.append([False, False, False, False, False, False])
 
     print(f"[SUMMARY] Processing individual metrics for {len(rrc_list)} RRCs...")
     for rrc in rrc_list:
         try:
-            v4_inc, v4_vpp_win, v4_pct = evaluate_rrc_metrics(
+            v4_has, v4_inc, v4_vpp_win, v4_pct = evaluate_rrc_metrics(
                 asn, rrc, "v4", alpha=alpha,
                 use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
             )
-            v6_inc, v6_vpp_win, v6_pct = evaluate_rrc_metrics(
+            v6_has, v6_inc, v6_vpp_win, v6_pct = evaluate_rrc_metrics(
                 asn, rrc, "v6", alpha=alpha,
                 use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
             )
-            v6_gt_v4 = v6_pct > v4_pct
 
-            results_matrix.append([v4_inc, v4_vpp_win, v6_inc, v6_vpp_win, v6_gt_v4])
+            has_both = v4_has and v6_has
+            v6_gt_v4 = (v6_pct > v4_pct) if has_both else False
+
+            results_matrix.append([has_both, v4_inc, v4_vpp_win, v6_inc, v6_vpp_win, v6_gt_v4])
         except Exception as e:
             print(f"[WARNING] Could not process {rrc}: {e}")
-            results_matrix.append([False, False, False, False, False])
+            results_matrix.append([False, False, False, False, False, False])
 
     num_rows = len(display_rows)
 
     # Plot Matrix Grid
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(12, 8))
 
     box_w = 0.6
     box_h = 0.6
@@ -231,7 +239,6 @@ def generate_summary_plot(
         for col_idx, is_true in enumerate(rrc_results):
             color = "#2ecc71" if is_true else "#e74c3c"
             
-            # Highlight GLOBAL row border
             edge_c = "black"
             line_w = 2.0 if row_idx == 0 else 0.8
             
@@ -245,7 +252,7 @@ def generate_summary_plot(
     ax.set_ylim(0, num_rows)
 
     ax.set_xticks([i + 0.5 for i in range(num_conditions)])
-    ax.set_xticklabels(condition_labels, rotation=0, ha="center", fontsize=10, fontweight="bold")
+    ax.set_xticklabels(condition_labels, rotation=0, ha="center", fontsize=9.5, fontweight="bold")
 
     ax.set_yticks([i + 0.5 for i in range(num_rows)])
     ax.set_yticklabels(display_rows, fontsize=10, fontweight="bold")
