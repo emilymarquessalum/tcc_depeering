@@ -19,6 +19,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import LargeBViewP
 
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import LargeBViewParser
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+from src.google.vpps.google_vpps_list import get_google_vpp_asns
 
 
 def load_global_hegemony_for_date(
@@ -228,7 +229,7 @@ def analyze_global_hegemony_over_time(
     save_plot(fig=fig, title=f"global_hegemony_over_time_{asn}_{ip_version}.png")
 
 
-from src.google.vpps.google_vpps_list import get_google_vpp_asns
+
 
 def analyze_global_vpp_hegemony_over_time(
     asn: int,
@@ -241,13 +242,9 @@ def analyze_global_vpp_hegemony_over_time(
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True
 ):
-    """
-    Computes global hegemony over time across all RRCs combined, splitting 
-    transit scores into Google VPP vs. Non-VPP categories.
-    """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
-    # 1. Discover all available dates across all RRCs
+    # 1. Discover interval dates
     all_available_dates = set()
     for rrc in rrc_list:
         dates = get_all_dates_available_for_asn_data(asn, rrc, ip_version, start_date=start_date)
@@ -273,9 +270,7 @@ def analyze_global_vpp_hegemony_over_time(
         if current_dt >= available_dts[-1]:
             break
 
-    print(f"\n[GLOBAL VPP] Computing global VPP hegemony for {len(interval_dates)} date snapshots across {len(rrc_list)} RRCs...")
-
-    # 2. Compute unified global hegemony scores
+    # 2. Fetch global hegemony scores
     hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
         asn, ip_version, interval_dates, alpha, rrc_list,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
@@ -286,35 +281,30 @@ def analyze_global_vpp_hegemony_over_time(
         print("[WARNING] No valid global snapshots available.")
         return
 
-    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
-        hegemony_scores_dict, valid_date_list
-    )
-
-    # 3. Categorize Hegemony into VPP vs Non-VPP
     hegemony_over_time_vpp_or_not_vpp: list[tuple[float, float]] = []
 
-    for date_idx, date in enumerate(valid_date_list):
+    # 3. Iterate over ALL transit ASNs directly per date snapshot
+    for date in valid_date_list:
+        date_scores = hegemony_scores_dict.get(date, {})
+        
         hegemony_vpp = 0.0
         hegemony_not_vpp = 0.0
 
-        for i, asn_for_hegemony in enumerate(unique_asns_list):
-            asn_score = top_fives_over_time[date_idx][i]
-            if str(asn_for_hegemony) in google_vpps_asns:
-                hegemony_vpp += asn_score
+        for transit_asn, score in date_scores.items():
+            if str(transit_asn) in google_vpps_asns:
+                hegemony_vpp += score
             else:
-                hegemony_not_vpp += asn_score
+                hegemony_not_vpp += score
 
-        if show_as_percentage:
-            tot = sum(hegemony_scores_dict[date].values())
-            if tot > 0:
-                hegemony_vpp = (hegemony_vpp / tot) * 100.0
-                hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
-            else:
-                hegemony_vpp, hegemony_not_vpp = 0.0, 0.0
+        tot = hegemony_vpp + hegemony_not_vpp  # Or sum(date_scores.values())
+
+        if show_as_percentage and tot > 0:
+            hegemony_vpp = (hegemony_vpp / tot) * 100.0
+            hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
 
         hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
 
-    # 4. Visualization
+    # 4. Plot results
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
 
     ax.plot(
