@@ -8,8 +8,7 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
-from typing import Dict, List, Tuple, Tuple
-from typing import List
+from typing import Dict, Tuple, Tuple 
 
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
@@ -29,7 +28,7 @@ def load_global_hegemony_for_date(
     alpha: float, 
     date: str, 
     ip_version: str, 
-    rrc_list: List[str],
+    rrc_list: list[str],
     allowed_viewpoints: Optional[Set[str]] = None
 ) -> Tuple[Dict[int, float], Set[str]]:
     """
@@ -83,12 +82,12 @@ def load_global_hegemony_for_date(
 def get_global_hegemony_scores(
     asn: int, 
     ip_version: str, 
-    date_list: List[str], 
+    date_list: list[str], 
     alpha: float, 
-    rrc_list: List[str],
+    rrc_list: list[str],
     use_strict_viewpoint_filtering: bool = False, 
     use_free_viewpoint_filtering: bool = False
-) -> Tuple[Dict[str, Dict[int, float]], Dict[str, int], List[str]]:
+) -> Tuple[Dict[str, Dict[int, float]], Dict[str, int], list[str]]:
     """
     Computes global hegemony scores across all specified RRCs over time.
     """
@@ -130,7 +129,7 @@ def analyze_global_hegemony_over_time(
     asn: int,
     alpha: float,
     ip_version: str,
-    rrc_list: List[str],
+    rrc_list: list[str],
     start_date: Optional[str] = None,
     month_interval: int = 6,
     use_strict_viewpoint_filtering: bool = True,
