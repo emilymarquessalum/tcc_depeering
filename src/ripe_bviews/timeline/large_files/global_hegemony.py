@@ -7,12 +7,10 @@ from datetime import datetime
 import os
 from pathlib import Path
 import sqlite3
-import sys
-from typing import Dict, Tuple, Tuple 
+import sys 
 
 from matplotlib import pyplot as plt
-from matplotlib.dates import relativedelta
-from pyparsing import Dict, Optional
+from matplotlib.dates import relativedelta 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
@@ -29,8 +27,8 @@ def load_global_hegemony_for_date(
     date: str, 
     ip_version: str, 
     rrc_list: list[str],
-    allowed_viewpoints: Optional[Set[str]] = None
-) -> Tuple[Dict[int, float], Set[str]]:
+    allowed_viewpoints = None
+):
     """
     Parses and aggregates BGP data from ALL listed RRCs for a given date,
     then executes Hegemony math on the global dataset.
@@ -87,7 +85,7 @@ def get_global_hegemony_scores(
     rrc_list: list[str],
     use_strict_viewpoint_filtering: bool = False, 
     use_free_viewpoint_filtering: bool = False
-) -> Tuple[Dict[str, Dict[int, float]], Dict[str, int], list[str]]:
+):
     """
     Computes global hegemony scores across all specified RRCs over time.
     """
@@ -130,12 +128,12 @@ def analyze_global_hegemony_over_time(
     alpha: float,
     ip_version: str,
     rrc_list: list[str],
-    start_date: Optional[str] = None,
+    start_date = None,
     month_interval: int = 6,
     use_strict_viewpoint_filtering: bool = True,
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
-    as_color_map: Optional[Dict[int, str]] = None
+    as_color_map = None
 ):
     if as_color_map is None:
         as_color_map = {}
