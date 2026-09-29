@@ -330,7 +330,7 @@ def analyze_global_vpp_hegemony_over_time(
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
     ax.set_ylabel(y_label, fontsize=12)
     ax.set_title(
-        f"GLOBAL VPP vs. Non-VPP Hegemony Share Over Time ({len(rrc_list)} RRCs Combined)\n"
+        f"GLOBAL VPP vs. Non-VPP Hegemony ({len(rrc_list)} RRCs)\n"
         f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=14
     )
@@ -342,6 +342,130 @@ def analyze_global_vpp_hegemony_over_time(
     plt.show()
 
     save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{ip_version}.png")
+
+
+def analyze_global_vpp_hegemony_over_time_top_ases(
+    asn: int,
+    alpha: float,
+    ip_version: str,
+    rrc_list: list[str],
+    start_date=None,
+    month_interval: int = 6,
+    use_strict_viewpoint_filtering: bool = True,
+    use_free_viewpoint_filtering: bool = False,
+    show_as_percentage: bool = True
+):
+    """
+    Computes global hegemony over time across all RRCs combined, splitting 
+    transit scores into Google VPP vs. Non-VPP categories.
+    """
+    google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
+
+    # 1. Discover all available dates across all RRCs
+    all_available_dates = set()
+    for rrc in rrc_list:
+        dates = get_all_dates_available_for_asn_data(asn, rrc, ip_version, start_date=start_date)
+        all_available_dates.update(dates)
+
+    if not all_available_dates:
+        print("[ERROR] No global data available for the specified parameters.")
+        return
+
+    sorted_dates = sorted(list(all_available_dates))
+    available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
+    interval_dates = [available_dts[0].strftime("%Y%m%d")]
+    current_dt = available_dts[0]
+    
+    while True:
+        ideal_target = current_dt + relativedelta(months=month_interval)
+        future_dts = [d for d in available_dts if d > current_dt]
+        if not future_dts:
+            break
+        closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
+        interval_dates.append(closest_dt.strftime("%Y%m%d"))
+        current_dt = closest_dt
+        if current_dt >= available_dts[-1]:
+            break
+
+    print(f"\n[GLOBAL VPP] Computing global VPP hegemony for {len(interval_dates)} date snapshots across {len(rrc_list)} RRCs...")
+
+    # 2. Compute unified global hegemony scores
+    hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
+        asn, ip_version, interval_dates, alpha, rrc_list,
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+        use_free_viewpoint_filtering=use_free_viewpoint_filtering
+    )
+
+    if not valid_date_list:
+        print("[WARNING] No valid global snapshots available.")
+        return
+
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
+        hegemony_scores_dict, valid_date_list, top_n=5
+    )
+
+    # 3. Categorize Hegemony into VPP vs Non-VPP
+    hegemony_over_time_vpp_or_not_vpp: list[tuple[float, float]] = []
+
+    for date_idx, date in enumerate(valid_date_list):
+        hegemony_vpp = 0.0
+        hegemony_not_vpp = 0.0
+
+        for i, asn_for_hegemony in enumerate(unique_asns_list):
+            asn_score = top_fives_over_time[date_idx][i]
+            if str(asn_for_hegemony) in google_vpps_asns:
+                hegemony_vpp += asn_score
+            else:
+                hegemony_not_vpp += asn_score
+
+        if show_as_percentage:
+            tot = sum(hegemony_scores_dict[date].values())
+            if tot > 0:
+                hegemony_vpp = (hegemony_vpp / tot) * 100.0
+                hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
+            else:
+                hegemony_vpp, hegemony_not_vpp = 0.0, 0.0
+
+        hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
+
+    # 4. Visualization
+    fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
+
+    ax.plot(
+        valid_date_list,
+        [h[0] for h in hegemony_over_time_vpp_or_not_vpp],
+        marker="o",
+        linewidth=2.5,
+        color="tab:blue",
+        label="Global VPP Hegemony",
+    )
+
+    ax.plot(
+        valid_date_list,
+        [h[1] for h in hegemony_over_time_vpp_or_not_vpp],
+        marker="s",
+        linewidth=2.5,
+        color="tab:orange",
+        linestyle="--",
+        label="Global Non-VPP Hegemony",
+    )
+
+    ax.set_xlabel("Date", fontsize=12)
+    y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
+    ax.set_ylabel(y_label, fontsize=12)
+    ax.set_title(
+        f"GLOBAL VPP vs. Non-VPP Hegemony ({len(rrc_list)} RRCs)\n"
+        f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
+        fontsize=14
+    )
+    ax.tick_params(axis="x", rotation=45)
+    ax.grid(True, linestyle="--", alpha=0.5)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="Is-VPP")
+
+    plt.tight_layout()
+    plt.show()
+
+    save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{ip_version}_top5.png")
 
 if __name__ == "__main__":
     asn = 15169

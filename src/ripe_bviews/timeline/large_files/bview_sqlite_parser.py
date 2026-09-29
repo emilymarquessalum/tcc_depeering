@@ -640,13 +640,13 @@ def get_hegemony_scores(
     return hegemony_scores_dict, viewpoint_counts_dict, valid_date_list
 
 
-def get_top_five_asns_over_time(hegemony_scores_dict, date_list):
+def get_top_five_asns_over_time(hegemony_scores_dict, date_list, top_n=3):
     all_unique_top_fives = set()
     for date in date_list:
         if DEBUG_HEGEMONY:
             print(f"Hegemony scores for {date}:")
         sorted_asns = get_sorted_asns_from_scores(hegemony_scores_dict[date])
-        all_unique_top_fives.update(sorted_asns[:3])
+        all_unique_top_fives.update(sorted_asns[:top_n])
     
     unique_asns_list = sorted(list(all_unique_top_fives))
     
