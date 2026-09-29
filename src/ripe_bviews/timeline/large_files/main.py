@@ -10,7 +10,7 @@ from bview_sqlite_parser import (
     get_first_and_last_date_available_for_asn_data,
     get_interval_dates_for_asn_data,
 )
-from global_hegemony import analyze_global_hegemony_over_time
+from global_hegemony import analyze_global_hegemony_over_time, analyze_global_vpp_hegemony_over_time
 from top_hegemony import analyze_top5_vs_others_hegemony_over_time
 from vpp_hegemony import compare_vpp_and_non_vpp_hegemony_over_time
 
@@ -72,6 +72,13 @@ def main():
         compare_vpp_and_non_vpp_hegemony_over_time(
             asn, alpha, rrc_target, ip_version, dates_rrc,
             use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            show_as_percentage=show_as_percentage
+        )
+
+        print("\n=== 5. GLOBAL VPP Hegemony Over Time ===")
+        analyze_global_vpp_hegemony_over_time(
+            asn=asn, alpha=alpha, ip_version=ip_version, rrc_list=all_rrcs,
+            month_interval=6, use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
             show_as_percentage=show_as_percentage
         )
 
