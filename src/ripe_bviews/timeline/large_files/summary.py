@@ -1,5 +1,3 @@
-
-
 import os
 import sys
 from pathlib import Path
@@ -19,6 +17,7 @@ from bview_sqlite_parser import (
     get_interval_dates_for_asn_data,
     get_top_five_asns_over_time,
 )
+from global_hegemony import get_global_hegemony_scores
 
 
 def evaluate_rrc_metrics(
@@ -30,16 +29,10 @@ def evaluate_rrc_metrics(
     increase_threshold_pct: float = 5.0,
 ) -> Tuple[bool, bool, float]:
     """
-    Evaluates condition 1 and condition 2 for a specific RRC and IP version:
-    1. Has Top ASes hegemony increased by >= threshold % between first and last dates?
-    2. Does VPP hegemony surpass Non-VPP hegemony at the final date snapshot?
-    
-    Returns:
-        (top_ases_increased, vpp_wins, last_snapshot_top_ases_pct)
+    Evaluates condition 1 and condition 2 for a single RRC and IP version.
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
-    # 1. Fetch available interval dates
     dates = get_interval_dates_for_asn_data(
         asn, rrc, ip_version, month_interval=6
     )
@@ -47,7 +40,6 @@ def evaluate_rrc_metrics(
     if not dates or len(dates) < 2:
         return False, False, 0.0
 
-    # 2. Get scores across available snapshots
     hegemony_scores_dict, _, valid_dates = get_hegemony_scores(
         asn, rrc, ip_version, dates, alpha, use_strict_viewpoint_filtering
     )
@@ -55,7 +47,6 @@ def evaluate_rrc_metrics(
     if not valid_dates or len(valid_dates) < 2:
         return False, False, 0.0
 
-    # Get the unique top ASNs (determined consistently using the reusable parser function)
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_dates
     )
@@ -63,7 +54,6 @@ def evaluate_rrc_metrics(
     if not unique_asns_list:
         return False, False, 0.0
 
-    # 3. Calculate percentage shares per date for Top ASNs
     first_date = valid_dates[0]
     last_date = valid_dates[-1]
 
@@ -79,10 +69,78 @@ def evaluate_rrc_metrics(
     first_top_pct = (first_top_sum / first_total * 100.0) if first_total > 0 else 0.0
     last_top_pct = (last_top_sum / last_total * 100.0) if last_total > 0 else 0.0
 
-    # Condition 1: Has hegemony for Top ASes increased >= threshold_pct?
     top_ases_increased = (last_top_pct - first_top_pct) >= increase_threshold_pct
 
-    # 4. Condition 2: Check if VPP hegemony > Non-VPP hegemony on the latest snapshot date
+    vpp_hegemony = 0.0
+    non_vpp_hegemony = 0.0
+
+    for target_asn in unique_asns_list:
+        score = last_scores.get(target_asn, 0.0)
+        if str(target_asn) in google_vpps_asns:
+            vpp_hegemony += score
+        else:
+            non_vpp_hegemony += score
+
+    vpp_wins = vpp_hegemony > non_vpp_hegemony
+
+    return top_ases_increased, vpp_wins, last_top_pct
+
+
+def evaluate_global_metrics(
+    asn: int,
+    rrc_list: List[str],
+    ip_version: str,
+    alpha: float = 0.34,
+    use_strict_viewpoint_filtering: bool = True,
+    increase_threshold_pct: float = 5.0,
+) -> Tuple[bool, bool, float]:
+    """
+    Evaluates condition 1 and condition 2 globally across ALL combined RRCs.
+    """
+    google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
+
+    all_available_dates = set()
+    for rrc in rrc_list:
+        dates = get_interval_dates_for_asn_data(asn, rrc, ip_version)
+        all_available_dates.update(dates)
+
+    if not all_available_dates:
+        return False, False, 0.0
+
+    sorted_dates = sorted(list(all_available_dates))
+
+    hegemony_scores_dict, _, valid_dates = get_global_hegemony_scores(
+        asn, ip_version, sorted_dates, alpha, rrc_list,
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+    )
+
+    if not valid_dates or len(valid_dates) < 2:
+        return False, False, 0.0
+
+    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
+        hegemony_scores_dict, valid_dates
+    )
+
+    if not unique_asns_list:
+        return False, False, 0.0
+
+    first_date = valid_dates[0]
+    last_date = valid_dates[-1]
+
+    first_scores = hegemony_scores_dict.get(first_date, {})
+    last_scores = hegemony_scores_dict.get(last_date, {})
+
+    first_total = sum(first_scores.values())
+    last_total = sum(last_scores.values())
+
+    first_top_sum = sum(first_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
+    last_top_sum = sum(last_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
+
+    first_top_pct = (first_top_sum / first_total * 100.0) if first_total > 0 else 0.0
+    last_top_pct = (last_top_sum / last_total * 100.0) if last_total > 0 else 0.0
+
+    top_ases_increased = (last_top_pct - first_top_pct) >= increase_threshold_pct
+
     vpp_hegemony = 0.0
     non_vpp_hegemony = 0.0
 
@@ -111,22 +169,37 @@ def generate_summary_plot(
             "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
         ]
 
+    # Shorter category labels
     condition_labels = [
-        "v4: Top ASes Hegemony Increased (>=5%)",
-        "v4: VPP Hegemony Wins",
-        "v6: Top ASes Hegemony Increased (>=5%)",
-        "v6: VPP Hegemony Wins",
-        "v4 Top ASes Hegemony % > v6 Top ASes Hegemony %"
+        "v4: Top ASes +5%",
+        "v4: VPP Wins",
+        "v6: Top ASes +5%",
+        "v6: VPP Wins",
+        "IPv6 > IPv4"
     ]
 
-    num_rrcs = len(rrc_list)
     num_conditions = len(condition_labels)
-
-    # Matrix to store boolean outcomes (True -> Green, False -> Red)
     results_matrix = []
+    display_rows = ["GLOBAL"] + [rrc.upper() for rrc in rrc_list]
 
-    print(f"[SUMMARY] Processing metrics across {num_rrcs} RRCs for ASN {asn}...")
+    print(f"[SUMMARY] Processing GLOBAL metrics across {len(rrc_list)} RRCs...")
+    try:
+        g_v4_inc, g_v4_vpp_win, g_v4_pct = evaluate_global_metrics(
+            asn, rrc_list, "v4", alpha=alpha,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+        )
+        g_v6_inc, g_v6_vpp_win, g_v6_pct = evaluate_global_metrics(
+            asn, rrc_list, "v6", alpha=alpha,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
+        )
+        g_v6_gt_v4 = g_v6_pct > g_v4_pct
 
+        results_matrix.append([g_v4_inc, g_v4_vpp_win, g_v6_inc, g_v6_vpp_win, g_v6_gt_v4])
+    except Exception as e:
+        print(f"[WARNING] Could not process GLOBAL: {e}")
+        results_matrix.append([False, False, False, False, False])
+
+    print(f"[SUMMARY] Processing individual metrics for {len(rrc_list)} RRCs...")
     for rrc in rrc_list:
         try:
             v4_inc, v4_vpp_win, v4_pct = evaluate_rrc_metrics(
@@ -137,49 +210,57 @@ def generate_summary_plot(
                 asn, rrc, "v6", alpha=alpha,
                 use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
             )
-            v4_gt_v6 = v4_pct > v6_pct
+            v6_gt_v4 = v6_pct > v4_pct
 
-            results_matrix.append([v4_inc, v4_vpp_win, v6_inc, v6_vpp_win, v4_gt_v6])
-            print(f"  [{rrc.upper()}] Done -> v4 Inc: {v4_inc}, v4 VPP Win: {v4_vpp_win}, v6 Inc: {v6_inc}, v6 VPP Win: {v6_vpp_win}, v4>v6: {v4_gt_v6}")
+            results_matrix.append([v4_inc, v4_vpp_win, v6_inc, v6_vpp_win, v6_gt_v4])
         except Exception as e:
             print(f"[WARNING] Could not process {rrc}: {e}")
             results_matrix.append([False, False, False, False, False])
 
+    num_rows = len(display_rows)
+
     # Plot Matrix Grid
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    box_w = 0.6
+    box_h = 0.6
+    x_offset = (1.0 - box_w) / 2.0
+    y_offset = (1.0 - box_h) / 2.0
 
     for row_idx, rrc_results in enumerate(results_matrix):
         for col_idx, is_true in enumerate(rrc_results):
             color = "#2ecc71" if is_true else "#e74c3c"
+            
+            # Highlight GLOBAL row border
+            edge_c = "black"
+            line_w = 2.0 if row_idx == 0 else 0.8
+            
             rect = plt.Rectangle(
-                (col_idx, row_idx), 0.85, 0.8,
-                facecolor=color, edgecolor="black", linewidth=1.2
+                (col_idx + x_offset, row_idx + y_offset), box_w, box_h,
+                facecolor=color, edgecolor=edge_c, linewidth=line_w
             )
             ax.add_patch(rect)
-            ax.text(
-                col_idx + 0.425, row_idx + 0.4,
-                "YES" if is_true else "NO",
-                ha="center", va="center",
-                color="white", fontweight="bold", fontsize=9
-            )
 
     ax.set_xlim(0, num_conditions)
-    ax.set_ylim(0, num_rrcs)
+    ax.set_ylim(0, num_rows)
 
-    ax.set_xticks([i + 0.425 for i in range(num_conditions)])
-    ax.set_xticklabels(condition_labels, rotation=30, ha="right", fontsize=10, fontweight="bold")
+    ax.set_xticks([i + 0.5 for i in range(num_conditions)])
+    ax.set_xticklabels(condition_labels, rotation=0, ha="center", fontsize=10, fontweight="bold")
 
-    ax.set_yticks([i + 0.4 for i in range(num_rrcs)])
-    ax.set_yticklabels([rrc.upper() for rrc in rrc_list], fontsize=10, fontweight="bold")
+    ax.set_yticks([i + 0.5 for i in range(num_rows)])
+    ax.set_yticklabels(display_rows, fontsize=10, fontweight="bold")
 
-    ax.invert_yaxis()  # rrc00 at the top
+    # Draw horizontal separator line below GLOBAL row
+    ax.axhline(y=1.0, color="black", linewidth=1.5, linestyle="--")
+
+    ax.invert_yaxis()
     ax.grid(False)
 
-    green_patch = mpatches.Patch(color="#2ecc71", label="Condition Met (True)")
-    red_patch = mpatches.Patch(color="#e74c3c", label="Condition Not Met (False)")
+    green_patch = mpatches.Patch(color="#2ecc71", label="True")
+    red_patch = mpatches.Patch(color="#e74c3c", label="False")
     ax.legend(handles=[green_patch, red_patch], bbox_to_anchor=(1.02, 1), loc="upper left")
 
-    plt.title(f"Hegemony & VPP Metrics Summary Per RRC Collector (ASN {asn}, α={alpha})", fontsize=14, pad=20)
+    plt.title(f"Hegemony Summary Matrix (ASN {asn}, α={alpha})", fontsize=13, pad=15)
     plt.tight_layout()
     plt.show()
 
