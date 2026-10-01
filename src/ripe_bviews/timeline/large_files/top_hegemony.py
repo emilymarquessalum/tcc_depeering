@@ -127,7 +127,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     ax.set_xlabel("Date", fontsize=12)
     ax.set_ylabel("Hegemony Share (%)", fontsize=12)
     ax.set_title(
-        f"Top 10% vs. Others Hegemony Share Over Time [{mode_label}]\n"
+        f"Top {percentage}% vs. Others Hegemony Share Over Time [{mode_label}]\n"
         f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=14,
     )
@@ -139,7 +139,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig, title=f"top10pct_vs_others_hegemony_{file_suffix}.png")
+    save_plot(fig=fig, title=f"top{percentage}pct_vs_others_hegemony_{file_suffix}.png")
 
 
 if __name__ == "__main__":
