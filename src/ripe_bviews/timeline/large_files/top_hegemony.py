@@ -72,6 +72,8 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     top10_percent_percentages = []
     others_percentages = []
 
+    percentage = 20
+
     # 2. Process each date snapshot
     for date in valid_date_list:
         scores = hegemony_scores_dict.get(date, {})
@@ -87,7 +89,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
         total_asns = len(sorted_transits)
 
         # Calculate top 10% cut-off index (at least 1 ASN)
-        top10_count = max(1, math.ceil(total_asns * 0.10))
+        top10_count = max(1, math.ceil(total_asns * percentage / 100))
 
         # Sum top 10% scores vs remaining scores
         top10_score = sum(score for _, score in sorted_transits[:top10_count])
@@ -109,7 +111,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
         marker="o",
         linewidth=2.5,
         color="tab:blue",
-        label="Top 10% Transits (Aggregated)",
+        label=f"Top {percentage}% Transits (Aggregated)",
     )
 
     ax.plot(
