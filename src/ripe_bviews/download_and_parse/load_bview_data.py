@@ -29,7 +29,7 @@ def load_bview_data_from_api(configs, ip_version="v4", load_from_routeviews=Fals
     day_delta = timedelta(days=configs.get("day_delta", 7))
     time_str = configs.get("time_str", "0000")
     time_delta = configs.get("time_delta_hours", 0)
-    path = f"{URL_ELIXIR}/bview?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&asn={asn_and_prefix[0]}&prefix={asn_and_prefix[1]}"
+    path = f"{URL_ELIXIR}/bview?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&month_delta={configs.get('month_delta', 0)}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&asn={asn_and_prefix[0]}&prefix={asn_and_prefix[1]}"
 
     response = requests.get(path)
     if response.status_code == 200:
@@ -44,11 +44,12 @@ def load_bview_asn_data_from_collector_api(configs, origin_asn, ip_version="v4",
     start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
     end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")
     day_delta = timedelta(days=configs.get("day_delta", 7))
+    month_delta = configs.get("month_delta", 0)
     time_str = configs.get("time_str", "0000")
     time_delta = configs.get("time_delta_hours", 0)
     origin_asn = origin_asn
     rrc = configs['routeserver-folder-name'] if load_from_routeviews else configs["rrc"] 
-    path = f"{URL_ELIXIR}/bview?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
+    path = f"{URL_ELIXIR}/bview?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&month_delta={month_delta}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
  
     response = requests.get(path) 
     if response.status_code == 200:
@@ -63,11 +64,12 @@ def delete_bview_asn_data_from_collector_api(configs, origin_asn, ip_version="v4
     start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
     end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")
     day_delta = timedelta(days=configs.get("day_delta", 7))
+    month_delta = configs.get("month_delta", 0)
     time_str = configs.get("time_str", "0000")
     time_delta = configs.get("time_delta_hours", 0)
     origin_asn = origin_asn
     rrc = configs['routeserver-folder-name'] if load_from_routeviews else configs["rrc"] 
-    path = f"{URL_ELIXIR}/bview/delete?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
+    path = f"{URL_ELIXIR}/bview/delete?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&month_delta={month_delta}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
  
     response = requests.delete(path) 
     if response.status_code == 200:
@@ -80,10 +82,11 @@ def load_bview_asn_data_timeline_from_configs(configs, origin_asn, ip_version="v
     start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
     end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")
     day_delta = timedelta(days=configs.get("day_delta", 7))
+    month_delta = configs.get("month_delta", 0)
     time_str = configs.get("time_str", "0000") 
     return load_bview_data_timeline(start_date, end_date, (), configs['routeserver-folder-name'] if load_from_routeviews else configs["rrc"], 
                                     origin_asn=origin_asn,
-                                    day_delta=day_delta, time_delta_hours=configs.get("time_delta_hours", 0), time_str=time_str, ip_version=ip_version, skip_if_missing=0, ignored_dates=[], max_iterations=None, load_from_both_routeviews_and_rrc=False)
+                                    day_delta=day_delta, month_delta=month_delta, time_delta_hours=configs.get("time_delta_hours", 0), time_str=time_str, ip_version=ip_version, skip_if_missing=0, ignored_dates=[], max_iterations=None, load_from_both_routeviews_and_rrc=False)
 
 
 def load_bview_data_timeline_from_configs(configs, ip_version="v4", skip_if_missing=0, ignored_dates=None,
@@ -100,9 +103,9 @@ def load_bview_data_timeline_from_configs(configs, ip_version="v4", skip_if_miss
     start_date = datetime.strptime(configs["start_date"], "%Y-%m-%d")
     end_date = datetime.strptime(configs["end_date"], "%Y-%m-%d")
     day_delta = timedelta(days=configs.get("day_delta", 7))
+    month_delta = configs.get("month_delta", 0)
     time_str = configs.get("time_str", "0000")
-
-    return load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc, day_delta=day_delta, time_delta_hours=configs.get("time_delta_hours", 0), time_str=time_str, ip_version=ip_version, skip_if_missing=skip_if_missing, ignored_dates=ignored_dates, max_iterations=max_iterations, load_from_both_routeviews_and_rrc=load_from_both_routeviews_and_rrc)
+    return load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc, day_delta=day_delta, month_delta=month_delta, time_delta_hours=configs.get("time_delta_hours", 0), time_str=time_str, ip_version=ip_version, skip_if_missing=skip_if_missing, ignored_dates=ignored_dates, max_iterations=max_iterations, load_from_both_routeviews_and_rrc=load_from_both_routeviews_and_rrc)
 
 def get_new_date_str(current_date_str, time_delta_hours):
     date_str_to_number = int(current_date_str[:2])
@@ -132,9 +135,26 @@ def get_progress_bar_from_timeline(start_date, end_date, day_delta, rrc, ip_vers
         leave=True
     )
 
+
+def add_months(source_date, months):
+  # Convert current year/month to an absolute month index
+  total_months = source_date.year * 12 + (source_date.month - 1) + months
+  new_year = total_months // 12
+  new_month = (total_months % 12) + 1
+
+  # Handle day overflow (e.g., trying to set Jan 31st to February)
+  # by clamping to the last valid day of the target month
+  import calendar
+
+  max_day = calendar.monthrange(new_year, new_month)[1]
+  new_day = min(source_date.day, max_day)
+
+  return source_date.replace(year=new_year, month=new_month, day=new_day)
+
+
 def load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc, 
                              origin_asn=None,
-                             day_delta=None, time_delta_hours=None, time_str=None, ip_version=None, skip_if_missing=0, ignored_dates=None, max_iterations=None,
+                             month_delta=None, day_delta=None, time_delta_hours=None, time_str=None, ip_version=None, skip_if_missing=0, ignored_dates=None, max_iterations=None,
                              load_from_both_routeviews_and_rrc=False) -> tuple[list[BGPDumpSnapshotStats], list]:
     current_date = start_date
     if day_delta is None:
@@ -148,7 +168,7 @@ def load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc,
     
     all_stats = []
 
-    current_date = start_date
+    current_date: datetime.date = start_date
     current_date_str = time_str
     labels = []
     consecutive_missing = 0
@@ -172,6 +192,7 @@ def load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc,
             current_date_str, date_changed = get_new_date_str(current_date_str, time_delta_hours)
             if date_changed:
                 current_date += timedelta(days=1)
+            current_date = add_months(current_date, month_delta) if month_delta else current_date
             progress_bar.update(1) # Advance progress bar even on skip
             continue
 
@@ -204,7 +225,7 @@ def load_bview_data_timeline(start_date, end_date, asn_and_prefix, rrc,
         current_date_str, date_changed = get_new_date_str(current_date_str, time_delta_hours)
         if date_changed:
             current_date += timedelta(days=1)
-            
+            current_date = add_months(current_date, month_delta) if month_delta else current_date
         # --- NEW: Update progress bar by 1 on successful load ---
         progress_bar.update(1)
 
