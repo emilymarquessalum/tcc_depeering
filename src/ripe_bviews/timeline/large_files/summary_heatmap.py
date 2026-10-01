@@ -28,15 +28,11 @@ def evaluate_rrc_metrics(
     ip_version: str,
     alpha: float = 0.34,
     use_strict_viewpoint_filtering: bool = True,
-) -> Dict[str, Optional[float]]:
+) -> Tuple[Dict[str, Optional[float]], Optional[str], Optional[str]]:
     """
     Evaluates continuous quantitative metrics for a single RRC and IP version.
-    Returns dictionary with:
-        - has_data: bool
-        - heg_delta_pct: change in total top ASes hegemony (% points)
-        - vpp_heg_delta_pct: change in VPP hegemony score (% points)
-        - last_top_pct: total top ASes hegemony % in last snapshot (current)
-        - last_vpp_pct: VPP hegemony % in last snapshot (current)
+    Returns:
+        (metrics_dict, start_date_str, end_date_str)
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
@@ -53,14 +49,14 @@ def evaluate_rrc_metrics(
     }
 
     if not dates or len(dates) < 2:
-        return empty_res
+        return empty_res, None, None
 
     hegemony_scores_dict, _, valid_dates = get_hegemony_scores(
         asn, rrc, ip_version, dates, alpha, use_strict_viewpoint_filtering
     )
 
     if not valid_dates or len(valid_dates) < 2:
-        return empty_res
+        return empty_res, None, None
 
     first_date = valid_dates[0]
     last_date = valid_dates[-1]
@@ -72,14 +68,14 @@ def evaluate_rrc_metrics(
     last_total = sum(last_scores.values())
 
     if first_total <= 0.0 or last_total <= 0.0:
-        return empty_res
+        return empty_res, None, None
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_dates
     )
 
     if not unique_asns_list:
-        return empty_res
+        return empty_res, None, None
 
     # Overall Hegemony calculations
     first_top_sum = sum(first_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
@@ -103,7 +99,7 @@ def evaluate_rrc_metrics(
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
         "last_top_pct": last_top_pct,
         "last_vpp_pct": last_vpp_pct,
-    }
+    }, str(first_date), str(last_date)
 
 
 def evaluate_global_metrics(
@@ -112,9 +108,11 @@ def evaluate_global_metrics(
     ip_version: str,
     alpha: float = 0.34,
     use_strict_viewpoint_filtering: bool = True,
-) -> Dict[str, Optional[float]]:
+) -> Tuple[Dict[str, Optional[float]], Optional[str], Optional[str]]:
     """
     Evaluates continuous quantitative metrics globally across ALL combined RRCs.
+    Returns:
+        (metrics_dict, start_date_str, end_date_str)
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
     empty_res = {
@@ -131,7 +129,7 @@ def evaluate_global_metrics(
         all_available_dates.update(dates)
 
     if not all_available_dates:
-        return empty_res
+        return empty_res, None, None
 
     sorted_dates = sorted(list(all_available_dates))
 
@@ -141,7 +139,7 @@ def evaluate_global_metrics(
     )
 
     if not valid_dates or len(valid_dates) < 2:
-        return empty_res
+        return empty_res, None, None
 
     first_date = valid_dates[0]
     last_date = valid_dates[-1]
@@ -153,14 +151,14 @@ def evaluate_global_metrics(
     last_total = sum(last_scores.values())
 
     if first_total <= 0.0 or last_total <= 0.0:
-        return empty_res
+        return empty_res, None, None
 
     top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
         hegemony_scores_dict, valid_dates
     )
 
     if not unique_asns_list:
-        return empty_res
+        return empty_res, None, None
 
     # Overall Hegemony calculations
     first_top_sum = sum(first_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
@@ -184,7 +182,14 @@ def evaluate_global_metrics(
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
         "last_top_pct": last_top_pct,
         "last_vpp_pct": last_vpp_pct,
-    }
+    }, str(first_date), str(last_date)
+
+
+def _format_date(date_str: Optional[str]) -> str:
+    """Helper to convert date strings to YYYYMMDD or return standard fallback."""
+    if not date_str:
+        return "UNKNOWN"
+    return str(date_str).replace("-", "").replace("/", "")[:8]
 
 
 def generate_summary_plot(
@@ -204,12 +209,18 @@ def generate_summary_plot(
     
     delta_matrix_rows = []
     current_matrix_rows = []
+    
+    collected_dates = []
 
     # 1. Process GLOBAL
     print(f"[SUMMARY] Processing GLOBAL metrics across {len(rrc_list)} RRCs...")
     try:
-        g_v4 = evaluate_global_metrics(asn, rrc_list, "v4", alpha, use_strict_viewpoint_filtering)
-        g_v6 = evaluate_global_metrics(asn, rrc_list, "v6", alpha, use_strict_viewpoint_filtering)
+        g_v4, g_v4_start, g_v4_end = evaluate_global_metrics(asn, rrc_list, "v4", alpha, use_strict_viewpoint_filtering)
+        g_v6, g_v6_start, g_v6_end = evaluate_global_metrics(asn, rrc_list, "v6", alpha, use_strict_viewpoint_filtering)
+
+        for d in [g_v4_start, g_v4_end, g_v6_start, g_v6_end]:
+            if d:
+                collected_dates.append(d)
 
         v6_minus_v4 = (
             (g_v6["last_top_pct"] - g_v4["last_top_pct"])
@@ -241,8 +252,12 @@ def generate_summary_plot(
     print(f"[SUMMARY] Processing individual metrics for {len(rrc_list)} RRCs...")
     for rrc in rrc_list:
         try:
-            v4_res = evaluate_rrc_metrics(asn, rrc, "v4", alpha, use_strict_viewpoint_filtering)
-            v6_res = evaluate_rrc_metrics(asn, rrc, "v6", alpha, use_strict_viewpoint_filtering)
+            v4_res, v4_start, v4_end = evaluate_rrc_metrics(asn, rrc, "v4", alpha, use_strict_viewpoint_filtering)
+            v6_res, v6_start, v6_end = evaluate_rrc_metrics(asn, rrc, "v6", alpha, use_strict_viewpoint_filtering)
+
+            for d in [v4_start, v4_end, v6_start, v6_end]:
+                if d:
+                    collected_dates.append(d)
 
             v6_minus_v4 = (
                 (v6_res["last_top_pct"] - v4_res["last_top_pct"])
@@ -270,6 +285,17 @@ def generate_summary_plot(
             delta_matrix_rows.append([np.nan] * 5)
             current_matrix_rows.append([np.nan] * 5)
 
+    # Determine overall start and end date strings
+    if collected_dates:
+        sorted_collected = sorted(collected_dates)
+        global_start_str = _format_date(sorted_collected[0])
+        global_end_str = _format_date(sorted_collected[-1])
+    else:
+        global_start_str = "START"
+        global_end_str = "END"
+
+    date_label = f"{global_start_str}_to_{global_end_str}"
+
     # -------------------------------------------------------------
     # PLOT 1: DELTA HEATMAP (Growth / Decrease over time)
     # -------------------------------------------------------------
@@ -291,7 +317,6 @@ def generate_summary_plot(
     fig1, ax1 = plt.subplots(figsize=(12, 10))
     ax1.set_facecolor("#e0e0e0")
 
-    # Coolwarm colormap: Negative = Blue, Zero = Neutral, Positive = Red
     sns.heatmap(
         df_delta,
         annot=annot_delta,
@@ -305,13 +330,18 @@ def generate_summary_plot(
     )
 
     ax1.axhline(y=1.0, color="black", linewidth=2.5)
-    plt.title(f"Hegemony Growth & Delta Summary Heatmap (ASN {asn}, α={alpha})", fontsize=14, pad=15, fontweight="bold")
+    plt.title(
+        f"Hegemony Growth & Delta Summary Heatmap (ASN {asn}, α={alpha})\n[{global_start_str} to {global_end_str}]",
+        fontsize=14,
+        pad=15,
+        fontweight="bold"
+    )
     plt.xticks(rotation=15, ha="right", fontsize=10, fontweight="bold")
     plt.yticks(fontsize=10, fontweight="bold")
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig1, title=f"rrc_hegemony_delta_heatmap_{asn}.png")
+    save_plot(fig=fig1, title=f"rrc_hegemony_delta_heatmap_{asn}_{date_label}.png")
 
     # -------------------------------------------------------------
     # PLOT 2: CURRENT ABSOLUTE VALUES HEATMAP
@@ -332,7 +362,6 @@ def generate_summary_plot(
             if np.isnan(val):
                 annot_current[i, j] = "N/A"
             elif j == 4:
-                # Column 5 is the delta exception
                 annot_current[i, j] = f"{val:+.1f}%"
             else:
                 annot_current[i, j] = f"{val:.1f}%"
@@ -353,13 +382,18 @@ def generate_summary_plot(
     )
 
     ax2.axhline(y=1.0, color="black", linewidth=2.5)
-    plt.title(f"Current Hegemony Status & IPv6 vs IPv4 Delta (ASN {asn}, α={alpha})", fontsize=14, pad=15, fontweight="bold")
+    plt.title(
+        f"Current Hegemony Status & IPv6 vs IPv4 Delta (ASN {asn}, α={alpha})\n[{global_start_str} to {global_end_str}]",
+        fontsize=14,
+        pad=15,
+        fontweight="bold"
+    )
     plt.xticks(rotation=15, ha="right", fontsize=10, fontweight="bold")
     plt.yticks(fontsize=10, fontweight="bold")
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig2, title=f"rrc_hegemony_current_status_heatmap_{asn}.png")
+    save_plot(fig=fig2, title=f"rrc_hegemony_current_status_heatmap_{asn}_{date_label}.png")
 
 
 if __name__ == "__main__":
