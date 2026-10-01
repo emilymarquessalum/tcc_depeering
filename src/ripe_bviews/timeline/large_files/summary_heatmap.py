@@ -1,9 +1,7 @@
-
-
 import os
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -37,7 +35,8 @@ def evaluate_rrc_metrics(
         - has_data: bool
         - heg_delta_pct: change in total top ASes hegemony (% points)
         - vpp_heg_delta_pct: change in VPP hegemony score (% points)
-        - last_top_pct: total top ASes hegemony % in last snapshot
+        - last_top_pct: total top ASes hegemony % in last snapshot (current)
+        - last_vpp_pct: VPP hegemony % in last snapshot (current)
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
@@ -45,7 +44,13 @@ def evaluate_rrc_metrics(
         asn, rrc, ip_version, month_interval=6
     )
 
-    empty_res = {"has_data": False, "heg_delta_pct": np.nan, "vpp_heg_delta_pct": np.nan, "last_top_pct": np.nan}
+    empty_res = {
+        "has_data": False,
+        "heg_delta_pct": np.nan,
+        "vpp_heg_delta_pct": np.nan,
+        "last_top_pct": np.nan,
+        "last_vpp_pct": np.nan,
+    }
 
     if not dates or len(dates) < 2:
         return empty_res
@@ -96,7 +101,8 @@ def evaluate_rrc_metrics(
         "has_data": True,
         "heg_delta_pct": heg_delta_pct,
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
-        "last_top_pct": last_top_pct
+        "last_top_pct": last_top_pct,
+        "last_vpp_pct": last_vpp_pct,
     }
 
 
@@ -111,7 +117,13 @@ def evaluate_global_metrics(
     Evaluates continuous quantitative metrics globally across ALL combined RRCs.
     """
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
-    empty_res = {"has_data": False, "heg_delta_pct": np.nan, "vpp_heg_delta_pct": np.nan, "last_top_pct": np.nan}
+    empty_res = {
+        "has_data": False,
+        "heg_delta_pct": np.nan,
+        "vpp_heg_delta_pct": np.nan,
+        "last_top_pct": np.nan,
+        "last_vpp_pct": np.nan,
+    }
 
     all_available_dates = set()
     for rrc in rrc_list:
@@ -170,7 +182,8 @@ def evaluate_global_metrics(
         "has_data": True,
         "heg_delta_pct": heg_delta_pct,
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
-        "last_top_pct": last_top_pct
+        "last_top_pct": last_top_pct,
+        "last_vpp_pct": last_vpp_pct,
     }
 
 
@@ -187,16 +200,10 @@ def generate_summary_plot(
             "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
         ]
 
-    column_labels = [
-        "v4 Heg Δ (%)",
-        "v4 VPP Heg Δ (%)",
-        "v6 Heg Δ (%)",
-        "v6 VPP Heg Δ (%)",
-        "v6 vs v4 Heg Δ (%)"
-    ]
-
     display_rows = ["GLOBAL"] + [rrc.upper() for rrc in rrc_list]
-    matrix_rows = []
+    
+    delta_matrix_rows = []
+    current_matrix_rows = []
 
     # 1. Process GLOBAL
     print(f"[SUMMARY] Processing GLOBAL metrics across {len(rrc_list)} RRCs...")
@@ -210,16 +217,25 @@ def generate_summary_plot(
             else np.nan
         )
 
-        matrix_rows.append([
+        delta_matrix_rows.append([
             g_v4["heg_delta_pct"],
             g_v4["vpp_heg_delta_pct"],
             g_v6["heg_delta_pct"],
             g_v6["vpp_heg_delta_pct"],
             v6_minus_v4
         ])
+
+        current_matrix_rows.append([
+            g_v4["last_top_pct"],
+            g_v4["last_vpp_pct"],
+            g_v6["last_top_pct"],
+            g_v6["last_vpp_pct"],
+            v6_minus_v4
+        ])
     except Exception as e:
         print(f"[WARNING] Could not process GLOBAL: {e}")
-        matrix_rows.append([np.nan] * 5)
+        delta_matrix_rows.append([np.nan] * 5)
+        current_matrix_rows.append([np.nan] * 5)
 
     # 2. Process Individual RRCs
     print(f"[SUMMARY] Processing individual metrics for {len(rrc_list)} RRCs...")
@@ -234,55 +250,117 @@ def generate_summary_plot(
                 else np.nan
             )
 
-            matrix_rows.append([
+            delta_matrix_rows.append([
                 v4_res["heg_delta_pct"],
                 v4_res["vpp_heg_delta_pct"],
                 v6_res["heg_delta_pct"],
                 v6_res["vpp_heg_delta_pct"],
                 v6_minus_v4
             ])
+
+            current_matrix_rows.append([
+                v4_res["last_top_pct"],
+                v4_res["last_vpp_pct"],
+                v6_res["last_top_pct"],
+                v6_res["last_vpp_pct"],
+                v6_minus_v4
+            ])
         except Exception as e:
             print(f"[WARNING] Could not process {rrc}: {e}")
-            matrix_rows.append([np.nan] * 5)
+            delta_matrix_rows.append([np.nan] * 5)
+            current_matrix_rows.append([np.nan] * 5)
 
-    # Convert to DataFrame
-    df = pd.DataFrame(matrix_rows, index=display_rows, columns=column_labels)
+    # -------------------------------------------------------------
+    # PLOT 1: DELTA HEATMAP (Growth / Decrease over time)
+    # -------------------------------------------------------------
+    delta_cols = [
+        "v4 Heg Δ (%)",
+        "v4 VPP Heg Δ (%)",
+        "v6 Heg Δ (%)",
+        "v6 VPP Heg Δ (%)",
+        "v6 vs v4 Heg Δ (%)"
+    ]
+    df_delta = pd.DataFrame(delta_matrix_rows, index=display_rows, columns=delta_cols)
 
-    # Create Heatmap
-    fig, ax = plt.subplots(figsize=(12, 10))
-    ax.set_facecolor("#e0e0e0")  # Gray background for missing (NaN) values
+    annot_delta = np.empty(df_delta.shape, dtype=object)
+    for i in range(df_delta.shape[0]):
+        for j in range(df_delta.shape[1]):
+            val = df_delta.iloc[i, j]
+            annot_delta[i, j] = f"{val:+.1f}%" if not np.isnan(val) else "N/A"
 
-    # Format values for annotation string with explicit +/- sign
-    annot_matrix = np.empty(df.shape, dtype=object)
-    for i in range(df.shape[0]):
-        for j in range(df.shape[1]):
-            val = df.iloc[i, j]
-            annot_matrix[i, j] = f"{val:+.1f}%" if not np.isnan(val) else "N/A"
+    fig1, ax1 = plt.subplots(figsize=(12, 10))
+    ax1.set_facecolor("#e0e0e0")
 
+    # Coolwarm colormap: Negative = Blue, Zero = Neutral, Positive = Red
     sns.heatmap(
-        df,
-        annot=annot_matrix,
+        df_delta,
+        annot=annot_delta,
         fmt="",
-        cmap="RdYlGn",
+        cmap="coolwarm",
         center=0.0,
         linewidths=0.8,
         linecolor="white",
         cbar_kws={"label": "Percentage Point Delta (%)"},
-        ax=ax
+        ax=ax1
     )
 
-    # Separate GLOBAL row visually
-    ax.axhline(y=1.0, color="black", linewidth=2.5)
-
+    ax1.axhline(y=1.0, color="black", linewidth=2.5)
     plt.title(f"Hegemony Growth & Delta Summary Heatmap (ASN {asn}, α={alpha})", fontsize=14, pad=15, fontweight="bold")
     plt.xticks(rotation=15, ha="right", fontsize=10, fontweight="bold")
     plt.yticks(fontsize=10, fontweight="bold")
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig, title=f"rrc_hegemony_summary_heatmap_{asn}.png")
+    save_plot(fig=fig1, title=f"rrc_hegemony_delta_heatmap_{asn}.png")
+
+    # -------------------------------------------------------------
+    # PLOT 2: CURRENT ABSOLUTE VALUES HEATMAP
+    # -------------------------------------------------------------
+    current_cols = [
+        "v4 Top 5 Heg (%)",
+        "v4 VPP Heg (%)",
+        "v6 Top 5 Heg (%)",
+        "v6 VPP Heg (%)",
+        "v6 vs v4 Heg Δ (%)"
+    ]
+    df_current = pd.DataFrame(current_matrix_rows, index=display_rows, columns=current_cols)
+
+    annot_current = np.empty(df_current.shape, dtype=object)
+    for i in range(df_current.shape[0]):
+        for j in range(df_current.shape[1]):
+            val = df_current.iloc[i, j]
+            if np.isnan(val):
+                annot_current[i, j] = "N/A"
+            elif j == 4:
+                # Column 5 is the delta exception
+                annot_current[i, j] = f"{val:+.1f}%"
+            else:
+                annot_current[i, j] = f"{val:.1f}%"
+
+    fig2, ax2 = plt.subplots(figsize=(12, 10))
+    ax2.set_facecolor("#e0e0e0")
+
+    sns.heatmap(
+        df_current,
+        annot=annot_current,
+        fmt="",
+        cmap="coolwarm",
+        center=0.0,
+        linewidths=0.8,
+        linecolor="white",
+        cbar_kws={"label": "Hegemony Share / Difference (%)"},
+        ax=ax2
+    )
+
+    ax2.axhline(y=1.0, color="black", linewidth=2.5)
+    plt.title(f"Current Hegemony Status & IPv6 vs IPv4 Delta (ASN {asn}, α={alpha})", fontsize=14, pad=15, fontweight="bold")
+    plt.xticks(rotation=15, ha="right", fontsize=10, fontweight="bold")
+    plt.yticks(fontsize=10, fontweight="bold")
+    plt.tight_layout()
+    plt.show()
+
+    save_plot(fig=fig2, title=f"rrc_hegemony_current_status_heatmap_{asn}.png")
 
 
 if __name__ == "__main__":
     generate_summary_plot(asn=15169, alpha=0.34)
-    
