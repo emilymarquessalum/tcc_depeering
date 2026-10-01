@@ -376,7 +376,8 @@ def generate_summary_plot(
         "v6 VPP Heg (%)",
         "v6 vs v4 VPP Δ (%)"
     ]
-    df_current = pd.DataFrame(current_matrix_rows[1:], index=display_rows[1:], columns=current_cols[1:])
+    df_current = pd.DataFrame(current_matrix_rows, index=display_rows, columns=current_cols)
+    df_current = df_current.drop(columns=["Route Count"])
 
     annot_current = np.empty(df_current.shape, dtype=object)
     for i in range(df_current.shape[0]):
