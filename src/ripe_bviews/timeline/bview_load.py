@@ -104,6 +104,7 @@ def load_asn_collector_for_all_rrcs(all_required_data):
         rrc_config["end_date"] = config.get("end_date", None)
         rrc_config["day_delta"] = config.get("day_delta", None)
         rrc_config["time_str"] = config.get("time_str", None)
+        rrc_config["month_delta"] = config.get("month_delta", None)
         load_bview_asn_data_from_collector_api(rrc_config, origin_asn, ip_version=ip_version, load_from_routeviews=False)
 
 
