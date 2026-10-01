@@ -46,12 +46,13 @@ def evaluate_rrc_metrics(
         "vpp_heg_delta_pct": np.nan,
         "last_top_pct": np.nan,
         "last_vpp_pct": np.nan,
+        "route_count": np.nan,
     }
 
     if not dates or len(dates) < 2:
         return empty_res, None, None
 
-    hegemony_scores_dict, _, valid_dates = get_hegemony_scores(
+    hegemony_scores_dict, route_counts_dict, valid_dates = get_hegemony_scores(
         asn, rrc, ip_version, dates, alpha, use_strict_viewpoint_filtering
     )
 
@@ -93,12 +94,21 @@ def evaluate_rrc_metrics(
     last_vpp_pct = (last_vpp_sum / last_total * 100.0)
     vpp_heg_delta_pct = last_vpp_pct - first_vpp_pct
 
+    # Route Count extraction
+    last_route_count = np.nan
+    if route_counts_dict is not None:
+        if isinstance(route_counts_dict, dict) and last_date in route_counts_dict:
+            last_route_count = float(route_counts_dict[last_date])
+        elif isinstance(route_counts_dict, (int, float)):
+            last_route_count = float(route_counts_dict)
+
     return {
         "has_data": True,
         "heg_delta_pct": heg_delta_pct,
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
         "last_top_pct": last_top_pct,
         "last_vpp_pct": last_vpp_pct,
+        "route_count": last_route_count,
     }, str(first_date), str(last_date)
 
 
@@ -121,6 +131,7 @@ def evaluate_global_metrics(
         "vpp_heg_delta_pct": np.nan,
         "last_top_pct": np.nan,
         "last_vpp_pct": np.nan,
+        "route_count": np.nan,
     }
 
     all_available_dates = set()
@@ -133,7 +144,7 @@ def evaluate_global_metrics(
 
     sorted_dates = sorted(list(all_available_dates))
 
-    hegemony_scores_dict, _, valid_dates = get_global_hegemony_scores(
+    hegemony_scores_dict, route_counts_dict, valid_dates = get_global_hegemony_scores(
         asn, ip_version, sorted_dates, alpha, rrc_list,
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
     )
@@ -176,12 +187,21 @@ def evaluate_global_metrics(
     last_vpp_pct = (last_vpp_sum / last_total * 100.0)
     vpp_heg_delta_pct = last_vpp_pct - first_vpp_pct
 
+    # Route Count extraction
+    last_route_count = np.nan
+    if route_counts_dict is not None:
+        if isinstance(route_counts_dict, dict) and last_date in route_counts_dict:
+            last_route_count = float(route_counts_dict[last_date])
+        elif isinstance(route_counts_dict, (int, float)):
+            last_route_count = float(route_counts_dict)
+
     return {
         "has_data": True,
         "heg_delta_pct": heg_delta_pct,
         "vpp_heg_delta_pct": vpp_heg_delta_pct,
         "last_top_pct": last_top_pct,
         "last_vpp_pct": last_vpp_pct,
+        "route_count": last_route_count,
     }, str(first_date), str(last_date)
 
 
@@ -190,6 +210,15 @@ def _format_date(date_str: Optional[str]) -> str:
     if not date_str:
         return "UNKNOWN"
     return str(date_str).replace("-", "").replace("/", "")[:8]
+
+
+def _calc_total_routes(v4_res: dict, v6_res: dict) -> float:
+    """Computes total route count across IPv4 and IPv6."""
+    r4 = v4_res.get("route_count", np.nan)
+    r6 = v6_res.get("route_count", np.nan)
+    if np.isnan(r4) and np.isnan(r6):
+        return np.nan
+    return np.nan_to_num(r4) + np.nan_to_num(r6)
 
 
 def generate_summary_plot(
@@ -228,7 +257,10 @@ def generate_summary_plot(
             else np.nan
         )
 
+        total_routes = _calc_total_routes(g_v4, g_v6)
+
         delta_matrix_rows.append([
+            total_routes,
             g_v4["heg_delta_pct"],
             g_v4["vpp_heg_delta_pct"],
             g_v6["heg_delta_pct"],
@@ -237,6 +269,7 @@ def generate_summary_plot(
         ])
 
         current_matrix_rows.append([
+            total_routes,
             g_v4["last_top_pct"],
             g_v4["last_vpp_pct"],
             g_v6["last_top_pct"],
@@ -245,8 +278,8 @@ def generate_summary_plot(
         ])
     except Exception as e:
         print(f"[WARNING] Could not process GLOBAL: {e}")
-        delta_matrix_rows.append([np.nan] * 5)
-        current_matrix_rows.append([np.nan] * 5)
+        delta_matrix_rows.append([np.nan] * 6)
+        current_matrix_rows.append([np.nan] * 6)
 
     # 2. Process Individual RRCs
     print(f"[SUMMARY] Processing individual metrics for {len(rrc_list)} RRCs...")
@@ -265,7 +298,10 @@ def generate_summary_plot(
                 else np.nan
             )
 
+            total_routes = _calc_total_routes(v4_res, v6_res)
+
             delta_matrix_rows.append([
+                total_routes,
                 v4_res["heg_delta_pct"],
                 v4_res["vpp_heg_delta_pct"],
                 v6_res["heg_delta_pct"],
@@ -274,6 +310,7 @@ def generate_summary_plot(
             ])
 
             current_matrix_rows.append([
+                total_routes,
                 v4_res["last_top_pct"],
                 v4_res["last_vpp_pct"],
                 v6_res["last_top_pct"],
@@ -282,8 +319,8 @@ def generate_summary_plot(
             ])
         except Exception as e:
             print(f"[WARNING] Could not process {rrc}: {e}")
-            delta_matrix_rows.append([np.nan] * 5)
-            current_matrix_rows.append([np.nan] * 5)
+            delta_matrix_rows.append([np.nan] * 6)
+            current_matrix_rows.append([np.nan] * 6)
 
     # Determine overall start and end date strings
     if collected_dates:
@@ -300,6 +337,7 @@ def generate_summary_plot(
     # PLOT 1: DELTA HEATMAP (Growth / Decrease over time)
     # -------------------------------------------------------------
     delta_cols = [
+        "Route Count",
         "v4 Heg Δ (%)",
         "v4 VPP Heg Δ (%)",
         "v6 Heg Δ (%)",
@@ -312,9 +350,14 @@ def generate_summary_plot(
     for i in range(df_delta.shape[0]):
         for j in range(df_delta.shape[1]):
             val = df_delta.iloc[i, j]
-            annot_delta[i, j] = f"{val:+.1f}%" if not np.isnan(val) else "N/A"
+            if np.isnan(val):
+                annot_delta[i, j] = "N/A"
+            elif j == 0:
+                annot_delta[i, j] = f"{int(val):,}"
+            else:
+                annot_delta[i, j] = f"{val:+.1f}%"
 
-    fig1, ax1 = plt.subplots(figsize=(12, 10))
+    fig1, ax1 = plt.subplots(figsize=(13, 10))
     ax1.set_facecolor("#e0e0e0")
 
     sns.heatmap(
@@ -347,6 +390,7 @@ def generate_summary_plot(
     # PLOT 2: CURRENT ABSOLUTE VALUES HEATMAP
     # -------------------------------------------------------------
     current_cols = [
+        "Route Count",
         "v4 Top 5 Heg (%)",
         "v4 VPP Heg (%)",
         "v6 Top 5 Heg (%)",
@@ -361,12 +405,14 @@ def generate_summary_plot(
             val = df_current.iloc[i, j]
             if np.isnan(val):
                 annot_current[i, j] = "N/A"
-            elif j == 4:
+            elif j == 0:
+                annot_current[i, j] = f"{int(val):,}"
+            elif j == 5:
                 annot_current[i, j] = f"{val:+.1f}%"
             else:
                 annot_current[i, j] = f"{val:.1f}%"
 
-    fig2, ax2 = plt.subplots(figsize=(12, 10))
+    fig2, ax2 = plt.subplots(figsize=(13, 10))
     ax2.set_facecolor("#e0e0e0")
 
     sns.heatmap(
