@@ -17,7 +17,6 @@ from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
 from bview_sqlite_parser import (
     get_hegemony_scores,
     get_interval_dates_for_asn_data,
-    get_top_five_asns_over_time,
 )
 from global_hegemony import get_global_hegemony_scores
 
@@ -30,7 +29,7 @@ def evaluate_rrc_metrics(
     use_strict_viewpoint_filtering: bool = True,
 ) -> Tuple[Dict[str, Optional[float]], Optional[str], Optional[str]]:
     """
-    Evaluates continuous quantitative metrics for a single RRC and IP version.
+    Evaluates continuous quantitative metrics for a single RRC and IP version across ALL ASes.
     Returns:
         (metrics_dict, start_date_str, end_date_str)
     """
@@ -71,24 +70,14 @@ def evaluate_rrc_metrics(
     if first_total <= 0.0 or last_total <= 0.0:
         return empty_res, None, None
 
-    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
-        hegemony_scores_dict, valid_dates
-    )
+    # Total Hegemony (ALL ASes sum to 100% of available hegemony)
+    first_top_pct = 100.0
+    last_top_pct = 100.0
+    heg_delta_pct = last_top_pct - first_top_pct  # 0.0%
 
-    if not unique_asns_list:
-        return empty_res, None, None
-
-    # Overall Hegemony calculations
-    first_top_sum = sum(first_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
-    last_top_sum = sum(last_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
-
-    first_top_pct = (first_top_sum / first_total * 100.0)
-    last_top_pct = (last_top_sum / last_total * 100.0)
-    heg_delta_pct = last_top_pct - first_top_pct
-
-    # VPP Hegemony calculations
-    first_vpp_sum = sum(first_scores.get(t, 0.0) for t in unique_asns_list if str(t) in google_vpps_asns)
-    last_vpp_sum = sum(last_scores.get(t, 0.0) for t in unique_asns_list if str(t) in google_vpps_asns)
+    # TOTAL VPP Hegemony across ALL ASes
+    first_vpp_sum = sum(score for target_asn, score in first_scores.items() if str(target_asn) in google_vpps_asns)
+    last_vpp_sum = sum(score for target_asn, score in last_scores.items() if str(target_asn) in google_vpps_asns)
 
     first_vpp_pct = (first_vpp_sum / first_total * 100.0)
     last_vpp_pct = (last_vpp_sum / last_total * 100.0)
@@ -120,7 +109,7 @@ def evaluate_global_metrics(
     use_strict_viewpoint_filtering: bool = True,
 ) -> Tuple[Dict[str, Optional[float]], Optional[str], Optional[str]]:
     """
-    Evaluates continuous quantitative metrics globally across ALL combined RRCs.
+    Evaluates continuous quantitative metrics globally across ALL combined RRCs for ALL ASes.
     Returns:
         (metrics_dict, start_date_str, end_date_str)
     """
@@ -164,24 +153,14 @@ def evaluate_global_metrics(
     if first_total <= 0.0 or last_total <= 0.0:
         return empty_res, None, None
 
-    top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
-        hegemony_scores_dict, valid_dates
-    )
-
-    if not unique_asns_list:
-        return empty_res, None, None
-
-    # Overall Hegemony calculations
-    first_top_sum = sum(first_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
-    last_top_sum = sum(last_scores.get(target_asn, 0.0) for target_asn in unique_asns_list)
-
-    first_top_pct = (first_top_sum / first_total * 100.0)
-    last_top_pct = (last_top_sum / last_total * 100.0)
+    # Total Hegemony (ALL ASes sum to 100% of available hegemony)
+    first_top_pct = 100.0
+    last_top_pct = 100.0
     heg_delta_pct = last_top_pct - first_top_pct
 
-    # VPP Hegemony calculations
-    first_vpp_sum = sum(first_scores.get(t, 0.0) for t in unique_asns_list if str(t) in google_vpps_asns)
-    last_vpp_sum = sum(last_scores.get(t, 0.0) for t in unique_asns_list if str(t) in google_vpps_asns)
+    # TOTAL VPP Hegemony across ALL ASes
+    first_vpp_sum = sum(score for target_asn, score in first_scores.items() if str(target_asn) in google_vpps_asns)
+    last_vpp_sum = sum(score for target_asn, score in last_scores.items() if str(target_asn) in google_vpps_asns)
 
     first_vpp_pct = (first_vpp_sum / first_total * 100.0)
     last_vpp_pct = (last_vpp_sum / last_total * 100.0)
@@ -252,7 +231,7 @@ def generate_summary_plot(
                 collected_dates.append(d)
 
         v6_minus_v4 = (
-            (g_v6["last_top_pct"] - g_v4["last_top_pct"])
+            (g_v6["last_vpp_pct"] - g_v4["last_vpp_pct"])
             if (g_v4["has_data"] and g_v6["has_data"])
             else np.nan
         )
@@ -293,7 +272,7 @@ def generate_summary_plot(
                     collected_dates.append(d)
 
             v6_minus_v4 = (
-                (v6_res["last_top_pct"] - v4_res["last_top_pct"])
+                (v6_res["last_vpp_pct"] - v4_res["last_vpp_pct"])
                 if (v4_res["has_data"] and v6_res["has_data"])
                 else np.nan
             )
@@ -342,7 +321,7 @@ def generate_summary_plot(
         "v4 VPP Heg Δ (%)",
         "v6 Heg Δ (%)",
         "v6 VPP Heg Δ (%)",
-        "v6 vs v4 Heg Δ (%)"
+        "v6 vs v4 VPP Δ (%)"
     ]
     df_delta = pd.DataFrame(delta_matrix_rows, index=display_rows, columns=delta_cols)
 
@@ -391,13 +370,13 @@ def generate_summary_plot(
     # -------------------------------------------------------------
     current_cols = [
         "Route Count",
-        "v4 Top 5 Heg (%)",
+        "v4 Total Heg (%)",
         "v4 VPP Heg (%)",
-        "v6 Top 5 Heg (%)",
+        "v6 Total Heg (%)",
         "v6 VPP Heg (%)",
-        "v6 vs v4 Heg Δ (%)"
+        "v6 vs v4 VPP Δ (%)"
     ]
-    df_current = pd.DataFrame(current_matrix_rows, index=display_rows, columns=current_cols)
+    df_current = pd.DataFrame(current_matrix_rows[1:], index=display_rows[1:], columns=current_cols[1:])
 
     annot_current = np.empty(df_current.shape, dtype=object)
     for i in range(df_current.shape[0]):
