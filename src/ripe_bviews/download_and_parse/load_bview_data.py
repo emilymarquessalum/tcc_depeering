@@ -50,7 +50,7 @@ def load_bview_asn_data_from_collector_api(configs, origin_asn, ip_version="v4",
     origin_asn = origin_asn
     rrc = configs['routeserver-folder-name'] if load_from_routeviews else configs["rrc"] 
     path = f"{URL_ELIXIR}/bview?start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}&day_delta={day_delta.days}&month_delta={month_delta}&time_delta={time_delta}&time_str={time_str}&rrc={rrc}&ip_version={ip_version}&origin_asn={origin_asn}"
- 
+    print(f"[DEBUG] Fetching data from API: {path}")
     response = requests.get(path) 
     if response.status_code == 200:
         return response.json()
