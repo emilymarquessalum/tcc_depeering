@@ -488,7 +488,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=14,
     )
-    ax.tick_params(axis="x", rotation=45)
+    ax.tick_params(axis="x")
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="Is-VPP")
 
