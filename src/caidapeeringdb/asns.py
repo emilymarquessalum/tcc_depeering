@@ -94,15 +94,16 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
         # Plot connections by continent for not-peered connections
         continent_data_series_not_peered, dates_for_plot, sorted_continents = organize_connections_by_continent(connections_over_time_by_asn_not_peered[asn], ixps)
 
-        plot_stacked_line_plot(
-            [continent_data_series_not_peered[continent] if continent in continent_data_series_not_peered else [0] * len(dates_for_plot) for continent in sorted_continents],
-            [f"Connections in {continent}" for continent in sorted_continents],
-            x_labels=dates_for_plot,
-            title=f"Not In Route Server Connections by Continent for {format_asn_to_search(asn_to_search)} over time",
-            xlabel="Date",
-            ylabel="Number of Connections",
-            subfolder=subfolder
-        )
+        if len(sorted_continents) > 1:
+            plot_stacked_line_plot(
+                [continent_data_series_not_peered[continent] if continent in continent_data_series_not_peered else [0] * len(dates_for_plot) for continent in sorted_continents],
+                [f"Connections in {continent}" for continent in sorted_continents],
+                x_labels=dates_for_plot,
+                title=f"Not In Route Server Connections by Continent for {format_asn_to_search(asn_to_search)} over time",
+                xlabel="Date",
+                ylabel="Number of Connections",
+                subfolder=subfolder
+            )
 
         ixps_over_time = [[ixp_id_to_name.get(net.get("ix_id"), net.get("ix_id")) for net in connections] for _, connections in connections_over_time]
  

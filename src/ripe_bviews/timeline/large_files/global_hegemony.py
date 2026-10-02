@@ -20,7 +20,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_all_dates_available_for_asn_data,
     get_top_five_asns_over_time,
 )
-from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
 
 
 def _get_clean_vpp_set() -> set[str]:
@@ -457,6 +457,9 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
 
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    
+    if valid_date_list is not None:
+        valid_date_list = format_labels_if_they_are_dates(valid_date_list)
 
     ax.plot(
         valid_date_list,
@@ -466,7 +469,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         color="tab:blue",
         label="Global VPP Hegemony (Top 5 Only)",
     )
-
+    
     ax.plot(
         valid_date_list,
         [h[1] for h in hegemony_over_time_vpp_or_not_vpp],
@@ -500,6 +503,8 @@ if __name__ == "__main__":
     alpha = 0.34
     ip_version = "v6"
 
+    start_date = None
+
     all_rrcs = [
         "rrc00", "rrc01", "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08",
         "rrc09", "rrc10", "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16",
@@ -513,7 +518,7 @@ if __name__ == "__main__":
         alpha=alpha,
         ip_version=ip_version,
         rrc_list=all_rrcs,
-        start_date=None,
+        start_date=start_date,
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
@@ -526,7 +531,7 @@ if __name__ == "__main__":
         alpha=alpha,
         ip_version=ip_version,
         rrc_list=all_rrcs,
-        start_date=None,
+        start_date=start_date,
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
@@ -539,7 +544,7 @@ if __name__ == "__main__":
         alpha=alpha,
         ip_version=ip_version,
         rrc_list=all_rrcs,
-        start_date=None,
+        start_date=start_date,
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,

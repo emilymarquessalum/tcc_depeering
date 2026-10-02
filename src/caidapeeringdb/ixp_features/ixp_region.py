@@ -71,6 +71,9 @@ def analyze_depeering_by_continent(data_structures, asn_to_analyze, all_ixps):
         not_peered_counts_all.append(not_peered_in_continent)
         lost_counts_all.append(lost_in_continent)
 
+    if not any(not_peered_counts_all) and not any(lost_counts_all):
+        print(f"No de-peered IXPs found for ASN {asn_to_analyze}. Skipping plot generation.")
+        return
     plot_stacked_bar_plot(
         [not_peered_counts_all, lost_counts_all],
         [STILL_CONNECTED_LABEL, COMPLETELY_LOST_LABEL],

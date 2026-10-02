@@ -186,6 +186,7 @@ def load_connections_over_time_for_asns(all_files, asns_to_search, connections_s
     # Pre-compile the regex pattern outside the loop
     file_date_pattern = re.compile(r"peeringdb_2_dump_(.*?)\.json")
 
+    # print(len(all_files))
     for file in all_files: 
         # Extract date string efficiently
         match = file_date_pattern.search(file)
@@ -195,7 +196,10 @@ def load_connections_over_time_for_asns(all_files, asns_to_search, connections_s
         
         # Group only the relevant data for ASNs we care about
         current_file_data = defaultdict(list)
-        for net in data.get("netixlan", {}).get("data", []):
+
+        asn_data = data.get("netixlan", {}).get("data", [])
+        # print(len(asn_data))
+        for net in asn_data:
             asn = get_asn_from_net(net)
             if asn in search_ids:  # Early filtering!
                 current_file_data[asn].append(net)
