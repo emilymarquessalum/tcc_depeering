@@ -145,6 +145,7 @@ def analyze_global_hegemony_over_time(
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
     as_color_map=None,
+    text_scale: float = 1.0,
 ):
     if as_color_map is None:
         as_color_map = {}
@@ -204,6 +205,17 @@ def analyze_global_hegemony_over_time(
         sum(hegemony_scores_dict[d].values()) for d in valid_date_list
     ]
 
+    # Apply global default text scaling across all Matplotlib defaults (catches implicit elements)
+    plt.rcParams.update({
+        "font.size": 10 * text_scale,
+        "axes.titlesize": 14 * text_scale,
+        "axes.labelsize": 12 * text_scale,
+        "xtick.labelsize": 10 * text_scale,
+        "ytick.labelsize": 10 * text_scale,
+        "legend.fontsize": 10 * text_scale,
+        "figure.titlesize": 16 * text_scale,
+    })
+
     fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     line_styles = ["-", "--", ":", "-."]
     markers = ["o", "s", "^", "v", "D", "X", "P"]
@@ -227,15 +239,22 @@ def analyze_global_hegemony_over_time(
             label=f"ASN {target_asn}",
         )
 
-    ax1.set_xlabel("Date", fontsize=12)
-    ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12)
+    ax1.set_xlabel("Date", fontsize=12 * text_scale)
+    ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12 * text_scale)
     ax1.set_title(
         f"GLOBAL Hegemony Over Time (All RRCs Combined)\n(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
-        fontsize=14,
+        fontsize=14 * text_scale,
     )
+    ax1.tick_params(axis="both", labelsize=10 * text_scale)
     ax1.tick_params(axis="x", rotation=45)
     ax1.grid(True, linestyle="--", alpha=0.5)
-    ax1.legend(bbox_to_anchor=(1.05, 1), loc="upper left", title="Top Transits")
+    ax1.legend(
+        bbox_to_anchor=(1.05, 1),
+        loc="upper left",
+        title="Top Transits",
+        fontsize=10 * text_scale,
+        title_fontsize=11 * text_scale,
+    )
 
     plt.tight_layout()
     plt.show()
@@ -252,6 +271,7 @@ def analyze_global_vpp_hegemony_over_time(
     use_strict_viewpoint_filtering: bool = True,
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
+    text_scale: float = 1.0,
 ):
     """
     Computes global VPP vs Non-VPP hegemony over time across ALL transit ASes in the routing table.
@@ -325,6 +345,17 @@ def analyze_global_vpp_hegemony_over_time(
 
         hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
 
+    # Apply global default text scaling across all Matplotlib defaults (catches implicit elements)
+    plt.rcParams.update({
+        "font.size": 10 * text_scale,
+        "axes.titlesize": 14 * text_scale,
+        "axes.labelsize": 12 * text_scale,
+        "xtick.labelsize": 10 * text_scale,
+        "ytick.labelsize": 10 * text_scale,
+        "legend.fontsize": 10 * text_scale,
+        "figure.titlesize": 16 * text_scale,
+    })
+
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
 
     ax.plot(
@@ -346,17 +377,24 @@ def analyze_global_vpp_hegemony_over_time(
         label="Global Non-VPP Hegemony (All ASes)",
     )
 
-    ax.set_xlabel("Date", fontsize=12)
+    ax.set_xlabel("Date", fontsize=12 * text_scale)
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
-    ax.set_ylabel(y_label, fontsize=12)
+    ax.set_ylabel(y_label, fontsize=12 * text_scale)
     ax.set_title(
         f"GLOBAL VPP vs. Non-VPP Hegemony ({len(rrc_list)} RRCs)\n"
         f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
-        fontsize=14,
+        fontsize=14 * text_scale,
     )
+    ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
-    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="Is-VPP")
+    ax.legend(
+        bbox_to_anchor=(1.02, 1),
+        loc="upper left",
+        title="Is-VPP",
+        fontsize=10 * text_scale,
+        title_fontsize=11 * text_scale,
+    )
 
     plt.tight_layout()
     plt.show()
@@ -374,6 +412,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     use_strict_viewpoint_filtering: bool = True,
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
+    text_scale: float = 1.0,
 ):
     """
     Computes global VPP vs Non-VPP hegemony over time strictly among 
@@ -456,6 +495,17 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
 
         hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
 
+    # Apply global default text scaling across all Matplotlib defaults (catches implicit elements)
+    plt.rcParams.update({
+        "font.size": 10 * text_scale,
+        "axes.titlesize": 14 * text_scale,
+        "axes.labelsize": 12 * text_scale,
+        "xtick.labelsize": 10 * text_scale,
+        "ytick.labelsize": 10 * text_scale,
+        "legend.fontsize": 10 * text_scale,
+        "figure.titlesize": 16 * text_scale,
+    })
+
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
     
     if valid_date_list is not None:
@@ -480,17 +530,24 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         label="Global Non-VPP Hegemony (Top 5 Only)",
     )
 
-    ax.set_xlabel("Date", fontsize=12)
+    ax.set_xlabel("Date", fontsize=12 * text_scale)
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
-    ax.set_ylabel(y_label, fontsize=12)
+    ax.set_ylabel(y_label, fontsize=12 * text_scale)
     ax.set_title(
         f"GLOBAL VPP vs. Non-VPP Hegemony [Top 5] ({len(rrc_list)} RRCs)\n"
         f"(AS{asn}, IP{ip_version.lower()}, α={alpha})",
-        fontsize=14,
+        fontsize=14 * text_scale,
     )
+    ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x")
     ax.grid(True, linestyle="--", alpha=0.5)
-    ax.legend(bbox_to_anchor=(1, 0), loc="lower right", title="Is-VPP")
+    ax.legend(
+        bbox_to_anchor=(1, 0),
+        loc="lower right",
+        title="Is-VPP",
+        fontsize=10 * text_scale,
+        title_fontsize=11 * text_scale,
+    )
 
     plt.tight_layout()
     plt.show()
@@ -502,6 +559,7 @@ if __name__ == "__main__":
     asn = 15169
     alpha = 0.34
     ip_version = "v6"
+    text_scale = 1.0  # Increase to scale font size of EVERYTHING globally (e.g., 1.5 = 150% size)
 
     start_date = None
 
@@ -522,6 +580,7 @@ if __name__ == "__main__":
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
+        text_scale=text_scale,
     )
 
     # 2. Run Global VPP vs Non-VPP Hegemony Over Time (ALL ASes)
@@ -535,6 +594,7 @@ if __name__ == "__main__":
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
+        text_scale=text_scale,
     )
 
     # 3. Run Global VPP vs Non-VPP Hegemony Over Time (Top 5 Only)
@@ -548,4 +608,5 @@ if __name__ == "__main__":
         month_interval=6,
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
+        text_scale=text_scale,
     )
