@@ -17,7 +17,7 @@ from src.utils.regions_and_locations import REGION_TO_COLOR_MAP
  
 
 
-vpps_data = json.load(open(Path(__file__).parent / "google_vpps.json", "r"))
+vpps_data = json.load(open(Path(__file__).parent / "google_vpps.json", "r", encoding="utf-8"))
 
 gold_vpps = (vpps_data["gold"])
 silver_vpps = (vpps_data["silver"])
@@ -35,7 +35,7 @@ def plot_vpp_count_by_region(vpp_list, title_suffix=""):
                 vpp_count_by_region[region] = 0
             vpp_count_by_region[region] += 1
 
-    print(vpp_count_by_region)
+    print(vpp_count_by_region, "total vpps:", len(vpp_list))
 
 
     plot_map_as_bar_plot(vpp_count_by_region, title=f"Number of Google VPPs by Region (non-exclusively), {title_suffix}", 

@@ -1,5 +1,3 @@
-
-
 from pathlib import Path 
 import sys
 
@@ -8,19 +6,12 @@ from matplotlib.ticker import MaxNLocator
 from matplotlib.offsetbox import AnchoredText
 
 
-
-
-
-    
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.caidapeeringdb.main import load_timeline_data
 
 from src.caidapeeringdb.asns import format_asn_to_search
-from src.caidapeeringdb.asns import format_asn_to_search
 from src.caidapeeringdb.caidapeeringdb_load import load_connections_over_time_for_asns
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, get_colors, save_plot, sort_data_and_labels_by_total
-
-from src.utils.graphs import save_plot
 
 
 def plot_stacked_line_on_ax(
@@ -39,7 +30,8 @@ def plot_stacked_line_on_ax(
     rotate_labels=False,
     sort_by_size=True,
     put_color_legend_below_y_axis=False,
-    put_legend=True
+    put_legend=True,
+    text_scale=1.0,
 ):
     """Helper function to draw a stacked line plot on a specific Matplotlib Axes (ax)."""
     assert len(data_lists) > 0, "At least one data list is required"
@@ -90,11 +82,12 @@ def plot_stacked_line_on_ax(
         )
         current_stack = stacked_values
 
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    # Set axis labels (font size scales automatically via rcParams or explicit scaling)
+    ax.set_xlabel(xlabel, fontsize=12 * text_scale)
+    ax.set_ylabel(ylabel, fontsize=12 * text_scale)
 
     if show_title:
-        ax.set_title(title, fontsize=14)
+        ax.set_title(title, fontsize=18 * text_scale)
 
     if put_legend:
         if put_color_legend_below_y_axis:
@@ -102,16 +95,19 @@ def plot_stacked_line_on_ax(
                 loc="upper center",
                 bbox_to_anchor=(0.5, -0.225 if rotate_labels else -0.15),
                 ncol=min(6, len(labels)),
-                fontsize=10,
+                fontsize=12 * text_scale,
             )
         else:
-            ax.legend()
+            ax.legend(fontsize=12 * text_scale)
 
     ax.grid(True)
     ax.margins(x=0)
 
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_ylim(bottom=0)
+    
+    # Scale y-axis tick labels font size
+    ax.tick_params(axis='both', which='major', labelsize=12 * text_scale)
 
     if annotations:
         for at in annotations:
@@ -119,7 +115,7 @@ def plot_stacked_line_on_ax(
 
     if notes:
         at = AnchoredText(
-            notes, prop=dict(size=10), frameon=True, loc="lower right"
+            notes, prop=dict(size=12 * text_scale), frameon=True, loc="lower right"
         )
         at.patch.set_boxstyle("round,pad=0.5,rounding_size=0.5")
         ax.add_artist(at)
@@ -135,21 +131,36 @@ def plot_stacked_line_on_ax(
             ax.set_xticks(tick_positions)
             ax.set_xticklabels(
                 tick_labels, rotation=45 if rotate_labels else 0,
-                fontsize=10
+                fontsize=12 * text_scale
             )
         else:
             ax.set_xticks(list(x_indices))
-            ax.set_xticklabels(x_labels, rotation=45 if rotate_labels else 0,
-                fontsize=10)
+            ax.set_xticklabels(
+                x_labels, rotation=45 if rotate_labels else 0,
+                fontsize=12 * text_scale
+            )
 
 
 def plot_two_asns_side_by_side(
-    asn1, asn2, data_peered, data_not_peered, subfolder=None
+    asn1, asn2, data_peered, data_not_peered, subfolder=None, text_scale=1.0
 ):
     """Creates a 1x2 figure and plots two ASNs side by side."""
-    # Create side-by-side layout (1 row, 2 columns) with double default width
+    # Scale all default Matplotlib font sizes globally (catches unconfigured elements)
+    plt.rcParams.update({
+        'font.size': 10 * text_scale,
+        'axes.titlesize': 14 * text_scale,
+        'axes.labelsize': 12 * text_scale,
+        'xtick.labelsize': 10 * text_scale,
+        'ytick.labelsize': 10 * text_scale,
+        'legend.fontsize': 10 * text_scale,
+        'figure.titlesize': 16 * text_scale
+    })
+
+    is_horizontal = False
     fig, (ax1, ax2) = plt.subplots(
-        2, 1, figsize=(DEFAULT_FIGSIZE[0], DEFAULT_FIGSIZE[1] * 2)
+        2 if not is_horizontal else 1, 
+        2 if is_horizontal else 1, 
+        figsize=(DEFAULT_FIGSIZE[0] * (2 if is_horizontal else 1), DEFAULT_FIGSIZE[1] * (1 if is_horizontal else 2))
     )
 
     asns_to_plot = [(asn1, ax1), (asn2, ax2)]
@@ -170,7 +181,7 @@ def plot_two_asns_side_by_side(
             ax,
             [number_of_connections_peered, connections_not_peered],
             ["In Route Server Connections", "Not-In-Route-Server Connections"],
-            x_labels=x_dates,
+            x_labels=x_dates, 
             title=f"IXP Connections for {format_asn_to_search(asn)} over time",
             put_color_legend_below_y_axis=True,
             put_legend=asn == asn2,  
@@ -179,6 +190,7 @@ def plot_two_asns_side_by_side(
             max_labels=8,
             sort_by_size=False,
             rotate_labels=False,
+            text_scale=text_scale,
         )
 
     plt.tight_layout()
@@ -187,7 +199,7 @@ def plot_two_asns_side_by_side(
     plt.close()
 
 
-def process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=None):
+def process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=None, text_scale=1.0):
     """Loads connections data and generates side-by-side plots for consecutive ASN pairs."""
     connections_over_time_by_asn_peered = load_connections_over_time_for_asns(
         all_files, asns_to_search_list, connections_should_be="peered"
@@ -195,9 +207,6 @@ def process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=Non
     connections_over_time_by_asn_not_peered = load_connections_over_time_for_asns(
         all_files, asns_to_search_list, connections_should_be="not_peered"
     )
-
-    #print(connections_over_time_by_asn_peered)
-    #print(connections_over_time_by_asn_not_peered)
 
     # Pair ASNs sequentially (0 & 1, 2 & 3, etc.)
     for i in range(0, len(asns_to_search_list) - 1, 2):
@@ -210,13 +219,16 @@ def process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=Non
             connections_over_time_by_asn_peered,
             connections_over_time_by_asn_not_peered,
             subfolder=subfolder,
+            text_scale=text_scale,
         )
 
-if __name__ == "__main__":
-    
 
+if __name__ == "__main__":
     config_path = str(Path(__file__).parent)
     
+    # Global text scale parameter (e.g., 1.5 increases all font sizes by 50%)
+    text_scale = 1.25
+
     # Load timeline data
     all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
     all_files = all_files_before_depeering + all_files_after_depeering
@@ -224,4 +236,4 @@ if __name__ == "__main__":
     asns_to_search_list = [(15169, "Google"), (396986, "ByteDance")]  
     subfolder = "comparison_plots" 
 
-    process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=subfolder)
+    process_and_plot_asns_in_pairs(all_files, asns_to_search_list, subfolder=subfolder, text_scale=text_scale)

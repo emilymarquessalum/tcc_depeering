@@ -26,7 +26,7 @@ data = get_data(all_files[-1])
 
 def get_vpps_list():
 
-    with open(Path(__file__).parent / "google_vpps.json", "r") as f:
+    with open(Path(__file__).parent / "google_vpps.json", "r", encoding="utf-8") as f:
         vpps_data = json.load(f)
         vpps_list = vpps_data.get("gold", []) + vpps_data.get("silver", [])
 
