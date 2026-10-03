@@ -484,13 +484,13 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
     ax.set_ylabel(y_label, fontsize=12)
     ax.set_title(
-        f"GLOBAL VPP vs. Non-VPP Hegemony Share [Top 5 Only] ({len(rrc_list)} RRCs)\n"
-        f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
+        f"GLOBAL VPP vs. Non-VPP Hegemony [Top 5] ({len(rrc_list)} RRCs)\n"
+        f"(AS{asn}, IP{ip_version.lower()}, α={alpha})",
         fontsize=14,
     )
     ax.tick_params(axis="x")
     ax.grid(True, linestyle="--", alpha=0.5)
-    ax.legend(bbox_to_anchor=(1, 1), loc="lower right", title="Is-VPP")
+    ax.legend(bbox_to_anchor=(1, 0), loc="lower right", title="Is-VPP")
 
     plt.tight_layout()
     plt.show()
