@@ -87,6 +87,42 @@ def load_asn_collector_rrc_data(all_required_data):
     load_bview_asn_data_from_collector_api(config, origin_asn, ip_version=ip_version, load_from_routeviews=False)
 
 
+def get_all_rrcs():
+    return  [  
+        {"rrc": "rrc" + str(i).zfill(2),
+         "name": [
+             "Multihop, Amsterdam",
+             "LINX, London",
+             "",
+             "AMS-IX, Amsterdam",
+             "CIXP, Geneva",
+             "VIX, Vienna",
+             "DIX-IE, Tokyo",
+             "Netnod, Stockholm",
+             "",
+             "",
+             "MIX, Italy",
+             "NYIIX, New York",
+             "DE-CIX, Frankfurt",
+             "MSK-IX, Moscow",
+             "PAIX, Palo Alto",
+             "PTTMetro, Sao Paulo",
+             "NOTA, Miami",
+             "",
+             "Catnix, Barcelona",
+             "NAP Africa, JB",
+             "SwissIX, Zurich",
+             "France-IX, Paris",
+             "InterLAN, Bucharest",
+             "Equinix, SG",
+             "LACNIC Multihop, Uruguay",
+             "RIPE-NCC Multihop, Amsterdam",
+             "UAE-IX, Dubai"
+         ][i]
+         } for i in range(0, 26)
+    ] 
+
+
 def load_asn_collector_for_all_rrcs(all_required_data):
     config = all_required_data.get("config")
     ip_version = get_ip_version(config)
@@ -96,9 +132,7 @@ def load_asn_collector_for_all_rrcs(all_required_data):
     while not origin_asn:
         origin_asn = input("Digite o ASN para o qual deseja buscar dados de coletores: ").strip()
 
-    all_rrc_configs = [  
-        {"rrc": "rrc" + str(i).zfill(2)} for i in range(0, 26)
-    ]
+    all_rrc_configs = get_all_rrcs()
     for rrc_config in all_rrc_configs:
         rrc_config["start_date"] = config.get("start_date", None)
         rrc_config["end_date"] = config.get("end_date", None)

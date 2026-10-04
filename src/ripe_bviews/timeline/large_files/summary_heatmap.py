@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from definitions import ROOT_DIR
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 
 from bview_sqlite_parser import (
     get_hegemony_scores,
@@ -136,7 +137,7 @@ def evaluate_global_metrics(
 
     all_available_dates = set()
     for rrc in rrc_list:
-        dates = get_interval_dates_for_asn_data(asn, rrc, ip_version)
+        dates = get_interval_dates_for_asn_data(asn, rrc["rrc"], ip_version)
         all_available_dates.update(dates)
 
     if not all_available_dates:
@@ -228,13 +229,9 @@ def generate_summary_plot(
     use_strict_viewpoint_filtering: bool = True,
 ):
     if rrc_list is None:
-        rrc_list = [
-            "rrc00", "rrc01", "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08",
-            "rrc09", "rrc10", "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16",
-            "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
-        ]
+        rrc_list = get_all_rrcs()
 
-    display_rows = ["GLOBAL"] + [rrc.upper() for rrc in rrc_list]
+    display_rows = ["GLOBAL"] + [rrc["name"].upper() for rrc in rrc_list]
     
     delta_matrix_rows = []
     current_matrix_rows = []
