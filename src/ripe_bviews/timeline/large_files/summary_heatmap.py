@@ -366,6 +366,8 @@ def generate_summary_plot(
         linewidths=0.8,
         linecolor="white",
         cbar_kws={"label": "Percentage Point Delta (%)"},
+        vmin=-100,
+        vmax=100,
         ax=ax1
     )
 
@@ -421,7 +423,9 @@ def generate_summary_plot(
         linewidths=0.8,
         linecolor="white",
         cbar_kws={"label": "Hegemony Share / Difference (%)"},
-        ax=ax2
+        ax=ax2,
+        vmin=-100,
+                vmax=100,
     )
 
     ax2.axhline(y=1.0, color="black", linewidth=2.5)
