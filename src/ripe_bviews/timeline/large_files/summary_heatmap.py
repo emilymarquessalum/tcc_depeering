@@ -38,7 +38,7 @@ def evaluate_rrc_metrics(
     google_vpps_asns = set(str(a) for a in get_google_vpp_asns(include_alternatives=True))
 
     dates = get_interval_dates_for_asn_data(
-        asn, rrc, ip_version, month_interval=6
+        asn, rrc["rrc"], ip_version, month_interval=6
     )
 
     empty_res = {
@@ -54,7 +54,7 @@ def evaluate_rrc_metrics(
         return empty_res, None, None
 
     hegemony_scores_dict, route_counts_dict, valid_dates = get_hegemony_scores(
-        asn, rrc, ip_version, dates, alpha, use_strict_viewpoint_filtering
+        asn, rrc["rrc"], ip_version, dates, alpha, use_strict_viewpoint_filtering
     )
 
     if not valid_dates or len(valid_dates) < 2:
