@@ -146,7 +146,7 @@ def evaluate_global_metrics(
     sorted_dates = sorted(list(all_available_dates))
 
     hegemony_scores_dict, route_counts_dict, valid_dates = get_global_hegemony_scores(
-        asn, ip_version, sorted_dates, alpha, rrc_list,
+        asn, ip_version, sorted_dates, alpha, [rrc["rrc"] for rrc in rrc_list],
         use_strict_viewpoint_filtering=use_strict_viewpoint_filtering
     )
 
