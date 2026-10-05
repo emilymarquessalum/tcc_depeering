@@ -72,8 +72,11 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     top10_percent_percentages = []
     others_percentages = []
 
+
     percentage = 20
 
+    percentage = float(input("Enter the percentage of top ASNs to consider (default 20): ") or "20")
+    
     # 2. Process each date snapshot
     for date in valid_date_list:
         scores = hegemony_scores_dict.get(date, {})
