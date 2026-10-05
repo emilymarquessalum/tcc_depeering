@@ -111,7 +111,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
         marker="o",
         linewidth=2.5,
         color="tab:blue",
-        label=f"Top {percentage}% Transits (Aggregated)",
+        label=f"Top {percentage}% Transits ({len(top10_percent_percentages)} ASNs)"
     )
 
     ax.plot(
