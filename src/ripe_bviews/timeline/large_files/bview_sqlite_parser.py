@@ -334,13 +334,7 @@ def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=N
 
 
 def get_interval_dates_for_asn_data(
-    asn, 
-    rrc_used, 
-    ip_version, 
-    month_interval=6, 
-    start_date=None, 
-    time_interval_acceptance=10,
-    max_days_forward=220  
+    asn, rrc_used, ip_version, month_interval=3, start_date=None
 ):
     path = f"{ROOT_DIR}/{rrc_used}/"
     files = os.listdir(path)
@@ -350,45 +344,22 @@ def get_interval_dates_for_asn_data(
     if not relevant_files:
         return []
 
-    dates = [f.split(".")[1] for f in relevant_files]
-
+    dates = sorted([f.split(".")[1] for f in relevant_files])
     if start_date:
         dates = [d for d in dates if d >= start_date]
-        
+
     if not dates:
         return []
 
-    sorted_dates = sorted(dates)
-    available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
-    
-    final_dates = []
-     
-    final_dates.append(available_dts[0].strftime("%Y%m%d"))
-    
-    current_dt = available_dts[0]
-      
-    while True: 
-        ideal_target = current_dt + relativedelta(months=month_interval)
-        
-        # Filter dates that are strictly after the current date
-        future_dts = [d for d in available_dts if d > current_dt]
-        if not future_dts:
-            break
- 
-        closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
-        days_diff = abs((closest_dt - ideal_target).days)
-        total_span_days = (closest_dt - current_dt).days
- 
-        if days_diff <= time_interval_acceptance or total_span_days <= max_days_forward:
-            final_dates.append(closest_dt.strftime("%Y%m%d"))
-            current_dt = closest_dt  # Move forward relative to selected date
-        else: 
-            current_dt = ideal_target
+    available_dts = [datetime.strptime(d, "%Y%m%d") for d in dates]
+    final_dates = [available_dts[0]]
 
-        if current_dt >= available_dts[-1]:
-            break
+    for dt in available_dts[1:]:
+        # Add date if at least ~2.5 months (75 days) have passed since the last added date
+        if (dt - final_dates[-1]).days >= (month_interval * 30 - 15):
+            final_dates.append(dt)
 
-    return final_dates
+    return [dt.strftime("%Y%m%d") for dt in final_dates]
 
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
