@@ -425,7 +425,7 @@ def generate_summary_plot(
         cbar_kws={"label": "Hegemony Share / Difference (%)"},
         ax=ax2,
         vmin=-100,
-                vmax=100,
+        vmax=100,
     )
 
     ax2.axhline(y=1.0, color="black", linewidth=2.5)
