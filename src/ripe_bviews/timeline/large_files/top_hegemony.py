@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_all_dates_available_for_asn_data,
     get_hegemony_scores,
@@ -150,11 +151,7 @@ if __name__ == "__main__":
     alpha = 0.34
     ip_version = "v4"
 
-    all_rrcs = [
-        "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08", "rrc09", "rrc10",
-        "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16", "rrc17", "rrc18",
-        "rrc19", "rrc20", "rrc21", "rrc22"
-    ]
+    all_rrcs = [r['rrc'] for r in get_all_rrcs()]
 
     # --- 1. RUN SINGLE RRC ANALYSIS ---
     rrc_target = "rrc03"
