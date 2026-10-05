@@ -159,7 +159,7 @@ if __name__ == "__main__":
     # --- 1. RUN SINGLE RRC ANALYSIS ---
     rrc_target = "rrc03"
     dates_rrc = get_interval_dates_for_asn_data(
-        asn, rrc_target, ip_version, month_interval=6
+        asn, rrc_target, ip_version, month_interval=3
     )
 
     analyze_top10_percent_vs_others_hegemony_over_time(
