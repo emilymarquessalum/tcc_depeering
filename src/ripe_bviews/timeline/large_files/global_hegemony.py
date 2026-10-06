@@ -1,5 +1,6 @@
 from collections.abc import Set
 from datetime import datetime
+import math
 import os
 from pathlib import Path
 import sqlite3
@@ -413,10 +414,11 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
     text_scale: float = 1.0,
+    percentage: Optional[float] = None,
 ):
     """
     Computes global VPP vs Non-VPP hegemony over time strictly among 
-    the Top 5 ASes at each specific snapshot timestamp.
+    the top ASes at each snapshot. Defaults to Top 5, or uses a percentage cutoff if provided.
     """
     clean_vpp_set = _get_clean_vpp_set()
 
@@ -445,7 +447,8 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         if current_dt >= available_dts[-1]:
             break
 
-    print(f"\n[GLOBAL VPP] Computing global VPP hegemony for {len(interval_dates)} date snapshots across {len(rrc_list)} RRCs...")
+    cutoff_desc = f"Top {percentage}%" if percentage is not None else "Top 5"
+    print(f"\n[GLOBAL VPP] Computing global VPP hegemony ({cutoff_desc}) for {len(interval_dates)} date snapshots across {len(rrc_list)} RRCs...")
 
     hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
         asn,
@@ -462,6 +465,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         return
 
     hegemony_over_time_vpp_or_not_vpp: list[tuple[float, float]] = []
+    top_counts: list[int] = []
 
     for date in valid_date_list:
         date_scores = hegemony_scores_dict.get(date, {})
@@ -476,14 +480,22 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             for raw_asn, score in date_scores.items()
         }
 
-        # Select Top 5 for THIS snapshot
+        # Select Top cutoff for THIS snapshot
         sorted_items = sorted(cleaned_date_scores.items(), key=lambda x: x[1], reverse=True)
-        top5_items = sorted_items[:5]
+        total_asns = len(sorted_items)
+
+        if percentage is not None:
+            top_count = max(1, math.ceil(total_asns * percentage / 100.0))
+        else:
+            top_count = 5
+
+        top_counts.append(top_count)
+        top_items = sorted_items[:top_count]
 
         hegemony_vpp = 0.0
         hegemony_not_vpp = 0.0
 
-        for clean_transit_asn, score in top5_items:
+        for clean_transit_asn, score in top_items:
             if clean_transit_asn in clean_vpp_set:
                 hegemony_vpp += score
             else:
@@ -494,6 +506,17 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
 
         hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
+
+    # Determine dynamic legend label and title suffix based on percentage or default Top 5
+    if percentage is not None:
+        avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
+        group_label = f"Top {percentage}% (~{avg_top_asns:.1f} ASNs)"
+        title_cutoff = f"Top {percentage}%"
+        file_suffix = f"top{int(percentage)}pct"
+    else:
+        group_label = "Top 5 Only"
+        title_cutoff = "Top 5"
+        file_suffix = "top5"
 
     # Apply global default text scaling across all Matplotlib defaults (catches implicit elements)
     plt.rcParams.update({
@@ -517,7 +540,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         marker="o",
         linewidth=2.5,
         color="tab:blue",
-        label="Global VPP Hegemony (Top 5 Only)",
+        label=f"Global VPP Hegemony ({group_label})",
     )
     
     ax.plot(
@@ -527,14 +550,14 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         linewidth=2.5,
         color="tab:orange",
         linestyle="--",
-        label="Global Non-VPP Hegemony (Top 5 Only)",
+        label=f"Global Non-VPP Hegemony ({group_label})",
     )
 
     ax.set_xlabel("Date", fontsize=12 * text_scale)
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
     ax.set_ylabel(y_label, fontsize=12 * text_scale)
     ax.set_title(
-        f"GLOBAL VPP vs. Non-VPP Hegemony [Top 5] ({len(rrc_list)} RRCs)\n"
+        f"GLOBAL VPP vs. Non-VPP Hegemony [{title_cutoff}] ({len(rrc_list)} RRCs)\n"
         f"(AS{asn}, IP{ip_version.lower()}, α={alpha})",
         fontsize=14 * text_scale,
     )
@@ -552,7 +575,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{ip_version}_top5.png")
+    save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{ip_version}_{file_suffix}.png")
 
 
 if __name__ == "__main__":
@@ -568,6 +591,10 @@ if __name__ == "__main__":
         "rrc09", "rrc10", "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16",
         "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
     ]
+
+    # Optional: Prompt user for percentage or default to Top 5 (None)
+    user_input = input("Enter percentage of top ASNs to consider (leave blank to default to Top 5): ").strip()
+    percentage = float(user_input) if user_input else None
 
     # 1. Run Global Individual Transit Hegemony Over Time
     print(f"\n[1/3] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
@@ -597,8 +624,8 @@ if __name__ == "__main__":
         text_scale=text_scale,
     )
 
-    # 3. Run Global VPP vs Non-VPP Hegemony Over Time (Top 5 Only)
-    print(f"\n[3/3] Running Global VPP vs Non-VPP Hegemony (Top 5 Only) for ASN {asn} ({ip_version.upper()})...")
+    # 3. Run Global VPP vs Non-VPP Hegemony Over Time (Top ASes or Top 5)
+    print(f"\n[3/3] Running Global VPP vs Non-VPP Hegemony (Top ASes) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_vpp_hegemony_over_time_top_ases(
         asn=asn,
         alpha=alpha,
@@ -609,4 +636,5 @@ if __name__ == "__main__":
         use_strict_viewpoint_filtering=True,
         show_as_percentage=True,
         text_scale=text_scale,
+        percentage=percentage,
     )

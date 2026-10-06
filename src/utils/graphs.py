@@ -124,7 +124,8 @@ def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='In
                            ):
     
     assert y is None or len(data_list) == len(y), "Length of data_list and y must be the same if y is provided. Lengths: data_list: {}, y: {}".format(len(data_list), len(y))
-    
+
+    y = format_labels_if_they_are_dates(y) if y is not None else None
      
     plt.rcdefaults()
     plt.figure(figsize=DEFAULT_FIGSIZE)

@@ -219,7 +219,7 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
 
     dates = [date.split("dump_")[1] for date in dates]
 
-    print(dates)
+    # print(dates)
 
     # 5. Render line plot
     plot_list_as_line_plot(
@@ -314,6 +314,8 @@ if __name__ == "__main__":
 
     vpps_list = load_vpp_data()
     vpps_non_ixp = get_non_ixp_vpps(vpps_list, data)
+
+    plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp)
     # vpp_participants, ixp_vpp_counts = analyze_vpp_ixp_participants(data, vpps_non_ixp)
 
     plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp)
