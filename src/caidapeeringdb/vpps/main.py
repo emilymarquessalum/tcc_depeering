@@ -13,6 +13,7 @@ from src.caidapeeringdb.caidapeeringdb_load import (
     get_all_files,
     get_all_ixps, 
     get_data,
+    get_dates_from_files,
 )
 from src.google.vpps.vpp_ixps import (
     get_all_vpps_whose_name_matches_an_ixp_name,
@@ -216,6 +217,10 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
     # 4. Total number of VPPs evaluated (non-IXPs)
     total_vpps_count = len(vpps_non_ixp)
 
+    dates = [date.split("dump_")[1] for date in dates]
+
+    print(dates)
+
     # 5. Render line plot
     plot_list_as_line_plot(
         connected_vpps_over_time,
@@ -228,6 +233,79 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
 
     return dates, connected_vpps_over_time
 
+
+def _get_connected_vpp_asns(snapshot, target_vpp_asns):
+    """Returns VPP ASNs with at least one IXP connection in a snapshot."""
+    connected_vpp_asns = set()
+    for conn in snapshot.get("netixlan", {}).get("data", []):
+        raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+        if raw_asn is None:
+            continue
+
+        try:
+            conn_asn = int(raw_asn)
+        except (ValueError, TypeError):
+            continue
+
+        if conn_asn in target_vpp_asns:
+            connected_vpp_asns.add(conn_asn)
+
+    return connected_vpp_asns
+
+
+def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
+    """
+    Plots VPPs entering and leaving IXP participation between snapshots.
+
+    A VPP enters when its ASN is absent from the previous snapshot's
+    netixlan records and present in the current snapshot. It leaves when the
+    reverse transition occurs. Each VPP is counted once per snapshot,
+    regardless of how many IXPs it uses.
+    """
+    if not all_files:
+        raise ValueError("At least one PeeringDB snapshot is required.")
+
+    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, get_data(all_files[-1]))
+    target_vpp_asns = set(vpp_asn_map)
+    dates = get_dates_from_files(all_files)
+    snapshots = get_all_data(all_files)
+
+    new_peerings = [0]
+    de_peerings = [0]
+    previous_connected_vpps = _get_connected_vpp_asns(snapshots[0], target_vpp_asns)
+
+    for snapshot in snapshots[1:]:
+        connected_vpps = _get_connected_vpp_asns(snapshot, target_vpp_asns)
+        new_peerings.append(len(connected_vpps - previous_connected_vpps))
+        de_peerings.append(len(previous_connected_vpps - connected_vpps))
+        previous_connected_vpps = connected_vpps
+
+    total_vpps_count = len(vpps_non_ixp)
+    labels = [date.replace("_", "-") for date in dates]
+    plot_list_as_line_plot(
+        new_peerings,
+        y=labels,
+        subfolder="vpps",
+        title=f"New VPP IXP Peerings Over Time (Total VPPs: {total_vpps_count})",
+        xlabel="Date",
+        ylabel="VPPs entering an IXP",
+        positive_color="green",
+        negative_color="green",
+    )
+    plot_list_as_line_plot(
+        de_peerings,
+        y=labels,
+        subfolder="vpps",
+        title=f"VPP IXP De-peerings Over Time (Total VPPs: {total_vpps_count})",
+        xlabel="Date",
+        ylabel="VPPs leaving all IXPs",
+        positive_color="red",
+        negative_color="red",
+    )
+
+    return dates, new_peerings, de_peerings
+
+
 if __name__ == "__main__":
     all_files = get_all_files()
     latest_file = all_files[-1]
@@ -238,4 +316,4 @@ if __name__ == "__main__":
     vpps_non_ixp = get_non_ixp_vpps(vpps_list, data)
     # vpp_participants, ixp_vpp_counts = analyze_vpp_ixp_participants(data, vpps_non_ixp)
 
-    plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp)
+    plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp)
