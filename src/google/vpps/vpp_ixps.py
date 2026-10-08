@@ -6,8 +6,6 @@ import sys
 from pathlib import Path
 
 
-
-
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from src.caidapeeringdb.ixp_features.ixp_region import plot_ixps_by_region
@@ -16,8 +14,13 @@ from src.caidapeeringdb.caidapeeringdb_load import get_all_files, get_all_ixps, 
 
 from src.google.vpps.vpp_region import plot_vpp_count_by_region
 from src.utils.graphs import plot_map_as_bar_plot
+from src.caidapeeringdb.main import load_timeline_data
 
 
+
+
+
+config_path = str(Path(__file__).parent.parent)
 all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
 all_files = all_files_before_depeering + all_files_after_depeering
 
