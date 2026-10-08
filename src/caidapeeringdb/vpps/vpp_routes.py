@@ -1,16 +1,13 @@
 import sys
 from pathlib import Path
 
+
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from src.caidapeeringdb.caidapeeringdb_load import get_all_files, get_data
 from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
-from src.ripe_bviews.timeline.bview_timeline import (
-    build_vpp_asn_map,
-    get_non_ixp_vpps,
-    load_vpp_data,
-)
+from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_non_ixp_vpps, load_vpp_data
 
 
 def analyze_vpp_routes_and_prefixes(all_required_data):
