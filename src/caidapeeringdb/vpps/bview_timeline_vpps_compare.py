@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+
 from src.ripe_bviews.bview_labels import get_date_range_title
 from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.ripe_bviews.download_and_parse.load_bview_data import load_bview_data
 from src.utils.graphs import plot_list_as_line_plot
