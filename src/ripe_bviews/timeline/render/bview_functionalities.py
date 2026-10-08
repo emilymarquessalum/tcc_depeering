@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 from src.caidapeeringdb.main import bview_analyze_depeering_by_continent, load_timeline_data
+from src.caidapeeringdb.vpps.vpp_routes import analyze_vpp_routes_and_prefixes
 from src.ripe_bviews.routeserver.bview_timeline_lookingglass import bview_looking_glass
 from src.ripe_bviews.timeline.bview_new_members import bview_new_members 
 
@@ -22,7 +23,7 @@ from src.caidapeeringdb.caidapeeringdb_load import get_data, get_most_recent_dat
 from src.ripe_bviews.timeline.bview_hegemony import bview_as_hegemony_analysis, bview_hegemony_of_current_ixp
 from src.ripe_bviews.timeline.bview_as_depeer_relevance import bview_depeering, bview_depeering_routes_impact 
 from src.ripe_bviews.timeline.bview_timeline_routes import bview_timeline_routes
-from src.ripe_bviews.timeline.bview_timeline_vpps_compare import bview_check_for_vpps
+from src.caidapeeringdb.vpps.bview_timeline_vpps_compare import bview_check_for_vpps
 from src.ripe_bviews.timeline.variability import print_variability_metrics
 
 
@@ -88,7 +89,23 @@ functionalities = [
 
         ]
     },
-   # {"name": "temp-LACNICtest",     "function": lacnic_delegation_analysis,       "requirements": ["timeline", "caida_data"]},
+    
+    
+    
+    {
+        "name": "VPP Analysis",
+        "submenu": [
+
+   
+       {"name": "timeline-vpps", "function": bview_check_for_vpps, "description": "Check for presence of Google VPP ASNs over time", "requirements": ["timeline"]},
+       
+        {"name": "routes-vpps", "function": analyze_vpp_routes_and_prefixes, "description": "Analyze routes and prefixes announced by VPPPs", "requirements": ["timeline"]},
+           
+
+        ]
+    },
+
+   # {"name": "temp-LACNICtest",     "function": lacnic_delegation_analysis,       "requirements": ["timeline", "caida_data"]}
     {"name": "timeline", "function": bview_timeline, "description": "Members, reachables over time...", "requirements": ["timeline", "timeline_weekly"]}, 
     {"name": "new-members", "function": bview_new_members, "description": "New members over time", "requirements": ["timeline"]},
     {"name": "ranking", "function": bview_ranking, "description": "Rankings, like member reachability...", "requirements": ["timeline", "caida_data"]},
@@ -123,9 +140,6 @@ functionalities = [
         "description": "Check connectivity metrics for relevant ICP ASes (Google, Netflix, Meta...)",
         "requirements": ["timeline"]
     },
-    {"name": "identify-vpps", "function": bview_check_for_vpps, "description": "Check for presence of Google VPP ASNs over time", "requirements": ["timeline"]},
-    
-    
     {
         "name": "WIP", 
         "submenu": [

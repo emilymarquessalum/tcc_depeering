@@ -382,7 +382,8 @@ def analyze_global_vpp_hegemony_over_time(
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
     ax.set_ylabel(y_label, fontsize=12 * text_scale)
     ax.set_title(
-        f"GLOBAL VPP vs. Non-VPP Hegemony ({len(rrc_list)} RRCs)\n"
+        f"{asn_}’s {ip_version.title()} Global Hegemony - VPP vs Non-VPP (Top 5)"
+        f"GLOBAL VPP vs. Non-VPP Hegemony"
         f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=14 * text_scale,
     )
