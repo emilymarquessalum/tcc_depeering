@@ -18,7 +18,14 @@ from src.google.vpps.vpp_region import plot_vpp_count_by_region
 from src.utils.graphs import plot_map_as_bar_plot
 
 
+all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
+all_files = all_files_before_depeering + all_files_after_depeering
 
+all_files_in_depeering_event_but_focused_ones = all_files_before_depeering + all_files_after_depeering#[0:3]
+
+# Get data snapshots
+before_data = get_data(all_files_before_depeering[-1])
+after_data = get_data(all_files_after_depeering[-1])
 all_files = get_all_files()
 
 print(all_files[-1])

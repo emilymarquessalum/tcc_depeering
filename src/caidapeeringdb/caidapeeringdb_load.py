@@ -32,6 +32,7 @@ def get_asn_from_net(net):
     else:
         print(f"Warning: No ASN found for net entry: {net}")
         return None
+
     
 def get_ixp_from_net(net):
     if "ix_id" in net:
@@ -41,6 +42,7 @@ def get_ixp_from_net(net):
     else:
         print(f"Warning: No IXP found for net entry: {net}")
         return None
+
 
 def ixp_name_short_format(ixp_name):
    return ixp_name.replace("Digital Realty", "DR").replace("New York","NY")[:11]
@@ -166,6 +168,7 @@ def get_data(file: str):
         data = json.load(f)
     return data
 
+
 def get_all_data(files):
     all_data = []
     for file in files:
@@ -244,6 +247,7 @@ def get_connections_for_ixp_over_time(ixp_id: int, all_files=None, all_data=None
 
     return connections_over_time
 
+
 def process_connections(ixp_connections, connections_should_be, one_connection_per_ix=True) -> list[dict]: 
     if not ixp_connections:
         return []
@@ -280,8 +284,10 @@ def process_connections(ixp_connections, connections_should_be, one_connection_p
         
     return ixp_connections
 
+
 def get_asn_to_name_map(data):
     return data['as_set']["data"][0]
+
 
 def get_asns_types_peeringdb(data, asns: list, silent: bool=False) -> dict[int, str]:
     asn_information = data["net"]["data"] 
@@ -308,6 +314,7 @@ def get_types_to_asns(data, asns: list, silent: bool=False) -> dict[str, list[in
         types_to_asns[asn_type].append(asn)
     return types_to_asns
 
+
 def get_all_asn_info_types(data):
     asn_information = data["net"]["data"] 
 
@@ -318,6 +325,7 @@ def get_all_asn_info_types(data):
             types.add(info_type)
     return types
 
+
 def get_asns_of_info_type(data, info_type): 
     return [ 
         (get_asn_from_net(net), net.get("name", "Unknown"), "") # Assuming net has a 'name' key
@@ -325,8 +333,10 @@ def get_asns_of_info_type(data, info_type):
         if net.get("info_type") == info_type and (get_asn_from_net(net) is not None)
     ]
 
+
 def get_all_asns(data):
     return [get_asn_from_net(net) for net in data.get("net", {}).get("data", []) if get_asn_from_net(net) is not None]
+
 
 def get_asinfo_from_asn(data, asn: int):
     asn_information = data["net"]["data"] 
@@ -338,10 +348,10 @@ def get_asinfo_from_asn(data, asn: int):
     print(f"Warning: ASN {asn} not found in 'net' data.")
     return None
 
+
 def get_all_ixps(data) -> list[dict]:
     # id, name, city, country, region_continent, created, updated...
     return list(data.get("ix", {}).get("data", []))
-
 
 
 def is_asn_in_ixp(asn: int, ixp_id: int, data, key="netixlan", connections_should_be="peered"):
@@ -350,6 +360,7 @@ def is_asn_in_ixp(asn: int, ixp_id: int, data, key="netixlan", connections_shoul
         if get_asn_from_net(conn) == asn:
             return True
     return False
+
 
 def get_unique_ixps_from_data_list(data_list):
     unique_ixps = []
@@ -375,9 +386,11 @@ def get_organization(org_id: int, data, key="org"):
 
     return None
 
+
 def get_all_organizations(data, key="org"):
     org_data = data[key]["data"]
     return org_data
+
 
 def get_all_ixps_from_organization(org_id: int, data):
 
@@ -391,6 +404,7 @@ def get_all_ixps_from_organization(org_id: int, data):
 
     return organizations
 
+
 def get_all_unique_organization_ids_from_ixps(data):
     all_ixps = get_all_ixps(data)
     org_ids = set()
@@ -401,6 +415,7 @@ def get_all_unique_organization_ids_from_ixps(data):
             org_ids.add(org_id_of_ixp)
 
     return list(org_ids)
+
 
 def get_all_organizations_that_own_ixps(data, key="org"):
     
@@ -421,8 +436,10 @@ def get_all_files():
     files.sort()
     return files
 
+
 def get_file_from_date(date):
     return _folder + f"peeringdb_2_dump_{date}.json"
+
 
 def get_dates_from_files(all_files):
     file_date_pattern = re.compile(r"peeringdb_2_dump_(.*?)\.json")
@@ -431,6 +448,7 @@ def get_dates_from_files(all_files):
         match = file_date_pattern.search(file)
         dates.append(match.group(1) if match else "unknown")
     return dates
+
 
 def get_most_recent_file():
     all_files = get_all_files()
@@ -451,6 +469,7 @@ def get_most_recent_data():
             return None  
 
     return get_data(most_recent_file)
+
 
 if __name__ == "__main__":
 
