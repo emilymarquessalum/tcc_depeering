@@ -6,15 +6,15 @@ from collections import defaultdict
 import re
 from definitions import ROOT_DIR
 
-def download_peeringdb_dump(date, save_date=None):
+def download_peeringdb_dump(date, save_date=None, file_path=None):
     url = f"https://publicdata.caida.org/datasets/peeringdb/{date.split('_')[0]}/{date.split('_')[1]}/peeringdb_2_dump_{date}.json"
-
-    output_folder = f"{ROOT_DIR}/caida-peeringdb/"
-
+ 
     if save_date is None:
         save_date = date
 
-    file_path = output_folder + f"peeringdb_2_dump_{save_date}.json"
+ 
+    if file_path is None:
+        file_path = f"{ROOT_DIR}/caida-peeringdb/" + f"peeringdb_2_dump_{save_date}.json"
 
     if not os.path.exists(file_path):
         with requests.get(url, stream=True) as r:
