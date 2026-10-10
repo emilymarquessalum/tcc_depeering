@@ -562,6 +562,10 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         f"(AS{asn}, IP{ip_version.lower()}, α={alpha})",
         fontsize=14 * text_scale,
     )
+    ax.set_title(
+            f"Google’s Global Hegemony - VPP vs Non-VPP ({title_cutoff})",
+            fontsize=14 * text_scale,
+    )
     ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x")
     ax.grid(True, linestyle="--", alpha=0.5)
