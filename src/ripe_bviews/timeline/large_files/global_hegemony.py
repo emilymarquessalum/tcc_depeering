@@ -295,11 +295,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     show_as_percentage: bool = True,
     text_scale: float = 1.0,
     percentage: Optional[float] = None,
-):
-    """
-    Computes global VPP vs Non-VPP hegemony over time strictly among 
-    the top ASes at each snapshot. Defaults to Top 5, or uses a percentage cutoff if provided.
-    """
+): 
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
 
@@ -397,11 +393,11 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
 
         formatted_dates = format_labels_if_they_are_dates(valid_date_list)
         linestyle = "-" if ip_ver == "v4" else "--"
-        label_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        label_suffix = f" {ip_ver.upper()}" if len(ip_versions) > 1 else ""
 
         if percentage is not None:
             avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
-            group_label = f"Top {percentage}% (~{avg_top_asns:.1f} ASNs)"
+            group_label = f"Top {percentage}%"# (~{avg_top_asns:.1f} ASNs)"
         else:
             group_label = "Top 5"
 
@@ -412,7 +408,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             linewidth=2.5,
             color="tab:blue",
             linestyle=linestyle,
-            label=f"Global VPP Hegemony ({group_label}){label_suffix}",
+            label=f"VPP Hegemony {label_suffix}",
         )
         
         ax.plot(
@@ -422,7 +418,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             linewidth=2.5,
             color="tab:orange",
             linestyle=linestyle,
-            label=f"Global Non-VPP Hegemony ({group_label}){label_suffix}",
+            label=f"Non-VPP Hegemony {label_suffix}",
         )
         has_data = True
 
@@ -484,8 +480,7 @@ if __name__ == "__main__":
         show_as_percentage=True,
         text_scale=text_scale,
     )
-
-    # 2. Run Global VPP vs Non-VPP Hegemony Over Time (Top ASes or Top 5)
+ 
     print(f"\n[2/2] Running Global VPP vs Non-VPP Hegemony ({'Top ' + str(percentage) + '%' if percentage else 'Top 5'}) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_vpp_hegemony_over_time_top_ases(
         asn=asn,
