@@ -1,29 +1,26 @@
-
-
-# Source - https://stackoverflow.com/a/25389715
-# Posted by jrd1, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-02-12, License - CC BY-SA 4.0
-
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/data/" 
+REPO_ROOT = Path(__file__).resolve().parent
 
+default_data_dir = REPO_ROOT / "data"
 
+if not default_data_dir.exists():
+    for parent in REPO_ROOT.parents:
+        if (parent / "data").exists():
+            default_data_dir = parent / "data"
+            break
 
-#ROOT_DIR = "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/"
+ROOT_DIR = os.getenv("ROOT_DIR", str(default_data_dir))
 ROOT_DIR2 = "admin:///home/media/test"
-
-ROOT_DIR = os.getenv("ROOT_DIR", ROOT_DIR)
 
 def append_roots(file):
     roots = []
-
     for root in [ROOT_DIR, ROOT_DIR2]:
         if file.startswith(root):
             return [file]
         roots.append(os.path.join(root, file))
-
     return roots

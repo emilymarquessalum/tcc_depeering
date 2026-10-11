@@ -1,15 +1,14 @@
 import sqlite3
 import os
+import re
 from typing import Tuple, Optional, Dict, Set, List
 from collections import defaultdict
 from pathlib import Path
 import sys
 
 from matplotlib import pyplot as plt
-import os
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-
 
 # Preserving your setup
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent)) 
@@ -19,6 +18,25 @@ from src.ripe_bviews.timeline.bview_hegemony import _apply_alpha_trimming, get_s
 from definitions import ROOT_DIR
 
 DEBUG_HEGEMONY = False  
+
+
+def _resolve_rrc_dir(rrc_used: str) -> str:
+    """Helper to locate the RRC directory across ROOT_DIR and current workspace."""
+    candidate = os.path.join(ROOT_DIR, rrc_used)
+    if os.path.exists(candidate):
+        return candidate
+    
+    # Fallback to local execution directory context
+    cwd_candidate = os.path.abspath(os.path.join("data", rrc_used))
+    if os.path.exists(cwd_candidate):
+        return cwd_candidate
+        
+    parent_candidate = os.path.abspath(os.path.join("..", "data", rrc_used))
+    if os.path.exists(parent_candidate):
+        return parent_candidate
+        
+    return candidate
+
 
 def calculate_as_hegemony_from_db(
     conn: sqlite3.Connection,
@@ -40,7 +58,6 @@ def calculate_as_hegemony_from_db(
     if DEBUG_HEGEMONY:
         print(f"[HEGEMONY] Aggregating baseline metrics per Viewpoint ({ip_version.upper()})...")
     
-    # Track distinct prefix counts for full-feed vetting
     cursor.execute("""
         SELECT viewpoint_peer, COUNT(DISTINCT prefix) 
         FROM bgp_mappings 
@@ -48,7 +65,6 @@ def calculate_as_hegemony_from_db(
     """)
     vp_table_sizes = {vp: size for vp, size in cursor.fetchall()}
 
-    # Select total paths or total path-weights depending on IP version
     query_baseline = "SELECT viewpoint_peer, prefix_weight FROM bgp_mappings"
     if target_asn is not None:
         query_baseline += " WHERE reachable_as = ?"
@@ -156,9 +172,6 @@ def calculate_as_hegemony_disk(
     v6_threshold: int = 1,
     allowed_viewpoints: Optional[Set[str]] = None
 ) -> Tuple[Dict[int, float], Set[str]]:
-    """
-    Refactored wrapper to keep existing script execution completely unchanged.
-    """
     conn = sqlite3.connect(db_path)
     scores, vps = calculate_as_hegemony_from_db(
         conn=conn,
@@ -305,49 +318,42 @@ class LargeBViewParser:
 
 
 def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
-    path = f"{ROOT_DIR}/{rrc_used}/"
-    files = os.listdir(path)
-    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
-
-    if not relevant_files:
+    dates = get_all_dates_available_for_asn_data(asn, rrc_used, ip_version)
+    if not dates:
         return None, None
-
-    dates = [f.split(".")[1] for f in relevant_files]
     return min(dates), max(dates)
 
-def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=None):
-    path = f"{ROOT_DIR}/{rrc_used}/"
-    files = os.listdir(path)
-    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
 
-    if not relevant_files:
+def get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=None):
+    path = _resolve_rrc_dir(rrc_used)
+    if not os.path.exists(path):
         return []
 
-    dates = [f.split(".")[1] for f in relevant_files]
+    files = os.listdir(path)
+    clean_ip = str(ip_version).lower().replace("ip", "").strip()
+    
+    matched_dates = set()
+    for f in files:
+        if not f.startswith("output_bview.") or f"origin_as.{asn}.txt" not in f:
+            continue
+            
+        if f".{clean_ip}." in f or (clean_ip == "v4" and ".v6." not in f and ".v4." not in f):
+            parts = f.split(".")
+            if len(parts) >= 2 and parts[1].isdigit() and len(parts[1]) == 8:
+                matched_dates.add(parts[1])
+
+    sorted_dates = sorted(list(matched_dates))
 
     if start_date:
-        dates = [d for d in dates if d >= start_date]
+        sorted_dates = [d for d in sorted_dates if d >= start_date]
 
-    return sorted(dates)
+    return sorted_dates
 
 
 def get_interval_dates_for_asn_data(
     asn, rrc_used, ip_version, month_interval=3, start_date=None
 ):
-    path = f"{ROOT_DIR}/{rrc_used}/"
-    files = os.listdir(path)
-    suffix = f"0000.{ip_version}.origin_as.{asn}.txt"
-    relevant_files = [f for f in files if f.startswith("output_bview.") and f.endswith(suffix)]
-
-    if not relevant_files:
-        return []
-
-    dates = sorted([f.split(".")[1] for f in relevant_files])
-    if start_date:
-        dates = [d for d in dates if d >= start_date]
-
+    dates = get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
     if not dates:
         return []
 
@@ -355,7 +361,6 @@ def get_interval_dates_for_asn_data(
     final_dates = [available_dts[0]]
 
     for dt in available_dts[1:]:
-        # Add date if at least ~2.5 months (75 days) have passed since the last added date
         if (dt - final_dates[-1]).days >= (month_interval * 30 - 15):
             final_dates.append(dt)
 
@@ -364,7 +369,11 @@ def get_interval_dates_for_asn_data(
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
-    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
+    rrc_dir = _resolve_rrc_dir(rrc_used)
+    
+    path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
+    if not os.path.exists(path):
+        path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
@@ -373,7 +382,6 @@ def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewp
     return calculate_as_hegemony_disk(
         db_path, target_asn=asn, alpha=alpha, ip_version=ip_version, allowed_viewpoints=allowed_viewpoints
     ) 
-
 
 
 def get_active_viewpoints_for_date(
@@ -386,7 +394,11 @@ def get_active_viewpoints_for_date(
     v6_threshold: int = 1
 ) -> Set[str]:
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
-    path = f"{ROOT_DIR}/{rrc_used}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
+    rrc_dir = _resolve_rrc_dir(rrc_used)
+    
+    path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
+    if not os.path.exists(path):
+        path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
     
     if not os.path.exists(db_path):
         parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
@@ -395,7 +407,6 @@ def get_active_viewpoints_for_date(
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
-    # 1. Total prefixes seen per viewpoint in this snapshot (unfiltered by reachable_as)
     cursor.execute("""
         SELECT viewpoint_peer, COUNT(DISTINCT prefix) 
         FROM bgp_mappings 
@@ -403,7 +414,6 @@ def get_active_viewpoints_for_date(
     """)
     vp_table_sizes = {vp: size for vp, size in cursor.fetchall()}
 
-    # 2. Query ALL viewpoints present in the snapshot
     cursor.execute("SELECT DISTINCT viewpoint_peer FROM bgp_mappings")
     all_vps = {row[0] for row in cursor.fetchall()}
     conn.close()
@@ -411,8 +421,7 @@ def get_active_viewpoints_for_date(
     if not filter_full_feed:
         return all_vps
 
-    # If parsing origin-filtered files, lower thresholds or check presence
-    chosen_threshold = v4_threshold if ip_version == "v4" else 1  # Adjusted for single-origin files
+    chosen_threshold = v4_threshold if ip_version == "v4" else 1
     
     active_vps = {
         vp for vp, size in vp_table_sizes.items() 
@@ -434,17 +443,19 @@ def select_best_date_in_window(
     if window_size <= 0:
         return all_dates[current_idx]
 
-    # Look ahead up to `window_size` available entries in all_dates
     candidate_dates = all_dates[current_idx : current_idx + window_size + 1]
 
     best_date = candidate_dates[0]
     max_monitors = -1
 
+    rrc_dir = _resolve_rrc_dir(rrc_used)
+
     for d in candidate_dates:
-        # Verify raw text file exists before trying to parse/count viewpoints
-        raw_path = f"{ROOT_DIR}/{rrc_used}/output_bview.{d}.0000.{ip_version}.origin_as.{asn}.txt"
+        raw_path = os.path.join(rrc_dir, f"output_bview.{d}.0000.{ip_version}.origin_as.{asn}.txt")
         if not os.path.exists(raw_path):
-            continue
+            raw_path = os.path.join(rrc_dir, f"output_bview.{d}.0000.origin_as.{asn}.txt")
+            if not os.path.exists(raw_path):
+                continue
 
         try:
             vps = get_active_viewpoints_for_date(
@@ -492,12 +503,10 @@ def compare_hegemony_for_two_dates(
                         asn, alpha, rrc_used, date_after, ip_version
             )
         else:
-            # 1. Load data for "Before" date and capture its active viewpoints
             hegemony_scores_before, viewpoints_before = load_hegemony_for_date(
                 asn, alpha, rrc_used, date_before, ip_version
             )
             
-            # 2. Load data for "After" date, restricting it to use ONLY the viewpoints from "Before"
             hegemony_scores_after, _ = load_hegemony_for_date(
                 asn, alpha, rrc_used, date_after, ip_version, allowed_viewpoints=viewpoints_before
             )
@@ -552,7 +561,6 @@ def get_hegemony_scores(
     else:
         selected_dates = list(date_list)
 
-    # Track valid dates
     valid_date_list = selected_dates
     allowed_viewpoints_baseline = None
     
@@ -662,7 +670,6 @@ def compare_hegemony_for_several_dates(
         hegemony_scores_dict, valid_date_list
     )
 
-    # Assign distinct colors to unique ASNs if not already mapped
     cmap = plt.get_cmap("tab20")
     for target_asn in unique_asns_list:
         if target_asn not in as_color_map:
@@ -767,63 +774,3 @@ def compare_hegemony_for_several_dates(
     save_plot(
         fig=fig, title=f"hegemony_over_time_{asn}_{rrc_used}_{ip_version}.png"
     )
-
-
-
-if __name__ == "__main__":
- 
-    asn = 15169
-    start_date = None 
-    
-    configs = [ 
-        {"rrc_used": rrc, "ip_version": "v6", "asn": 15169, "start_date": None, "use_best_next_days": 0} for rrc in [
-            "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08", "rrc09", "rrc10",
-            "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16", "rrc17", "rrc18",
-            "rrc19", "rrc20", "rrc21", "rrc22",
-        ]
-
-    ]
-    asn_input = input(f"Enter ASN to analyze (default {asn}): ")
-    if asn_input:
-        asn = int(asn_input)
-        
-    alpha = 0.34 
-    use_strict_viewpoint_filtering = True # only viewpoints that existed in all snapshots
-    use_free_viewpoint_filtering = False # all viewpoints available for each snapshot independently
-    show_collector_count_over_time = False 
-    show_as_percentage = True
-
-    for config in configs:
-        rrc_used = config["rrc_used"]
-        ip_version = config["ip_version"]
-        asn = config["asn"]
-        start_date = config["start_date"]
-        use_best_next_days = config["use_best_next_days"]
-
-        print(f"\n[INFO] Processing ASN {asn} for RRC {rrc_used} ({ip_version.upper()}) with start date {start_date} and best next days {use_best_next_days}...")
-
-        try:
-            date_before, date_after = get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version)
-
-            compare_hegemony_for_two_dates(
-                asn, alpha, rrc_used, ip_version, date_before, date_after, 
-                use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-                use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-            )
-
-            
-            # dates =  get_all_dates_available_for_asn_data(asn, rrc_used, ip_version, start_date=start_date)
-            dates = get_interval_dates_for_asn_data(asn, rrc_used, ip_version, month_interval=6, start_date=start_date)
-
-            compare_hegemony_for_several_dates(
-                asn, alpha, rrc_used, ip_version, dates,
-                use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-                use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-                use_best_next_days=use_best_next_days,
-                show_collector_count_over_time=show_collector_count_over_time,
-                show_as_percentage=show_as_percentage,
-            )
-            
-        except Exception as e:
-            print(f"[ERROR] An error occurred while processing RRC {rrc_used}: {e}")
-            continue
