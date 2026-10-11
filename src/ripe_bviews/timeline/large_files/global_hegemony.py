@@ -393,7 +393,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
 
         formatted_dates = format_labels_if_they_are_dates(valid_date_list)
         linestyle = "-" if ip_ver == "v4" else "--"
-        label_suffix = f" IP{ip_ver.lower()}" if len(ip_versions) > 1 else ""
+        label_suffix = f"IP{ip_ver.lower()}" if len(ip_versions) > 1 else ""
         
         if percentage is not None:
             avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
@@ -439,12 +439,12 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(
-        bbox_to_anchor=(1.02, 1),
-        loc="upper left",
+        #bbox_to_anchor=(1.02, 1),
+        loc="lower left",
         title="Is-VPP",
         fontsize=10 * text_scale,
         title_fontsize=11 * text_scale,
-    )
+    ) 
 
     plt.tight_layout()
     plt.show()
