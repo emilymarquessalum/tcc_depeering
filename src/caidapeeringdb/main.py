@@ -66,7 +66,9 @@ def load_timeline_data(config_path):
         config_google_before_depeering = json.load(f)
     with open(config_path + "/config_google_after_depeering_timeline.json", 'r') as f:
         config_google_after_depeering = json.load(f)
-    
+
+    print(config_google_before_depeering)
+    print(config_google_after_depeering)
     all_files_before_depeering = load_all_files(config_google_before_depeering)
     all_files_after_depeering = load_all_files(config_google_after_depeering) 
     
