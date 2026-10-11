@@ -393,8 +393,8 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
 
         formatted_dates = format_labels_if_they_are_dates(valid_date_list)
         linestyle = "-" if ip_ver == "v4" else "--"
-        label_suffix = f" {ip_ver.upper()}" if len(ip_versions) > 1 else ""
-
+        label_suffix = f" IP{ip_ver.lower()}" if len(ip_versions) > 1 else ""
+        
         if percentage is not None:
             avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
             group_label = f"Top {percentage}%"# (~{avg_top_asns:.1f} ASNs)"
