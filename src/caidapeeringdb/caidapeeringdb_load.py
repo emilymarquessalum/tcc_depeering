@@ -23,6 +23,7 @@ def download_peeringdb_dump(date, save_date=None, file_path=None):
             with open(file_path, "w") as f:
                 json.dump(data, f)
 
+    print(f"Downloaded PeeringDB dump for {date} to {file_path}")
 
 def get_asn_from_net(net):
     if "asn" in net:
