@@ -40,7 +40,8 @@ def extract_path_lengths_and_hegemony(
     ip_version: str = "v4",
 ) -> Tuple[Dict[str, List[int]], Dict[int, float]]:
     """
-    Computes AS hegemony scores and collects all BGP AS path lengths mapped per transit ASN.
+    Computes AS hegemony scores and collects all BGP AS path lengths mapped per transit ASN,
+    with AS path prepending stripped out.
     
     Returns:
         - transit_path_lengths: Dict[transit_asn_str, List[path_length]]
@@ -74,12 +75,23 @@ def extract_path_lengths_and_hegemony(
             if not path_str:
                 continue
             try:
-                as_path = [int(x) for x in path_str.split(",") if x]
+                raw_as_path = [int(x) for x in path_str.split(",") if x]
             except ValueError:
                 continue
 
-            path_len = len(as_path)
-            unique_transits = set(as_path)
+            if not raw_as_path:
+                continue
+
+            # Strip AS path prepending by collapsing consecutive duplicate ASNs
+            dedup_as_path = []
+            for asn in raw_as_path:
+                if not dedup_as_path or dedup_as_path[-1] != asn:
+                    dedup_as_path.append(asn)
+
+            # Path length after prepending is removed
+            path_len = len(dedup_as_path)
+
+            unique_transits = set(dedup_as_path)
             if target_asn is not None and target_asn in unique_transits:
                 unique_transits.remove(target_asn)
 
