@@ -13,8 +13,6 @@ from matplotlib import pyplot as plt
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
-from src.ripe_bviews.timeline.bview_load import get_all_rrcs
-
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     LargeBViewParser,
@@ -329,8 +327,9 @@ if __name__ == "__main__":
 
     asn = 15169
     alpha = 0.34
-     
-    all_rrcs = get_all_rrcs()
+    
+    # Define available RRCs for GLOBAL evaluation
+    all_rrcs = ["rrc00", "rrc01", "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc10"]
 
     # Interactive setup
     mode = input("Run mode ('global' or 'single') [default 'global']: ").strip().lower() or "global"
