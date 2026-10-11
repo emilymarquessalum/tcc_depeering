@@ -440,7 +440,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(
         #bbox_to_anchor=(1.02, 1),
-        loc="lower left",
+        loc="lower right",
         title="Is-VPP",
         fontsize=10 * text_scale,
         title_fontsize=11 * text_scale,
