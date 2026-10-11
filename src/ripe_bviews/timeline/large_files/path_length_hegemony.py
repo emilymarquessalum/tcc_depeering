@@ -314,7 +314,7 @@ def analyze_path_length_hegemony(
 
     ax1.set_ylabel("Avg Path Length (Hops)")
     ax1.set_xlabel("Date")
-    ax1.set_title(f"Overall AS Path Length Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax1.set_title(f"AS Path Length \n(ASN: {asn}, {rrc_tag})")
     ax1.tick_params(axis="x", rotation=45)
     ax1.grid(True, linestyle="--", alpha=0.5)
     ax1.legend(loc="upper right")
@@ -334,7 +334,7 @@ def analyze_path_length_hegemony(
 
     ax2.set_ylabel("Avg Path Length (Hops)")
     ax2.set_xlabel("Date")
-    ax2.set_title(f"AS Path Length: VPPs vs. Non-VPPs Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax2.set_title(f"AS Path Length: VPPs vs. Non-VPPs Over Time\n(AS{asn}, Scope: {rrc_tag})")
     ax2.tick_params(axis="x", rotation=45)
     ax2.grid(True, linestyle="--", alpha=0.5)
     ax2.legend(loc="upper right")
@@ -356,7 +356,7 @@ def analyze_path_length_hegemony(
     ax3.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
     ax3.set_ylabel("Difference in Avg Path Length (Hops)")
     ax3.set_xlabel("Date")
-    ax3.set_title(f"How Much Higher is VPP Path Length Than Non-VPP? (VPP - Non-VPP)\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax3.set_title(f"How Much Higher is VPP Path Length Than Non-VPP? For {top_label_desc} \n(AS{asn}, {rrc_tag})")
     ax3.tick_params(axis="x", rotation=45)
     ax3.grid(True, linestyle="--", alpha=0.5)
     ax3.legend(loc="upper right")
