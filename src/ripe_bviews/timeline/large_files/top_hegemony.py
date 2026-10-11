@@ -25,28 +25,24 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     asn: int,
     alpha: float,
     ip_version: Union[str, List[str]] = "v4",
-    date_list: Optional[List[str]] = None,
+    date_list: Optional[list] = None,
     percentage: float = 20.0,
     rrc_used: Optional[str] = None,
-    rrc_list: Optional[List[str]] = None,
+    rrc_list: Optional[list[str]] = None,
     use_strict_viewpoint_filtering: bool = False,
     use_free_viewpoint_filtering: bool = False,
     use_best_next_days: int = 0,
-    show_both_ip_versions: bool = False,
     text_scale: float = 1.0,
+    show_both_ip_versions: bool = False,
+    start_date=None,
     month_interval: int = 3,
 ):
     """
     Computes and plots the aggregated Hegemony percentage share of the Top X% Transit ASNs
     versus all remaining ('Others') Transit ASNs over time.
-    Supports displaying a single IP version ('v4' or 'v6') or both IP versions simultaneously.
-
-    IP versions are differentiated by line style ('-' for IPv4, '--' for IPv6),
-    while Top X% and Others are differentiated by color (blue for Top X%, orange for Others).
     """
     ip_versions = _parse_ip_versions(ip_version, show_both_ip_versions)
 
-    # Apply global default text scaling across all Matplotlib defaults
     plt.rcParams.update({
         "font.size": 10 * text_scale,
         "axes.titlesize": 14 * text_scale,
@@ -61,28 +57,32 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     has_data = False
 
     for ip_ver in ip_versions:
-        # Determine current date list for this specific IP version
+        # Resolve date list per IP version
         if date_list is None:
-            if rrc_used:
-                current_date_list = get_interval_dates_for_asn_data(
-                    asn, rrc_used, ip_ver, month_interval=month_interval
-                )
-            elif rrc_list:
+            if rrc_list:
                 all_available_dates = set()
                 for rrc in rrc_list:
                     all_available_dates.update(
-                        get_all_dates_available_for_asn_data(asn, rrc, ip_ver)
+                        get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
                     )
                 current_date_list = sorted(list(all_available_dates))
+            elif rrc_used:
+                current_date_list = get_interval_dates_for_asn_data(
+                    asn, rrc_used, ip_ver, month_interval=month_interval, start_date=start_date
+                )
             else:
                 raise ValueError("Must provide either 'rrc_used' or 'rrc_list'.")
         else:
             current_date_list = date_list
 
+        if not current_date_list:
+            print(f"[WARNING] No dates available for ASN {asn} ({ip_ver.upper()}).")
+            continue
+
         # Fetch scores depending on mode
         if rrc_list:
             print(
-                f"[ANALYSIS] Computing Global Top {percentage}% vs Others [{ip_ver.upper()}] across {len(rrc_list)} RRCs..."
+                f"[ANALYSIS] Computing Global Top {percentage}% vs Others ({ip_ver.upper()}) across {len(rrc_list)} RRCs..."
             )
             hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
                 asn=asn,
@@ -94,8 +94,9 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
                 use_free_viewpoint_filtering=use_free_viewpoint_filtering,
             )
             mode_label = f"Global ({len(rrc_list)} RRCs)"
+            mode_file_suffix = f"global_{asn}"
         elif rrc_used:
-            print(f"[ANALYSIS] Computing Top {percentage}% vs Others [{ip_ver.upper()}] for RRC {rrc_used}...")
+            print(f"[ANALYSIS] Computing Top {percentage}% vs Others ({ip_ver.upper()}) for RRC {rrc_used}...")
             hegemony_scores_dict, _, valid_date_list = get_hegemony_scores(
                 asn=asn,
                 rrc_used=rrc_used,
@@ -107,8 +108,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
                 use_best_next_days=use_best_next_days,
             )
             mode_label = f"RRC {rrc_used}"
-        else:
-            raise ValueError("Must provide either 'rrc_used' or 'rrc_list'.")
+            mode_file_suffix = f"{asn}_{rrc_used}"
 
         if not valid_date_list:
             print(f"[WARNING] No valid snapshots available to process for IP version {ip_ver.upper()}.")
@@ -130,7 +130,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             sorted_transits = sorted(scores.items(), key=lambda item: item[1], reverse=True)
             total_asns = len(sorted_transits)
 
-            top_count = max(1, math.ceil(total_asns * percentage / 100))
+            top_count = max(1, math.ceil(total_asns * percentage / 100.0))
             top_counts.append(top_count)
 
             top_score = sum(score for _, score in sorted_transits[:top_count])
@@ -154,7 +154,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             linewidth=2.5,
             color="tab:blue",
             linestyle=linestyle,
-            label=f"Top {percentage}% Transits (~{avg_top_asns:.1f} ASNs/snapshot){label_suffix}",
+            label=f"Top {percentage}% Transits (~{avg_top_asns:.1f} ASNs){label_suffix}",
         )
 
         ax.plot(
@@ -198,8 +198,8 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     plt.show()
 
     save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
-    location_suffix = f"global_{asn}_{save_suffix}" if rrc_list else f"{asn}_{rrc_used}_{save_suffix}"
-    save_plot(fig=fig, title=f"top{int(percentage)}pct_vs_others_hegemony_{location_suffix}.png")
+    save_plot(fig=fig, title=f"top{int(percentage)}pct_vs_others_hegemony_{mode_file_suffix}_{save_suffix}.png")
+
 
 if __name__ == "__main__":
     asn = 15169
