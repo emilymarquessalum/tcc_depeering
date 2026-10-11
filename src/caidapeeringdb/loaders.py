@@ -75,6 +75,8 @@ def load_all_files(timeline_config):
                     print("Loading missing file...")
                     try:
                         file_path = os.path.join(start_folder, file_name)
+
+                        os.makedirs(start_folder, exist_ok=True)  
                         download_peeringdb_dump(date_to_load, file_path=file_path)  
                         if os.path.exists(file_path):
                             all_files.append(file_name)
