@@ -8,13 +8,12 @@ import sys
 from typing import Dict, List, Optional, Set, Tuple, Union
 
 from matplotlib import pyplot as plt
-
+import numpy as np
 
 # Preserving repository structure / imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
-
 from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
@@ -169,11 +168,15 @@ def analyze_path_length_hegemony(
     text_scale: float = 1.0,
 ):
     """
-    Executes Path Length Analysis across 4 separate figures:
+    Executes Path Length Analysis across 8 separate figures:
       1. Overall Path Length over time
-      2. Path Length for VPPs vs. Non-VPPs over time
-      3. Difference (VPP Path Length - Non-VPP Path Length) over time
-      4. Path Length for Top X (Top N or Top X%) Hegemony ASNs over time
+      2. Mean Path Length: VPPs vs. Non-VPPs
+      3. Mean Path Length Delta (VPP - Non-VPP)
+      4. Q25 Path Length: VPPs vs. Non-VPPs
+      5. Q25 Path Length Delta (VPP Q25 - Non-VPP Q25)
+      6. Q75 Path Length: VPPs vs. Non-VPPs
+      7. Q75 Path Length Delta (VPP Q75 - Non-VPP Q75)
+      8. Path Length for Top X Hegemony ASNs over time
     """
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
@@ -192,7 +195,6 @@ def analyze_path_length_hegemony(
         "figure.titlesize": 16 * text_scale,
     })
 
-    # Prepare datasets per IP version
     processed_data = {}
 
     for ip_ver in ip_versions:
@@ -232,9 +234,22 @@ def analyze_path_length_hegemony(
 
         valid_dates = []
         avg_path_len_overall = []
+        
+        # Means
         avg_path_len_vpp = []
         avg_path_len_non_vpp = []
         avg_path_len_vpp_delta = []
+
+        # Q25 (25th Percentile)
+        q25_path_len_vpp = []
+        q25_path_len_non_vpp = []
+        q25_path_len_vpp_delta = []
+
+        # Q75 (75th Percentile)
+        q75_path_len_vpp = []
+        q75_path_len_non_vpp = []
+        q75_path_len_vpp_delta = []
+
         avg_path_len_topx = []
 
         for d in dates:
@@ -252,25 +267,37 @@ def analyze_path_length_hegemony(
 
             valid_dates.append(d)
 
-            # --- 1. Overall Path Length ---
+            # Overall
             all_lengths = [l for lens in transit_path_lengths.values() for l in lens]
             avg_overall = sum(all_lengths) / len(all_lengths) if all_lengths else 0.0
             avg_path_len_overall.append(avg_overall)
 
-            # --- 2. VPP vs Non-VPP Path Length ---
+            # VPP vs Non-VPP lengths collections
             vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in clean_vpp_set for l in lens]
             non_vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str not in clean_vpp_set for l in lens]
 
+            # Means & Delta
             avg_vpp = sum(vpp_lengths) / len(vpp_lengths) if vpp_lengths else 0.0
             avg_non_vpp = sum(non_vpp_lengths) / len(non_vpp_lengths) if non_vpp_lengths else 0.0
-
             avg_path_len_vpp.append(avg_vpp)
             avg_path_len_non_vpp.append(avg_non_vpp)
-
-            # --- 3. VPP Path Length Delta (VPP - Non-VPP) ---
             avg_path_len_vpp_delta.append(avg_vpp - avg_non_vpp)
 
-            # --- 4. Top X Hegemony Path Length ---
+            # Q25 Percentile Calculations & Delta
+            vpp_q25 = float(np.percentile(vpp_lengths, 25)) if vpp_lengths else 0.0
+            non_vpp_q25 = float(np.percentile(non_vpp_lengths, 25)) if non_vpp_lengths else 0.0
+            q25_path_len_vpp.append(vpp_q25)
+            q25_path_len_non_vpp.append(non_vpp_q25)
+            q25_path_len_vpp_delta.append(vpp_q25 - non_vpp_q25)
+
+            # Q75 Percentile Calculations & Delta
+            vpp_q75 = float(np.percentile(vpp_lengths, 75)) if vpp_lengths else 0.0
+            non_vpp_q75 = float(np.percentile(non_vpp_lengths, 75)) if non_vpp_lengths else 0.0
+            q75_path_len_vpp.append(vpp_q75)
+            q75_path_len_non_vpp.append(non_vpp_q75)
+            q75_path_len_vpp_delta.append(vpp_q75 - non_vpp_q75)
+
+            # Top X Hegemony Path Length
             sorted_hegemony = sorted(hegemony_scores.items(), key=lambda x: x[1], reverse=True)
             total_transits = len(sorted_hegemony)
 
@@ -291,6 +318,12 @@ def analyze_path_length_hegemony(
             "vpp": avg_path_len_vpp,
             "non_vpp": avg_path_len_non_vpp,
             "delta": avg_path_len_vpp_delta,
+            "vpp_q25": q25_path_len_vpp,
+            "non_vpp_q25": q25_path_len_non_vpp,
+            "q25_delta": q25_path_len_vpp_delta,
+            "vpp_q75": q75_path_len_vpp,
+            "non_vpp_q75": q75_path_len_non_vpp,
+            "q75_delta": q75_path_len_vpp_delta,
             "topx": avg_path_len_topx,
         }
 
@@ -323,7 +356,7 @@ def analyze_path_length_hegemony(
     save_plot(fig=fig1, title=f"path_length_overall_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
-    # FIGURE 2: VPP vs. Non-VPP Path Length
+    # FIGURE 2: VPP vs. Non-VPP Path Length (Mean)
     # ==========================================
     fig2, ax2 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
@@ -334,16 +367,16 @@ def analyze_path_length_hegemony(
 
     ax2.set_ylabel("Avg Path Length (Hops)")
     ax2.set_xlabel("Date")
-    ax2.set_title(f"AS Path Length: VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag})")
+    ax2.set_title(f"AS Path Length (Mean): VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag})")
     ax2.tick_params(axis="x", rotation=45)
     ax2.grid(True, linestyle="--", alpha=0.5)
     ax2.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_mean_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
-    # FIGURE 3: Delta (VPP Path Length - Non-VPP Path Length)
+    # FIGURE 3: Mean Delta (VPP - Non-VPP)
     # ==========================================
     fig3, ax3 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
@@ -356,33 +389,117 @@ def analyze_path_length_hegemony(
     ax3.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
     ax3.set_ylabel("Difference in Avg Path Length (Hops)")
     ax3.set_xlabel("Date")
-    ax3.set_title(f"How Much Higher is VPP Path Length Than Non-VPP? For {top_label_desc} \n(AS{asn}, {rrc_tag})")
+    ax3.set_title(f"Mean Path Length Delta: VPP vs Non-VPP (VPP - Non-VPP)\n(AS{asn}, {rrc_tag})")
     ax3.tick_params(axis="x", rotation=45)
     ax3.grid(True, linestyle="--", alpha=0.5)
     ax3.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig3, title=f"path_length_vpp_delta_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig3, title=f"path_length_vpp_delta_mean_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
-    # FIGURE 4: Top X Hegemony Path Length
+    # FIGURE 4: Q25 Path Length (VPP vs Non-VPP)
     # ==========================================
     fig4, ax4 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
         ls = "-" if ip_ver == "v4" else "--"
-        mk = "o" if ip_ver == "v4" else "^"
         lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
-        ax4.plot(data["dates"], data["topx"], marker=mk, linestyle=ls, linewidth=2.5, color="tab:green", label=f"{top_label_desc} Hegemony Path Length{lbl_suffix}")
+        ax4.plot(data["dates"], data["vpp_q25"], marker="o" if ip_ver == "v4" else "^", linestyle=ls, linewidth=2.5, color="tab:blue", label=f"VPP Q25 Path Length{lbl_suffix}")
+        ax4.plot(data["dates"], data["non_vpp_q25"], marker="s" if ip_ver == "v4" else "D", linestyle=ls, linewidth=2.5, color="tab:orange", label=f"Non-VPP Q25 Path Length{lbl_suffix}")
 
-    ax4.set_ylabel("Avg Path Length (Hops)")
+    ax4.set_ylabel("Q25 Path Length (Hops)")
     ax4.set_xlabel("Date")
-    ax4.set_title(f"AS Path Length for {top_label_desc} Hegemony Transits Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax4.set_title(f"25th Percentile (Q25) Path Length: VPPs vs Non-VPPs\n(AS{asn}, Scope: {rrc_tag})")
     ax4.tick_params(axis="x", rotation=45)
     ax4.grid(True, linestyle="--", alpha=0.5)
     ax4.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig4, title=f"path_length_hegemony_{top_tag}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig4, title=f"path_length_vpp_vs_non_vpp_q25_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 5: Q25 Delta (VPP Q25 - Non-VPP Q25)
+    # ==========================================
+    fig5, ax5 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        color = "tab:purple" if ip_ver == "v4" else "tab:red"
+        ax5.plot(data["dates"], data["q25_delta"], marker=mk, linestyle=ls, linewidth=2.5, color=color, label=f"VPP Extra Q25 Path Length{lbl_suffix}")
+
+    ax5.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
+    ax5.set_ylabel("Difference in Q25 Path Length (Hops)")
+    ax5.set_xlabel("Date")
+    ax5.set_title(f"Q25 Path Length Delta: VPP vs Non-VPP (VPP Q25 - Non-VPP Q25)\n(AS{asn}, {rrc_tag})")
+    ax5.tick_params(axis="x", rotation=45)
+    ax5.grid(True, linestyle="--", alpha=0.5)
+    ax5.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig5, title=f"path_length_vpp_delta_q25_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 6: Q75 Path Length (VPP vs Non-VPP)
+    # ==========================================
+    fig6, ax6 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        ax6.plot(data["dates"], data["vpp_q75"], marker="o" if ip_ver == "v4" else "^", linestyle=ls, linewidth=2.5, color="tab:blue", label=f"VPP Q75 Path Length{lbl_suffix}")
+        ax6.plot(data["dates"], data["non_vpp_q75"], marker="s" if ip_ver == "v4" else "D", linestyle=ls, linewidth=2.5, color="tab:orange", label=f"Non-VPP Q75 Path Length{lbl_suffix}")
+
+    ax6.set_ylabel("Q75 Path Length (Hops)")
+    ax6.set_xlabel("Date")
+    ax6.set_title(f"75th Percentile (Q75) Path Length: VPPs vs Non-VPPs\n(AS{asn}, Scope: {rrc_tag})")
+    ax6.tick_params(axis="x", rotation=45)
+    ax6.grid(True, linestyle="--", alpha=0.5)
+    ax6.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig6, title=f"path_length_vpp_vs_non_vpp_q75_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 7: Q75 Delta (VPP Q75 - Non-VPP Q75)
+    # ==========================================
+    fig7, ax7 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        color = "tab:purple" if ip_ver == "v4" else "tab:red"
+        ax7.plot(data["dates"], data["q75_delta"], marker=mk, linestyle=ls, linewidth=2.5, color=color, label=f"VPP Extra Q75 Path Length{lbl_suffix}")
+
+    ax7.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
+    ax7.set_ylabel("Difference in Q75 Path Length (Hops)")
+    ax7.set_xlabel("Date")
+    ax7.set_title(f"Q75 Path Length Delta: VPP vs Non-VPP (VPP Q75 - Non-VPP Q75)\n(AS{asn}, {rrc_tag})")
+    ax7.tick_params(axis="x", rotation=45)
+    ax7.grid(True, linestyle="--", alpha=0.5)
+    ax7.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig7, title=f"path_length_vpp_delta_q75_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 8: Top X Hegemony Path Length
+    # ==========================================
+    fig8, ax8 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        ax8.plot(data["dates"], data["topx"], marker=mk, linestyle=ls, linewidth=2.5, color="tab:green", label=f"{top_label_desc} Hegemony Path Length{lbl_suffix}")
+
+    ax8.set_ylabel("Avg Path Length (Hops)")
+    ax8.set_xlabel("Date")
+    ax8.set_title(f"AS Path Length for {top_label_desc} Hegemony Transits Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax8.tick_params(axis="x", rotation=45)
+    ax8.grid(True, linestyle="--", alpha=0.5)
+    ax8.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig8, title=f"path_length_hegemony_{top_tag}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
 
 if __name__ == "__main__":
