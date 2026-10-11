@@ -9,6 +9,8 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 
 from matplotlib import pyplot as plt
 
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
+
 # Preserving repository structure / imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
@@ -101,7 +103,7 @@ def get_db_for_date(
     is_global = isinstance(rrc_used, list) or (isinstance(rrc_used, str) and rrc_used.lower() == "global")
     
     if is_global:
-        rrc_list = rrc_used if isinstance(rrc_used, list) else ["rrc03"]  # Fallback list if string 'global' passed
+        rrc_list = rrc_used if isinstance(rrc_used, list) else ["rrc03"]
         global_db_path = f"huge_bgp_cache_GLOBAL_{date}_{ip_version}_{asn}.db"
         
         if os.path.exists(global_db_path):
@@ -136,7 +138,6 @@ def get_db_for_date(
         return global_db_path
 
     else:
-        # Single RRC logic
         db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
         if os.path.exists(db_path):
             return db_path
@@ -162,16 +163,16 @@ def analyze_path_length_hegemony(
     ip_version: Union[str, List[str]] = "v4",
     start_date: Optional[str] = None,
     month_interval: int = 6,
-    top_x: Optional[Union[int, float]] = 5,  # Top 5 if int (5), or Top X% if float/percentage (e.g., 10.0 for 10%)
+    top_x: Optional[Union[int, float]] = 5,
     is_percentage_top_x: bool = False,
     text_scale: float = 1.0,
 ):
     """
-    Executes Path Length Analysis across 3 dimensions:
+    Executes Path Length Analysis across 4 separate figures:
       1. Overall Path Length over time
       2. Path Length for VPPs vs. Non-VPPs over time
-      3. Path Length for Top X (Top N or Top X%) Hegemony ASNs over time
-    Natively supports both Single RRC and GLOBAL multi-RRC modes.
+      3. Difference (VPP Path Length - Non-VPP Path Length) over time
+      4. Path Length for Top X (Top N or Top X%) Hegemony ASNs over time
     """
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
@@ -190,7 +191,8 @@ def analyze_path_length_hegemony(
         "figure.titlesize": 16 * text_scale,
     })
 
-    fig, (ax_overall, ax_vpp, ax_topx) = plt.subplots(3, 1, figsize=(DEFAULT_FIGSIZE[0], DEFAULT_FIGSIZE[1] * 1.8), sharex=True)
+    # Prepare datasets per IP version
+    processed_data = {}
 
     for ip_ver in ip_versions:
         if is_global:
@@ -231,6 +233,7 @@ def analyze_path_length_hegemony(
         avg_path_len_overall = []
         avg_path_len_vpp = []
         avg_path_len_non_vpp = []
+        avg_path_len_vpp_delta = []
         avg_path_len_topx = []
 
         for d in dates:
@@ -263,7 +266,10 @@ def analyze_path_length_hegemony(
             avg_path_len_vpp.append(avg_vpp)
             avg_path_len_non_vpp.append(avg_non_vpp)
 
-            # --- 3. Top X Hegemony Path Length ---
+            # --- 3. VPP Path Length Delta (VPP - Non-VPP) ---
+            avg_path_len_vpp_delta.append(avg_vpp - avg_non_vpp)
+
+            # --- 4. Top X Hegemony Path Length ---
             sorted_hegemony = sorted(hegemony_scores.items(), key=lambda x: x[1], reverse=True)
             total_transits = len(sorted_hegemony)
 
@@ -278,48 +284,104 @@ def analyze_path_length_hegemony(
             avg_topx = sum(top_x_lengths) / len(top_x_lengths) if top_x_lengths else 0.0
             avg_path_len_topx.append(avg_topx)
 
-        formatted_dates = format_labels_if_they_are_dates(valid_dates)
-        ls = "-" if ip_ver == "v4" else "--"
-        mk = "o" if ip_ver == "v4" else "^"
-        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        processed_data[ip_ver] = {
+            "dates": format_labels_if_they_are_dates(valid_dates),
+            "overall": avg_path_len_overall,
+            "vpp": avg_path_len_vpp,
+            "non_vpp": avg_path_len_non_vpp,
+            "delta": avg_path_len_vpp_delta,
+            "topx": avg_path_len_topx,
+        }
 
-        # Plot 1: Overall Path Length
-        ax_overall.plot(formatted_dates, avg_path_len_overall, marker=mk, linestyle=ls, linewidth=2, label=f"Overall Path Length{lbl_suffix}")
-
-        # Plot 2: VPP vs Non-VPP Path Length
-        ax_vpp.plot(formatted_dates, avg_path_len_vpp, marker=mk, linestyle=ls, linewidth=2, color="tab:blue", label=f"VPP Path Length{lbl_suffix}")
-        ax_vpp.plot(formatted_dates, avg_path_len_non_vpp, marker="s" if ip_ver == "v4" else "D", linestyle=ls, linewidth=2, color="tab:orange", label=f"Non-VPP Path Length{lbl_suffix}")
-
-        # Plot 3: Top X Hegemony Path Length
-        top_desc = f"Top {top_x}%" if is_percentage_top_x else f"Top {top_x}"
-        ax_topx.plot(formatted_dates, avg_path_len_topx, marker=mk, linestyle=ls, linewidth=2, color="tab:green", label=f"{top_desc} Hegemony Path Length{lbl_suffix}")
-
-    # Formatting Subplots
-    top_label_desc = f"Top {top_x}%" if is_percentage_top_x else f"Top {top_x}"
-
-    ax_overall.set_ylabel("Avg Path Length (Hops)")
-    ax_overall.set_title(f"1. Overall AS Path Length Over Time (Target ASN: {asn}, Scope: {rrc_tag})")
-    ax_overall.grid(True, linestyle="--", alpha=0.5)
-    ax_overall.legend(loc="upper right")
-
-    ax_vpp.set_ylabel("Avg Path Length (Hops)")
-    ax_vpp.set_title("2. AS Path Length for VPPs vs. Non-VPPs Over Time")
-    ax_vpp.grid(True, linestyle="--", alpha=0.5)
-    ax_vpp.legend(loc="upper right")
-
-    ax_topx.set_ylabel("Avg Path Length (Hops)")
-    ax_topx.set_title(f"3. AS Path Length for {top_label_desc} Hegemony Transits Over Time")
-    ax_topx.set_xlabel("Date")
-    ax_topx.tick_params(axis="x", rotation=45)
-    ax_topx.grid(True, linestyle="--", alpha=0.5)
-    ax_topx.legend(loc="upper right")
-
-    plt.tight_layout()
-    plt.show()
+    if not processed_data:
+        print("[WARNING] No data available to plot.")
+        return
 
     ip_tag = "both" if len(ip_versions) > 1 else ip_versions[0]
     top_tag = f"top{int(top_x)}pct" if is_percentage_top_x else f"top{top_x}"
-    save_plot(fig=fig, title=f"path_length_hegemony_{asn}_{rrc_tag.lower()}_{ip_tag}_{top_tag}.png")
+    top_label_desc = f"Top {top_x}%" if is_percentage_top_x else f"Top {top_x}"
+
+    # ==========================================
+    # FIGURE 1: Overall Path Length Over Time
+    # ==========================================
+    fig1, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        ax1.plot(data["dates"], data["overall"], marker=mk, linestyle=ls, linewidth=2.5, label=f"Overall Path Length{lbl_suffix}")
+
+    ax1.set_ylabel("Avg Path Length (Hops)")
+    ax1.set_xlabel("Date")
+    ax1.set_title(f"Overall AS Path Length Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax1.tick_params(axis="x", rotation=45)
+    ax1.grid(True, linestyle="--", alpha=0.5)
+    ax1.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig1, title=f"path_length_overall_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 2: VPP vs. Non-VPP Path Length
+    # ==========================================
+    fig2, ax2 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        ax2.plot(data["dates"], data["vpp"], marker="o" if ip_ver == "v4" else "^", linestyle=ls, linewidth=2.5, color="tab:blue", label=f"VPP Path Length{lbl_suffix}")
+        ax2.plot(data["dates"], data["non_vpp"], marker="s" if ip_ver == "v4" else "D", linestyle=ls, linewidth=2.5, color="tab:orange", label=f"Non-VPP Path Length{lbl_suffix}")
+
+    ax2.set_ylabel("Avg Path Length (Hops)")
+    ax2.set_xlabel("Date")
+    ax2.set_title(f"AS Path Length: VPPs vs. Non-VPPs Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax2.tick_params(axis="x", rotation=45)
+    ax2.grid(True, linestyle="--", alpha=0.5)
+    ax2.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 3: Delta (VPP Path Length - Non-VPP Path Length)
+    # ==========================================
+    fig3, ax3 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        color = "tab:purple" if ip_ver == "v4" else "tab:red"
+        ax3.plot(data["dates"], data["delta"], marker=mk, linestyle=ls, linewidth=2.5, color=color, label=f"VPP Extra Path Length{lbl_suffix}")
+
+    ax3.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
+    ax3.set_ylabel("Difference in Avg Path Length (Hops)")
+    ax3.set_xlabel("Date")
+    ax3.set_title(f"How Much Higher is VPP Path Length Than Non-VPP? (VPP - Non-VPP)\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax3.tick_params(axis="x", rotation=45)
+    ax3.grid(True, linestyle="--", alpha=0.5)
+    ax3.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig3, title=f"path_length_vpp_delta_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+
+    # ==========================================
+    # FIGURE 4: Top X Hegemony Path Length
+    # ==========================================
+    fig4, ax4 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    for ip_ver, data in processed_data.items():
+        ls = "-" if ip_ver == "v4" else "--"
+        mk = "o" if ip_ver == "v4" else "^"
+        lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+        ax4.plot(data["dates"], data["topx"], marker=mk, linestyle=ls, linewidth=2.5, color="tab:green", label=f"{top_label_desc} Hegemony Path Length{lbl_suffix}")
+
+    ax4.set_ylabel("Avg Path Length (Hops)")
+    ax4.set_xlabel("Date")
+    ax4.set_title(f"AS Path Length for {top_label_desc} Hegemony Transits Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax4.tick_params(axis="x", rotation=45)
+    ax4.grid(True, linestyle="--", alpha=0.5)
+    ax4.legend(loc="upper right")
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig4, title=f"path_length_hegemony_{top_tag}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
 
 if __name__ == "__main__":
@@ -327,11 +389,8 @@ if __name__ == "__main__":
 
     asn = 15169
     alpha = 0.34
-    
-    # Define available RRCs for GLOBAL evaluation
-    all_rrcs = ["rrc00", "rrc01", "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc10"]
+    all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
-    # Interactive setup
     mode = input("Run mode ('global' or 'single') [default 'global']: ").strip().lower() or "global"
     ip_version = input("Enter IP version ('v4', 'v6', or 'both') [default 'both']: ").strip() or "both"
     top_x_input = input("Enter Top X hegemony cut-off (e.g. '5' for Top 5, '10%' for Top 10%) [default '5']: ").strip() or "5"
