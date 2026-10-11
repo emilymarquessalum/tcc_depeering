@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
@@ -261,92 +261,60 @@ def analyze_global_hegemony_over_time(
     plt.show()
     save_plot(fig=fig, title=f"global_hegemony_over_time_{asn}_{ip_version}.png")
 
+    
+def _parse_ip_versions(
+    ip_version: Union[str, List[str], Tuple[str, ...]],
+    show_both_ip_versions: bool = False,
+) -> List[str]:
+    """Parses and normalizes input IP version specifications into a list of version strings ('v4', 'v6')."""
+    if show_both_ip_versions or ip_version == "both":
+        return ["v4", "v6"]
+    if isinstance(ip_version, (list, tuple, set)):
+        res = []
+        for v in ip_version:
+            clean_v = str(v).lower().replace("ip", "").strip()
+            if clean_v in ["v4", "v6"]:
+                res.append(clean_v)
+            elif clean_v in ["both", "v4_v6", "v4v6"]:
+                return ["v4", "v6"]
+        return res if res else ["v4"]
+    clean_v = str(ip_version).lower().replace("ip", "").strip()
+    if clean_v in ["both", "v4_v6", "v4v6"]:
+        return ["v4", "v6"]
+    if clean_v in ["v4", "v6"]:
+        return [clean_v]
+    return ["v4"]
 
 def analyze_global_vpp_hegemony_over_time(
     asn: int,
     alpha: float,
-    ip_version: str,
-    rrc_list: list[str],
+    ip_version: Union[str, List[str]] = "v4",
+    rrc_list: list[str] = None,
     start_date=None,
     month_interval: int = 6,
     use_strict_viewpoint_filtering: bool = True,
     use_free_viewpoint_filtering: bool = False,
     show_as_percentage: bool = True,
     text_scale: float = 1.0,
+    show_both_ip_versions: bool = False,
 ):
     """
     Computes global VPP vs Non-VPP hegemony over time across ALL transit ASes in the routing table.
+    Can compute and display either a single IP version ('v4' or 'v6') or both IP versions on the same plot.
+    
+    IP versions are differentiated by line style ('-' for IPv4, '--' for IPv6),
+    while VPP and Non-VPP are differentiated by color (blue for VPP, orange for Non-VPP).
     """
+    if rrc_list is None:
+        rrc_list = [
+            "rrc00", "rrc01", "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08",
+            "rrc09", "rrc10", "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16",
+            "rrc17", "rrc18", "rrc19", "rrc20", "rrc21", "rrc22"
+        ]
+
+    ip_versions = _parse_ip_versions(ip_version, show_both_ip_versions)
     clean_vpp_set = _get_clean_vpp_set()
 
-    all_available_dates = set()
-    for rrc in rrc_list:
-        dates = get_all_dates_available_for_asn_data(asn, rrc, ip_version, start_date=start_date)
-        all_available_dates.update(dates)
-
-    if not all_available_dates:
-        print("[ERROR] No global data available for the specified parameters.")
-        return
-
-    sorted_dates = sorted(list(all_available_dates))
-    available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
-    interval_dates = [available_dts[0].strftime("%Y%m%d")]
-    current_dt = available_dts[0]
-
-    while True:
-        ideal_target = current_dt + relativedelta(months=month_interval)
-        future_dts = [d for d in available_dts if d > current_dt]
-        if not future_dts:
-            break
-        closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
-        interval_dates.append(closest_dt.strftime("%Y%m%d"))
-        current_dt = closest_dt
-        if current_dt >= available_dts[-1]:
-            break
-
-    hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
-        asn,
-        ip_version,
-        interval_dates,
-        alpha,
-        rrc_list,
-        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
-        use_free_viewpoint_filtering=use_free_viewpoint_filtering,
-    )
-
-    if not valid_date_list:
-        print("[WARNING] No valid global snapshots available.")
-        return
-
-    hegemony_over_time_vpp_or_not_vpp: list[tuple[float, float]] = []
-
-    # Iterate over ALL ASes present in each date snapshot
-    for date in valid_date_list:
-        date_scores = hegemony_scores_dict.get(date, {})
-        tot = sum(date_scores.values())
-
-        if tot <= 0.0:
-            hegemony_over_time_vpp_or_not_vpp.append((0.0, 0.0))
-            continue
-
-        hegemony_vpp = 0.0
-        hegemony_not_vpp = 0.0
-
-        for raw_transit_asn, score in date_scores.items():
-            clean_transit_asn = str(raw_transit_asn).upper().replace("AS", "").strip()
-
-            if clean_transit_asn in clean_vpp_set:
-                hegemony_vpp += score
-            else:
-                hegemony_not_vpp += score
-
-        if show_as_percentage:
-            hegemony_vpp = (hegemony_vpp / tot) * 100.0
-            hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
-
-        hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
-
-    # Apply global default text scaling across all Matplotlib defaults (catches implicit elements)
     plt.rcParams.update({
         "font.size": 10 * text_scale,
         "axes.titlesize": 14 * text_scale,
@@ -358,33 +326,113 @@ def analyze_global_vpp_hegemony_over_time(
     })
 
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    has_data = False
 
-    ax.plot(
-        valid_date_list,
-        [h[0] for h in hegemony_over_time_vpp_or_not_vpp],
-        marker="o",
-        linewidth=2.5,
-        color="tab:blue",
-        label="Global VPP Hegemony (All ASes)",
-    )
+    for ip_ver in ip_versions:
+        all_available_dates = set()
+        for rrc in rrc_list:
+            dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+            all_available_dates.update(dates)
 
-    ax.plot(
-        valid_date_list,
-        [h[1] for h in hegemony_over_time_vpp_or_not_vpp],
-        marker="s",
-        linewidth=2.5,
-        color="tab:orange",
-        linestyle="--",
-        label="Global Non-VPP Hegemony (All ASes)",
-    )
+        if not all_available_dates:
+            print(f"[ERROR] No global data available for ASN {asn} ({ip_ver.upper()}).")
+            continue
+
+        sorted_dates = sorted(list(all_available_dates))
+        available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
+        interval_dates = [available_dts[0].strftime("%Y%m%d")]
+        current_dt = available_dts[0]
+
+        while True:
+            ideal_target = current_dt + relativedelta(months=month_interval)
+            future_dts = [d for d in available_dts if d > current_dt]
+            if not future_dts:
+                break
+            closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
+            interval_dates.append(closest_dt.strftime("%Y%m%d"))
+            current_dt = closest_dt
+            if current_dt >= available_dts[-1]:
+                break
+
+        hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
+            asn,
+            ip_ver,
+            interval_dates,
+            alpha,
+            rrc_list,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        )
+
+        if not valid_date_list:
+            print(f"[WARNING] No valid global snapshots available for IP version {ip_ver.upper()}.")
+            continue
+
+        hegemony_over_time_vpp_or_not_vpp: list[tuple[float, float]] = []
+
+        for date in valid_date_list:
+            date_scores = hegemony_scores_dict.get(date, {})
+            tot = sum(date_scores.values())
+
+            if tot <= 0.0:
+                hegemony_over_time_vpp_or_not_vpp.append((0.0, 0.0))
+                continue
+
+            hegemony_vpp = 0.0
+            hegemony_not_vpp = 0.0
+
+            for raw_transit_asn, score in date_scores.items():
+                clean_transit_asn = str(raw_transit_asn).upper().replace("AS", "").strip()
+
+                if clean_transit_asn in clean_vpp_set:
+                    hegemony_vpp += score
+                else:
+                    hegemony_not_vpp += score
+
+            if show_as_percentage:
+                hegemony_vpp = (hegemony_vpp / tot) * 100.0
+                hegemony_not_vpp = (hegemony_not_vpp / tot) * 100.0
+
+            hegemony_over_time_vpp_or_not_vpp.append((hegemony_vpp, hegemony_not_vpp))
+
+        formatted_dates = format_labels_if_they_are_dates(valid_date_list)
+        linestyle = "-" if ip_ver == "v4" else "--"
+        label_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+
+        ax.plot(
+            formatted_dates,
+            [h[0] for h in hegemony_over_time_vpp_or_not_vpp],
+            marker="o" if ip_ver == "v4" else "^",
+            linewidth=2.5,
+            color="tab:blue",
+            linestyle=linestyle,
+            label=f"Global VPP Hegemony (All ASes){label_suffix}",
+        )
+
+        ax.plot(
+            formatted_dates,
+            [h[1] for h in hegemony_over_time_vpp_or_not_vpp],
+            marker="s" if ip_ver == "v4" else "D",
+            linewidth=2.5,
+            color="tab:orange",
+            linestyle=linestyle,
+            label=f"Global Non-VPP Hegemony (All ASes){label_suffix}",
+        )
+        has_data = True
+
+    if not has_data:
+        print("[WARNING] No data plotted.")
+        plt.close(fig)
+        return
 
     ax.set_xlabel("Date", fontsize=12 * text_scale)
     y_label = "Hegemony Percentage (%)" if show_as_percentage else "Hegemony"
     ax.set_ylabel(y_label, fontsize=12 * text_scale)
+
+    ip_desc = "IPv4 & IPv6" if len(ip_versions) > 1 else ip_versions[0].upper()
     ax.set_title(
-        f"{asn_}’s {ip_version.title()} Global Hegemony - VPP vs Non-VPP (Top 5)"
-        f"GLOBAL VPP vs. Non-VPP Hegemony"
-        f"(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
+        f"GLOBAL VPP vs. Non-VPP Hegemony (All ASes)\n"
+        f"(Target ASN: {asn}, IP: {ip_desc}, α={alpha})",
         fontsize=14 * text_scale,
     )
     ax.tick_params(axis="both", labelsize=10 * text_scale)
@@ -401,7 +449,8 @@ def analyze_global_vpp_hegemony_over_time(
     plt.tight_layout()
     plt.show()
 
-    save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{ip_version}.png")
+    save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
+    save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{save_suffix}.png")
 
 
 def analyze_global_vpp_hegemony_over_time_top_ases(
@@ -586,7 +635,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
 if __name__ == "__main__":
     asn = 15169
     alpha = 0.34
-    ip_version = "v6"
+    ip_version = "both"
     text_scale = 1.0  # Increase to scale font size of EVERYTHING globally (e.g., 1.5 = 150% size)
 
     start_date = None
