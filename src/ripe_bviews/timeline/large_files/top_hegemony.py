@@ -1,24 +1,46 @@
 import math
+import os
 from pathlib import Path
 import sys
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
 
 from matplotlib import pyplot as plt
-from pyparsing.common import Union
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_all_dates_available_for_asn_data,
     get_hegemony_scores,
     get_interval_dates_for_asn_data,
 )
 from src.ripe_bviews.timeline.large_files.global_hegemony import (
-    _parse_ip_versions,
     get_global_hegemony_scores,
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+
+
+def _parse_ip_versions(
+    ip_version: Union[str, List[str], Tuple[str, ...]],
+    show_both_ip_versions: bool = False,
+) -> List[str]:
+    """Parses and normalizes input IP version specifications into a list of version strings ('v4', 'v6')."""
+    if show_both_ip_versions or ip_version == "both":
+        return ["v4", "v6"]
+    if isinstance(ip_version, (list, tuple, set)):
+        res = []
+        for v in ip_version:
+            clean_v = str(v).lower().replace("ip", "").strip()
+            if clean_v in ["v4", "v6"]:
+                res.append(clean_v)
+            elif clean_v in ["both", "v4_v6", "v4v6"]:
+                return ["v4", "v6"]
+        return res if res else ["v4"]
+    clean_v = str(ip_version).lower().replace("ip", "").strip()
+    if clean_v in ["both", "v4_v6", "v4v6"]:
+        return ["v4", "v6"]
+    if clean_v in ["v4", "v6"]:
+        return [clean_v]
+    return ["v4"]
 
 
 def analyze_top10_percent_vs_others_hegemony_over_time(
@@ -30,7 +52,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     rrc_used: Optional[str] = None,
     rrc_list: Optional[list[str]] = None,
     use_strict_viewpoint_filtering: bool = False,
-    use_free_viewpoint_filtering: bool = False,
+    use_free_viewpoint_filtering: bool = True,
     use_best_next_days: int = 0,
     text_scale: float = 1.0,
     show_both_ip_versions: bool = False,
@@ -57,14 +79,13 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     has_data = False
 
     for ip_ver in ip_versions:
-        # Resolve date list per IP version
+        # Resolve date list per IP version dynamically
         if date_list is None:
             if rrc_list:
                 all_available_dates = set()
                 for rrc in rrc_list:
-                    all_available_dates.update(
-                        get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
-                    )
+                    dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+                    all_available_dates.update(dates)
                 current_date_list = sorted(list(all_available_dates))
             elif rrc_used:
                 current_date_list = get_interval_dates_for_asn_data(
@@ -79,7 +100,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             print(f"[WARNING] No dates available for ASN {asn} ({ip_ver.upper()}).")
             continue
 
-        # Fetch scores depending on mode
+        # Fetch scores
         if rrc_list:
             print(
                 f"[ANALYSIS] Computing Global Top {percentage}% vs Others ({ip_ver.upper()}) across {len(rrc_list)} RRCs..."
@@ -205,44 +226,38 @@ if __name__ == "__main__":
     asn = 15169
     alpha = 0.34
     ip_version = "both"
+    text_scale = 1.0
 
-    # Ask for user input once at entry point
     user_input = input("Enter the percentage of top ASNs to consider (default 20): ").strip()
     percentage = float(user_input) if user_input else 20.0
 
-    all_rrcs = [r["rrc"] for r in get_all_rrcs()]
-
-    # --- 1. RUN SINGLE RRC ANALYSIS ---
+    # Target specific RRCs that contain downloaded dataset files
     rrc_target = "rrc03"
-    dates_rrc = get_interval_dates_for_asn_data(
-        asn, rrc_target, ip_version, month_interval=3
-    )
+    available_rrcs = ["rrc03"]  # Add other populated RRCs as needed (e.g. "rrc01", "rrc05")
 
+    # --- 1. SINGLE RRC ANALYSIS ---
+    print(f"\n[1/2] Running Single RRC Top {percentage}% Analysis for {rrc_target}...")
     analyze_top10_percent_vs_others_hegemony_over_time(
         asn=asn,
         alpha=alpha,
         ip_version=ip_version,
-        date_list=dates_rrc,
         percentage=percentage,
         rrc_used=rrc_target,
-        use_strict_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=False,
+        use_free_viewpoint_filtering=True,
+        month_interval=3,
+        text_scale=text_scale,
     )
 
-    # --- 2. RUN GLOBAL ANALYSIS (ALL RRCs COMBINED) ---
-    all_available_dates = set()
-    for rrc in all_rrcs:
-        all_available_dates.update(
-            get_all_dates_available_for_asn_data(asn, rrc, ip_version)
-        )
-
-    sorted_dates = sorted(list(all_available_dates))
-
+    # --- 2. GLOBAL ANALYSIS ---
+    print(f"\n[2/2] Running Global Top {percentage}% Analysis...")
     analyze_top10_percent_vs_others_hegemony_over_time(
         asn=asn,
         alpha=alpha,
         ip_version=ip_version,
-        date_list=sorted_dates,
         percentage=percentage,
-        rrc_list=all_rrcs,
-        use_strict_viewpoint_filtering=True,
+        rrc_list=available_rrcs,
+        use_strict_viewpoint_filtering=False,
+        use_free_viewpoint_filtering=True,
+        text_scale=text_scale,
     )
