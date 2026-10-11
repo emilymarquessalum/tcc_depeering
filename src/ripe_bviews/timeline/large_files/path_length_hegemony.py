@@ -9,12 +9,13 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 
 from matplotlib import pyplot as plt
 
-from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 
 # Preserving repository structure / imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
+
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     LargeBViewParser,
