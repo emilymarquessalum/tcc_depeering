@@ -15,7 +15,9 @@ with open(config_path, 'r') as f:
 # Extract configuration values
 focused_date = config.get("focused_date")
 loading_method = config.get("loading_method")
-start_folder = ROOT_DIR + "caida-peeringdb/"   
+start_folder = os.path.join(ROOT_DIR, "caida-peeringdb")   
+cache_dir = os.path.join(ROOT_DIR, "cache")
+
 
 def load_all_files(timeline_config):
     """Load all PeeringDB files based on configuration."""
@@ -105,9 +107,36 @@ def load_all_files(timeline_config):
     return all_files, dates 
 
 
-def load_all_data(config):
+def generate_cache_filename(timeline_config):
+    """Generate a unique cache filename based on config conditions."""
+    if loading_method == "all":
+        skips = timeline_config.get("date_skips", 3)
+        focused = focused_date if focused_date else "none"
+        name = f"cache_method_all_skips_{skips}_focused_{focused}.json"
+    else:
+        start_date = timeline_config.get("start_date", "20240101").replace("-", "")
+        end_date = timeline_config.get("end_date", "20240401").replace("-", "")
+        m_interval = timeline_config.get("intervals_in_months", 0)
+        d_interval = timeline_config.get("intervals_in_days", 0)
+        name = f"cache_range_{start_date}_to_{end_date}_m{m_interval}_d{d_interval}.json"
+    
+    return os.path.join(cache_dir, name)
 
-    all_files, _ = load_all_files(config)
+
+def load_all_data(timeline_config):
+    """Load all data, leveraging a cached JSON file if available."""
+    os.makedirs(cache_dir, exist_ok=True)
+    cache_path = generate_cache_filename(timeline_config)
+
+    # Check if cache file already exists
+    if os.path.exists(cache_path):
+        print(f"Loading cached data from: {cache_path}")
+        with open(cache_path, "r") as f:
+            cached_payload = json.load(f)
+        return cached_payload["all_data"], cached_payload["dates"]
+
+    # Otherwise load data from raw dumps
+    all_files, _ = load_all_files(timeline_config)
 
     all_data = []
     dates = []
@@ -124,5 +153,13 @@ def load_all_data(config):
         data = get_data(file)
         all_data.append(data)
 
+    # Save to cache file for subsequent executions
+    cache_payload = {
+        "dates": dates,
+        "all_data": all_data
+    }
+    with open(cache_path, "w") as f:
+        json.dump(cache_payload, f)
+    print(f"Saved dataset cache to: {cache_path}")
+
     return all_data, dates
- 
