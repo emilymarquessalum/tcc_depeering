@@ -265,7 +265,7 @@ def analyze_global_hegemony_over_time(
         ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12 * text_scale)
         ax1.set_title(
             f"GLOBAL Hegemony Over Time (All RRCs Combined)\n(Target ASN: {asn}, IP: {ip_ver.upper()}, α={alpha})",
-            fontsize=14 * text_scale,
+            fontsize=18 * text_scale,
         )
         ax1.tick_params(axis="both", labelsize=10 * text_scale)
         ax1.tick_params(axis="x", rotation=45)
@@ -458,7 +458,7 @@ if __name__ == "__main__":
     asn = 15169
     alpha = 0.34
     ip_version = "both"
-    text_scale = 1.0
+    text_scale = 1.25
     start_date = None
 
     all_rrcs = ["rrc03"]  # Add all available/populated RRCs here
