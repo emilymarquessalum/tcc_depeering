@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import math
 import os
 from pathlib import Path
@@ -38,10 +39,15 @@ def extract_path_lengths_and_hegemony(
     target_asn: int,
     alpha: float = 0.34,
     ip_version: str = "v4",
+    considers_duplicated_paths: bool = False,
 ) -> Tuple[Dict[str, List[int]], Dict[int, float]]:
     """
     Computes AS hegemony scores and collects all BGP AS path lengths mapped per transit ASN,
     with AS path prepending stripped out.
+    
+    Args:
+        considers_duplicated_paths: If True, counts every recorded AS path instance (including duplicates across peer views).
+                                    If False (default), filters out duplicate raw AS paths before processing.
     
     Returns:
         - transit_path_lengths: Dict[transit_asn_str, List[path_length]]
@@ -57,14 +63,18 @@ def extract_path_lengths_and_hegemony(
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    query = "SELECT as_path FROM bgp_mappings"
+    # Deduplicate raw AS paths at the query level if duplicated paths are disabled
+    select_clause = "SELECT as_path FROM bgp_mappings" if considers_duplicated_paths else "SELECT DISTINCT as_path FROM bgp_mappings"
+    
     if target_asn is not None:
-        query += " WHERE reachable_as = ?"
+        query = f"{select_clause} WHERE reachable_as = ?"
         cursor.execute(query, (target_asn,))
     else:
+        query = select_clause
         cursor.execute(query)
 
     transit_path_lengths = defaultdict(list)
+    seen_paths: Set[str] = set()
 
     while True:
         rows = cursor.fetchmany(50_000)
@@ -74,6 +84,12 @@ def extract_path_lengths_and_hegemony(
         for (path_str,) in rows:
             if not path_str:
                 continue
+
+            if not considers_duplicated_paths:
+                if path_str in seen_paths:
+                    continue
+                seen_paths.add(path_str)
+
             try:
                 raw_as_path = [int(x) for x in path_str.split(",") if x]
             except ValueError:
@@ -107,6 +123,7 @@ def get_db_for_date(
     rrc_used: Union[str, List[str]],
     date: str,
     ip_version: str,
+    considers_duplicated_paths: bool = False,
 ) -> str:
     """
     Ensures SQLite staging DB exists for the given ASN, Date, and IP Version.
@@ -142,7 +159,15 @@ def get_db_for_date(
                 rrc_parser.parse_to_disk(raw_path)
 
             global_cursor.execute("ATTACH DATABASE ? AS source_db;", (rrc_db_path,))
-            global_cursor.execute("INSERT INTO bgp_mappings SELECT * FROM source_db.bgp_mappings;")
+            
+            # Deduplicate inserted paths across multi-RRC merge when considers_duplicated_paths is False
+            if considers_duplicated_paths:
+                global_cursor.execute("INSERT INTO bgp_mappings SELECT * FROM source_db.bgp_mappings;")
+            else:
+                global_cursor.execute(
+                    "INSERT OR IGNORE INTO bgp_mappings SELECT * FROM source_db.bgp_mappings;"
+                )
+                
             global_conn.commit()
             global_cursor.execute("DETACH DATABASE source_db;")
 
@@ -178,6 +203,7 @@ def analyze_path_length_hegemony(
     top_x: Optional[Union[int, float]] = 5,
     is_percentage_top_x: bool = False,
     text_scale: float = 1.0,
+    considers_duplicated_paths: bool = False,
 ):
     """
     Executes Path Length Analysis across 8 separate figures:
@@ -213,8 +239,8 @@ def analyze_path_length_hegemony(
         if is_global:
             all_available_dates = set()
             for rrc in rrc_list:
-                dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
-                all_available_dates.update(dates)
+                d_avail = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+                all_available_dates.update(d_avail)
 
             if not all_available_dates:
                 print(f"[WARNING] No dates available across RRCs for ASN {asn} ({ip_ver.upper()}).")
@@ -222,7 +248,7 @@ def analyze_path_length_hegemony(
 
             sorted_dates = sorted(list(all_available_dates))
             available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
-            dates = [available_dts[0].strftime("%Y%m%d")]
+            interval_dates = [available_dts[0].strftime("%Y%m%d")]
             current_dt = available_dts[0]
 
             while True:
@@ -231,10 +257,15 @@ def analyze_path_length_hegemony(
                     break
                 ideal_target = current_dt + relativedelta(months=month_interval)
                 closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
-                dates.append(closest_dt.strftime("%Y%m%d"))
+                
+                if closest_dt <= current_dt:
+                    break
+
+                interval_dates.append(closest_dt.strftime("%Y%m%d"))
                 current_dt = closest_dt
                 if current_dt >= available_dts[-1]:
                     break
+            dates = interval_dates
         else:
             dates = get_interval_dates_for_asn_data(
                 asn, rrc_used, ip_ver, month_interval=month_interval, start_date=start_date
@@ -266,9 +297,15 @@ def analyze_path_length_hegemony(
 
         for d in dates:
             try:
-                db_path = get_db_for_date(asn, active_rrc_target, d, ip_ver)
+                db_path = get_db_for_date(
+                    asn, active_rrc_target, d, ip_ver, considers_duplicated_paths=considers_duplicated_paths
+                )
                 transit_path_lengths, hegemony_scores = extract_path_lengths_and_hegemony(
-                    db_path=db_path, target_asn=asn, alpha=alpha, ip_version=ip_ver
+                    db_path=db_path,
+                    target_asn=asn,
+                    alpha=alpha,
+                    ip_version=ip_ver,
+                    considers_duplicated_paths=considers_duplicated_paths,
                 )
             except Exception as e:
                 print(f"[ERROR] Could not process date {d} for {ip_ver.upper()}: {e}")
@@ -296,29 +333,32 @@ def analyze_path_length_hegemony(
             avg_path_len_vpp_delta.append(avg_vpp - avg_non_vpp)
 
             # Q25 Percentile Calculations & Delta
-            vpp_q25 = float(np.percentile(vpp_lengths, 25)) if vpp_lengths else 0.0
-            non_vpp_q25 = float(np.percentile(non_vpp_lengths, 25)) if non_vpp_lengths else 0.0
+            vpp_q25 = float(np.percentile(vpp_lengths, 25)) if len(vpp_lengths) > 0 else 0.0
+            non_vpp_q25 = float(np.percentile(non_vpp_lengths, 25)) if len(non_vpp_lengths) > 0 else 0.0
             q25_path_len_vpp.append(vpp_q25)
             q25_path_len_non_vpp.append(non_vpp_q25)
             q25_path_len_vpp_delta.append(vpp_q25 - non_vpp_q25)
 
             # Q75 Percentile Calculations & Delta
-            vpp_q75 = float(np.percentile(vpp_lengths, 75)) if vpp_lengths else 0.0
-            non_vpp_q75 = float(np.percentile(non_vpp_lengths, 75)) if non_vpp_lengths else 0.0
+            vpp_q75 = float(np.percentile(vpp_lengths, 75)) if len(vpp_lengths) > 0 else 0.0
+            non_vpp_q75 = float(np.percentile(non_vpp_lengths, 75)) if len(non_vpp_lengths) > 0 else 0.0
             q75_path_len_vpp.append(vpp_q75)
             q75_path_len_non_vpp.append(non_vpp_q75)
             q75_path_len_vpp_delta.append(vpp_q75 - non_vpp_q75)
 
             # Top X Hegemony Path Length
             sorted_hegemony = sorted(hegemony_scores.items(), key=lambda x: x[1], reverse=True)
-            total_transits = len(sorted_hegemony)
+            
+            # Filter non-zero hegemony transits for percentile cutoff
+            non_zero_hegemony = [item for item in sorted_hegemony if item[1] > 0.0]
+            total_transits = len(non_zero_hegemony) if non_zero_hegemony else len(sorted_hegemony)
 
             if is_percentage_top_x and top_x is not None:
                 cutoff_count = max(1, math.ceil(total_transits * (top_x / 100.0)))
             else:
                 cutoff_count = int(top_x) if top_x else 5
 
-            top_x_asns = {str(item[0]) for item in sorted_hegemony[:cutoff_count]}
+            top_x_asns = {str(item[0]).replace("AS", "").strip() for item in sorted_hegemony[:cutoff_count]}
             top_x_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in top_x_asns for l in lens]
 
             avg_topx = sum(top_x_lengths) / len(top_x_lengths) if top_x_lengths else 0.0
@@ -515,8 +555,6 @@ def analyze_path_length_hegemony(
 
 
 if __name__ == "__main__":
-    from dateutil.relativedelta import relativedelta
-
     asn = 15169
     alpha = 0.34
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
@@ -524,6 +562,9 @@ if __name__ == "__main__":
     mode = input("Run mode ('global' or 'single') [default 'global']: ").strip().lower() or "global"
     ip_version = input("Enter IP version ('v4', 'v6', or 'both') [default 'both']: ").strip() or "both"
     top_x_input = input("Enter Top X hegemony cut-off (e.g. '5' for Top 5, '10%' for Top 10%) [default '5']: ").strip() or "5"
+    dup_input = input("Consider duplicated paths? ('y/n') [default 'n']: ").strip().lower() or "n"
+
+    considers_duplicated_paths = dup_input in ["y", "yes", "true", "1"]
 
     if top_x_input.endswith("%"):
         is_percentage_top_x = True
@@ -543,6 +584,7 @@ if __name__ == "__main__":
             is_percentage_top_x=is_percentage_top_x,
             month_interval=6,
             text_scale=1.0,
+            considers_duplicated_paths=considers_duplicated_paths,
         )
     else:
         rrc_used = input("Enter single RRC to analyze (e.g. 'rrc03') [default 'rrc03']: ").strip() or "rrc03"
@@ -556,4 +598,5 @@ if __name__ == "__main__":
             is_percentage_top_x=is_percentage_top_x,
             month_interval=6,
             text_scale=1.0,
+            considers_duplicated_paths=considers_duplicated_paths,
         )
