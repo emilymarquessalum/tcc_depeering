@@ -99,7 +99,7 @@ def run_debug_pipeline(asn: int = 15169, rrc_used: str = "rrc03", ip_version: st
         print(f" [FAIL] Exception during Hegemony calculation: {e}")
         return
 
-    print("\n=" * 60)
+    #print("\n=" * 60)
     print(" DEBUGGER FINISHED: ALL PIPELINE STAGES FUNCTIONAL")
     print("=" * 60)
 
