@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore', category=UserWarning, message='.*FigureCanvasA
 # Track graphs rendered in this session
 _session_rendered_graphs = []
 
-DEFAULT_FIGSIZE = (12,6)
+DEFAULT_FIGSIZE = (12,8) # (12,6)
 
 def clean_title_name(title):
     return title.replace(" ", "_").replace("(", "-").replace(":", "dotdot").replace(")", "-").lower().replace(",", "_and_").replace("//", "/")
