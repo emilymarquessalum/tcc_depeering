@@ -438,7 +438,7 @@ def analyze_path_length_hegemony(
 
     ax2.set_ylabel(f"{y_label_prefix} Path Length (Hops)")
     ax2.set_xlabel("Date")
-    ax2.set_title(f"AS Path Length ({stat_type}): VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag})")
+    ax2.set_title(f"AS Path Length ({stat_type}): VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag}, {top_label_desc})")
     ax2.tick_params(axis="x", rotation=45)
     ax2.grid(True, linestyle="--", alpha=0.5)
     ax2.legend(loc="upper right")
