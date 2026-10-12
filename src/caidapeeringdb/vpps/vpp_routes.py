@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from src.ripe_bviews.read_bgpdump import BGPDumpSnapshotStats
 from src.caidapeeringdb.caidapeeringdb_load import get_all_files, get_data 
-from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_non_ixp_vpps, load_vpp_data
+from src.caidapeeringdb.vpps.main import build_vpp_asn_map#, get_non_ixp_vpps, load_vpp_data
 
 
 def analyze_vpp_routes_and_prefixes(all_required_data, use_median=False):
