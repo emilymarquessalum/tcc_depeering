@@ -447,7 +447,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         title_fontsize=11 * text_scale,
     ) 
 
-    ax.set_ylim(bottom=0, top=18 if show_as_percentage else None)
+    ax.set_ylim(bottom=0, top=20 if show_as_percentage else None)
 
     plt.tight_layout()
     plt.show()
