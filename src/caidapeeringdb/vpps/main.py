@@ -1,4 +1,5 @@
 import json
+import statistics
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -7,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from src.utils.graphs import plot_list_as_line_plot
- 
+
 from src.caidapeeringdb.caidapeeringdb_load import (
     get_all_data,
     get_all_files,
@@ -90,6 +91,8 @@ def get_non_ixp_vpps(vpps_list, data):
     print(f"Valid VPPs remaining (NOT IXPs): {len(vpps_non_ixp)}")
 
     return vpps_non_ixp
+
+
 def build_vpp_asn_map(vpps_non_ixp, data):
     """
     Builds a dictionary mapping ASN (int) -> VPP object.
@@ -178,6 +181,7 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
         title=f"Percentage of Unique VPPs with at Least One IXP Connection Over Time (Total VPPs: {total_vpps_count})",
         xlabel="Date",
         ylabel="Percentage of Connected VPPs (%)",
+        max_labels=12
     )
 
     return dates, connected_vpps_pct_over_time
@@ -226,6 +230,7 @@ def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
         ylabel="% of VPPs entering an IXP",
         positive_color="green",
         negative_color="green",
+        max_labels=12
     )
     plot_list_as_line_plot(
         de_peerings_pct,
@@ -236,9 +241,11 @@ def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
         ylabel="% of VPPs leaving all IXPs",
         positive_color="red",
         negative_color="red",
+        max_labels=12
     )
 
     return dates, new_peerings_pct, de_peerings_pct
+
 
 def analyze_vpp_ixp_participants(data, vpps_non_ixp):
     """
@@ -291,7 +298,78 @@ def analyze_vpp_ixp_participants(data, vpps_non_ixp):
     return vpp_participants, ixp_vpp_counts
 
 
- 
+def plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, convert_to_gbps=True, use_median=False):
+    """
+    Plots the average/median speed of VPP IXP connections over time across PeeringDB snapshots.
+    
+    PeeringDB's 'speed' field in netixlan is in Mbps.
+    Setting convert_to_gbps=True divides the metric by 1000 for better readability.
+    """
+    if not all_files:
+        raise ValueError("At least one PeeringDB snapshot is required.")
+
+    # Build ASN map using the latest snapshot
+    latest_snapshot = get_data(all_files[-1])
+    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, latest_snapshot)
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    dates = get_dates_from_files(all_files)
+    all_snapshots = get_all_data(all_files)
+
+    speeds_over_time = []
+
+    for snapshot in all_snapshots:
+        speeds = []
+        netixlan_entries = snapshot.get("netixlan", {}).get("data", [])
+
+        for conn in netixlan_entries:
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            # Check if connection belongs to a non-IXP VPP ASN
+            if conn_asn in target_vpp_asns:
+                speed = conn.get("speed")
+                # Ensure speed is a valid positive integer
+                if speed is not None:
+                    try:
+                        speed_val = int(speed)
+                        if speed_val > 0:
+                            speeds.append(speed_val)
+                    except (ValueError, TypeError):
+                        pass
+
+        # Calculate average or median speed for current snapshot
+        if speeds:
+            val = statistics.median(speeds) if use_median else (sum(speeds) / len(speeds))
+            if convert_to_gbps:
+                val = val / 1000.0  # Convert Mbps to Gbps
+        else:
+            val = 0.0
+
+        speeds_over_time.append(round(val, 2))
+
+    labels = [date.replace("_", "-") for date in dates]
+    unit = "Gbps" if convert_to_gbps else "Mbps"
+    stat_type = "Median" if use_median else "Average"
+
+    plot_list_as_line_plot(
+        speeds_over_time,
+        y=labels,
+        subfolder="vpps",
+        title=f"{stat_type} VPP Connection Speed at IXPs Over Time ({unit})",
+        xlabel="Date",
+        ylabel=f"{stat_type} Speed ({unit})",
+        max_labels=7
+    )
+
+    return dates, speeds_over_time
+
 
 if __name__ == "__main__":
     all_files = get_all_files()
@@ -306,3 +384,5 @@ if __name__ == "__main__":
     # vpp_participants, ixp_vpp_counts = analyze_vpp_ixp_participants(data, vpps_non_ixp)
 
     plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp)
+
+    plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, use_median=True)

@@ -5,6 +5,7 @@ import math
 import os
 from pathlib import Path
 import sqlite3
+import statistics
 import sys
 from typing import Dict, List, Optional, Set, Tuple, Union
 
@@ -204,12 +205,13 @@ def analyze_path_length_hegemony(
     is_percentage_top_x: bool = False,
     text_scale: float = 1.0,
     considers_duplicated_paths: bool = False,
+    use_median: bool = False,
 ):
     """
     Executes Path Length Analysis across 8 separate figures:
       1. Overall Path Length over time
-      2. Mean Path Length: VPPs vs. Non-VPPs
-      3. Mean Path Length Delta (VPP - Non-VPP)
+      2. Central Path Length (Mean/Median): VPPs vs. Non-VPPs
+      3. Central Path Length Delta (VPP - Non-VPP)
       4. Q25 Path Length: VPPs vs. Non-VPPs
       5. Q25 Path Length Delta (VPP Q25 - Non-VPP Q25)
       6. Q75 Path Length: VPPs vs. Non-VPPs
@@ -276,12 +278,12 @@ def analyze_path_length_hegemony(
             continue
 
         valid_dates = []
-        avg_path_len_overall = []
+        overall_path_len = []
         
-        # Means
-        avg_path_len_vpp = []
-        avg_path_len_non_vpp = []
-        avg_path_len_vpp_delta = []
+        # Central tendency (Mean or Median)
+        vpp_central_path_len = []
+        non_vpp_central_path_len = []
+        central_path_len_vpp_delta = []
 
         # Q25 (25th Percentile)
         q25_path_len_vpp = []
@@ -293,7 +295,7 @@ def analyze_path_length_hegemony(
         q75_path_len_non_vpp = []
         q75_path_len_vpp_delta = []
 
-        avg_path_len_topx = []
+        topx_central_path_len = []
 
         for d in dates:
             try:
@@ -318,19 +320,30 @@ def analyze_path_length_hegemony(
 
             # Overall
             all_lengths = [l for lens in transit_path_lengths.values() for l in lens]
-            avg_overall = sum(all_lengths) / len(all_lengths) if all_lengths else 0.0
-            avg_path_len_overall.append(avg_overall)
+            if all_lengths:
+                val_overall = float(statistics.median(all_lengths)) if use_median else (sum(all_lengths) / len(all_lengths))
+            else:
+                val_overall = 0.0
+            overall_path_len.append(val_overall)
 
             # VPP vs Non-VPP lengths collections
             vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in clean_vpp_set for l in lens]
             non_vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str not in clean_vpp_set for l in lens]
 
-            # Means & Delta
-            avg_vpp = sum(vpp_lengths) / len(vpp_lengths) if vpp_lengths else 0.0
-            avg_non_vpp = sum(non_vpp_lengths) / len(non_vpp_lengths) if non_vpp_lengths else 0.0
-            avg_path_len_vpp.append(avg_vpp)
-            avg_path_len_non_vpp.append(avg_non_vpp)
-            avg_path_len_vpp_delta.append(avg_vpp - avg_non_vpp)
+            # Central Tendency (Mean or Median) & Delta
+            if vpp_lengths:
+                val_vpp = float(statistics.median(vpp_lengths)) if use_median else (sum(vpp_lengths) / len(vpp_lengths))
+            else:
+                val_vpp = 0.0
+
+            if non_vpp_lengths:
+                val_non_vpp = float(statistics.median(non_vpp_lengths)) if use_median else (sum(non_vpp_lengths) / len(non_vpp_lengths))
+            else:
+                val_non_vpp = 0.0
+
+            vpp_central_path_len.append(val_vpp)
+            non_vpp_central_path_len.append(val_non_vpp)
+            central_path_len_vpp_delta.append(val_vpp - val_non_vpp)
 
             # Q25 Percentile Calculations & Delta
             vpp_q25 = float(np.percentile(vpp_lengths, 25)) if len(vpp_lengths) > 0 else 0.0
@@ -361,22 +374,25 @@ def analyze_path_length_hegemony(
             top_x_asns = {str(item[0]).replace("AS", "").strip() for item in sorted_hegemony[:cutoff_count]}
             top_x_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in top_x_asns for l in lens]
 
-            avg_topx = sum(top_x_lengths) / len(top_x_lengths) if top_x_lengths else 0.0
-            avg_path_len_topx.append(avg_topx)
+            if top_x_lengths:
+                val_topx = float(statistics.median(top_x_lengths)) if use_median else (sum(top_x_lengths) / len(top_x_lengths))
+            else:
+                val_topx = 0.0
+            topx_central_path_len.append(val_topx)
 
         processed_data[ip_ver] = {
             "dates": format_labels_if_they_are_dates(valid_dates),
-            "overall": avg_path_len_overall,
-            "vpp": avg_path_len_vpp,
-            "non_vpp": avg_path_len_non_vpp,
-            "delta": avg_path_len_vpp_delta,
+            "overall": overall_path_len,
+            "vpp": vpp_central_path_len,
+            "non_vpp": non_vpp_central_path_len,
+            "delta": central_path_len_vpp_delta,
             "vpp_q25": q25_path_len_vpp,
             "non_vpp_q25": q25_path_len_non_vpp,
             "q25_delta": q25_path_len_vpp_delta,
             "vpp_q75": q75_path_len_vpp,
             "non_vpp_q75": q75_path_len_non_vpp,
             "q75_delta": q75_path_len_vpp_delta,
-            "topx": avg_path_len_topx,
+            "topx": topx_central_path_len,
         }
 
     if not processed_data:
@@ -386,6 +402,9 @@ def analyze_path_length_hegemony(
     ip_tag = "both" if len(ip_versions) > 1 else ip_versions[0]
     top_tag = f"top{int(top_x)}pct" if is_percentage_top_x else f"top{top_x}"
     top_label_desc = f"Top {top_x}%" if is_percentage_top_x else f"Top {top_x}"
+    stat_type = "Median" if use_median else "Mean"
+    stat_suffix = "median" if use_median else "mean"
+    y_label_prefix = "Median" if use_median else "Avg"
 
     # ==========================================
     # FIGURE 1: Overall Path Length Over Time
@@ -397,18 +416,18 @@ def analyze_path_length_hegemony(
         lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
         ax1.plot(data["dates"], data["overall"], marker=mk, linestyle=ls, linewidth=2.5, label=f"Overall Path Length{lbl_suffix}")
 
-    ax1.set_ylabel("Avg Path Length (Hops)")
+    ax1.set_ylabel(f"{y_label_prefix} Path Length (Hops)")
     ax1.set_xlabel("Date")
-    ax1.set_title(f"AS Path Length \n(ASN: {asn}, {rrc_tag})")
+    ax1.set_title(f"AS Path Length ({stat_type})\n(ASN: {asn}, {rrc_tag})")
     ax1.tick_params(axis="x", rotation=45)
     ax1.grid(True, linestyle="--", alpha=0.5)
     ax1.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig1, title=f"path_length_overall_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig1, title=f"path_length_overall_{stat_suffix}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
-    # FIGURE 2: VPP vs. Non-VPP Path Length (Mean)
+    # FIGURE 2: VPP vs. Non-VPP Path Length
     # ==========================================
     fig2, ax2 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
@@ -417,18 +436,18 @@ def analyze_path_length_hegemony(
         ax2.plot(data["dates"], data["vpp"], marker="o" if ip_ver == "v4" else "^", linestyle=ls, linewidth=2.5, color="tab:blue", label=f"VPP Path Length{lbl_suffix}")
         ax2.plot(data["dates"], data["non_vpp"], marker="s" if ip_ver == "v4" else "D", linestyle=ls, linewidth=2.5, color="tab:orange", label=f"Non-VPP Path Length{lbl_suffix}")
 
-    ax2.set_ylabel("Avg Path Length (Hops)")
+    ax2.set_ylabel(f"{y_label_prefix} Path Length (Hops)")
     ax2.set_xlabel("Date")
-    ax2.set_title(f"AS Path Length (Mean): VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag})")
+    ax2.set_title(f"AS Path Length ({stat_type}): VPPs vs. Non-VPPs \n(AS{asn}, Scope: {rrc_tag})")
     ax2.tick_params(axis="x", rotation=45)
     ax2.grid(True, linestyle="--", alpha=0.5)
     ax2.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_mean_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{stat_suffix}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
-    # FIGURE 3: Mean Delta (VPP - Non-VPP)
+    # FIGURE 3: Path Length Delta (VPP - Non-VPP)
     # ==========================================
     fig3, ax3 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
@@ -439,15 +458,15 @@ def analyze_path_length_hegemony(
         ax3.plot(data["dates"], data["delta"], marker=mk, linestyle=ls, linewidth=2.5, color=color, label=f"VPP Extra Path Length{lbl_suffix}")
 
     ax3.axhline(0, color="gray", linestyle=":", linewidth=1.5, label="Equal Path Length (0 Hops)")
-    ax3.set_ylabel("Difference in Avg Path Length (Hops)")
+    ax3.set_ylabel(f"Difference in {y_label_prefix} Path Length (Hops)")
     ax3.set_xlabel("Date")
-    ax3.set_title(f"Mean Path Length Delta: VPP vs Non-VPP (VPP - Non-VPP)\n(AS{asn}, {rrc_tag})")
+    ax3.set_title(f"{stat_type} Path Length Delta: VPP vs Non-VPP (VPP - Non-VPP)\n(AS{asn}, {rrc_tag})")
     ax3.tick_params(axis="x", rotation=45)
     ax3.grid(True, linestyle="--", alpha=0.5)
     ax3.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig3, title=f"path_length_vpp_delta_mean_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig3, title=f"path_length_vpp_delta_{stat_suffix}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
     # ==========================================
     # FIGURE 4: Q25 Path Length (VPP vs Non-VPP)
@@ -543,15 +562,15 @@ def analyze_path_length_hegemony(
         lbl_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
         ax8.plot(data["dates"], data["topx"], marker=mk, linestyle=ls, linewidth=2.5, color="tab:green", label=f"{top_label_desc} Hegemony Path Length{lbl_suffix}")
 
-    ax8.set_ylabel("Avg Path Length (Hops)")
+    ax8.set_ylabel(f"{y_label_prefix} Path Length (Hops)")
     ax8.set_xlabel("Date")
-    ax8.set_title(f"AS Path Length for {top_label_desc} Hegemony Transits Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax8.set_title(f"AS Path Length ({stat_type}) for {top_label_desc} Hegemony Transits Over Time\n(Target ASN: {asn}, Scope: {rrc_tag})")
     ax8.tick_params(axis="x", rotation=45)
     ax8.grid(True, linestyle="--", alpha=0.5)
     ax8.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
-    save_plot(fig=fig8, title=f"path_length_hegemony_{top_tag}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
+    save_plot(fig=fig8, title=f"path_length_hegemony_{top_tag}_{stat_suffix}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
 
 if __name__ == "__main__":
@@ -562,9 +581,11 @@ if __name__ == "__main__":
     mode = input("Run mode ('global' or 'single') [default 'global']: ").strip().lower() or "global"
     ip_version = input("Enter IP version ('v4', 'v6', or 'both') [default 'both']: ").strip() or "both"
     top_x_input = input("Enter Top X hegemony cut-off (e.g. '5' for Top 5, '10%' for Top 10%) [default '5']: ").strip() or "5"
-    dup_input = input("Consider duplicated paths? ('y/n') [default 'n']: ").strip().lower() or "n"
+    dup_input = input("Consider duplicated paths? ('y/n') [default 'y']: ").strip().lower() or "y"
+    stat_input = input("Use median instead of mean? ('y/n') [default 'y']: ").strip().lower() or "y"
 
     considers_duplicated_paths = dup_input in ["y", "yes", "true", "1"]
+    use_median = stat_input in ["y", "yes", "true", "1"]
 
     if top_x_input.endswith("%"):
         is_percentage_top_x = True
@@ -585,6 +606,7 @@ if __name__ == "__main__":
             month_interval=6,
             text_scale=1.0,
             considers_duplicated_paths=considers_duplicated_paths,
+            use_median=use_median,
         )
     else:
         rrc_used = input("Enter single RRC to analyze (e.g. 'rrc03') [default 'rrc03']: ").strip() or "rrc03"
@@ -599,4 +621,5 @@ if __name__ == "__main__":
             month_interval=6,
             text_scale=1.0,
             considers_duplicated_paths=considers_duplicated_paths,
+            use_median=use_median,
         )

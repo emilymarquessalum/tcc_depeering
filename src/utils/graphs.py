@@ -583,6 +583,7 @@ def sort_data_and_labels_by_total(data_lists, labels, sort_by_size=True):
 
 def format_labels_if_they_are_dates(labels):
 
+    print("Formatting labels as dates if applicable...")#, labels)
     if len(labels) == 0:
         return labels
     
@@ -605,6 +606,7 @@ def format_labels_if_they_are_dates(labels):
                 label_dates.append(date) 
             
             all_dates_have_same_day = True#all(date.day == label_dates[0].day for date in label_dates)
+            has_several_years = len(set(date.year for date in label_dates)) > 1
 
             for date in label_dates:
                 month_str = months[date.month - 1]  # Get month name from month number
@@ -619,14 +621,24 @@ def format_labels_if_they_are_dates(labels):
                     
                     day_text = f"{date.day}{suffix} of "
                     
-                formatted_labels.append(date.strftime('%Y, ') + 
+                if has_several_years:
+                    formatted_labels.append(date.strftime('%Y, ') + 
                                             day_text + 
                                             month_str
                                             ) 
+                else:
+                    formatted_labels.append(day_text + 
+                                            month_str
+                                            ) 
+
+
+                
             return formatted_labels
         except (ValueError, TypeError) as e:
-            #print("Couldnt parse because: ", e)
+            print("Couldnt parse because: ", e)
             return labels  # Not date strings, return original labels
+    else:
+        print("First label is not a string, skipping date formatting.")
 
     return labels  
 
