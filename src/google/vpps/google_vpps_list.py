@@ -111,5 +111,5 @@ def get_google_vpp_asns(include_alternatives=False) -> list[str]:
 if __name__ == "__main__":
 
     print(len(get_google_vpp_asns()))
-    create_list_of_vpp_asns_from_names()
-    print(len(get_google_vpp_asns()))
+    #create_list_of_vpp_asns_from_names()
+    #print(len(get_google_vpp_asns()))

@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore', category=UserWarning, message='.*FigureCanvasA
 # Track graphs rendered in this session
 _session_rendered_graphs = []
 
-DEFAULT_FIGSIZE = (12,8) # (12,6)
+DEFAULT_FIGSIZE = (12,6) # (12,8)
 
 def clean_title_name(title):
     return title.replace(" ", "_").replace("(", "-").replace(":", "dotdot").replace(")", "-").lower().replace(",", "_and_").replace("//", "/")
@@ -118,7 +118,7 @@ def make_sanity_check_tests(x_labels, data_list):
     return None
 
 def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='Index', ylabel='Value', 
-                           positive_color='green', negative_color='red', subfolder=None, max_labels=None, 
+                           positive_color='green', negative_color='red', fontsize=None, subfolder=None, max_labels=None, 
                            notes=None, annotations=None, use_fill=True,
                             use_rotated_labels=False 
                            ):
@@ -155,7 +155,7 @@ def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='In
     plt.axhline(y=0, color='black', linestyle='-', linewidth=0.8)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title(title)
+    plt.title(title, fontsize=fontsize)
     plt.margins(x=0)
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  
  

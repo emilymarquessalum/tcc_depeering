@@ -1,4 +1,5 @@
 import os
+import pickle
 import sys
 import requests
 import json
@@ -170,11 +171,18 @@ def get_data(file: str):
     return data
 
 
-def get_all_data(files):
-    all_data = []
-    for file in files:
-        data = get_data(file)
-        all_data.append(data)
+CACHE_FILE = os.path.join(ROOT_DIR, "caida-peeringdb", "cached_peeringdb_data.pkl")
+def get_all_data(files, use_cache=True):
+    if use_cache and os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "rb") as f:
+            return pickle.load(f)
+
+    all_data = [get_data(file) for file in files]
+
+    if use_cache:
+        with open(CACHE_FILE, "wb") as f:
+            pickle.dump(all_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
     return all_data
 
 

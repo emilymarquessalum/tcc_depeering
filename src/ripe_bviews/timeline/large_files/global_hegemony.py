@@ -432,7 +432,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     ax.set_xlabel("Date", fontsize=12 * text_scale)
     ax.set_ylabel("Hegemony Percentage (%)" if show_as_percentage else "Hegemony", fontsize=12 * text_scale)
     ax.set_title(
-        f"Google’s Global Hegemony - VPP vs Non-VPP ({cutoff_desc})",
+        f"Google's Global Hegemony - VPP vs Non-VPP ({cutoff_desc})",
        # f"\n(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=16 * text_scale,
     )

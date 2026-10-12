@@ -3,11 +3,12 @@ import statistics
 import sys
 from collections import defaultdict
 from pathlib import Path
-
+import re
+from matplotlib import pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from src.utils.graphs import plot_list_as_line_plot
+from src.utils.graphs import DEFAULT_FIGSIZE, plot_list_as_line_plot
 
 from src.caidapeeringdb.caidapeeringdb_load import (
     get_all_data,
@@ -16,117 +17,41 @@ from src.caidapeeringdb.caidapeeringdb_load import (
     get_data,
     get_dates_from_files,
 )
-from src.google.vpps.vpp_ixps import (
-    get_all_vpps_whose_name_matches_an_ixp_name,
-    get_all_vpps_whose_name_matches_an_organization_that_owns_ixps,
-)
+from src.google.vpps.google_vpps_list import get_google_vpp_asns
 
 
-def load_vpp_data():
-    """Loads Google VPPs list from local JSON file."""
-    with open(Path(__file__).parent / "google_vpps.json", "r", encoding="utf-8") as f:
-        vpps_data = json.load(f)
-        return vpps_data.get("gold", []) + vpps_data.get("silver", [])
+def build_vpp_asn_map(data=None): 
+    raw_asns = get_google_vpp_asns(include_alternatives=False)
+    target_asns = set()
+    for asn in raw_asns:
+        try:
+            target_asns.add(int(str(asn).upper().replace("AS", "").strip()))
+        except (ValueError, TypeError):
+            continue
 
+    vpp_asn_map = defaultdict(list)
 
-def extract_asns_from_vpp(vpp):
-    """
-    Extracts all numeric ASNs from a VPP entry, whether stored as
-    a single int/str, a list under 'asns'/'asn_list', or nested dicts.
-    """
-    found_asns = set()
+    if data:
+        net_data = data.get("net", {}).get("data", [])
+        net_lookup = {
+            int(net["asn"]): net.get("name", "Unknown VPP") 
+            for net in net_data if net.get("asn")
+        }
+        
+        for asn in target_asns:
+            vpp_name = net_lookup.get(asn, f"VPP AS{asn}")
+            vpp_asn_map[asn].append({"isp_name": vpp_name, "asn": asn})
+    else:
+        for asn in target_asns:
+            vpp_asn_map[asn].append({"isp_name": f"VPP AS{asn}", "asn": asn})
 
-    # Direct single keys
-    for key in ("asn", "asn_number", "autsys"):
-        val = vpp.get(key)
-        if val is not None:
-            if isinstance(val, list):
-                for v in val:
-                    try:
-                        found_asns.add(int(str(v).strip().lower().replace("as", "")))
-                    except (ValueError, TypeError):
-                        pass
-            else:
-                try:
-                    found_asns.add(int(str(val).strip().lower().replace("as", "")))
-                except (ValueError, TypeError):
-                    pass
-
-    # List keys
-    for key in ("asns", "asn_list", "autsys_list"):
-        val = vpp.get(key, [])
-        if isinstance(val, list):
-            for v in val:
-                try:
-                    found_asns.add(int(str(v).strip().lower().replace("as", "")))
-                except (ValueError, TypeError):
-                    pass
-
-    return found_asns
-
-
-def get_non_ixp_vpps(vpps_list, data):
-    """
-    Filters VPPs to only include ASNs/organizations that ARE NOT IXPs 
-    and DO NOT own IXPs.
-    """
-    # 1. Identify VPPs matching IXP names directly
-    all_ixps = get_all_ixps(data)
-    _, vpp_names_ixps, _ = get_all_vpps_whose_name_matches_an_ixp_name(vpps_list, all_ixps)
-
-    # 2. Identify VPPs matching Organizations that own IXPs
-    _, vpp_names_org_ixps, _ = get_all_vpps_whose_name_matches_an_organization_that_owns_ixps(vpps_list, data)
-
-    # Combine names to exclude
-    excluded_names = vpp_names_ixps.union(vpp_names_org_ixps)
-
-    # Filter out VPPs whose ISP name matches excluded sets
-    vpps_non_ixp = [
-        vpp for vpp in vpps_list
-        if vpp.get("isp_name", "").split("\n")[0].lower() not in excluded_names
-    ]
-
-    print(f"Total VPPs evaluated: {len(vpps_list)}")
-    print(f"VPPs excluded (are IXPs or own IXPs): {len(vpps_list) - len(vpps_non_ixp)}")
-    print(f"Valid VPPs remaining (NOT IXPs): {len(vpps_non_ixp)}")
-
-    return vpps_non_ixp
-
-
-def build_vpp_asn_map(vpps_non_ixp, data):
-    """
-    Builds a dictionary mapping ASN (int) -> VPP object.
-    Uses exact string matching on PeeringDB fallback to avoid over-matching.
-    """
-    vpp_asn_map = {}
-
-    net_data = data.get("net", {}).get("data", [])
-    pdb_name_to_asns = defaultdict(set)
-    for net in net_data:
-        asn = net.get("asn")
-        name = net.get("name", "").strip().lower()
-        if asn and name:
-            pdb_name_to_asns[name].add(int(asn))
-
-    for vpp in vpps_non_ixp:
-        asns = extract_asns_from_vpp(vpp)
-
-        # Fallback: exact match on ISP name against PeeringDB networks
-        if not asns:
-            isp_name = vpp.get("isp_name", "").split("\n")[0].strip().lower()
-            if isp_name and isp_name in pdb_name_to_asns:
-                asns.update(pdb_name_to_asns[isp_name])
-
-        for asn in asns:
-            vpp_asn_map[asn] = vpp
-
-    print(f"Mapped {len(vpp_asn_map)} distinct ASNs from non-IXP VPPs.")
-    return vpp_asn_map
+    print(f"Mapped {len(vpp_asn_map)} distinct target VPP ASNs from google_vpps_list.")
+    return dict(vpp_asn_map)
 
 
 def _get_connected_vpp_entities(snapshot, target_vpp_asns, vpp_asn_map):
     """
-    Returns the set of unique VPP objects/identifiers (using id or isp_name)
+    Returns the set of unique VPP identifiers (using isp_name)
     that have at least one IXP connection in a snapshot.
     """
     connected_vpps = set()
@@ -141,29 +66,34 @@ def _get_connected_vpp_entities(snapshot, target_vpp_asns, vpp_asn_map):
             continue
 
         if conn_asn in target_vpp_asns:
-            vpp_obj = vpp_asn_map[conn_asn]
-            # Use a unique identifier for the VPP entity (e.g. primary ISP name line or id)
-            vpp_id = vpp_obj.get("isp_name", "").split("\n")[0].strip()
-            connected_vpps.add(vpp_id)
+            vpp_objs = vpp_asn_map.get(conn_asn, [])
+            if isinstance(vpp_objs, list):
+                for vpp_obj in vpp_objs:
+                    vpp_id = vpp_obj.get("isp_name", "").split("\n")[0].strip()
+                    if vpp_id:
+                        connected_vpps.add(vpp_id)
+            else:
+                vpp_id = vpp_objs.get("isp_name", "").split("\n")[0].strip()
+                if vpp_id:
+                    connected_vpps.add(vpp_id)
 
     return connected_vpps
 
 
-def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
+def plot_vpps_with_percentage_ixp_connections_over_time(all_files, all_snapshots, vpp_asn_map):
     """
     Plots the percentage of unique VPP entities that have at least one IXP connection
     over time across all PeeringDB snapshot files.
     """
     latest_snapshot = get_data(all_files[-1])
-    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, latest_snapshot)
     target_vpp_asns = set(vpp_asn_map.keys())
 
     dates = [file.split("/")[-1].split(".")[0] for file in all_files]
-    all_snapshots = get_all_data(all_files)
+    
 
-    total_vpps_count = len(vpps_non_ixp)
+    total_vpps_count = len(target_vpp_asns)
     if total_vpps_count == 0:
-        raise ValueError("No valid non-IXP VPPs found to evaluate.")
+        raise ValueError("No valid VPP ASNs found to evaluate.")
 
     connected_vpps_pct_over_time = []
 
@@ -178,7 +108,7 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
         connected_vpps_pct_over_time,
         y=dates,
         subfolder="vpps",
-        title=f"Percentage of Unique VPPs with at Least One IXP Connection Over Time (Total VPPs: {total_vpps_count})",
+        title="Percentage of Unique VPPs with at Least One IXP Connection Over Time",
         xlabel="Date",
         ylabel="Percentage of Connected VPPs (%)",
         max_labels=12
@@ -187,21 +117,84 @@ def plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp):
     return dates, connected_vpps_pct_over_time
 
 
-def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
+
+
+def plot_vpps_total_ixp_connections_over_time(
+    all_files, all_snapshots, vpp_asn_map, consider_only_one_connection_per_ixp=True
+):  
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    dates = [file.split("/")[-1].split(".")[0] for file in all_files] 
+
+    total_vpps_count = len(target_vpp_asns)
+    if total_vpps_count == 0:
+        raise ValueError("No valid VPP ASNs found to evaluate.")
+
+    total_ixp_connections_over_time = []
+
+    for snapshot in all_snapshots:
+        if consider_only_one_connection_per_ixp:
+            seen_ixp_connections = set()
+            for conn in snapshot.get("netixlan", {}).get("data", []):
+                raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+                if raw_asn is None:
+                    continue
+                try:
+                    conn_asn = int(raw_asn)
+                except (ValueError, TypeError):
+                    continue
+
+                if conn_asn in target_vpp_asns:
+                    ixp_id = conn.get("ix_id")
+                    if ixp_id is not None:
+                        # Tracks unique (VPP ASN, IXP ID) pairs
+                        seen_ixp_connections.add((conn_asn, ixp_id))
+
+            total_connections = len(seen_ixp_connections)
+        else:
+            total_connections = 0
+            for conn in snapshot.get("netixlan", {}).get("data", []):
+                raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+                if raw_asn is None:
+                    continue
+                try:
+                    conn_asn = int(raw_asn)
+                except (ValueError, TypeError):
+                    continue
+
+                if conn_asn in target_vpp_asns:
+                    total_connections += 1
+
+        total_ixp_connections_over_time.append(total_connections)
+
+    dates = [date.split("dump_")[1] for date in dates]
+
+    plot_list_as_line_plot(
+        total_ixp_connections_over_time,
+        y=dates,
+        subfolder="vpps",
+        title="Total IXP Connections Across VPPs Over Time",
+        xlabel="Date",
+        ylabel="Total Number of IXP Connections",
+        max_labels=7,
+        fontsize=18
+    )
+
+    return dates, total_ixp_connections_over_time
+
+
+def plot_vpp_ixp_entries_and_exits_over_time(all_files, snapshots, vpp_asn_map):
     """
     Plots VPP entities entering and leaving IXP participation over time as a percentage.
     """
     if not all_files:
         raise ValueError("At least one PeeringDB snapshot is required.")
-
-    latest_snapshot = get_data(all_files[-1])
-    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, latest_snapshot)
+ 
     target_vpp_asns = set(vpp_asn_map.keys())
     
-    dates = get_dates_from_files(all_files)
-    snapshots = get_all_data(all_files)
+    dates = get_dates_from_files(all_files) 
 
-    total_vpps_count = len(vpps_non_ixp)
+    total_vpps_count = len(target_vpp_asns)
     
     new_peerings_pct = [0.0]
     de_peerings_pct = [0.0]
@@ -225,18 +218,19 @@ def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
         new_peerings_pct,
         y=labels,
         subfolder="vpps",
-        title=f"New VPP IXP Peerings Over Time (Total VPPs: {total_vpps_count})",
+        title="New VPP IXP Peerings Over Time",
         xlabel="Date",
         ylabel="% of VPPs entering an IXP",
         positive_color="green",
         negative_color="green",
+        fontsize=18,
         max_labels=12
     )
     plot_list_as_line_plot(
         de_peerings_pct,
         y=labels,
         subfolder="vpps",
-        title=f"VPP IXP De-peerings Over Time (Total VPPs: {total_vpps_count})",
+        title="VPP IXP De-peerings Over Time",
         xlabel="Date",
         ylabel="% of VPPs leaving all IXPs",
         positive_color="red",
@@ -247,11 +241,11 @@ def plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp):
     return dates, new_peerings_pct, de_peerings_pct
 
 
-def analyze_vpp_ixp_participants(data, vpps_non_ixp):
+def analyze_vpp_ixp_participants(data):
     """
-    Extracts IXP participation data (netixlan) for non-IXP VPP ASNs.
+    Extracts IXP participation data (netixlan) for VPP ASNs.
     """
-    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, data)
+    vpp_asn_map = build_vpp_asn_map(data)
 
     netixlan_data = data.get("netixlan", {}).get("data", [])
     ixp_lookup = {ixp["id"]: ixp for ixp in get_all_ixps(data)}
@@ -274,10 +268,13 @@ def analyze_vpp_ixp_participants(data, vpps_non_ixp):
             ixp_id = conn.get("ix_id")
             ixp_info = ixp_lookup.get(ixp_id, {})
 
+            vpp_objs = vpp_asn_map[conn_asn]
+            vpp_name = vpp_objs[0].get("isp_name", "").split("\n")[0] if vpp_objs else f"AS{conn_asn}"
+
             participant_info = {
                 "connection_id": conn.get("id"),
                 "asn": conn_asn,
-                "vpp_name": vpp_asn_map[conn_asn].get("isp_name", "").split("\n")[0],
+                "vpp_name": vpp_name,
                 "ixp_id": ixp_id,
                 "ixp_name": ixp_info.get("name", "Unknown IXP"),
                 "is_rs_peer": conn.get("is_rs_peer", False),
@@ -298,23 +295,18 @@ def analyze_vpp_ixp_participants(data, vpps_non_ixp):
     return vpp_participants, ixp_vpp_counts
 
 
-def plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, convert_to_gbps=True, use_median=False):
+def plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, convert_to_gbps=True, use_median=False):
     """
     Plots the average/median speed of VPP IXP connections over time across PeeringDB snapshots.
-    
-    PeeringDB's 'speed' field in netixlan is in Mbps.
-    Setting convert_to_gbps=True divides the metric by 1000 for better readability.
     """
     if not all_files:
         raise ValueError("At least one PeeringDB snapshot is required.")
 
-    # Build ASN map using the latest snapshot
     latest_snapshot = get_data(all_files[-1])
-    vpp_asn_map = build_vpp_asn_map(vpps_non_ixp, latest_snapshot)
+    vpp_asn_map = build_vpp_asn_map(latest_snapshot)
     target_vpp_asns = set(vpp_asn_map.keys())
 
-    dates = get_dates_from_files(all_files)
-    all_snapshots = get_all_data(all_files)
+    dates = get_dates_from_files(all_files) 
 
     speeds_over_time = []
 
@@ -332,10 +324,8 @@ def plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, convert_to_gbp
             except (ValueError, TypeError):
                 continue
 
-            # Check if connection belongs to a non-IXP VPP ASN
             if conn_asn in target_vpp_asns:
                 speed = conn.get("speed")
-                # Ensure speed is a valid positive integer
                 if speed is not None:
                     try:
                         speed_val = int(speed)
@@ -344,11 +334,10 @@ def plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, convert_to_gbp
                     except (ValueError, TypeError):
                         pass
 
-        # Calculate average or median speed for current snapshot
         if speeds:
             val = statistics.median(speeds) if use_median else (sum(speeds) / len(speeds))
             if convert_to_gbps:
-                val = val / 1000.0  # Convert Mbps to Gbps
+                val = val / 1000.0
         else:
             val = 0.0
 
@@ -365,24 +354,153 @@ def plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, convert_to_gbp
         title=f"{stat_type} VPP Connection Speed at IXPs Over Time ({unit})",
         xlabel="Date",
         ylabel=f"{stat_type} Speed ({unit})",
-        max_labels=7
+        max_labels=7,
+        fontsize=18
     )
 
     return dates, speeds_over_time
 
 
+def plot_google_vs_vpp_total_port_speed_over_time(
+    all_files,
+    all_snapshots,
+    google_asns={15169},
+    convert_to_tbps=True,
+    output_dir="plots/vpps",
+):
+    """
+    Plots Google's total port speed vs. VPP total port speed across all IXPs over time.
+    """
+    if not all_files:
+        raise ValueError("At least one PeeringDB snapshot is required.")
+
+    latest_snapshot = get_data(all_files[-1])
+    vpp_asn_map = build_vpp_asn_map(latest_snapshot)
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    dates = get_dates_from_files(all_files) 
+
+    divisor = 1000000.0 if convert_to_tbps else 1000.0
+    unit = "Tbps" if convert_to_tbps else "Gbps"
+
+    google_totals = []
+    vpp_totals = []
+
+    for snapshot in all_snapshots:
+        google_speed_mbps = 0
+        vpp_speed_mbps = 0
+
+        netixlan_entries = snapshot.get("netixlan", {}).get("data", [])
+
+        for conn in netixlan_entries:
+            raw_asn = (
+                conn.get("asn")
+                if conn.get("asn") is not None
+                else conn.get("local_asn")
+            )
+            if raw_asn is None:
+                continue
+
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            speed = conn.get("speed")
+            if speed is None:
+                continue
+
+            try:
+                speed_val = int(speed)
+                if speed_val <= 0:
+                    continue
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn in google_asns:
+                google_speed_mbps += speed_val
+            if conn_asn in target_vpp_asns:
+                vpp_speed_mbps += speed_val
+
+        google_totals.append(round(google_speed_mbps / divisor, 2))
+        vpp_totals.append(round(vpp_speed_mbps / divisor, 2))
+
+    labels = [date.replace("_", "-") for date in dates]
+
+    plt.figure(figsize=DEFAULT_FIGSIZE)
+ 
+    plt.plot(
+        labels,
+        google_totals,
+        marker="o",
+        linewidth=2,
+        color="#4285F4",
+        label=f"Google (ASNs: {', '.join(map(str, google_asns))})",
+    )
+    plt.plot(
+        labels,
+        vpp_totals,
+        marker="s",
+        linewidth=2,
+        color="#EA4335",
+        label=f"All VPPs (Total Count: {len(target_vpp_asns)})",
+    )
+
+    plt.title(
+        f"Total IXP Port Speed: Google vs. VPPs Over Time ({unit})",
+        fontsize=14,
+        pad=15,
+    )
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel(f"Total Port Speed ({unit})", fontsize=12)
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.legend(fontsize=11)
+
+    max_labels = 12
+    if len(labels) > max_labels:
+        step = len(labels) // max_labels
+        plt.xticks(
+            ticks=range(0, len(labels), step),
+            labels=[labels[i] for i in range(0, len(labels), step)],
+            rotation=45,
+        )
+    else:
+        plt.xticks(rotation=45)
+
+    plt.tight_layout()
+
+    out_path = Path(output_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+    plt.savefig(out_path / "google_vs_vpp_total_port_speed.png", dpi=300)
+    plt.show()
+
+    return dates, google_totals, vpp_totals
+
+
 if __name__ == "__main__":
     all_files = get_all_files()
-    latest_file = all_files[-1]
-    print(f"Loading PeeringDB data snapshot: {latest_file}")
-    data = get_data(latest_file)
+    latest_file = all_files[-1] 
 
-    vpps_list = load_vpp_data()
-    vpps_non_ixp = get_non_ixp_vpps(vpps_list, data)
+    all_snapshots = get_all_data(all_files)
+    
+    latest_snapshot = get_data(all_files[-1]) 
+    print(f"Latest PeeringDB snapshot: {latest_file} with {len(latest_snapshot.get('netixlan', {}).get('data', []))} netixlan entries.")
+    vpp_asn_map = build_vpp_asn_map(latest_snapshot)
 
-    plot_vpps_with_ixp_connections_over_time(all_files, vpps_non_ixp)
-    # vpp_participants, ixp_vpp_counts = analyze_vpp_ixp_participants(data, vpps_non_ixp)
+    plot_vpps_with_percentage_ixp_connections_over_time(all_files, all_snapshots, vpp_asn_map)
+    plot_vpps_total_ixp_connections_over_time(all_files, all_snapshots, vpp_asn_map)
+    # analyze_vpp_ixp_participants(get_data(latest_file))
 
-    plot_vpp_ixp_entries_and_exits_over_time(all_files, vpps_non_ixp)
+    plot_vpp_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
 
-    plot_vpp_average_ixp_speed_over_time(all_files, vpps_non_ixp, use_median=True)
+    plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=True)
+
+    ''' this was a dumb comparison. 
+    google_asns = {15169}
+    dates, google_totals, vpp_totals = plot_google_vs_vpp_total_port_speed_over_time(
+        all_files,
+        all_snapshots,
+        google_asns=google_asns,
+        convert_to_tbps=True
+    ) 
+    '''
