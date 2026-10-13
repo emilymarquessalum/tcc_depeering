@@ -91,9 +91,110 @@ def _filter_scores(
         return {k: v for k, v in cleaned.items() if k in target_set}
     return cleaned
 
+from collections import defaultdict
+import math
+import os
+from pathlib import Path
+import sys
+from typing import Dict, List, Optional, Set, Tuple, Union
+
+from matplotlib import pyplot as plt
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
+
+from definitions import ROOT_DIR
+from src.google.vpps.google_vpps_list import get_google_vpp_asns
+from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
+    get_all_dates_available_for_asn_data,
+    get_hegemony_scores,
+    get_interval_dates_for_asn_data,
+)
+from src.ripe_bviews.timeline.large_files.global_hegemony import (
+    _get_clean_vpp_set,
+    _parse_ip_versions,
+    get_global_hegemony_scores,
+)
+from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
+
+
+def compute_cosine_similarity_pct(
+    scores_1: Dict[str, float],
+    scores_2: Dict[str, float],
+) -> float:
+    """
+    Computes Cosine Similarity between two ASN hegemony distribution vectors as a percentage (0% - 100%).
+    
+    Formula: (A · B) / (||A|| * ||B||) * 100
+    """
+    all_asns = set(scores_1.keys()).union(set(scores_2.keys()))
+    if not all_asns:
+        return 0.0
+
+    dot_product = sum(scores_1.get(asn, 0.0) * scores_2.get(asn, 0.0) for asn in all_asns)
+    magnitude_1 = math.sqrt(sum(v ** 2 for v in scores_1.values()))
+    magnitude_2 = math.sqrt(sum(v ** 2 for v in scores_2.values()))
+
+    if magnitude_1 == 0.0 or magnitude_2 == 0.0:
+        return 0.0
+
+    similarity = dot_product / (magnitude_1 * magnitude_2)
+    return similarity * 100.0
+
+
+def _get_common_dates_and_scores(
+    asn1: int,
+    asn2: int,
+    ip_ver: str,
+    alpha: float,
+    rrc_used: Optional[str] = None,
+    rrc_list: Optional[List[str]] = None,
+    month_interval: int = 6,
+    start_date: Optional[str] = None,
+    use_strict_viewpoint_filtering: bool = False,
+) -> Tuple[Dict[str, Dict[str, float]], Dict[str, Dict[str, float]], List[str], str]:
+    if rrc_list:
+        dates1, dates2 = set(), set()
+        for rrc in rrc_list:
+            dates1.update(get_all_dates_available_for_asn_data(asn1, rrc, ip_ver, start_date=start_date))
+            dates2.update(get_all_dates_available_for_asn_data(asn2, rrc, ip_ver, start_date=start_date))
+        common_dates = sorted(list(dates1.intersection(dates2)))
+    elif rrc_used:
+        dates1 = get_interval_dates_for_asn_data(asn1, rrc_used, ip_ver, month_interval, start_date)
+        dates2 = get_interval_dates_for_asn_data(asn2, rrc_used, ip_ver, month_interval, start_date)
+        common_dates = sorted(list(set(dates1).intersection(set(dates2))))
+    else:
+        raise ValueError("Must provide either 'rrc_used' or 'rrc_list'.")
+
+    if not common_dates:
+        return {}, {}, [], ""
+
+    if rrc_list:
+        scores_1, _, valid_1 = get_global_hegemony_scores(
+            asn1, ip_ver, common_dates, alpha, rrc_list, use_strict_viewpoint_filtering
+        )
+        scores_2, _, valid_2 = get_global_hegemony_scores(
+            asn2, ip_ver, common_dates, alpha, rrc_list, use_strict_viewpoint_filtering
+        )
+        scope_desc = f"Global ({len(rrc_list)} RRCs)"
+    else:
+        scores_1, _, valid_1 = get_hegemony_scores(
+            asn1, rrc_used, ip_ver, common_dates, alpha, use_strict_viewpoint_filtering
+        )
+        scores_2, _, valid_2 = get_hegemony_scores(
+            asn2, rrc_used, ip_ver, common_dates, alpha, use_strict_viewpoint_filtering
+        )
+        scope_desc = f"RRC {rrc_used.upper()}"
+
+    valid_dates = sorted(list(set(valid_1).intersection(set(valid_2))))
+    return scores_1, scores_2, valid_dates, scope_desc
+
+
+def _clean_scores(scores: Dict[str, float]) -> Dict[str, float]:
+    return {str(k).upper().replace("AS", "").strip(): v for k, v in scores.items()}
+
 
 # ==============================================================================
-# Dedicated Mode Comparison Functions
+# Dedicated Similarity Comparison Functions
 # ==============================================================================
 
 def compare_hegemony_general(
@@ -109,10 +210,8 @@ def compare_hegemony_general(
     use_strict_viewpoint_filtering: bool = False,
     text_scale: float = 1.0,
 ):
-    """MODE 1: General Hegemony Comparison (Raw absolute score totals)."""
+    """General Similarity: Computes Cosine Similarity % between full transit vectors over time."""
     ip_versions = _parse_ip_versions(ip_version)
-
-    plt.rcParams.update({"font.size": 10 * text_scale, "axes.titlesize": 14 * text_scale})
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
     has_data = False
 
@@ -123,30 +222,36 @@ def compare_hegemony_general(
         if not valid_dates:
             continue
 
-        val_1, val_2 = [], []
+        similarity_pcts = []
         for d in valid_dates:
-            f1 = _filter_scores(scores_1.get(d, {}), specific_as_list)
-            f2 = _filter_scores(scores_2.get(d, {}), specific_as_list)
-            val_1.append(sum(f1.values()))
-            val_2.append(sum(f2.values()))
+            f1 = _clean_scores(scores_1.get(d, {}))
+            f2 = _clean_scores(scores_2.get(d, {}))
+            
+            if specific_as_list:
+                targets = {str(a).strip() for a in specific_as_list}
+                f1 = {k: v for k, v in f1.items() if k in targets}
+                f2 = {k: v for k, v in f2.items() if k in targets}
+
+            sim_pct = compute_cosine_similarity_pct(f1, f2)
+            similarity_pcts.append(sim_pct)
+
+        avg_sim = sum(similarity_pcts) / len(similarity_pcts) if similarity_pcts else 0.0
+        print(f"[RESULT] General Hegemony Similarity for AS{asn1} vs AS{asn2} ({ip_ver.upper()}): {avg_sim:.2f}%")
 
         formatted_dates = format_labels_if_they_are_dates(valid_dates)
         linestyle = "-" if ip_ver == "v4" else "--"
         ip_label = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
 
-        ax.plot(formatted_dates, val_1, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"AS{asn1}{ip_label}")
-        ax.plot(formatted_dates, val_2, marker="s" if ip_ver == "v4" else "D", linestyle=linestyle, linewidth=2.5, label=f"AS{asn2}{ip_label}")
+        ax.plot(formatted_dates, similarity_pcts, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"Similarity %{ip_label}")
         has_data = True
 
     if not has_data:
-        print("[WARNING] General Mode: No comparative data plotted.")
-        plt.close(fig)
         return
 
-    filter_desc = f"\nFiltered Transits: {specific_as_list}" if specific_as_list else ""
-    ax.set_ylabel("Hegemony Score", fontsize=12 * text_scale)
+    ax.set_ylabel("Hegemony Similarity (%)", fontsize=12 * text_scale)
     ax.set_xlabel("Date", fontsize=12 * text_scale)
-    ax.set_title(f"General Hegemony: AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha}){filter_desc}", fontsize=14 * text_scale)
+    ax.set_ylim(-5, 105)
+    ax.set_title(f"General Hegemony Similarity (%): AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha})", fontsize=14 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(loc="upper right")
@@ -154,7 +259,7 @@ def compare_hegemony_general(
     plt.show()
 
     rrc_tag = "global" if rrc_list else rrc_used
-    save_plot(fig=fig, title=f"hegemony_compare_general_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
+    save_plot(fig=fig, title=f"hegemony_similarity_general_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
 
 
 def compare_hegemony_percentage(
@@ -164,17 +269,14 @@ def compare_hegemony_percentage(
     ip_version: Union[str, List[str]] = "v4",
     rrc_used: Optional[str] = None,
     rrc_list: Optional[List[str]] = None,
-    specific_as_list: Optional[List[int]] = None,
-    top_percentage: Optional[float] = None,
+    top_percentage: Optional[float] = 20.0,
     month_interval: int = 6,
     start_date: Optional[str] = None,
     use_strict_viewpoint_filtering: bool = False,
     text_scale: float = 1.0,
 ):
-    """MODE 2: Percentage / Ratio Share Comparison (x% or Top X% Transits share)."""
+    """Percentage/Top X% Similarity: Cosine similarity restricted to top X% transit ASNs."""
     ip_versions = _parse_ip_versions(ip_version)
-
-    plt.rcParams.update({"font.size": 10 * text_scale, "axes.titlesize": 14 * text_scale})
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
     has_data = False
 
@@ -185,46 +287,39 @@ def compare_hegemony_percentage(
         if not valid_dates:
             continue
 
-        pct_1, pct_2 = [], []
+        similarity_pcts = []
         for d in valid_dates:
-            f1 = _filter_scores(scores_1.get(d, {}), specific_as_list)
-            f2 = _filter_scores(scores_2.get(d, {}), specific_as_list)
-
-            tot_1 = sum(f1.values())
-            tot_2 = sum(f2.values())
+            f1 = _clean_scores(scores_1.get(d, {}))
+            f2 = _clean_scores(scores_2.get(d, {}))
 
             if top_percentage is not None:
-                sorted_1 = sorted(f1.items(), key=lambda x: x[1], reverse=True)
-                sorted_2 = sorted(f2.items(), key=lambda x: x[1], reverse=True)
-                k1 = max(1, math.ceil(len(sorted_1) * top_percentage / 100.0)) if sorted_1 else 0
-                k2 = max(1, math.ceil(len(sorted_2) * top_percentage / 100.0)) if sorted_2 else 0
-                sub_1 = sum(score for _, score in sorted_1[:k1])
-                sub_2 = sum(score for _, score in sorted_2[:k2])
-            else:
-                sub_1 = tot_1
-                sub_2 = tot_2
+                s1 = sorted(f1.items(), key=lambda x: x[1], reverse=True)
+                s2 = sorted(f2.items(), key=lambda x: x[1], reverse=True)
+                k1 = max(1, math.ceil(len(s1) * top_percentage / 100.0)) if s1 else 0
+                k2 = max(1, math.ceil(len(s2) * top_percentage / 100.0)) if s2 else 0
+                f1 = dict(s1[:k1])
+                f2 = dict(s2[:k2])
 
-            pct_1.append((sub_1 / tot_1 * 100.0) if tot_1 > 0 else 0.0)
-            pct_2.append((sub_2 / tot_2 * 100.0) if tot_2 > 0 else 0.0)
+            sim_pct = compute_cosine_similarity_pct(f1, f2)
+            similarity_pcts.append(sim_pct)
+
+        avg_sim = sum(similarity_pcts) / len(similarity_pcts) if similarity_pcts else 0.0
+        print(f"[RESULT] Top {top_percentage}% Hegemony Similarity for AS{asn1} vs AS{asn2} ({ip_ver.upper()}): {avg_sim:.2f}%")
 
         formatted_dates = format_labels_if_they_are_dates(valid_dates)
         linestyle = "-" if ip_ver == "v4" else "--"
         ip_label = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
 
-        ax.plot(formatted_dates, pct_1, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"AS{asn1}{ip_label}")
-        ax.plot(formatted_dates, pct_2, marker="s" if ip_ver == "v4" else "D", linestyle=linestyle, linewidth=2.5, label=f"AS{asn2}{ip_label}")
+        ax.plot(formatted_dates, similarity_pcts, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"Similarity %{ip_label}")
         has_data = True
 
     if not has_data:
-        print("[WARNING] Percentage Mode: No comparative data plotted.")
-        plt.close(fig)
         return
 
-    filter_desc = f"\nFiltered Transits: {specific_as_list}" if specific_as_list else ""
-    pct_title_suffix = f" (Top {top_percentage}%)" if top_percentage else ""
-    ax.set_ylabel("Hegemony Share (%)", fontsize=12 * text_scale)
+    ax.set_ylabel("Hegemony Similarity (%)", fontsize=12 * text_scale)
     ax.set_xlabel("Date", fontsize=12 * text_scale)
-    ax.set_title(f"Hegemony Share (%) Comparison{pct_title_suffix}: AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha}){filter_desc}", fontsize=14 * text_scale)
+    ax.set_ylim(-5, 105)
+    ax.set_title(f"Top {top_percentage}% Hegemony Similarity (%): AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha})", fontsize=14 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(loc="upper right")
@@ -232,7 +327,7 @@ def compare_hegemony_percentage(
     plt.show()
 
     rrc_tag = "global" if rrc_list else rrc_used
-    save_plot(fig=fig, title=f"hegemony_compare_percentage_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
+    save_plot(fig=fig, title=f"hegemony_similarity_top{int(top_percentage)}pct_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
 
 
 def compare_hegemony_vpp_only(
@@ -243,15 +338,13 @@ def compare_hegemony_vpp_only(
     rrc_used: Optional[str] = None,
     rrc_list: Optional[List[str]] = None,
     month_interval: int = 6,
-    start_date: Optional[str] = None, 
+    start_date: Optional[str] = None,
     use_strict_viewpoint_filtering: bool = False,
     text_scale: float = 1.0,
 ):
-    """MODE 3: VPP-Only Hegemony Comparison (Restricted strictly to Google VPP transits)."""
+    """VPP-Only Similarity: Cosine similarity restricted strictly to Google VPP transits."""
     ip_versions = _parse_ip_versions(ip_version)
     vpp_set = _get_clean_vpp_set()
-
-    plt.rcParams.update({"font.size": 10 * text_scale, "axes.titlesize": 14 * text_scale})
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
     has_data = False
 
@@ -262,33 +355,31 @@ def compare_hegemony_vpp_only(
         if not valid_dates:
             continue
 
-        val_1, val_2 = [], []
+        similarity_pcts = []
         for d in valid_dates:
-            f1 = _filter_scores(scores_1.get(d, {}))
-            f2 = _filter_scores(scores_2.get(d, {}))
+            f1 = {k: v for k, v in _clean_scores(scores_1.get(d, {})).items() if k in vpp_set}
+            f2 = {k: v for k, v in _clean_scores(scores_2.get(d, {})).items() if k in vpp_set}
 
-            vpp_score_1 = sum(v for k, v in f1.items() if k in vpp_set)
-            vpp_score_2 = sum(v for k, v in f2.items() if k in vpp_set)
+            sim_pct = compute_cosine_similarity_pct(f1, f2)
+            similarity_pcts.append(sim_pct)
 
-            val_1.append(vpp_score_1)
-            val_2.append(vpp_score_2)
+        avg_sim = sum(similarity_pcts) / len(similarity_pcts) if similarity_pcts else 0.0
+        print(f"[RESULT] VPP-Only Hegemony Similarity for AS{asn1} vs AS{asn2} ({ip_ver.upper()}): {avg_sim:.2f}%")
 
         formatted_dates = format_labels_if_they_are_dates(valid_dates)
         linestyle = "-" if ip_ver == "v4" else "--"
         ip_label = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
 
-        ax.plot(formatted_dates, val_1, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"AS{asn1}{ip_label}")
-        ax.plot(formatted_dates, val_2, marker="s" if ip_ver == "v4" else "D", linestyle=linestyle, linewidth=2.5, label=f"AS{asn2}{ip_label}")
+        ax.plot(formatted_dates, similarity_pcts, marker="o" if ip_ver == "v4" else "^", linestyle=linestyle, linewidth=2.5, label=f"VPP Similarity %{ip_label}")
         has_data = True
 
     if not has_data:
-        print("[WARNING] VPP-Only Mode: No comparative data plotted.")
-        plt.close(fig)
         return
 
-    ax.set_ylabel("VPP Hegemony Score", fontsize=12 * text_scale)
+    ax.set_ylabel("VPP Hegemony Similarity (%)", fontsize=12 * text_scale)
     ax.set_xlabel("Date", fontsize=12 * text_scale)
-    ax.set_title(f"VPP-Only Hegemony: AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha})", fontsize=14 * text_scale)
+    ax.set_ylim(-5, 105)
+    ax.set_title(f"VPP-Only Hegemony Similarity (%): AS{asn1} vs AS{asn2}\n[{scope_desc}] (α={alpha})", fontsize=14 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(loc="upper right")
@@ -296,9 +387,8 @@ def compare_hegemony_vpp_only(
     plt.show()
 
     rrc_tag = "global" if rrc_list else rrc_used
-    save_plot(fig=fig, title=f"hegemony_compare_vpp_only_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
-
-
+    save_plot(fig=fig, title=f"hegemony_similarity_vpp_only_AS{asn1}_vs_AS{asn2}_{rrc_tag}.png")
+    
 # ==============================================================================
 # Execution Driver
 # ==============================================================================
