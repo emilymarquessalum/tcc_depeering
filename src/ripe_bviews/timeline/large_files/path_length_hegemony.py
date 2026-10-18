@@ -41,6 +41,7 @@ def extract_path_lengths_and_hegemony(
     alpha: float = 0.34,
     ip_version: str = "v4",
     considers_duplicated_paths: bool = False,
+    only_penultimate_as: bool = False,
 ) -> Tuple[Dict[str, List[int]], Dict[int, float]]:
     """
     Computes AS hegemony scores and collects all BGP AS path lengths mapped per transit ASN,
@@ -111,6 +112,16 @@ def extract_path_lengths_and_hegemony(
             unique_transits = set(dedup_as_path)
             if target_asn is not None and target_asn in unique_transits:
                 unique_transits.remove(target_asn)
+
+            if only_penultimate_as and target_asn is not None:
+                # Find occurrences of target_asn and grab the AS directly preceding it
+                new_unique_transits = set()
+                for idx, asn in enumerate(dedup_as_path):
+                    if asn == target_asn and idx > 0:
+                        penultimate_as = dedup_as_path[idx - 1]
+                        if penultimate_as != target_asn:
+                            new_unique_transits.add(penultimate_as)
+                unique_transits = new_unique_transits
 
             for transit_node in unique_transits:
                 transit_path_lengths[str(transit_node)].append(path_len)
@@ -205,6 +216,7 @@ def analyze_path_length_hegemony(
     is_percentage_top_x: bool = False,
     text_scale: float = 1.0,
     considers_duplicated_paths: bool = False,
+    only_penultimate_as: bool = False,
     use_median: bool = False,
 ):
     """
@@ -308,6 +320,7 @@ def analyze_path_length_hegemony(
                     alpha=alpha,
                     ip_version=ip_ver,
                     considers_duplicated_paths=considers_duplicated_paths,
+                    only_penultimate_as=only_penultimate_as,
                 )
             except Exception as e:
                 print(f"[ERROR] Could not process date {d} for {ip_ver.upper()}: {e}")
@@ -426,9 +439,6 @@ def analyze_path_length_hegemony(
     plt.show()
     save_plot(fig=fig1, title=f"path_length_overall_{stat_suffix}_{asn}_{rrc_tag.lower()}_{ip_tag}.png")
 
-    # ==========================================
-    # FIGURE 2: VPP vs. Non-VPP Path Length
-    # ==========================================
     fig2, ax2 = plt.subplots(figsize=DEFAULT_FIGSIZE)
     for ip_ver, data in processed_data.items():
         ls = "-" if ip_ver == "v4" else "--"

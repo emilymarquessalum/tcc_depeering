@@ -185,7 +185,8 @@ def plot_vpps_total_ixp_connections_over_time(
 
 def plot_vpp_ixp_entries_and_exits_over_time(all_files, snapshots, vpp_asn_map):
     """
-    Plots VPP entities entering and leaving IXP participation over time as a percentage.
+    Plots the absolute number of VPP entities entering and leaving IXP participation over time,
+    and prints which ASes/VPP entities entered or left at each date.
     """
     if not all_files:
         raise ValueError("At least one PeeringDB snapshot is required.")
@@ -193,52 +194,164 @@ def plot_vpp_ixp_entries_and_exits_over_time(all_files, snapshots, vpp_asn_map):
     target_vpp_asns = set(vpp_asn_map.keys())
     
     dates = get_dates_from_files(all_files) 
-
-    total_vpps_count = len(target_vpp_asns)
     
-    new_peerings_pct = [0.0]
-    de_peerings_pct = [0.0]
+    new_peerings_count = [0]
+    de_peerings_count = [0]
     
     previous_connected_vpps = _get_connected_vpp_entities(snapshots[0], target_vpp_asns, vpp_asn_map)
 
-    for snapshot in snapshots[1:]:
+    for i, snapshot in enumerate(snapshots[1:], start=1):
         connected_vpps = _get_connected_vpp_entities(snapshot, target_vpp_asns, vpp_asn_map)
         
-        entered_count = len(connected_vpps - previous_connected_vpps)
-        left_count = len(previous_connected_vpps - connected_vpps)
+        entered_vpps = connected_vpps - previous_connected_vpps
+        left_vpps = previous_connected_vpps - connected_vpps
         
-        new_peerings_pct.append(round((entered_count / total_vpps_count) * 100, 2))
-        de_peerings_pct.append(round((left_count / total_vpps_count) * 100, 2))
+        entered_count = len(entered_vpps)
+        left_count = len(left_vpps)
+
+        date_str = dates[i].replace("_", "-")
+        if entered_vpps:
+            print(f"[{date_str}] Entered IXP participation ({entered_count}): {', '.join(sorted(entered_vpps))}")
+        if left_vpps:
+            print(f"[{date_str}] Left IXP participation ({left_count}): {', '.join(sorted(left_vpps))}")
+        
+        new_peerings_count.append(entered_count)
+        de_peerings_count.append(left_count)
         
         previous_connected_vpps = connected_vpps
 
     labels = [date.replace("_", "-") for date in dates]
     
     plot_list_as_line_plot(
-        new_peerings_pct,
+        new_peerings_count,
         y=labels,
         subfolder="vpps",
         title="New VPP IXP Peerings Over Time",
         xlabel="Date",
-        ylabel="% of VPPs entering an IXP",
+        ylabel="Number of VPPs entering an IXP",
         positive_color="green",
         negative_color="green",
         fontsize=18,
         max_labels=12
     )
     plot_list_as_line_plot(
-        de_peerings_pct,
+        de_peerings_count,
         y=labels,
         subfolder="vpps",
         title="VPP IXP De-peerings Over Time",
         xlabel="Date",
-        ylabel="% of VPPs leaving all IXPs",
+        ylabel="Number of VPPs leaving all IXPs",
         positive_color="red",
         negative_color="red",
         max_labels=12
     )
 
-    return dates, new_peerings_pct, de_peerings_pct
+    return dates, new_peerings_count, de_peerings_count
+ 
+import itertools
+
+def plot_ixp_entries_and_exits_over_time(all_files, snapshots, vpp_asn_map):
+    """
+    Plots the absolute and cumulative (accumulated) number of IXP entries 
+    and exits (VPP-IXP connection pairings) over time.
+    """
+    if not all_files:
+        raise ValueError("At least one PeeringDB snapshot is required.")
+ 
+    target_vpp_asns = set(vpp_asn_map.keys())
+    dates = get_dates_from_files(all_files) 
+
+    def _get_vpp_ixp_pairs(snapshot):
+        """Returns the set of unique (vpp_asn, ixp_id) pairs present in the snapshot."""
+        pairs = set()
+        for conn in snapshot.get("netixlan", {}).get("data", []):
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn in target_vpp_asns:
+                ixp_id = conn.get("ix_id")
+                if ixp_id is not None:
+                    pairs.add((conn_asn, ixp_id))
+        return pairs
+
+    new_peerings_count = [0]
+    de_peerings_count = [0]
+    
+    previous_pairs = _get_vpp_ixp_pairs(snapshots[0])
+
+    for snapshot in snapshots[1:]:
+        current_pairs = _get_vpp_ixp_pairs(snapshot)
+        
+        entered_count = len(current_pairs - previous_pairs)
+        left_count = len(previous_pairs - current_pairs)
+        
+        new_peerings_count.append(entered_count)
+        de_peerings_count.append(left_count)
+        
+        previous_pairs = current_pairs
+
+    # Calculate cumulative sums over time
+    accumulated_new_peerings = list(itertools.accumulate(new_peerings_count))
+    accumulated_de_peerings = list(itertools.accumulate(de_peerings_count))
+
+    labels = [date.replace("_", "-") for date in dates]
+    
+    # 1. Non-accumulated Plots
+    plot_list_as_line_plot(
+        new_peerings_count,
+        y=labels,
+        subfolder="vpps",
+        title="New IXP Connections Over Time",
+        xlabel="Date",
+        ylabel="Number of New Connections Added",
+        positive_color="green",
+        negative_color="green",
+        fontsize=18,
+        max_labels=12
+    )
+    plot_list_as_line_plot(
+        de_peerings_count,
+        y=labels,
+        subfolder="vpps",
+        title="IXP De-peerings Over Time",
+        xlabel="Date",
+        ylabel="Number of Connections Removed",
+        positive_color="red",
+        negative_color="red",
+        max_labels=12
+    )
+
+    # 2. Accumulated Plots
+    plot_list_as_line_plot(
+        accumulated_new_peerings,
+        y=labels,
+        subfolder="vpps",
+        title="Accumulated New IXP Connections Over Time",
+        xlabel="Date",
+        ylabel="Cumulative New Connections Added",
+        positive_color="green",
+        negative_color="green",
+        fontsize=18,
+        max_labels=12
+    )
+    plot_list_as_line_plot(
+        accumulated_de_peerings,
+        y=labels,
+        subfolder="vpps",
+        title="Accumulated IXP De-peerings Over Time",
+        xlabel="Date",
+        ylabel="Cumulative Connections Removed",
+        positive_color="red",
+        negative_color="red",
+        max_labels=12
+    )
+
+    return dates, new_peerings_count, de_peerings_count, accumulated_new_peerings, accumulated_de_peerings
 
 
 def analyze_vpp_ixp_participants(data):
@@ -492,6 +605,7 @@ if __name__ == "__main__":
     # analyze_vpp_ixp_participants(get_data(latest_file))
 
     plot_vpp_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
+    plot_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
 
     plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=True)
 

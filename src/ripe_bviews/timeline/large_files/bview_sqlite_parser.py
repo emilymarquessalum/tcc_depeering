@@ -46,7 +46,8 @@ def calculate_as_hegemony_from_db(
     ip_version: str = "v4",
     v4_threshold: int = 1,
     v6_threshold: int = 1,
-    allowed_viewpoints: Optional[Set[str]] = None
+    allowed_viewpoints: Optional[Set[str]] = None,
+    only_penultimate_as: bool = True
 ) -> Tuple[Dict[int, float], Set[str]]:
     """
     Core Hegemony math operating on an open SQLite connection.
@@ -136,9 +137,19 @@ def calculate_as_hegemony_from_db(
             except ValueError:
                 continue
             
-            unique_transits = set(as_path)
-            if target_asn is not None and target_asn in unique_transits:
-                unique_transits.remove(target_asn)
+            # --- NEW MODE LOGIC HERE ---
+            if only_penultimate_as and target_asn is not None:
+                unique_transits = set()
+                # Find occurrences of target_asn and grab the AS directly preceding it
+                for idx, asn_node in enumerate(as_path):
+                    if asn_node == target_asn and idx > 0:
+                        penultimate_as = as_path[idx - 1]
+                        if penultimate_as != target_asn:
+                            unique_transits.add(penultimate_as)
+            else:
+                unique_transits = set(as_path)
+                if target_asn is not None and target_asn in unique_transits:
+                    unique_transits.remove(target_asn)
 
             for transit_node in unique_transits:
                 transit_vp_weights[transit_node][vp] += weight
@@ -170,6 +181,7 @@ def calculate_as_hegemony_disk(
     ip_version: str = "v4",
     v4_threshold: int = 1,
     v6_threshold: int = 1,
+    only_penultimate_as: bool = True,
     allowed_viewpoints: Optional[Set[str]] = None
 ) -> Tuple[Dict[int, float], Set[str]]:
     conn = sqlite3.connect(db_path)
@@ -181,7 +193,8 @@ def calculate_as_hegemony_disk(
         ip_version=ip_version,
         v4_threshold=v4_threshold,
         v6_threshold=v6_threshold,
-        allowed_viewpoints=allowed_viewpoints
+        allowed_viewpoints=allowed_viewpoints,
+        only_penultimate_as=only_penultimate_as
     )
     conn.close()
     return scores, vps
