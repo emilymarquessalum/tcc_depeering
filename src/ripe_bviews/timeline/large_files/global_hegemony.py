@@ -165,6 +165,7 @@ def analyze_global_hegemony_over_time(
     use_free_viewpoint_filtering: bool = True,
     show_as_percentage: bool = True,
     as_color_map=None,
+    top_n: int = 5,
     text_scale: float = 1.0,
 ):
     if as_color_map is None:
@@ -215,7 +216,8 @@ def analyze_global_hegemony_over_time(
             continue
 
         top_fives_over_time, unique_asns_list = get_top_five_asns_over_time(
-            hegemony_scores_dict, valid_date_list
+            hegemony_scores_dict, valid_date_list,
+            top_n=top_n
         )
 
         cmap = plt.get_cmap("tab20")
@@ -469,6 +471,8 @@ if __name__ == "__main__":
     user_input = input("Enter percentage of top ASNs to consider (leave blank to default to Top 5): ").strip()
     percentage = float(user_input) if user_input else None
 
+    user_input = input("Enter the number of top ASNs to consider (leave blank to default to 5): ").strip()
+
     # 1. Run Global Individual Transit Hegemony Over Time
     print(f"\n[1/2] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_hegemony_over_time(
@@ -482,6 +486,7 @@ if __name__ == "__main__":
         use_free_viewpoint_filtering=True,
         show_as_percentage=True,
         text_scale=text_scale,
+        top_n=int(user_input) if user_input else 5
     )
  
     print(f"\n[2/2] Running Global VPP vs Non-VPP Hegemony ({'Top ' + str(percentage) + '%' if percentage else 'Top 5'}) for ASN {asn} ({ip_version.upper()})...")
