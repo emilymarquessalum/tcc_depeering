@@ -566,6 +566,132 @@ def plot_global_hegemony_cdf(
 
     save_plot(fig=fig, title=f"global_hegemony_cdf_{asn}_{date}.png")
 
+
+def plot_global_vpp_vs_non_vpp_cdf(
+    asn: int,
+    alpha: float,
+    date: str,
+    ip_version: Union[str, List[str]] = "both",
+    rrc_list: Optional[List[str]] = None,
+    text_scale: float = 1.25,
+):
+    """
+    Plots CDF curves comparing VPP ASes vs. Non-VPP ASes in terms of Hegemony distribution.
+    
+    X-axis: % of ASes within each group (Ranked highest score to lowest)
+    Y-axis: Cumulative Share of Hegemony within that group (%)
+    """
+    if rrc_list is None:
+        rrc_list = ["rrc03"]
+
+    clean_vpp_set = _get_clean_vpp_set()
+    ip_versions = _parse_ip_versions(ip_version)
+
+    plt.rcParams.update({
+        "font.size": 10 * text_scale,
+        "axes.titlesize": 14 * text_scale,
+        "axes.labelsize": 12 * text_scale,
+        "xtick.labelsize": 10 * text_scale,
+        "ytick.labelsize": 10 * text_scale,
+        "legend.fontsize": 10 * text_scale,
+        "figure.titlesize": 16 * text_scale,
+    })
+
+    fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    has_data = False
+
+    for ip_ver in ip_versions:
+        # Load global hegemony scores for date
+        scores, _ = load_global_hegemony_for_date(
+            asn=asn,
+            alpha=alpha,
+            date=date,
+            ip_version=ip_ver,
+            rrc_list=rrc_list,
+        )
+
+        if not scores:
+            print(f"[WARNING] No global scores found for {ip_ver.upper()} on {date}.")
+            continue
+
+        # Clean ASN keys and filter positive scores
+        vpp_scores = []
+        non_vpp_scores = []
+
+        for raw_asn, score in scores.items():
+            if score <= 0:
+                continue
+            clean_asn = str(raw_asn).upper().replace("AS", "").strip()
+            if clean_asn in clean_vpp_set:
+                vpp_scores.append(score)
+            else:
+                non_vpp_scores.append(score)
+
+        linestyle = "-" if ip_ver == "v4" else "--"
+        ip_label = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+
+        # Compute & Plot VPP CDF
+        if vpp_scores:
+            sorted_vpp = sorted(vpp_scores, reverse=True)
+            tot_vpp = sum(sorted_vpp)
+            cum_vpp = (np.cumsum(sorted_vpp) / tot_vpp) * 100.0
+            x_vpp = [0.0] + [(i + 1) / len(sorted_vpp) * 100.0 for i in range(len(sorted_vpp))]
+            y_vpp = [0.0] + list(cum_vpp)
+
+            ax.plot(
+                x_vpp,
+                y_vpp,
+                linewidth=2.5,
+                linestyle=linestyle,
+                color="tab:blue",
+                label=f"VPP ASes (N={len(sorted_vpp)}){ip_label}",
+            )
+            has_data = True
+
+        # Compute & Plot Non-VPP CDF
+        if non_vpp_scores:
+            sorted_non = sorted(non_vpp_scores, reverse=True)
+            tot_non = sum(sorted_non)
+            cum_non = (np.cumsum(sorted_non) / tot_non) * 100.0
+            x_non = [0.0] + [(i + 1) / len(sorted_non) * 100.0 for i in range(len(sorted_non))]
+            y_non = [0.0] + list(cum_non)
+
+            ax.plot(
+                x_non,
+                y_non,
+                linewidth=2.5,
+                linestyle=linestyle,
+                color="tab:orange",
+                label=f"Non-VPP ASes (N={len(sorted_non)}){ip_label}",
+            )
+            has_data = True
+
+    if not has_data:
+        print("[WARNING] No valid VPP/Non-VPP score data to plot.")
+        plt.close(fig)
+        return
+
+    # Reference uniform 45-degree line
+    ax.plot([0, 100], [0, 100], color="grey", linestyle=":", linewidth=1.5, label="Uniform Distribution")
+
+    ax.set_xlabel("% of ASes within Group (Ranked Highest to Lowest)", fontsize=12 * text_scale)
+    ax.set_ylabel("Group Cumulative Share of Hegemony (%)", fontsize=12 * text_scale)
+    ax.set_title(
+        f"Global Hegemony Distribution: VPP vs. Non-VPP (CDF)\n(Target ASN: {asn}, Date: {date}, α={alpha})",
+        fontsize=14 * text_scale,
+    )
+
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 105)
+    ax.grid(True, linestyle="--", alpha=0.5)
+    ax.legend(loc="lower right", fontsize=10 * text_scale)
+
+    plt.tight_layout()
+    plt.show()
+
+    save_plot(fig=fig, title=f"global_vpp_vs_non_vpp_hegemony_cdf_{asn}_{date}.png")
+
+
 if __name__ == "__main__":
     asn = 15169
     alpha = 0.34
@@ -613,6 +739,15 @@ if __name__ == "__main__":
 
 
     plot_global_hegemony_cdf(
+        asn=asn,
+        alpha=alpha,
+        date="20261001",
+        ip_version=ip_version,
+        rrc_list=all_rrcs,
+        text_scale=text_scale,
+    )
+
+    plot_global_vpp_vs_non_vpp_cdf(
         asn=asn,
         alpha=alpha,
         date="20261001",
