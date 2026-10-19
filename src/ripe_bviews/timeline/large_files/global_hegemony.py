@@ -741,7 +741,7 @@ if __name__ == "__main__":
     plot_global_hegemony_cdf(
         asn=asn,
         alpha=alpha,
-        date="20261001",
+        date="20260901",
         ip_version=ip_version,
         rrc_list=all_rrcs,
         text_scale=text_scale,
@@ -750,7 +750,7 @@ if __name__ == "__main__":
     plot_global_vpp_vs_non_vpp_cdf(
         asn=asn,
         alpha=alpha,
-        date="20261001",
+        date="20260901",
         ip_version=ip_version,
         rrc_list=all_rrcs,
         text_scale=text_scale,
