@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
-
+import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
