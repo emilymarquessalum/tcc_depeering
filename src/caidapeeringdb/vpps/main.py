@@ -98,17 +98,21 @@ def _get_connected_vpp_entities(snapshot, target_vpp_asns, vpp_asn_map):
 def get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map):
     print("\n--- [DEBUG] PeeringDB Snapshot File Inspection ---")
     print(f"Total PeeringDB files loaded: {len(all_files)}")
-    for f in all_files[:5]:  # Print first 5 sample file paths
+    for f in all_files[:5]:  # Inspect first 5 files
+        f_name = Path(f).name
+        digits_only = re.sub(r"\D", "", f_name)
         print(f"  Raw file path: {repr(f)}")
-        print(f"  Extracted name: {repr(Path(f).name)}")
-        print(f"  Digits only: {repr(re.sub(r'\D', '', Path(f).name))}")
+        print(f"  Extracted name: {repr(f_name)}")
+        print(f"  Digits only: {repr(digits_only)}")
+    print("--------------------------------------------------\n")
 
     target_vpp_asns = set(vpp_asn_map.keys())
     status_map = {}
 
     for file_path, snapshot in zip(all_files, all_snapshots):
         file_str = str(file_path)
-        digits_only = re.sub(r"\D", "", Path(file_str).name)
+        f_name = Path(file_str).name
+        digits_only = re.sub(r"\D", "", f_name)
         
         # Take the first 8 digits found in the filename
         if len(digits_only) >= 8:
@@ -127,7 +131,6 @@ def get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map):
 
     print(f"[DEBUG] Successfully mapped {len(status_map)} dates into status_map: {list(status_map.keys())}\n")
     return status_map
-
 
 def plot_vpps_with_percentage_ixp_connections_over_time(all_files, all_snapshots, vpp_asn_map):
     """
