@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
+from src.caidapeeringdb.ixp_features.continent_logic import organize_connections_by_continent
 from src.utils.graphs import DEFAULT_FIGSIZE, plot_list_as_line_plot
 
 from src.caidapeeringdb.caidapeeringdb_load import (
@@ -104,10 +105,12 @@ def get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map):
     status_map = {}
 
     for file_path, snapshot in zip(all_files, all_snapshots):
-        raw_date = Path(file_path).name
-        # Match exactly 8 consecutive digits representing YYYYMMDD
-        match = re.search(r"\d{8}", raw_date)
-        clean_date = match.group(0) if match else re.sub(r"\D", "", raw_date)[:8]
+        raw_name = Path(file_path).name
+        match = re.search(r"\d{8}", raw_name)
+        if not match:
+            continue
+        
+        clean_date = match.group(0)
         
         connected = get_connected_vpp_asns(snapshot, target_vpp_asns)
         unconnected = target_vpp_asns - connected
@@ -622,6 +625,87 @@ def plot_google_vs_vpp_total_port_speed_over_time(
     return dates, google_totals, vpp_totals
 
 
+
+def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, vpp_asn_map):
+    """
+    Plots the geographical distribution (by continent) of IXPs that VPPs 
+    are connected to over time across all PeeringDB snapshot files.
+    """
+    if not all_files or not all_snapshots:
+        raise ValueError("At least one snapshot is required.")
+
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    # Get all unique IXPs from the latest snapshot for metadata lookups
+    all_ixps = get_all_ixps(all_snapshots[-1])
+
+    connections_over_time = []
+
+    for file_path, snapshot in zip(all_files, all_snapshots):
+        raw_date = Path(file_path).stem
+        clean_date = re.sub(r"\D", "", raw_date)
+
+        vpp_ixp_connections = []
+        for conn in snapshot.get("netixlan", {}).get("data", []):
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn in target_vpp_asns:
+                vpp_ixp_connections.append(conn)
+
+        connections_over_time.append((clean_date, vpp_ixp_connections))
+
+    # Organize connections by continent using logic from continent_logic
+    continent_data_series, dates_for_plot, sorted_continents = organize_connections_by_continent(
+        connections_over_time, all_ixps
+    )
+
+    # Plot stacked bar chart or individual continent line plots
+    plt.figure(figsize=DEFAULT_FIGSIZE)
+    labels = [date.replace("_", "-") for date in dates_for_plot]
+
+    for continent in sorted_continents:
+        plt.plot(
+            labels,
+            continent_data_series[continent],
+            marker="o",
+            linewidth=2,
+            label=continent
+        )
+
+    plt.title("Geographical Distribution of IXP Connections for VPPs Over Time", fontsize=14, pad=15)
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Number of IXP Connections", fontsize=12)
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.legend(fontsize=11, title="Continent")
+
+    max_labels = 12
+    if len(labels) > max_labels:
+        step = len(labels) // max_labels
+        plt.xticks(
+            ticks=range(0, len(labels), step),
+            labels=[labels[i] for i in range(0, len(labels), step)],
+            rotation=45,
+        )
+    else:
+        plt.xticks(rotation=45)
+
+    plt.tight_layout()
+
+    out_path = Path("plots/vpps")
+    out_path.mkdir(parents=True, exist_ok=True)
+    plt.savefig(out_path / "vpp_ixp_geographical_distribution.png", dpi=300)
+    plt.show()
+
+    return dates_for_plot, continent_data_series
+
+
 if __name__ == "__main__":
     all_files = get_all_files()
     latest_file = all_files[-1] 
@@ -639,3 +723,5 @@ if __name__ == "__main__":
     plot_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
 
     plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=True)
+
+    plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, vpp_asn_map)

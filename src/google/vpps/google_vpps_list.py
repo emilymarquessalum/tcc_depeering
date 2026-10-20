@@ -108,8 +108,16 @@ def get_google_vpp_asns(include_alternatives=False) -> list[str]:
     return list(vpps_asn_map.keys())
 
 
+def get_google_vpps( ) -> list[str]:
+    with open(SCRIPT_DIR / "google_vpps.json", "r") as f:
+        vpps_asn_map = json.load(f)
+
+    return vpps_asn_map.get("silver", []) + vpps_asn_map.get("gold", [])
+
+
 if __name__ == "__main__":
 
     print(len(get_google_vpp_asns()))
+    print(len(get_google_vpps()))
     #create_list_of_vpp_asns_from_names()
     #print(len(get_google_vpp_asns()))
