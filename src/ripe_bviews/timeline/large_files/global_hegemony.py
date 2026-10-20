@@ -78,6 +78,26 @@ def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[st
     )
 
 
+def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
+    """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
+    if not pdb_dates_normalized:
+        raise ValueError("Cannot find closest PeeringDB date: pdb_dates_normalized list is empty.")
+
+    def parse_date_to_datetime(d_str: str) -> datetime:
+        match = re.search(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})", str(d_str))
+        if match:
+            clean_str = "".join(match.groups())
+            return datetime.strptime(clean_str, "%Y%m%d")
+        raise ValueError(f"Could not parse valid YYYYMMDD date from string: {d_str}")
+
+    bgp_dt = parse_date_to_datetime(bgp_date_str)
+
+    return min(
+        pdb_dates_normalized,
+        key=lambda d: abs((parse_date_to_datetime(d) - bgp_dt).days)
+    )
+
+
 def load_global_hegemony_for_date(
     asn: int,
     alpha: float,
