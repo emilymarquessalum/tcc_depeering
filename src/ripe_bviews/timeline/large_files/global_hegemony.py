@@ -12,9 +12,9 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
-from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
-
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
+
+from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
 
 from definitions import ROOT_DIR
 from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_data
