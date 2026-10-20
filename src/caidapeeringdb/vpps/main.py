@@ -102,7 +102,6 @@ def get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map):
         print(f"  Raw file path: {repr(f)}")
         print(f"  Extracted name: {repr(Path(f).name)}")
         print(f"  Digits only: {repr(re.sub(r'\D', '', Path(f).name))}")
-    print("--------------------------------------------------\n")
 
     target_vpp_asns = set(vpp_asn_map.keys())
     status_map = {}
