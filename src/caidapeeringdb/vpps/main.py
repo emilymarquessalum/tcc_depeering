@@ -104,8 +104,10 @@ def get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map):
     status_map = {}
 
     for file_path, snapshot in zip(all_files, all_snapshots):
-        raw_date = Path(file_path).stem
-        clean_date = re.sub(r"\D", "", raw_date)
+        raw_date = Path(file_path).name
+        # Match exactly 8 consecutive digits representing YYYYMMDD
+        match = re.search(r"\d{8}", raw_date)
+        clean_date = match.group(0) if match else re.sub(r"\D", "", raw_date)[:8]
         
         connected = get_connected_vpp_asns(snapshot, target_vpp_asns)
         unconnected = target_vpp_asns - connected

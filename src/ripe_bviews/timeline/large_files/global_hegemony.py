@@ -61,10 +61,10 @@ def _parse_ip_versions(
 
 def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
     """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
-    bgp_dt = datetime.strptime(bgp_date_str, "%Y%m%d")
+    bgp_dt = datetime.strptime(str(bgp_date_str)[:8], "%Y%m%d")
     return min(
         pdb_dates_normalized,
-        key=lambda d: abs((datetime.strptime(d, "%Y%m%d") - bgp_dt).days)
+        key=lambda d: abs((datetime.strptime(str(d)[:8], "%Y%m%d") - bgp_dt).days)
     )
 
 
