@@ -3,6 +3,7 @@ from datetime import datetime
 import math
 import os
 from pathlib import Path
+import re
 import sqlite3
 import sys
 from typing import Dict, List, Optional, Tuple, Union
@@ -10,9 +11,11 @@ from typing import Dict, List, Optional, Tuple, Union
 from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
+from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_data
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     LargeBViewParser,
@@ -22,6 +25,12 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_top_five_asns_over_time,
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
+
+# Import functions from main.py
+try:
+    from main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
+except ImportError:
+    from src.caidapeeringdb.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
 
 
 def _get_clean_vpp_set() -> set[str]:
@@ -52,6 +61,15 @@ def _parse_ip_versions(
     if clean_v in ["v4", "v6"]:
         return [clean_v]
     return ["v4"]
+
+
+def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
+    """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
+    bgp_dt = datetime.strptime(bgp_date_str, "%Y%m%d")
+    return min(
+        pdb_dates_normalized,
+        key=lambda d: abs((datetime.strptime(d, "%Y%m%d") - bgp_dt).days)
+    )
 
 
 def load_global_hegemony_for_date(
@@ -152,6 +170,167 @@ def get_global_hegemony_scores(
         viewpoint_counts_dict[d] = len(active_vps)
 
     return hegemony_scores_dict, viewpoint_counts_dict, valid_date_list
+
+
+def analyze_global_vpp_ixp_connected_hegemony_over_time(
+    asn: int,
+    alpha: float,
+    ip_version: Union[str, List[str]] = "v4",
+    rrc_list: list[str] = None,
+    start_date=None,
+    month_interval: int = 6,
+    use_strict_viewpoint_filtering: bool = False,
+    use_free_viewpoint_filtering: bool = True,
+    text_scale: float = 1.0,
+):
+    """
+    Calculates and plots the percentage of Total VPP Hegemony coming from VPPs
+    that have at least one IXP connection over time.
+
+    If unconnected VPPs account for X% of total VPP hegemony on a date,
+    this plot displays (100 - X)%, representing the hegemony share of IXP-connected VPPs.
+    """
+    # 1. Load PeeringDB snapshots and build VPP status map from main.py
+    all_files = get_all_files()
+    all_snapshots = get_all_data(all_files)
+    latest_snapshot = get_data(all_files[-1])
+    vpp_asn_map = build_vpp_asn_map(latest_snapshot)
+
+    status_map = get_vpp_ixp_connection_status_map(all_files, all_snapshots, vpp_asn_map)
+    pdb_dates_normalized = list(status_map.keys())
+
+    ip_versions = _parse_ip_versions(ip_version)
+
+    plt.rcParams.update({
+        "font.size": 10 * text_scale,
+        "axes.titlesize": 14 * text_scale,
+        "axes.labelsize": 12 * text_scale,
+        "xtick.labelsize": 10 * text_scale,
+        "ytick.labelsize": 10 * text_scale,
+        "legend.fontsize": 10 * text_scale,
+        "figure.titlesize": 16 * text_scale,
+    })
+
+    fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    has_data = False
+
+    for ip_ver in ip_versions:
+        all_available_dates = set()
+        for rrc in rrc_list:
+            dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+            all_available_dates.update(dates)
+
+        if not all_available_dates:
+            print(f"[ERROR] No global data available for ASN {asn} ({ip_ver.upper()}).")
+            continue
+
+        sorted_dates = sorted(list(all_available_dates))
+        available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
+        interval_dates = [available_dts[0].strftime("%Y%m%d")]
+        current_dt = available_dts[0]
+
+        while True:
+            ideal_target = current_dt + relativedelta(months=month_interval)
+            future_dts = [d for d in available_dts if d > current_dt]
+            if not future_dts:
+                break
+            closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
+            interval_dates.append(closest_dt.strftime("%Y%m%d"))
+            current_dt = closest_dt
+            if current_dt >= available_dts[-1]:
+                break
+
+        print(f"\n[GLOBAL VPP IXP HEGEMONY] Computing IXP-connected VPP hegemony share ({ip_ver.upper()}) across {len(interval_dates)} dates...")
+
+        hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
+            asn,
+            ip_ver,
+            interval_dates,
+            alpha,
+            rrc_list,
+            use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
+            use_free_viewpoint_filtering=use_free_viewpoint_filtering,
+        )
+
+        if not valid_date_list:
+            print(f"[WARNING] No valid global snapshots available for {ip_ver.upper()}.")
+            continue
+
+        connected_vpp_hegemony_pcts = []
+
+        for date in valid_date_list:
+            date_scores = hegemony_scores_dict.get(date, {})
+
+            cleaned_date_scores = {}
+            for raw_asn, score in date_scores.items():
+                try:
+                    clean_asn = int(str(raw_asn).upper().replace("AS", "").strip())
+                    cleaned_date_scores[clean_asn] = score
+                except (ValueError, TypeError):
+                    continue
+
+            # Match BGP date to closest PeeringDB snapshot date
+            closest_pdb_date = _get_closest_peeringdb_date(date, pdb_dates_normalized)
+            conn_asns = status_map[closest_pdb_date]["connected_asns"]
+            unconn_asns = status_map[closest_pdb_date]["unconnected_asns"]
+            all_vpp_asns = conn_asns | unconn_asns
+
+            total_vpp_hegemony = sum(
+                score for asn_id, score in cleaned_date_scores.items() if asn_id in all_vpp_asns
+            )
+
+            if total_vpp_hegemony <= 0.0:
+                connected_vpp_hegemony_pcts.append(0.0)
+                continue
+
+            unconnected_vpp_hegemony = sum(
+                score for asn_id, score in cleaned_date_scores.items() if asn_id in unconn_asns
+            )
+
+            # If unconnected VPPs account for X%, display value is (100 - X)%
+            pct_unconnected = (unconnected_vpp_hegemony / total_vpp_hegemony) * 100.0
+            pct_connected = 100.0 - pct_unconnected
+
+            connected_vpp_hegemony_pcts.append(round(pct_connected, 2))
+
+        formatted_dates = format_labels_if_they_are_dates(valid_date_list)
+        linestyle = "-" if ip_ver == "v4" else "--"
+        marker = "o" if ip_ver == "v4" else "^"
+        label_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
+
+        ax.plot(
+            formatted_dates,
+            connected_vpp_hegemony_pcts,
+            marker=marker,
+            linewidth=2.5,
+            color="tab:green",
+            linestyle=linestyle,
+            label=f"IXP-Connected VPP Hegemony Share{label_suffix}",
+        )
+        has_data = True
+
+    if not has_data:
+        print("[WARNING] No data plotted.")
+        plt.close(fig)
+        return
+
+    ax.set_xlabel("Date", fontsize=12 * text_scale)
+    ax.set_ylabel("% of Total VPP Hegemony", fontsize=12 * text_scale)
+    ax.set_title(
+        "Percentage of Total VPP Hegemony From IXP-Connected VPPs Over Time",
+        fontsize=14 * text_scale,
+    )
+    ax.tick_params(axis="both", labelsize=10 * text_scale)
+    ax.tick_params(axis="x", rotation=45)
+    ax.grid(True, linestyle="--", alpha=0.5)
+    ax.legend(loc="best", fontsize=10 * text_scale)
+    ax.set_ylim(bottom=0, top=105)
+
+    plt.tight_layout()
+    plt.show()
+
+    save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
+    save_plot(fig=fig, title=f"global_vpp_ixp_connected_hegemony_share_{asn}_{save_suffix}.png")
 
 
 def analyze_global_hegemony_over_time(
@@ -268,7 +447,6 @@ def analyze_global_hegemony_over_time(
         ax1.set_title(
             f"GLOBAL Hegemony Over Time (All RRCs Combined)\n(Target ASN: {asn}, IP: {ip_ver.upper()}, α={alpha})",
             fontsize=14 * text_scale,
-            #fontsize=18 * text_scale,
         )
         ax1.tick_params(axis="both", labelsize=10 * text_scale)
         ax1.tick_params(axis="x", rotation=45)
@@ -397,12 +575,6 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         formatted_dates = format_labels_if_they_are_dates(valid_date_list)
         linestyle = "-" if ip_ver == "v4" else "--"
         label_suffix = f"IP{ip_ver.lower()}" if len(ip_versions) > 1 else ""
-        
-        if percentage is not None:
-            avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
-            group_label = f"Top {percentage}%"# (~{avg_top_asns:.1f} ASNs)"
-        else:
-            group_label = "Top 5"
 
         ax.plot(
             formatted_dates,
@@ -435,14 +607,12 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     ax.set_ylabel("Hegemony Percentage (%)" if show_as_percentage else "Hegemony", fontsize=12 * text_scale)
     ax.set_title(
         f"Google's Global Hegemony - VPP vs Non-VPP ({cutoff_desc})",
-       # f"\n(Target ASN: {asn}, IP: {ip_version.upper()}, α={alpha})",
         fontsize=16 * text_scale,
     )
     ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(
-        #bbox_to_anchor=(1.02, 1),
         loc="upper right",
         title="Is-VPP",
         fontsize=10 * text_scale,
@@ -467,12 +637,6 @@ def plot_global_hegemony_cdf(
     rrc_list: Optional[List[str]] = None,
     text_scale: float = 1.25,
 ):
-    """
-    Plots a CDF comparing the Cumulative % of ASes against their Cumulative Share of Hegemony.
-    
-    X-axis: % of ASes (ranked from highest hegemony to lowest)
-    Y-axis: Cumulative Share of Hegemony (%)
-    """
     if rrc_list is None:
         rrc_list = ["rrc03"]
 
@@ -492,7 +656,6 @@ def plot_global_hegemony_cdf(
     has_data = False
 
     for ip_ver in ip_versions:
-        # Load hegemony scores for the specified date
         scores, active_vps = load_global_hegemony_for_date(
             asn=asn,
             alpha=alpha,
@@ -505,25 +668,20 @@ def plot_global_hegemony_cdf(
             print(f"[WARNING] No scores found for {ip_ver.upper()} on {date}.")
             continue
 
-        # Filter out zero or negative hegemony values if any exist
         valid_scores = [val for val in scores.values() if val > 0]
         if not valid_scores:
             print(f"[WARNING] All scores were zero for {ip_ver.upper()} on {date}.")
             continue
 
-        # Sort scores in descending order (highest hegemony ASes first)
         sorted_scores = sorted(valid_scores, reverse=True)
         total_hegemony = sum(sorted_scores)
 
-        # Compute cumulative sum of hegemony
         cum_scores = np.cumsum(sorted_scores)
         cum_share = (cum_scores / total_hegemony) * 100.0
 
-        # Compute cumulative percentage of ASes
         num_ases = len(sorted_scores)
         pct_ases = [(i + 1) / num_ases * 100.0 for i in range(num_ases)]
 
-        # Prepend (0, 0) origin point for proper CDF curve display
         x_cdf = [0.0] + pct_ases
         y_cdf = [0.0] + list(cum_share)
 
@@ -546,7 +704,6 @@ def plot_global_hegemony_cdf(
         plt.close(fig)
         return
 
-    # Reference 45-degree line representing equal distribution of hegemony
     ax.plot([0, 100], [0, 100], color="grey", linestyle=":", linewidth=1.5, label="Uniform Distribution")
 
     ax.set_xlabel("% of ASes (Ranked Highest to Lowest)", fontsize=12 * text_scale)
@@ -575,12 +732,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
     rrc_list: Optional[List[str]] = None,
     text_scale: float = 1.25,
 ):
-    """
-    Plots CDF curves comparing VPP ASes vs. Non-VPP ASes in terms of Hegemony distribution.
-    
-    X-axis: % of ASes within each group (Ranked highest score to lowest)
-    Y-axis: Cumulative Share of Hegemony within that group (%)
-    """
     if rrc_list is None:
         rrc_list = ["rrc03"]
 
@@ -601,7 +752,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
     has_data = False
 
     for ip_ver in ip_versions:
-        # Load global hegemony scores for date
         scores, _ = load_global_hegemony_for_date(
             asn=asn,
             alpha=alpha,
@@ -614,7 +764,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
             print(f"[WARNING] No global scores found for {ip_ver.upper()} on {date}.")
             continue
 
-        # Clean ASN keys and filter positive scores
         vpp_scores = []
         non_vpp_scores = []
 
@@ -630,7 +779,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
         linestyle = "-" if ip_ver == "v4" else "--"
         ip_label = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
 
-        # Compute & Plot VPP CDF
         if vpp_scores:
             sorted_vpp = sorted(vpp_scores, reverse=True)
             tot_vpp = sum(sorted_vpp)
@@ -648,7 +796,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
             )
             has_data = True
 
-        # Compute & Plot Non-VPP CDF
         if non_vpp_scores:
             sorted_non = sorted(non_vpp_scores, reverse=True)
             tot_non = sum(sorted_non)
@@ -671,7 +818,6 @@ def plot_global_vpp_vs_non_vpp_cdf(
         plt.close(fig)
         return
 
-    # Reference uniform 45-degree line
     ax.plot([0, 100], [0, 100], color="grey", linestyle=":", linewidth=1.5, label="Uniform Distribution")
 
     ax.set_xlabel("% of ASes within Group (Ranked Highest to Lowest)", fontsize=12 * text_scale)
@@ -699,7 +845,7 @@ if __name__ == "__main__":
     text_scale = 1.25
     start_date = None
 
-    all_rrcs = ["rrc03"]  # Add all available/populated RRCs here
+    all_rrcs = ["rrc03"]
 
     user_input = input("Enter percentage of top ASNs to consider (leave blank to default to Top 5): ").strip()
     percentage = float(user_input) if user_input else None
@@ -707,7 +853,7 @@ if __name__ == "__main__":
     user_input = input("Enter the number of top ASNs to consider (leave blank to default to 5): ").strip()
 
     # 1. Run Global Individual Transit Hegemony Over Time
-    print(f"\n[1/2] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
+    print(f"\n[1/3] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_hegemony_over_time(
         asn=asn,
         alpha=alpha,
@@ -722,7 +868,8 @@ if __name__ == "__main__":
         top_n=int(user_input) if user_input else 5
     )
  
-    print(f"\n[2/2] Running Global VPP vs Non-VPP Hegemony ({'Top ' + str(percentage) + '%' if percentage else 'Top 5'}) for ASN {asn} ({ip_version.upper()})...")
+    # 2. Run Global VPP vs Non-VPP Hegemony Over Time
+    print(f"\n[2/3] Running Global VPP vs Non-VPP Hegemony ({'Top ' + str(percentage) + '%' if percentage else 'Top 5'}) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_vpp_hegemony_over_time_top_ases(
         asn=asn,
         alpha=alpha,
@@ -737,6 +884,19 @@ if __name__ == "__main__":
         percentage=percentage,
     )
 
+    # 3. Run IXP-Connected VPP Hegemony Share Over Time
+    print(f"\n[3/3] Running IXP-Connected VPP Hegemony Share Over Time for ASN {asn} ({ip_version.upper()})...")
+    analyze_global_vpp_ixp_connected_hegemony_over_time(
+        asn=asn,
+        alpha=alpha,
+        ip_version=ip_version,
+        rrc_list=all_rrcs,
+        start_date=start_date,
+        month_interval=6,
+        use_strict_viewpoint_filtering=False,
+        use_free_viewpoint_filtering=True,
+        text_scale=text_scale,
+    )
 
     plot_global_hegemony_cdf(
         asn=asn,

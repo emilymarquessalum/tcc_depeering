@@ -1,0 +1,89 @@
+{
+  "gold": [
+    {
+      "isp_name": "Arelion\nwww.arelion.com/products-and-services/internet-and-cloud/google-gold-tier-vpp",
+      "isp_link": "https://www.arelion.com/products-and-services/internet-and-cloud/google-gold-tier-vpp",
+      "sales_region": "Asia-Pacific,\nEurope,\nLatin America,\nNorth America",
+      "metros_with_multiple_pnis": "AMS+, ARN+, ATL+, BUD, DEN, DFW, FRA+, HAM, HEM, HKG+, IAD, LAX+, LGA+, LHR+, MAD+, MIA, MIL+, MRS, MUC, ORD, PAR+, PHX+, PRG, QRO, SEA, SFO, SIN+, WAW, YUL, YYZ+, ZRH+"
+    },
+    {
+      "isp_name": "AT&T; Business\nwww.business.att.com/products/att-dedicated-internet.html",
+      "isp_link": "https://www.business.att.com/products/att-dedicated-internet.html",
+      "sales_region": "North America",
+      "metros_with_multiple_pnis": "ATL, DFW, IAD+, LAX+, LGA, MIA, ORD, SFO"
+    },
+    {
+      "isp_name": "Comcast\nwww.comcasttechnologysolutions.com/wholesale-internet",
+      "isp_link": "https://www.comcasttechnologysolutions.com/wholesale-internet",
+      "sales_region": "North America",
+      "metros_with_multiple_pnis": "ATL, DEN, DFW, IAD+, LAX+, LGA+, MIA, ORD+, SEA+, SFO+, SLC"
+    },
+    {
+      "isp_name": "Console Connect\nwww.consoleconnect.com",
+      "isp_link": "https://www.consoleconnect.com/",
+      "sales_region": "Asia-Pacific,\nAfrica,\nEurope,\nOceania,\nNorth America",
+      "metros_with_multiple_pnis": "DFW, HKG+, MRS, SIN+, SYD"
+    },
+    {
+      "isp_name": "Deutsche Telekom\nbusiness.telekom.com/products-and-solutions/magentabusiness-networks/premium-internet-underlay",
+      "isp_link": "https://business.telekom.com/products-and-solutions/magentabusiness-networks/premium-internet-underlay",
+      "sales_region": "Europe,\nNorth America",
+      "metros_with_multiple_pnis": "AMS, FRA+, HAM, MUC"
+    },
+    {
+      "isp_name": "Jio\nwww.jio.com",
+      "isp_link": "https://www.jio.com/",
+      "sales_region": "Asia-Pacific",
+      "metros_with_multiple_pnis": "BOM+, DEL+, MAA+"
+    },
+    {
+      "isp_name": "KDDI\nbiz.kddi.com/english/service/global-internet",
+      "isp_link": "https://biz.kddi.com/english/service/global-internet/",
+      "sales_region": "Asia-Pacific",
+      "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
+    {
+      "isp_name": "Lumen / Colt / Cirion\nwww.lumen.com/en-us/networking/google-peering.html",
+      "isp_link": "https://www.lumen.com/en-us/networking/google-peering.html",
+      "sales_region": "Africa,\nAsia-Pacific,\nEurope,\nLatin America,\nOceania,\nNorth America",
+      "metros_with_multiple_pnis": "AMS, ATL, BOG, DEN, DFW, DUB, EZE, GRU, HKG, IAD+, JNB, LAX, LGA+, MAD, MIA, MIL, MRS, ORD, PAR, PHX+, QRO, RIO, SCL, SEA, SFO, SIN+, SLC, SYD, WAW"
+    },
+    {
+      "isp_name": "OCN NTT Communications Corporation\nwww.ntt.com/business/services/network/internet-connect/ocn-business.html#",
+      "isp_link": "https://www.ntt.com/business/services/network/internet-connect/ocn-business.html",
+      "sales_region": "Asia-Pacific",
+      "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
+    {
+      "isp_name": "Softbank www.softbank.jp/biz/services/network/vpn-internet/smart-intenet/lineup/suite-ether",
+      "isp_link": "https://www.softbank.jp/biz/services/network/vpn-internet/smart-intenet/lineup/suite-ether/",
+      "sales_region": "Asia-Pacific",
+      "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
+    {
+      "isp_name": "Telstra\nwww.telstra.com.au",
+      "isp_link": "https://www.telstra.com.au/",
+      "sales_region": "Oceania",
+      "metros_with_multiple_pnis": "MEL+, SYD+"
+    },
+    {
+      "isp_name": "Telstra International\nwww.telstrainternational.com/en/products/global-networks/global-internet",
+      "isp_link": "https://www.telstrainternational.com/en/products/global-networks/global-internet",
+      "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+      "metros_with_multiple_pnis": "HKG+, LAX+, NRT+, SIN+, TSA"
+    },
+    {
+      "isp_name": "Verizon Business\nwww.verizon.com/business",
+      "isp_link": "https://www.verizon.com/business/",
+      "sales_region": "Europe,\nNorth America",
+      "metros_with_multiple_pnis": "AMS, ARN+, ATL, DFW, FRA, IAD+, LAX+, LGA, LHR, MIA, ORD, PAR, SEA, SFO"
+    },
+    {
+      "isp_name": "Vodafone Business\nbusiness.vodafone.com/GoogleVPPprogram_GCPpeering...",
+      "isp_link": "https://business.vodafone.com/GoogleVPPprogram_GCPpeering?utm_medium=external_website&utm_source=website&utm_campaign=fy25_non_program_google_vpp&utm_term=google_vpp&utm_content=google_vpp_website&aid=a001fl&did=d002ii&elqCampaignId=13187",
+      "sales_region": "Asia-Pacific,\nEurope,\nNorth America",
+      "metros_with_multiple_pnis": "AMS, ARN+, FRA+, HKG, LHR, MIL, SIN, SOF+"
+    }
+  ],
+  "silver": []
+}

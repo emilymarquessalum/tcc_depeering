@@ -30,7 +30,7 @@ def fetch_bimonthly_wayback_snapshots(target_url, start_year=2021):
     
     print("Fetching snapshot index from Internet Archive CDX API...")
     try:
-        response = requests.get(cdx_url, headers=headers, params=params, timeout=30)
+        response = requests.get(cdx_url, headers=headers, params=params, timeout=60)
         response.raise_for_status()
         records = response.json()
     except requests.exceptions.RequestException as e:
@@ -81,7 +81,7 @@ def scrape_vpps_from_url(driver, url):
     """Scrape VPP table data from a specific URL using Selenium."""
     driver.get(url)
      
-    wait = WebDriverWait(driver, 20)
+    wait = WebDriverWait(driver, 60)
     try:
         wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "table")))
     except TimeoutException:
@@ -182,26 +182,41 @@ def main():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     
-    driver = webdriver.Chrome(options=options)
+    driver = None
 
     try:
         for idx, snap in enumerate(snapshots, start=1):
             date_str = snap["date"]
             archive_url = snap["url"]
+            filename = f"google_vpps_{date_str}.json"
+            output_path = os.path.join(output_dir, filename)
+
+            # Check if file already exists
+            if os.path.exists(output_path):
+                print(f"[{idx}/{len(snapshots)}] Skipping {date_str} (file already exists: {filename})")
+                continue
+
+            # Initialize driver lazily only when we need to scrape
+            if driver is None:
+                driver = webdriver.Chrome(options=options)
+                driver.set_page_load_timeout(180)
+                driver.set_script_timeout(180)
+
+                driver.implicitly_wait(60)
+
             print(f"[{idx}/{len(snapshots)}] Processing snapshot for {date_str}...")
             
             vpps_data = scrape_vpps_from_url(driver, archive_url)
             
             if vpps_data and (vpps_data["gold"] or vpps_data["silver"]):
-                filename = f"google_vpps_{date_str}.json"
-                output_path = os.path.join(output_dir, filename)
                 save_vpps_to_json(vpps_data, output_path)
                 print(f"  Captured {len(vpps_data['gold'])} Gold, {len(vpps_data['silver'])} Silver providers.")
             else:
                 print(f"  No provider data extracted from snapshot {date_str}.")
 
     finally:
-        driver.quit()
+        if driver is not None:
+            driver.quit()
 
 
 if __name__ == "__main__":
