@@ -704,6 +704,94 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     return dates_for_plot, continent_data_series
 
 
+def plot_vpp_percentage_of_google_rs_ixps_over_time(
+    all_files,
+    all_snapshots,
+    vpp_asn_map,
+    google_asns={15169},
+    cutoff_year=2024,
+    output_dir="plots/vpps"
+): 
+    if not all_files or not all_snapshots:
+        raise ValueError("At least one PeeringDB snapshot is required.")
+
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    # Step 1: Extract unique IXP IDs where Google had a Route Server connection before `cutoff_year`
+    google_rs_ixps_pre_2024 = set()
+
+    for file_path, snapshot in zip(all_files, all_snapshots):
+        f_name = file_path.split("/")[-1]
+        
+        # Extract year from filename (e.g., peeringdb_2_dump_2023_01_01.json)
+        match = re.search(r"(20\d{2})", f_name)
+        if not match:
+            continue
+        
+        year = int(match.group(1))
+        if year < cutoff_year:
+            for conn in snapshot.get("netixlan", {}).get("data", []):
+                raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+                if raw_asn is None:
+                    continue
+                try:
+                    conn_asn = int(raw_asn)
+                except (ValueError, TypeError):
+                    continue
+
+                if conn_asn in google_asns and bool(conn.get("is_rs_peer")):
+                    ix_id = conn.get("ix_id")
+                    if ix_id is not None:
+                        google_rs_ixps_pre_2024.add(ix_id)
+
+    total_google_ixps = len(google_rs_ixps_pre_2024)
+    if total_google_ixps == 0:
+        raise ValueError(f"No IXPs found with Google Route Server connections prior to {cutoff_year}.")
+
+    print(f"Found {total_google_ixps} distinct IXPs with Google Route Server connections before {cutoff_year}.")
+
+    # Step 2: Track VPP connections to these specific Google IXPs over time
+    dates = get_dates_from_files(all_files)
+    labels = [date.replace("_", "-") for date in dates]
+    pct_over_time = []
+
+    for snapshot in all_snapshots:
+        vpp_connected_ixps = set()
+        
+        for conn in snapshot.get("netixlan", {}).get("data", []):
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn in target_vpp_asns:
+                ix_id = conn.get("ix_id")
+                if ix_id is not None:
+                    vpp_connected_ixps.add(ix_id)
+
+        # Overlap between Google pre-2024 RS IXPs and IXPs currently connected to by any VPP
+        matched_ixps = google_rs_ixps_pre_2024.intersection(vpp_connected_ixps)
+        pct = (len(matched_ixps) / total_google_ixps) * 100.0
+        pct_over_time.append(round(pct, 2))
+
+    # Step 3: Plot the line graph
+    plot_list_as_line_plot(
+        pct_over_time,
+        y=labels,
+        subfolder="vpps",
+        title=f"% of Google Pre-{cutoff_year} RS IXPs Connected to by VPPs Over Time",
+        xlabel="Date",
+        ylabel="% of Google RS IXPs Connected to by VPPs",
+        max_labels=12,
+        fontsize=18
+    )
+
+    return labels, pct_over_time, google_rs_ixps_pre_2024
+
+
 if __name__ == "__main__":
     all_files = get_all_files()
     latest_file = all_files[-1] 
