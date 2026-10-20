@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
+from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from definitions import ROOT_DIR
@@ -25,12 +27,6 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_top_five_asns_over_time,
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
-
-# Import functions from main.py
-try:
-    from main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
-except ImportError:
-    from src.caidapeeringdb.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
 
 
 def _get_clean_vpp_set() -> set[str]:
