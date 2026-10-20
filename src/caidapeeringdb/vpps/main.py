@@ -811,3 +811,7 @@ if __name__ == "__main__":
     plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=True)
 
     plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, vpp_asn_map)
+
+    dates, percentages, google_ixps = plot_vpp_percentage_of_google_rs_ixps_over_time(
+        all_files, all_snapshots, vpp_asn_map
+    )
