@@ -808,7 +808,7 @@ if __name__ == "__main__":
     plot_vpp_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
     plot_ixp_entries_and_exits_over_time(all_files, all_snapshots, vpp_asn_map)
 
-    plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=True)
+    plot_vpp_average_ixp_speed_over_time(all_files, all_snapshots, use_median=False)
 
     plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, vpp_asn_map)
 

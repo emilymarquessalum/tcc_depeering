@@ -5,14 +5,14 @@ import sys
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
-
+import statistics
 
 
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.utils.graphs import plot_list_as_bar_plot
+from src.utils.graphs import plot_list_as_bar_plot, plot_list_as_line_plot
 from src.caidapeeringdb.ixp_depeering_compare import check_external_ixp_depeering_for_peak_ases
 from src.caidapeeringdb.grouped_asns import get_ixps_by_continent_count, plot_ixps_distribution_by_continent
 from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
@@ -343,6 +343,65 @@ def bview_analyze_depeering_by_continent(all_required_data):
     analyze_depeering_by_continent(data_structures, asn_to_analyze, all_required_data["all_ixps"])
 
 
+def plot_focused_asn_median_port_speed_over_time(all_files, all_snapshots, asn_to_analyze, convert_to_gbps=True):
+    """
+    Plots the median connection/port speed over time for a target ASN across PeeringDB snapshots.
+    """
+    if not all_files or not all_snapshots:
+        raise ValueError("At least one snapshot is required.")
+
+    dates = [file.split("/")[-1].split(".")[0] for file in all_files]
+    speeds_over_time = []
+
+    for snapshot in all_snapshots:
+        speeds = []
+        netixlan_entries = snapshot.get("netixlan", {}).get("data", [])
+
+        for conn in netixlan_entries:
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn == asn_to_analyze:
+                speed = conn.get("speed")
+                if speed is not None:
+                    try:
+                        speed_val = int(speed)
+                        if speed_val > 0:
+                            speeds.append(speed_val)
+                    except (ValueError, TypeError):
+                        pass
+
+        if speeds:
+            median_val = statistics.median(speeds)
+            if convert_to_gbps:
+                median_val = median_val / 1000.0
+        else:
+            median_val = 0.0
+
+        speeds_over_time.append(round(median_val, 2))
+
+    labels = [date.split("dump_")[-1].replace("_", "-") for date in dates]
+    unit = "Gbps" if convert_to_gbps else "Mbps"
+
+    plot_list_as_line_plot(
+        speeds_over_time,
+        y=labels,
+        subfolder="asns",
+        title=f"Median Port Speed Over Time for ASN {asn_to_analyze} ({unit})",
+        xlabel="Date",
+        ylabel=f"Median Speed ({unit})",
+        max_labels=12,
+        fontsize=18
+    )
+
+    return labels, speeds_over_time
+
 if __name__ == "__main__":
 
     config_path = str(Path(__file__).parent)
@@ -416,10 +475,14 @@ if __name__ == "__main__":
     plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage)
   
     start_actions()
+    confirm_action(
+            f"Plot median port speed over time for ASN {asn_to_analyze}",
+            lambda: plot_focused_asn_median_port_speed_over_time(all_files, get_all_data(all_files_before_depeering) + get_all_data(all_files_after_depeering), asn_to_analyze)
+        )
+            
     confirm_action("Plot asns analysis", lambda: plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None))
      
     #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
-    
     
    
     # Build data structures for analysis
