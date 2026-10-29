@@ -86,7 +86,10 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             if rrc_list:
                 all_available_dates = set()
                 for rrc in rrc_list:
-                    dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+                    #dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+                    dates = get_interval_dates_for_asn_data(
+                        asn, rrc, ip_ver, month_interval=month_interval, start_date=start_date
+                    )
                     all_available_dates.update(dates)
                 current_date_list = sorted(list(all_available_dates))
             elif rrc_used:
