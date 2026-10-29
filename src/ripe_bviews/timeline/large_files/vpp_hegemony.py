@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 # Preserving project root path insertion
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.ripe_bviews.timeline.large_files.global_hegemony import _parse_ip_versions
 from definitions import ROOT_DIR
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
@@ -188,12 +189,8 @@ if __name__ == "__main__":
     text_scale = 1.0  # Increase to scale font size of EVERYTHING (e.g., 1.5 = 150% size)
     start_date = None
 
-    rrcs = [
-        "rrc03", "rrc04", "rrc05", "rrc06", "rrc07", "rrc08", "rrc09", "rrc10",
-        "rrc11", "rrc12", "rrc13", "rrc14", "rrc15", "rrc16", "rrc17", "rrc18",
-        "rrc19", "rrc20", "rrc21", "rrc22",
-    ]
-
+    rrcs = [rrc["rrc"] for rrc in get_all_rrcs()] 
+    
     asn_input = input(f"Enter ASN to analyze (default {asn}): ")
     if asn_input:
         asn = int(asn_input)
