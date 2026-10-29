@@ -232,6 +232,10 @@ if __name__ == "__main__":
 
     user_input = input("Enter the percentage of top ASNs to consider (default 20): ").strip()
 
+    ip_version_input = input("Enter IP version (v4, v6, both) [default: both]: ").strip().lower()
+    if ip_version_input in ["v4", "v6", "both"]:
+        ip_version = ip_version_input
+
     is_percentage = "%" in user_input
     if is_percentage:
         user_input = user_input.replace("%", "").strip()
