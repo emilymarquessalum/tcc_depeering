@@ -379,6 +379,22 @@ def get_interval_dates_for_asn_data(
 
     return [dt.strftime("%Y%m%d") for dt in final_dates]
 
+# ignores what dates "exist" and just generates a list of all dates from start_date to end_date, month_interval at a time
+def get_interval_dates(month_interval, start_date, end_date):
+    if not start_date or not end_date:
+        return []
+
+    start_dt = datetime.strptime(start_date, "%Y%m%d")
+    end_dt = datetime.strptime(end_date, "%Y%m%d")
+
+    final_dates = []
+    current_dt = start_dt
+
+    while current_dt <= end_dt:
+        final_dates.append(current_dt.strftime("%Y%m%d"))
+        current_dt += relativedelta(months=month_interval)
+
+    return final_dates
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"

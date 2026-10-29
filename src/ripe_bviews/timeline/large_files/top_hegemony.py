@@ -12,6 +12,7 @@ from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_all_dates_available_for_asn_data,
     get_hegemony_scores,
+    get_interval_dates,
     get_interval_dates_for_asn_data,
 )
 from src.ripe_bviews.timeline.large_files.global_hegemony import (
@@ -86,15 +87,18 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             if rrc_list:
                 all_available_dates = set()
                 for rrc in rrc_list:
-                    #dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
-                    # dates = get_interval_dates_for_asn_data(
-                    #     asn, rrc, ip_ver, month_interval=month_interval, start_date=start_date
-                    # )
-                    # all_available_dates.update(dates)
-                    all_available_dates = get_interval_dates_for_asn_data(
+                    dates = get_all_dates_available_for_asn_data(asn, rrc, ip_ver, start_date=start_date)
+                    dates = get_interval_dates_for_asn_data(
                         asn, rrc, ip_ver, month_interval=month_interval, start_date=start_date
                     )
-                current_date_list = sorted(list(all_available_dates))
+                    all_available_dates.update(dates)
+                    # all_available_dates = get_interval_dates_for_asn_data(
+                    #     asn, rrc, ip_ver, month_interval=month_interval, start_date=start_date
+                    # )
+                    
+                current_date_list = get_interval_dates(month_interval, start_date, sorted(list(all_available_dates))[-1])
+                
+                #current_date_list = sorted(list(all_available_dates))
             elif rrc_used:
                 current_date_list = get_interval_dates_for_asn_data(
                     asn, rrc_used, ip_ver, month_interval=month_interval, start_date=start_date
