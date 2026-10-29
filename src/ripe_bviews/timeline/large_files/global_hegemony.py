@@ -374,6 +374,7 @@ def analyze_global_hegemony_over_time(
     as_color_map=None,
     top_n: int = 5,
     text_scale: float = 1.0,
+    highlight_max_per_date: bool = False,   
 ):
     if as_color_map is None:
         as_color_map = {}
@@ -451,6 +452,9 @@ def analyze_global_hegemony_over_time(
         line_styles = ["-", "--", ":", "-."]
         markers = ["o", "s", "^", "v", "D", "X", "P"]
 
+        # Store all plotted series per date to compute max scores across tracked ASNs
+        all_asn_scores_by_date = [[] for _ in valid_date_list]
+
         for i, target_asn in enumerate(unique_asns_list):
             scores_for_asn = []
             for d_idx in range(len(valid_date_list)):
@@ -459,6 +463,7 @@ def analyze_global_hegemony_over_time(
                     tot = total_hegemony_per_date[d_idx]
                     val = (val / tot * 100.0) if tot > 0 else 0.0
                 scores_for_asn.append(val)
+                all_asn_scores_by_date[d_idx].append(val)
 
             ax1.plot(
                 valid_date_list,
@@ -470,10 +475,24 @@ def analyze_global_hegemony_over_time(
                 label=f"ASN {target_asn}",
             )
 
+        # --- NEW PLOTTING STEP FOR HIGHEST SCORE PER DATE ---
+        if highlight_max_per_date and valid_date_list:
+            max_scores_per_date = [
+                max(scores) if scores else 0.0 for scores in all_asn_scores_by_date
+            ]
+            ax1.plot(
+                valid_date_list,
+                max_scores_per_date,
+                color="blue",
+                linewidth=4.5,
+                zorder=5,
+                label="Highest Score Per Date",
+            )
+
         ax1.set_xlabel("Date", fontsize=12 * text_scale)
         ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12 * text_scale)
         ax1.set_title(
-            f"Global Hegemony Over Time Top {top_n} \n(Target ASN: {asn}, IP{ip_ver.lower()})", #, α={alpha})"
+            f"Global Hegemony Over Time Top {top_n} \n(Target ASN: {asn}, IP{ip_ver.lower()})",
             fontsize=14 * text_scale,
         )
         ax1.tick_params(axis="both", labelsize=10 * text_scale)
@@ -490,7 +509,6 @@ def analyze_global_hegemony_over_time(
         plt.tight_layout()
         plt.show()
         save_plot(fig=fig, title=f"global_hegemony_over_time_{asn}_{ip_ver}.png")
-
 
 def analyze_global_vpp_hegemony_over_time_top_ases(
     asn: int,
@@ -893,7 +911,8 @@ if __name__ == "__main__":
         use_free_viewpoint_filtering=True,
         show_as_percentage=True,
         text_scale=text_scale,
-        top_n=int(user_input) if user_input else 5
+        top_n=int(user_input) if user_input else 5,
+        highlight_max_per_date=True,
     )
  
     # 2. Run Global VPP vs Non-VPP Hegemony Over Time
