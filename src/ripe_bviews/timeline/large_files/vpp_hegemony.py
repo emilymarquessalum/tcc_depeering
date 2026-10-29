@@ -215,16 +215,16 @@ if __name__ == "__main__":
         print(f"\n[INFO] Running VPP Analysis for ASN {target_asn} on RRC {rrc_used} ({ip_version.upper()}) [Top 5 Only: {only_top_5}]...")
 
         try:
-            dates = get_interval_dates_for_asn_data(
-                target_asn, rrc_used, ip_version, month_interval=6, start_date=start_date
-            )
+            # dates = get_interval_dates_for_asn_data(
+            #     target_asn, rrc_used, ip_version, month_interval=6, start_date=start_date
+            # )
 
             compare_vpp_and_non_vpp_hegemony_over_time(
                 target_asn,
                 alpha,
                 rrc_used,
                 ip_version,
-                dates,
+                date_list=None,
                 use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
                 use_best_next_days=use_best_next_days,
                 show_as_percentage=show_as_percentage,
