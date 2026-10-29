@@ -95,10 +95,10 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
                     # all_available_dates = get_interval_dates_for_asn_data(
                     #     asn, rrc, ip_ver, month_interval=month_interval, start_date=start_date
                     # )
-                    
-                current_date_list = get_interval_dates(month_interval, start_date, sorted(list(all_available_dates))[-1])
+
+                #current_date_list = get_interval_dates(month_interval, start_date, sorted(list(all_available_dates))[-1])
                 
-                #current_date_list = sorted(list(all_available_dates))
+                current_date_list = sorted(list(all_available_dates))
             elif rrc_used:
                 current_date_list = get_interval_dates_for_asn_data(
                     asn, rrc_used, ip_ver, month_interval=month_interval, start_date=start_date
