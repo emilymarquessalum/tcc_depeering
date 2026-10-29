@@ -522,6 +522,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     show_as_percentage: bool = True,
     text_scale: float = 1.0,
     percentage: Optional[float] = None,
+    is_percentage: bool = False
 ): 
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
@@ -565,7 +566,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             if current_dt >= available_dts[-1]:
                 break
 
-        cutoff_desc = f"Top {percentage}%" if percentage is not None else "Top 5"
+        cutoff_desc = f"Top {percentage}{'%' if is_percentage else ''}" if percentage is not None else "Top 5"
         print(f"\n[GLOBAL VPP] Computing global VPP hegemony ({cutoff_desc}) ({ip_ver.upper()}) for {len(interval_dates)} dates across {len(rrc_list)} RRCs...")
 
         hegemony_scores_dict, _, valid_date_list = get_global_hegemony_scores(
@@ -602,7 +603,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
             total_asns = len(sorted_items)
 
             if percentage is not None:
-                top_count = max(1, math.ceil(total_asns * percentage / 100.0))
+                top_count = max(1, math.ceil(total_asns * percentage / 100.0)) if is_percentage else max(1, int(percentage))
             else:
                 top_count = 5
 
@@ -648,7 +649,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
         plt.close(fig)
         return
 
-    cutoff_desc = f"Top {percentage}%" if percentage is not None else "Top 5"
+    cutoff_desc = f"Top {percentage}{'%' if is_percentage else ''}" if percentage is not None else "Top 5"
     ax.set_xlabel("Date", fontsize=12 * text_scale)
     ax.set_ylabel("Hegemony Percentage (%)" if show_as_percentage else "Hegemony", fontsize=12 * text_scale)
     ax.set_title(
@@ -894,6 +895,11 @@ if __name__ == "__main__":
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
     user_input = input("Enter percentage of top ASNs to consider (leave blank to default to Top 5): ").strip()
+    
+    is_percentage = "%" in user_input
+    if is_percentage:
+        user_input = user_input.replace("%", "").strip()
+
     percentage = float(user_input) if user_input else None
 
     user_input = input("Enter the number of top ASNs to consider (leave blank to default to 5): ").strip()
@@ -929,6 +935,7 @@ if __name__ == "__main__":
         show_as_percentage=True,
         text_scale=text_scale,
         percentage=percentage,
+        is_percentage=is_percentage
     )
 
     # 3. Run IXP-Connected VPP Hegemony Share Over Time
