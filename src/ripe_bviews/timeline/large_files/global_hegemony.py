@@ -905,8 +905,8 @@ if __name__ == "__main__":
         rrc_list=all_rrcs,
         start_date=start_date,
         month_interval=6,
-        use_strict_viewpoint_filtering=False,
-        use_free_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=True,
+        use_free_viewpoint_filtering=False,
         show_as_percentage=True,
         text_scale=text_scale,
         percentage=percentage,
@@ -921,8 +921,8 @@ if __name__ == "__main__":
         rrc_list=all_rrcs,
         start_date=start_date,
         month_interval=6,
-        use_strict_viewpoint_filtering=False,
-        use_free_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=True,
+        use_free_viewpoint_filtering=False,
         text_scale=text_scale,
     )
 
