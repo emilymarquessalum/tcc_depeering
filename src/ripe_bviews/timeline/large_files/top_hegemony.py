@@ -256,8 +256,8 @@ if __name__ == "__main__":
         percentage=percentage,
         is_percentage=is_percentage,
         rrc_used=rrc_target,
-        use_strict_viewpoint_filtering=False,
-        use_free_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=True,
+        use_free_viewpoint_filtering=False,
         month_interval=3,
         text_scale=text_scale,
     )
@@ -271,7 +271,7 @@ if __name__ == "__main__":
         percentage=percentage,
         is_percentage=is_percentage,
         rrc_list=available_rrcs,
-        use_strict_viewpoint_filtering=False,
-        use_free_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=True,
+        use_free_viewpoint_filtering=False,
         text_scale=text_scale,
     )
