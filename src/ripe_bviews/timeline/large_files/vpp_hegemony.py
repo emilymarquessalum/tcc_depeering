@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 from src.ripe_bviews.timeline.bview_load import get_all_rrcs
 from src.ripe_bviews.timeline.large_files.global_hegemony import _parse_ip_versions
 from definitions import ROOT_DIR
-from src.google.vpps.google_vpps_list import get_google_vpp_asns
+from src.google.vpps.google_vpps_list import get_google_vpp_asn_map, get_google_vpp_asns
 from src.ripe_bviews.timeline.bview_hegemony import get_sorted_asns_from_scores
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
 
@@ -28,7 +28,7 @@ from bview_sqlite_parser import (
 
 
 def _get_clean_vpp_set() -> Set[str]:
-    """Retrieves and normalizes Google VPP ASNs into pure numeric string format."""
+    return get_google_vpp_asn_map().keys()
     raw_vpps = get_google_vpp_asns(include_alternatives=True)
     return {str(asn).upper().replace("AS", "").strip() for asn in raw_vpps}
 
