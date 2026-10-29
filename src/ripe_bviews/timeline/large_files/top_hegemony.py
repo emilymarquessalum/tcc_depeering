@@ -229,6 +229,7 @@ if __name__ == "__main__":
     alpha = 0.34
     ip_version = "both"
     text_scale = 1.0
+    month_interval = 6
 
     user_input = input("Enter the percentage of top ASNs to consider (default 20): ").strip()
 
@@ -258,7 +259,7 @@ if __name__ == "__main__":
         rrc_used=rrc_target,
         use_strict_viewpoint_filtering=True,
         use_free_viewpoint_filtering=False,
-        month_interval=3,
+        month_interval=month_interval,
         text_scale=text_scale,
     )
 
@@ -273,5 +274,6 @@ if __name__ == "__main__":
         rrc_list=available_rrcs,
         use_strict_viewpoint_filtering=True,
         use_free_viewpoint_filtering=False,
+        month_interval=month_interval,
         text_scale=text_scale,
     )

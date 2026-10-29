@@ -891,7 +891,7 @@ if __name__ == "__main__":
     ip_version = "both"
     text_scale = 1.25
     start_date = None
-    month_interval = 3
+    month_interval = 6
 
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
