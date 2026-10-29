@@ -221,7 +221,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     plt.show()
 
     save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
-    save_plot(fig=fig, title=f"top{int(percentage)}{"pct" if is_percentage else ''}_vs_others_hegemony_{mode_file_suffix}_{save_suffix}.png")
+    save_plot(fig=fig, title=f"top{int(percentage)}{'pct' if is_percentage else ''}_vs_others_hegemony_{mode_file_suffix}_{save_suffix}.png")
 
 
 if __name__ == "__main__":
