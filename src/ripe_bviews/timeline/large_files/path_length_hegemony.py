@@ -203,12 +203,13 @@ def analyze_path_length_hegemony(
     considers_duplicated_paths: bool = False,
     only_penultimate_as: bool = False,
     showfliers: bool = False,
+    use_mean: bool = False,
 ):
     """
-    Executes Path Length Boxplot Analysis over time:
-      1. Overall Path Length Boxplots
-      2. VPP vs. Non-VPP Side-by-Side Boxplots
-      3. Top X Hegemony Path Length Boxplots
+    Executes Path Length Analysis over time (Boxplots or Means):
+      1. Overall Path Length Analysis
+      2. VPP vs. Non-VPP Side-by-Side Analysis
+      3. Top X Hegemony Path Length Analysis
     """
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
@@ -333,102 +334,131 @@ def analyze_path_length_hegemony(
         return
 
     top_tag = f"top{int(top_x)}pct" if is_percentage_top_x else f"top{top_x}"
-    top_label_desc = f"Top {top_x}%" if is_percentage_top_x else f"Top {top_x}"
+
+    if is_percentage_top_x and top_x == 100:
+        top_label_desc = "All"
+    elif is_percentage_top_x:
+        top_label_desc = f"Top {top_x}%"
+    else:
+        top_label_desc = f"Top {top_x}"
+
+    plot_type_tag = "mean" if use_mean else "boxplot"
 
     for ip_ver, data in processed_data.items():
         dates = data["dates"]
         positions = np.arange(len(dates))
 
         # ==========================================
-        # FIGURE 1: Overall Path Length Boxplots Over Time
+        # FIGURE 1: Overall Path Length Analysis Over Time
         # ==========================================
         fig1, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
-        ax1.boxplot(
-            data["overall"],
-            positions=positions,
-            widths=0.4,
-            patch_artist=True,
-            showfliers=showfliers,
-            boxprops=dict(facecolor="tab:blue", alpha=0.7),
-            medianprops=dict(color="crimson", linewidth=2.0),
-        )
+        if use_mean:
+            means = [np.mean(dist) if dist else 0 for dist in data["overall"]]
+            ax1.plot(positions, means, marker="o", linewidth=2.0, color="tab:blue", label="Mean Path Length")
+        else:
+            ax1.boxplot(
+                data["overall"],
+                positions=positions,
+                widths=0.4,
+                patch_artist=True,
+                showfliers=showfliers,
+                boxprops=dict(facecolor="tab:blue", alpha=0.7),
+                medianprops=dict(color="crimson", linewidth=2.0),
+            )
 
         ax1.set_xticks(positions)
         ax1.set_xticklabels(dates, rotation=45)
         ax1.set_ylabel("AS Path Length (Hops)")
         ax1.set_xlabel("Date")
-        ax1.set_title(f"AS Path Length Distribution Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        ax1.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax1.grid(True, linestyle="--", alpha=0.5)
+        if use_mean:
+            ax1.legend(loc="upper right")
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig1, title=f"path_length_overall_boxplot_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig1, title=f"path_length_overall_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
         # ==========================================
-        # FIGURE 2: VPP vs. Non-VPP Side-by-Side Boxplots
+        # FIGURE 2: VPP vs. Non-VPP Side-by-Side Analysis
         # ==========================================
         fig2, ax2 = plt.subplots(figsize=DEFAULT_FIGSIZE)
         width = 0.35
 
-        ax2.boxplot(
-            data["vpp"],
-            positions=positions - width / 2,
-            widths=width * 0.8,
-            patch_artist=True,
-            showfliers=showfliers,
-            boxprops=dict(facecolor="tab:blue", alpha=0.7),
-            medianprops=dict(color="black", linewidth=1.5),
-        )
+        if use_mean:
+            vpp_means = [np.mean(dist) if dist else 0 for dist in data["vpp"]]
+            non_vpp_means = [np.mean(dist) if dist else 0 for dist in data["non_vpp"]]
+            ax2.bar(positions - width / 2, vpp_means, width, label="VPP Transits", color="tab:blue", alpha=0.7)
+            ax2.bar(positions + width / 2, non_vpp_means, width, label="Non-VPP Transits", color="tab:orange", alpha=0.7)
+        else:
+            ax2.boxplot(
+                data["vpp"],
+                positions=positions - width / 2,
+                widths=width * 0.8,
+                patch_artist=True,
+                showfliers=showfliers,
+                boxprops=dict(facecolor="tab:blue", alpha=0.7),
+                medianprops=dict(color="black", linewidth=1.5),
+            )
 
-        ax2.boxplot(
-            data["non_vpp"],
-            positions=positions + width / 2,
-            widths=width * 0.8,
-            patch_artist=True,
-            showfliers=showfliers,
-            boxprops=dict(facecolor="tab:orange", alpha=0.7),
-            medianprops=dict(color="black", linewidth=1.5),
-        )
+            ax2.boxplot(
+                data["non_vpp"],
+                positions=positions + width / 2,
+                widths=width * 0.8,
+                patch_artist=True,
+                showfliers=showfliers,
+                boxprops=dict(facecolor="tab:orange", alpha=0.7),
+                medianprops=dict(color="black", linewidth=1.5),
+            )
+
+            legend_elements = [
+                Patch(facecolor="tab:blue", alpha=0.7, label="VPP Transits"),
+                Patch(facecolor="tab:orange", alpha=0.7, label="Non-VPP Transits"),
+            ]
+            ax2.legend(handles=legend_elements, loc="upper right")
 
         ax2.set_xticks(positions)
         ax2.set_xticklabels(dates, rotation=45)
         ax2.set_ylabel("AS Path Length (Hops)")
         ax2.set_xlabel("Date")
-        ax2.set_title(f"AS Path Length Distribution: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})")
+        ax2.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'}: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})")
         ax2.grid(True, linestyle="--", alpha=0.5)
 
-        legend_elements = [
-            Patch(facecolor="tab:blue", alpha=0.7, label="VPP Transits"),
-            Patch(facecolor="tab:orange", alpha=0.7, label="Non-VPP Transits"),
-        ]
-        ax2.legend(handles=legend_elements, loc="upper right")
+        if use_mean:
+            ax2.legend(loc="upper right")
 
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_boxplot_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
         # ==========================================
-        # FIGURE 3: Top X Hegemony Path Length Boxplots
+        # FIGURE 3: Top X Hegemony Path Length Analysis
         # ==========================================
         fig3, ax3 = plt.subplots(figsize=DEFAULT_FIGSIZE)
-        ax3.boxplot(
-            data["topx"],
-            positions=positions,
-            widths=0.4,
-            patch_artist=True,
-            showfliers=showfliers,
-            boxprops=dict(facecolor="tab:green", alpha=0.7),
-            medianprops=dict(color="crimson", linewidth=2.0),
-        )
+        if use_mean:
+            topx_means = [np.mean(dist) if dist else 0 for dist in data["topx"]]
+            ax3.plot(positions, topx_means, marker="o", linewidth=2.0, color="tab:green", label="Mean Path Length")
+        else:
+            ax3.boxplot(
+                data["topx"],
+                positions=positions,
+                widths=0.4,
+                patch_artist=True,
+                showfliers=showfliers,
+                boxprops=dict(facecolor="tab:green", alpha=0.7),
+                medianprops=dict(color="crimson", linewidth=2.0),
+            )
 
         ax3.set_xticks(positions)
         ax3.set_xticklabels(dates, rotation=45)
         ax3.set_ylabel("AS Path Length (Hops)")
         ax3.set_xlabel("Date")
-        ax3.set_title(f"AS Path Length Distribution for {top_label_desc} Hegemony Transits ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        ax3.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} for {top_label_desc} Hegemony Transits ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax3.grid(True, linestyle="--", alpha=0.5)
+        if use_mean:
+            ax3.legend(loc="upper right")
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig3, title=f"path_length_hegemony_{top_tag}_boxplot_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig3, title=f"path_length_hegemony_{top_tag}_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
 
 if __name__ == "__main__":
@@ -440,9 +470,11 @@ if __name__ == "__main__":
     ip_version = input("Enter IP version ('v4', 'v6', or 'both') [default 'both']: ").strip() or "both"
     top_x_input = input("Enter Top X hegemony cut-off (e.g. '5' for Top 5, '10%' for Top 10%) [default '5']: ").strip() or "5"
     dup_input = input("Consider duplicated paths? ('y/n') [default 'y']: ").strip().lower() or "y"
+    plot_type_input = input("Plot type ('boxplot' or 'mean') [default 'boxplot']: ").strip().lower() or "boxplot"
     fliers_input = input("Show outlier dots in boxplots? ('y/n') [default 'n']: ").strip().lower() or "n"
 
     considers_duplicated_paths = dup_input in ["y", "yes", "true", "1"]
+    use_mean = plot_type_input in ["mean", "m", "line"]
     showfliers = fliers_input in ["y", "yes", "true", "1"]
 
     if top_x_input.endswith("%"):
@@ -453,7 +485,7 @@ if __name__ == "__main__":
         top_x = int(top_x_input)
 
     if mode == "global":
-        print(f"\n[INFO] Running GLOBAL Path Length Hegemony Boxplot analysis for ASN {asn} across {len(all_rrcs)} RRCs...")
+        print(f"\n[INFO] Running GLOBAL Path Length Hegemony analysis for ASN {asn} across {len(all_rrcs)} RRCs...")
         analyze_path_length_hegemony(
             asn=asn,
             alpha=alpha,
@@ -465,10 +497,11 @@ if __name__ == "__main__":
             text_scale=1.0,
             considers_duplicated_paths=considers_duplicated_paths,
             showfliers=showfliers,
+            use_mean=use_mean,
         )
     else:
         rrc_used = input("Enter single RRC to analyze (e.g. 'rrc03') [default 'rrc03']: ").strip() or "rrc03"
-        print(f"\n[INFO] Running Single RRC Path Length Hegemony Boxplot analysis for ASN {asn} on {rrc_used}...")
+        print(f"\n[INFO] Running Single RRC Path Length Hegemony analysis for ASN {asn} on {rrc_used}...")
         analyze_path_length_hegemony(
             asn=asn,
             alpha=alpha,
@@ -480,4 +513,5 @@ if __name__ == "__main__":
             text_scale=1.0,
             considers_duplicated_paths=considers_duplicated_paths,
             showfliers=showfliers,
+            use_mean=use_mean,
         )
