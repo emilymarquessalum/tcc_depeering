@@ -891,6 +891,7 @@ if __name__ == "__main__":
     ip_version = "both"
     text_scale = 1.25
     start_date = None
+    month_interval = 3
 
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
@@ -912,7 +913,7 @@ if __name__ == "__main__":
         ip_version=ip_version,
         rrc_list=all_rrcs,
         start_date=start_date,
-        month_interval=6,
+        month_interval=month_interval,
         use_strict_viewpoint_filtering=False,
         use_free_viewpoint_filtering=True,
         show_as_percentage=True,
@@ -929,7 +930,7 @@ if __name__ == "__main__":
         ip_version=ip_version,
         rrc_list=all_rrcs,
         start_date=start_date,
-        month_interval=6,
+        month_interval=month_interval,
         use_strict_viewpoint_filtering=True,
         use_free_viewpoint_filtering=False,
         show_as_percentage=True,
