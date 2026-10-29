@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs 
 from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_all_dates_available_for_asn_data,
     get_hegemony_scores,
@@ -49,6 +50,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     ip_version: Union[str, List[str]] = "v4",
     date_list: Optional[list] = None,
     percentage: float = 20.0,
+    is_percentage: bool = True,
     rrc_used: Optional[str] = None,
     rrc_list: Optional[list[str]] = None,
     use_strict_viewpoint_filtering: bool = False,
@@ -151,7 +153,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             sorted_transits = sorted(scores.items(), key=lambda item: item[1], reverse=True)
             total_asns = len(sorted_transits)
 
-            top_count = max(1, math.ceil(total_asns * percentage / 100.0))
+            top_count = max(1, math.ceil(total_asns * percentage / 100.0)) if is_percentage else int(percentage)
             top_counts.append(top_count)
 
             top_score = sum(score for _, score in sorted_transits[:top_count])
@@ -229,11 +231,17 @@ if __name__ == "__main__":
     text_scale = 1.0
 
     user_input = input("Enter the percentage of top ASNs to consider (default 20): ").strip()
+
+    is_percentage = "%" in user_input
+    if is_percentage:
+        user_input = user_input.replace("%", "").strip()
     percentage = float(user_input) if user_input else 20.0
 
     # Target specific RRCs that contain downloaded dataset files
     rrc_target = "rrc03"
-    available_rrcs = ["rrc03"]  # Add other populated RRCs as needed (e.g. "rrc01", "rrc05")
+
+    
+    available_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()] 
 
     # --- 1. SINGLE RRC ANALYSIS ---
     print(f"\n[1/2] Running Single RRC Top {percentage}% Analysis for {rrc_target}...")
@@ -242,6 +250,7 @@ if __name__ == "__main__":
         alpha=alpha,
         ip_version=ip_version,
         percentage=percentage,
+        is_percentage=is_percentage,
         rrc_used=rrc_target,
         use_strict_viewpoint_filtering=False,
         use_free_viewpoint_filtering=True,
@@ -256,6 +265,7 @@ if __name__ == "__main__":
         alpha=alpha,
         ip_version=ip_version,
         percentage=percentage,
+        is_percentage=is_percentage,
         rrc_list=available_rrcs,
         use_strict_viewpoint_filtering=False,
         use_free_viewpoint_filtering=True,
