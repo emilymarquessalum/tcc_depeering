@@ -486,7 +486,7 @@ def analyze_global_hegemony_over_time(
                 color="blue",
                 linewidth=4.5,
                 zorder=5,
-                label="Highest Score Per Date",
+                label="Highest Score",
             )
 
         ax1.set_xlabel("Date", fontsize=12 * text_scale)
