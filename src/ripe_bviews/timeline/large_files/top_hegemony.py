@@ -177,7 +177,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             linewidth=2.5,
             color="tab:blue",
             linestyle=linestyle,
-            label=f"Top {percentage}% Transits (~{avg_top_asns:.1f} ASNs){label_suffix}",
+            label=f"Top {percentage}{'%' if is_percentage else ''} Transits (~{avg_top_asns:.1f} ASNs){label_suffix}",
         )
 
         ax.plot(
@@ -201,8 +201,8 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
 
     ip_desc = "IPv4 & IPv6" if len(ip_versions) > 1 else ip_versions[0].upper()
     ax.set_title(
-        f"Top {percentage}% vs. Others Hegemony Share Over Time [{mode_label}]\n"
-        f"(Target ASN: {asn}, IP: {ip_desc}, α={alpha})",
+        f"Top {percentage}{'%' if is_percentage else ''} vs. Others Hegemony Share Over Time [{mode_label}]\n"
+        f"(Target ASN: {asn}, IP{ip_desc.lower()})",#, α={alpha})",
         fontsize=14 * text_scale,
     )
     ax.tick_params(axis="both", labelsize=10 * text_scale)
