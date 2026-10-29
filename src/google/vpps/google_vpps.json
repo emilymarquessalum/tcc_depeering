@@ -391,7 +391,13 @@
       "metros_with_multiple_pnis": "KIX+, NRT"
     },
     {
-      "isp_name": "JPNAP (Layer 3 Service)\njpnap.net",
+      "isp_name": "JPNAP East (Layer 3 Service)\njpnap.net",
+      "isp_link": "https://www.jpnap.net/",
+      "sales_region": "Asia-Pacific",
+      "metros_with_multiple_pnis": "KIX+, NRT+"
+    },
+    {
+      "isp_name": "JPNAP West (Layer 3 Service)\njpnap.net",
       "isp_link": "https://www.jpnap.net/",
       "sales_region": "Asia-Pacific",
       "metros_with_multiple_pnis": "KIX+, NRT+"

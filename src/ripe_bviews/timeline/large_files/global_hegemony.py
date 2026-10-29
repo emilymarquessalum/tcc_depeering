@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
+from src.ripe_bviews.timeline.bview_load import get_all_rrcs
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from src.caidapeeringdb.vpps.main import build_vpp_asn_map, get_vpp_ixp_connection_status_map
@@ -871,7 +873,7 @@ if __name__ == "__main__":
     text_scale = 1.25
     start_date = None
 
-    all_rrcs = ["rrc03"]
+    all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
     user_input = input("Enter percentage of top ASNs to consider (leave blank to default to Top 5): ").strip()
     percentage = float(user_input) if user_input else None

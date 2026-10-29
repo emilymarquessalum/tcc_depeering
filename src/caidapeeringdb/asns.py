@@ -264,14 +264,16 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
 
         plot_stacked_line_plot(
             [number_of_connections_peered, connections_not_peered],
-            ["In Route Server Connections", "Not-In-Route-Server Connections"],
+            #["Servidores de Rota", "Em Infraestrutura"],
+            ["Route Server", "In Infrastructure"],
             x_labels=[file_date for file_date, _ in connections_over_time],
             subfolder=subfolder,
-            title=f"IXP Connections for {format_asn_to_search(asn_to_search)} over time (Route Server x Not-Route-Server)",
+            #title=f"Conexões com IXPs - {format_asn_to_search(asn_to_search)}",
+            title=f"IXP Connections - {format_asn_to_search(asn_to_search)}",
             #show_title=False,
             put_color_legend_below_y_axis=True, 
-            xlabel="Date",
-            ylabel="Number of Connections",
+            #xlabel="Data", ylabel="Número de Conexões",
+            xlabel="Date", ylabel="Number of Connections",
             max_labels=8,  
             sort_by_size=False, 
             rotate_labels=False

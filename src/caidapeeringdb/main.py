@@ -466,20 +466,18 @@ if __name__ == "__main__":
 
     #print(f"Dead IXPs (no connections for >3 snapshots): {len(dead_ixps)}")
     #sys.exit(0)  
-
-
-    # Get IXP distribution by continent
-    ixp_by_continent_count, ixp_by_continent_count_percentage, _ = get_ixps_by_continent_count(all_files_after_depeering)
-
-    # Plot IXP distribution
-    plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage)
+ 
   
     start_actions()
+    '''
+    # Plot IXP distribution
+    ixp_by_continent_count, ixp_by_continent_count_percentage, _ = get_ixps_by_continent_count(all_files_after_depeering)
+    plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage)
     confirm_action(
             f"Plot median port speed over time for ASN {asn_to_analyze}",
             lambda: plot_focused_asn_median_port_speed_over_time(all_files, get_all_data(all_files_before_depeering) + get_all_data(all_files_after_depeering), asn_to_analyze)
         )
-            
+    '''     
     confirm_action("Plot asns analysis", lambda: plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None))
      
     #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
@@ -647,4 +645,4 @@ if __name__ == "__main__":
 
         finish_actions() 
 
-    ixps_features_analysis() 
+    #ixps_features_analysis() 

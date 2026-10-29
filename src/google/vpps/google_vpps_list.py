@@ -107,6 +107,11 @@ def get_google_vpp_asns(include_alternatives=False) -> list[str]:
         return all_asns
     return list(vpps_asn_map.keys())
 
+def get_google_vpp_asn_map() -> dict[str, dict]:
+    with open(SCRIPT_DIR / "google_vpps_list.json", "r", encoding="utf-8") as f:
+        vpps_asn_map = json.load(f)
+    return vpps_asn_map
+
 
 def get_google_vpps( ) -> list[str]:
     with open(SCRIPT_DIR / "google_vpps.json", "r", encoding="utf-8") as f:
@@ -115,9 +120,33 @@ def get_google_vpps( ) -> list[str]:
     return vpps_asn_map.get("silver", []) + vpps_asn_map.get("gold", [])
 
 
+def get_vpps_that_dont_have_asns() -> list[str]:
+
+    vpp_asn_map = get_google_vpp_asn_map()
+    vpps = get_google_vpps()
+    vpps_without_asns = []
+
+    for vpp in vpps:
+        vpp_name = vpp.get("isp_name", "").split("\n")[0].strip()  # Get the first line of the ISP name and strip whitespace
+
+        vpp_asn = None
+        for asn, provider in vpp_asn_map.items():
+            if provider.get("isp_name") == vpp_name:
+                vpp_asn = asn
+                break
+    
+        if vpp_asn is None:
+            vpps_without_asns.append(vpp_name)
+
+    return vpps_without_asns
+
+
 if __name__ == "__main__":
 
     print(len(get_google_vpp_asns()))
     print(len(get_google_vpps()))
+
+    print(get_vpps_that_dont_have_asns()) 
+
     #create_list_of_vpp_asns_from_names()
     #print(len(get_google_vpp_asns()))
