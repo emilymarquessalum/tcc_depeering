@@ -109,7 +109,7 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
  
 
 
-        plot_win_loss = False
+        plot_win_loss = True
 
         if plot_win_loss:
             plot_list_as_win_loss_bar_plot(
@@ -210,6 +210,34 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
             
                 create_text_report=True
             ) 
+
+            depeered_counts_by_continent = {}
+            time_series = connections_over_time_by_asn_not_peered[asn]
+            
+            for i in range(1, len(time_series)):
+                prev_ixps = {net.get("ix_id") for net in time_series[i-1][1]}
+                curr_ixps = {net.get("ix_id") for net in time_series[i][1]}
+                depeered_ixp_ids = prev_ixps - curr_ixps
+
+                for ixp_id in depeered_ixp_ids:
+                    ixp_info = next((ixp for ixp in ixps if str(ixp["id"]) == str(ixp_id)), None)
+                    continent = get_continent_for_ixp(ixp_id, ixp_info)
+                    depeered_counts_by_continent[continent] = depeered_counts_by_continent.get(continent, 0) + 1
+
+            if depeered_counts_by_continent:
+                continents = list(depeered_counts_by_continent.keys())
+                counts = list(depeered_counts_by_continent.values())
+                colors = [continent_colors.get(c, "#333333") for c in continents]
+
+                plot_list_as_bar_plot(
+                    continents,
+                    y=counts,
+                    subfolder=subfolder,
+                    colors=colors,
+                    title=f"Quantity of De-peered IXPs by Region for {format_asn_to_search(asn_to_search)} (Not In Route Server)",
+                    xlabel="Region / Continent",
+                    ylabel="Quantity of De-peered IXPs"
+                )
 
         plot_ixps_lost = False
 

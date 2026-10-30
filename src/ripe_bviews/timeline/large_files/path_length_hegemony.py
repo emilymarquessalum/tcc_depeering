@@ -430,6 +430,42 @@ def analyze_path_length_hegemony(
         plt.show()
         save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
+        fig2b, ax2b = plt.subplots(figsize=DEFAULT_FIGSIZE)
+
+        vpp_means = [np.mean(dist) if dist else 0 for dist in data["vpp"]]
+        non_vpp_means = [np.mean(dist) if dist else 0 for dist in data["non_vpp"]]
+
+        ax2b.plot(
+            positions,
+            vpp_means,
+            marker="o",
+            linewidth=2.0,
+            color="tab:blue",
+            label="VPP Transits (Mean)",
+        )
+        ax2b.plot(
+            positions,
+            non_vpp_means,
+            marker="s",
+            linewidth=2.0,
+            color="tab:orange",
+            label="Non-VPP Transits (Mean)",
+        )
+
+        ax2b.set_xticks(positions)
+        ax2b.set_xticklabels(dates, rotation=45)
+        ax2b.set_ylabel("Average AS Path Length (Hops)")
+        ax2b.set_xlabel("Date")
+        ax2b.set_title(
+            f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})"
+        )
+        ax2b.grid(True, linestyle="--", alpha=0.5)
+        ax2b.legend(loc="upper right")
+
+        plt.tight_layout()
+        plt.show()
+        save_plot(fig=fig2b, title=f"path_length_vpp_vs_non_vpp_mean_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+
         # ==========================================
         # FIGURE 3: Top X Hegemony Path Length Analysis
         # ==========================================
