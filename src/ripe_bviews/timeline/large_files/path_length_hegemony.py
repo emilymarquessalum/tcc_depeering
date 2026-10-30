@@ -457,7 +457,7 @@ def analyze_path_length_hegemony(
         ax2b.set_ylabel("Average AS Path Length (Hops)")
         ax2b.set_xlabel("Date")
         ax2b.set_title(
-            f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})"
+            f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.lower()})\n(AS{asn}, Scope: {rrc_tag})"
         )
         ax2b.grid(True, linestyle="--", alpha=0.5)
         ax2b.legend(loc="upper right")
