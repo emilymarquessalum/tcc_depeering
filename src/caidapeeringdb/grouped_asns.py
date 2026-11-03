@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.utils.graphs import (
     plot_list_as_bar_plot,
     plot_list_as_line_plot,
+    plot_lists_as_plot_list_with_multiple_lines,
     plot_map_as_bar_plot,
     plot_stacked_line_plot,
     plot_stacked_win_loss_bar_plot_by_continent,

@@ -673,7 +673,7 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     plt.show()
 
     save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
-    file_suffix = f"top{int(percentage)}pct" if percentage is not None else "top5"
+    file_suffix = (f"top{int(percentage)}pct" if is_percentage else f"top{int(percentage)}") if percentage is not None else "top5"
     save_plot(fig=fig, title=f"global_vpp_hegemony_over_time_{asn}_{save_suffix}_{file_suffix}.png")
 
 
