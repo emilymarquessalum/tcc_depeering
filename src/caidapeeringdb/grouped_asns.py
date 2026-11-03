@@ -123,8 +123,12 @@ def plot_ixp_coverage_by_continent(all_files, asn=15169):
     }
 
 
-def plot_google_ixp_connection_loss_by_continent(all_files, asn=15169):
-    """Plot the percentage of first-date Google IXP connections lost over time."""
+def plot_google_ixp_infrastructure_loss_by_continent(all_files, asn=15169):
+    """Plot loss of all Google connectivity at first-date IXPs by continent.
+
+    An IXP is lost only when Google has no netixlan entry there. A change to
+    route-server peering alone therefore does not count as infrastructure loss.
+    """
     if not all_files:
         raise ValueError("At least one snapshot is required to plot connection loss.")
 
@@ -207,9 +211,9 @@ def plot_google_ixp_connection_loss_by_continent(all_files, asn=15169):
     plot_lists_as_plot_list_with_multiple_lines(
         lines,
         x_labels=dates,
-        title="Google IXP Connection Loss by Continent",
+        title="Google IXP Infrastructure Loss by Continent",
         xlabel="Date",
-        ylabel="First-date connections lost",
+        ylabel="First-date IXPs left",
         subfolder="peeringdb_connections",
         max_labels=12,
         use_rotated_labels=True,

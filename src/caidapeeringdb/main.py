@@ -16,7 +16,7 @@ from src.utils.graphs import plot_list_as_bar_plot, plot_list_as_line_plot
 from src.caidapeeringdb.ixp_depeering_compare import check_external_ixp_depeering_for_peak_ases
 from src.caidapeeringdb.grouped_asns import (
     get_ixps_by_continent_count,
-    plot_google_ixp_connection_loss_by_continent,
+    plot_google_ixp_infrastructure_loss_by_continent,
     plot_ixp_coverage_by_continent,
     plot_ixps_distribution_by_continent,
 )
@@ -490,8 +490,8 @@ if __name__ == "__main__":
                                                asn=asn_to_analyze),
     )
     confirm_action(
-        "Plot Google IXP connection loss by continent",
-        lambda: plot_google_ixp_connection_loss_by_continent(
+        "Plot Google IXP infrastructure loss by continent",
+        lambda: plot_google_ixp_infrastructure_loss_by_continent(
             all_files,
             asn=asn_to_analyze,
         ),

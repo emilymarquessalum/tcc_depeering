@@ -276,6 +276,13 @@ def analyze_path_length_hegemony(
         non_vpp_distributions = []
         topx_distributions = []
 
+        # Count tracking for debug plots
+        overall_counts = []
+        vpp_counts = []
+        non_vpp_counts = []
+        topx_counts = []
+
+
         for d in dates:
             try:
                 db_path = get_db_for_date(
@@ -321,17 +328,48 @@ def analyze_path_length_hegemony(
             non_vpp_distributions.append(non_vpp_lengths if non_vpp_lengths else [0])
             topx_distributions.append(top_x_lengths if top_x_lengths else [0])
 
+            overall_counts.append(len(all_lengths))
+            vpp_counts.append(len(vpp_lengths))
+            non_vpp_counts.append(len(non_vpp_lengths))
+            topx_counts.append(len(top_x_lengths))
+
         processed_data[ip_ver] = {
             "dates": format_labels_if_they_are_dates(valid_dates),
             "overall": overall_distributions,
             "vpp": vpp_distributions,
             "non_vpp": non_vpp_distributions,
             "topx": topx_distributions,
+            "overall_counts": overall_counts,
+            "vpp_counts": vpp_counts,
+            "non_vpp_counts": non_vpp_counts,
+            "topx_counts": topx_counts,
         }
 
     if not processed_data:
         print("[WARNING] No data available to plot.")
         return
+
+
+    # ==========================================
+    # DEBUG FIGURE 1: Amount of AS Paths (Overall)
+    # ==========================================
+    fig1_dbg, ax1_dbg = plt.subplots(figsize=DEFAULT_FIGSIZE)
+    ax1_dbg.bar(positions, data["overall_counts"], color="tab:blue", alpha=0.7, width=0.5)
+    
+    # Annotate bars with exact counts
+    for pos, count in zip(positions, data["overall_counts"]):
+        ax1_dbg.text(pos, count, f"{count:,}", ha="center", va="bottom", fontsize=8 * text_scale)
+
+    ax1_dbg.set_xticks(positions)
+    ax1_dbg.set_xticklabels(dates, rotation=45)
+    ax1_dbg.set_ylabel("Total AS Paths Count")
+    ax1_dbg.set_xlabel("Date")
+    ax1_dbg.set_title(f"[DEBUG] Total AS Paths Considered Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+    ax1_dbg.grid(True, linestyle="--", alpha=0.5)
+    plt.tight_layout()
+    plt.show()
+    save_plot(fig=fig1_dbg, title=f"debug_path_count_overall_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+
 
     top_tag = f"top{int(top_x)}pct" if is_percentage_top_x else f"top{top_x}"
 
