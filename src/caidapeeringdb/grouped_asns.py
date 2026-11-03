@@ -42,6 +42,188 @@ def plot_ixps_distribution_by_continent(ixp_by_continent_count_percentage):
     )
 
 
+def plot_ixp_coverage_by_continent(all_files, asn=15169): 
+    if not all_files:
+        raise ValueError("At least one snapshot is required to plot IXP coverage.")
+
+    first_file = sorted(all_files)[0]
+    first_data = get_data(first_file)
+    ixps = get_all_ixps(first_data)
+
+    ixp_by_continent = defaultdict(set)
+    ixp_ids = set()
+    for ixp in ixps:
+        ixp_id = ixp.get("id")
+        if ixp_id is None:
+            continue
+        ixp_id = str(ixp_id)
+        ixp_ids.add(ixp_id)
+        continent = get_continent_for_ixp(ixp_id, ixp)
+        ixp_by_continent[continent].add(ixp_id)
+
+    connected_ixp_ids = {
+        str(connection.get("ix_id"))
+        for connection in first_data.get("netixlan", {}).get("data", [])
+        if (
+            connection.get("asn") == asn
+            or connection.get("local_asn") == asn
+        )
+        and connection.get("ix_id") is not None
+    } & ixp_ids
+
+    continents = sorted(ixp_by_continent)
+    continents.append("Oceania")
+    total_by_continent = {
+        continent: len(ixp_by_continent[continent])
+        for continent in continents
+    }
+    connected_by_continent = {
+        continent: len(ixp_by_continent[continent] & connected_ixp_ids)
+        for continent in continents
+    }
+    coverage = {
+        continent: (
+            connected_by_continent[continent] / total_by_continent[continent]
+        )
+        for continent in continents
+        if total_by_continent[continent]
+    }
+    ratio_labels = [
+        f"({connected_by_continent[continent]}/{total_by_continent[continent]})"
+        for continent in continents
+    ]
+    colors = [
+        continent_colors.get(continent, "gray")
+        for continent in continents
+    ]
+
+    snapshot_date = Path(first_file).stem.replace("peeringdb_2_dump_", "")
+    plot_list_as_bar_plot(
+        continents,
+        y=[coverage[continent] if continent in coverage else 0 for continent in continents],
+        extra_labels=ratio_labels,
+        title=f"Google IXP Coverage by Continent ({snapshot_date})",
+        xlabel="Continent",
+        ylabel="IXPs connected to Google",
+        subfolder="peeringdb_connections",
+        colors=colors,
+        is_percentage=True,
+        show_values=True,
+        use_rotated_labels=True,
+    )
+
+    return {
+        continent: {
+            "connected": connected_by_continent[continent],
+            "total": total_by_continent[continent],
+            "coverage": coverage[continent] if continent in coverage else 0,
+        }
+        for continent in continents
+    }
+
+
+def plot_google_ixp_connection_loss_by_continent(all_files, asn=15169):
+    """Plot the percentage of first-date Google IXP connections lost over time."""
+    if not all_files:
+        raise ValueError("At least one snapshot is required to plot connection loss.")
+
+    files = sorted(all_files)
+    first_data = get_data(files[0])
+    first_ixps = {
+        str(ixp["id"]): ixp
+        for ixp in get_all_ixps(first_data)
+        if ixp.get("id") is not None
+    }
+
+    first_connections_by_continent = defaultdict(set)
+    for connection in first_data.get("netixlan", {}).get("data", []):
+        if (
+            connection.get("asn") != asn
+            and connection.get("local_asn") != asn
+        ):
+            continue
+        ixp_id = connection.get("ix_id")
+        if ixp_id is None or str(ixp_id) not in first_ixps:
+            continue
+        continent = get_continent_for_ixp(str(ixp_id), first_ixps[str(ixp_id)])
+        first_connections_by_continent[continent].add(str(ixp_id))
+
+    continents = sorted(
+        continent
+        for continent, ixp_ids in first_connections_by_continent.items()
+        if ixp_ids
+    )
+    if not continents:
+        raise ValueError("No Google IXP connections found in the first snapshot.")
+
+    baseline_counts = {
+        continent: len(first_connections_by_continent[continent])
+        for continent in continents
+    }
+    loss_by_continent = {continent: [] for continent in continents}
+    dates = []
+
+    for file in files:
+        data = get_data(file)
+        ixps = {
+            str(ixp["id"]): ixp
+            for ixp in get_all_ixps(data)
+            if ixp.get("id") is not None
+        }
+        connected_by_continent = defaultdict(set)
+        for connection in data.get("netixlan", {}).get("data", []):
+            if (
+                connection.get("asn") != asn
+                and connection.get("local_asn") != asn
+            ):
+                continue
+            ixp_id = connection.get("ix_id")
+            if ixp_id is None or str(ixp_id) not in ixps:
+                continue
+            continent = get_continent_for_ixp(str(ixp_id), ixps[str(ixp_id)])
+            if continent in baseline_counts:
+                connected_by_continent[continent].add(str(ixp_id))
+
+        for continent in continents:
+            still_connected = (
+                first_connections_by_continent[continent]
+                & connected_by_continent[continent]
+            )
+            lost_fraction = (
+                baseline_counts[continent] - len(still_connected)
+            ) / baseline_counts[continent]
+            loss_by_continent[continent].append(lost_fraction)
+        dates.append(Path(file).stem.replace("peeringdb_2_dump_", ""))
+
+    lines = [
+        {
+            "data": loss_by_continent[continent],
+            "label": continent,
+            "color": continent_colors.get(continent, "gray"),
+        }
+        for continent in continents
+    ]
+    plot_lists_as_plot_list_with_multiple_lines(
+        lines,
+        x_labels=dates,
+        title="Google IXP Connection Loss by Continent",
+        xlabel="Date",
+        ylabel="First-date connections lost",
+        subfolder="peeringdb_connections",
+        max_labels=12,
+        use_rotated_labels=True,
+        is_percentage=True,
+    )
+
+    return {
+        continent: {
+            "baseline_connections": baseline_counts[continent],
+            "loss_percentages": loss_by_continent[continent],
+        }
+        for continent in continents
+    }
+
+
 def get_ixps_by_continent_count(all_files):
     # 1. Use a generator instead of a list comprehension to save memory 
     # (Assuming get_unique_ixps_from_data_list accepts iterables)
@@ -254,5 +436,3 @@ def plot_stacked_connections_for_group(connections_peered, connections_not_peere
         ylabel="Number of Connections",
         notes=f"This group includes ASNs: {', '.join([f'{asn_names_of_that_group[i]}' for i, asn in enumerate(asn_names_of_that_group)])}"
     )
-
-

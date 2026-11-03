@@ -660,8 +660,9 @@ def analyze_global_vpp_hegemony_over_time_top_ases(
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend(
-        loc="upper right",
-        title="Is-VPP",
+        loc="upper left",
+        bbox_to_anchor=(1.05, 1),
+        title="Is VPP",
         fontsize=10 * text_scale,
         title_fontsize=11 * text_scale,
     ) 

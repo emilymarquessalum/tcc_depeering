@@ -14,7 +14,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.utils.graphs import plot_list_as_bar_plot, plot_list_as_line_plot
 from src.caidapeeringdb.ixp_depeering_compare import check_external_ixp_depeering_for_peak_ases
-from src.caidapeeringdb.grouped_asns import get_ixps_by_continent_count, plot_ixps_distribution_by_continent
+from src.caidapeeringdb.grouped_asns import (
+    get_ixps_by_continent_count,
+    plot_google_ixp_connection_loss_by_continent,
+    plot_ixp_coverage_by_continent,
+    plot_ixps_distribution_by_continent,
+)
 from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
 from src.caidapeeringdb.ases_overtime import plot_ases_heatmap_over_time
 from src.utils.user_input import choose_option, confirm_action, finish_actions, start_actions
@@ -479,6 +484,18 @@ if __name__ == "__main__":
         )
     '''     
     confirm_action("Plot asns analysis", lambda: plot_asns_analysis(all_files_in_depeering_event_but_focused_ones, asns_to_search_for_analysis, None))
+    confirm_action(
+        "Plot Google IXP coverage by continent",
+        lambda: plot_ixp_coverage_by_continent(all_files,
+                                               asn=asn_to_analyze),
+    )
+    confirm_action(
+        "Plot Google IXP connection loss by continent",
+        lambda: plot_google_ixp_connection_loss_by_continent(
+            all_files,
+            asn=asn_to_analyze,
+        ),
+    )
      
     #plot_asns_analysis(all_files_after_depeering, asns_to_search_for_analysis, ixp_by_continent_count)
     

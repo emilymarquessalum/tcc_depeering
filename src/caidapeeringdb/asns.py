@@ -80,16 +80,20 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
         # Plot connections by continent for peered connections
         continent_data_series_peered, dates_for_plot, sorted_continents = organize_connections_by_continent(connections_over_time, ixps)
 
-        if len(sorted_continents) > 1:
-            plot_stacked_line_plot(
-                [continent_data_series_peered[continent] for continent in sorted_continents],
-                [f"Connections in {continent}" for continent in sorted_continents],
-                x_labels=dates_for_plot,
-                title=f"In Route Server Connections by Continent for {format_asn_to_search(asn_to_search)} over time",
-                xlabel="Date",
-                ylabel="Number of Connections",
-                subfolder=subfolder
-            )
+        try:
+            if len(sorted_continents) > 1:
+                plot_stacked_line_plot(
+                    [continent_data_series_peered[continent] for continent in sorted_continents],
+                    [f"Connections in {continent}" for continent in sorted_continents],
+                    x_labels=dates_for_plot,
+                    title=f"In Route Server Connections by Continent for {format_asn_to_search(asn_to_search)} over time",
+                    xlabel="Date",
+                    ylabel="Number of Connections",
+                    subfolder=subfolder
+                )
+
+        except Exception as e:
+            print(f"Error plotting peered connections by continent: {e}")
 
         # Plot connections by continent for not-peered connections
         continent_data_series_not_peered, dates_for_plot, sorted_continents = organize_connections_by_continent(connections_over_time_by_asn_not_peered[asn], ixps)
@@ -298,7 +302,7 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
             subfolder=subfolder,
             #title=f"Conexões com IXPs - {format_asn_to_search(asn_to_search)}",
             title=f"IXP Connections - {format_asn_to_search(asn_to_search)}",
-            #show_title=False,
+            show_title=False,
             put_color_legend_below_y_axis=True, 
             #xlabel="Data", ylabel="Número de Conexões",
             xlabel="Date", ylabel="Number of Connections",

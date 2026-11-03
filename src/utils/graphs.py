@@ -4,7 +4,7 @@ from matplotlib.offsetbox import AnchoredText
 from matplotlib.patches import Patch
 import numpy as np  
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MaxNLocator, PercentFormatter
  
 #import tkinter as tk
 #from tkinter import ttk 
@@ -188,7 +188,8 @@ def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='In
 
 def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title='Multiple Lines Plot', 
                                                 xlabel='Index', ylabel='Value', subfolder=None, max_labels=None, 
-                                                notes=None, annotations=None, use_rotated_labels=False):
+                                                notes=None, annotations=None, use_rotated_labels=False,
+                                                is_percentage=False):
     """
     Plots multiple lines on a single chart with customized line configurations.
     
@@ -255,8 +256,13 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
     plt.title(title)
     plt.margins(x=0)
 
-    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))  
-    plt.ylim(top=max(max(line["data"]) for line in lines_data) * 1.1)  # Add 10% headroom to the top of the Y-axis
+    if is_percentage:
+        plt.gca().yaxis.set_major_formatter(PercentFormatter(1.0))
+        plt.ylim(0, 1.05)
+    else:
+        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+        max_value = max(max(line["data"]) for line in lines_data)
+        plt.ylim(top=max_value * 1.1 if max_value else 1)
     # Inject third-party matplotlib artist layers if present
     if annotations:
         for at in annotations:
