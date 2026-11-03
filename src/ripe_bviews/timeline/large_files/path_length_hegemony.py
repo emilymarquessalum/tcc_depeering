@@ -42,6 +42,7 @@ def extract_path_lengths_and_hegemony(
     ip_version: str = "v4",
     considers_duplicated_paths: bool = False,
     only_penultimate_as: bool = False,
+    exclude_target_from_len: bool = False,
 ) -> Tuple[Dict[str, List[int]], Dict[int, float]]:
     """
     Computes AS hegemony scores and collects all BGP AS path lengths mapped per transit ASN,
@@ -97,7 +98,12 @@ def extract_path_lengths_and_hegemony(
                 if not dedup_as_path or dedup_as_path[-1] != asn:
                     dedup_as_path.append(asn)
 
-            path_len = len(dedup_as_path)
+            # Option to exclude target_asn from path length calculation baseline
+            if exclude_target_from_len and target_asn is not None:
+                effective_path = [asn for asn in dedup_as_path if asn != target_asn]
+                path_len = len(effective_path)
+            else:
+                path_len = len(dedup_as_path)
 
             unique_transits = set(dedup_as_path)
             if target_asn is not None and target_asn in unique_transits:
@@ -204,12 +210,20 @@ def analyze_path_length_hegemony(
     only_penultimate_as: bool = False,
     showfliers: bool = False,
     use_mean: bool = False,
+    aggregate_by_transit_median: bool = False,
+    exclude_target_from_len: bool = False,
 ):
     """
     Executes Path Length Analysis over time (Boxplots or Means):
       1. Overall Path Length Analysis
       2. VPP vs. Non-VPP Side-by-Side Analysis
       3. Top X Hegemony Path Length Analysis
+
+    Parameters:
+      aggregate_by_transit_median (bool): If True, computes the median path length per transit ASN 
+                                          first, using transits as individual equal-weighted observations.
+                                          If False, aggregates raw path lengths across all paths.
+      exclude_target_from_len (bool): If True, removes target_asn from path hop count.
     """
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version)
@@ -276,12 +290,10 @@ def analyze_path_length_hegemony(
         non_vpp_distributions = []
         topx_distributions = []
 
-        # Count tracking for debug plots
         overall_counts = []
         vpp_counts = []
         non_vpp_counts = []
         topx_counts = []
-
 
         for d in dates:
             try:
@@ -295,6 +307,7 @@ def analyze_path_length_hegemony(
                     ip_version=ip_ver,
                     considers_duplicated_paths=considers_duplicated_paths,
                     only_penultimate_as=only_penultimate_as,
+                    exclude_target_from_len=exclude_target_from_len,
                 )
             except Exception as e:
                 print(f"[ERROR] Could not process date {d} for {ip_ver.upper()}: {e}")
@@ -305,12 +318,7 @@ def analyze_path_length_hegemony(
 
             valid_dates.append(d)
 
-            # Collect full path length arrays per group
-            all_lengths = [l for lens in transit_path_lengths.values() for l in lens]
-            vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in clean_vpp_set for l in lens]
-            non_vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str not in clean_vpp_set for l in lens]
-
-            # Top X Hegemony Path Lengths
+            # Determine Top X Hegemony transits
             sorted_hegemony = sorted(hegemony_scores.items(), key=lambda x: x[1], reverse=True)
             non_zero_hegemony = [item for item in sorted_hegemony if item[1] > 0.0]
             total_transits = len(non_zero_hegemony) if non_zero_hegemony else len(sorted_hegemony)
@@ -321,7 +329,32 @@ def analyze_path_length_hegemony(
                 cutoff_count = int(top_x) if top_x else 5
 
             top_x_asns = {str(item[0]).replace("AS", "").strip() for item in sorted_hegemony[:cutoff_count]}
-            top_x_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in top_x_asns for l in lens]
+
+            if aggregate_by_transit_median:
+                # -------------------------------------------------------------
+                # MEDIAN PER TRANSIT ASN (Unweighted by volume)
+                # -------------------------------------------------------------
+                all_lengths = [np.median(lens) for lens in transit_path_lengths.values() if lens]
+                vpp_lengths = [
+                    np.median(lens) for asn_str, lens in transit_path_lengths.items()
+                    if asn_str in clean_vpp_set and lens
+                ]
+                non_vpp_lengths = [
+                    np.median(lens) for asn_str, lens in transit_path_lengths.items()
+                    if asn_str not in clean_vpp_set and lens
+                ]
+                top_x_lengths = [
+                    np.median(lens) for asn_str, lens in transit_path_lengths.items()
+                    if asn_str in top_x_asns and lens
+                ]
+            else:
+                # -------------------------------------------------------------
+                # RAW CONCATENATION (Original weighted behavior)
+                # -------------------------------------------------------------
+                all_lengths = [l for lens in transit_path_lengths.values() for l in lens]
+                vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in clean_vpp_set for l in lens]
+                non_vpp_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str not in clean_vpp_set for l in lens]
+                top_x_lengths = [l for asn_str, lens in transit_path_lengths.items() if asn_str in top_x_asns for l in lens]
 
             overall_distributions.append(all_lengths if all_lengths else [0])
             vpp_distributions.append(vpp_lengths if vpp_lengths else [0])
@@ -349,10 +382,6 @@ def analyze_path_length_hegemony(
         print("[WARNING] No data available to plot.")
         return
 
-
-
-
-
     top_tag = f"top{int(top_x)}pct" if is_percentage_top_x else f"top{top_x}"
 
     if is_percentage_top_x and top_x == 100:
@@ -363,6 +392,8 @@ def analyze_path_length_hegemony(
         top_label_desc = f"Top {top_x}"
 
     plot_type_tag = "mean" if use_mean else "boxplot"
+    agg_tag = "_transit_median" if aggregate_by_transit_median else ""
+    y_label_text = "Median Path Length per Transit (Hops)" if aggregate_by_transit_median else "AS Path Length (Hops)"
 
     for ip_ver, data in processed_data.items():
         dates = data["dates"]
@@ -388,7 +419,7 @@ def analyze_path_length_hegemony(
 
         ax1.set_xticks(positions)
         ax1.set_xticklabels(dates, rotation=45)
-        ax1.set_ylabel("AS Path Length (Hops)")
+        ax1.set_ylabel(y_label_text)
         ax1.set_xlabel("Date")
         ax1.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax1.grid(True, linestyle="--", alpha=0.5)
@@ -396,27 +427,28 @@ def analyze_path_length_hegemony(
             ax1.legend(loc="upper right")
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig1, title=f"path_length_overall_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig1, title=f"path_length_overall_{plot_type_tag}{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
         # ==========================================
-        # DEBUG FIGURE 1: Amount of AS Paths (Overall)
+        # DEBUG FIGURE 1: Amount of Observations Considered
         # ==========================================
         fig1_dbg, ax1_dbg = plt.subplots(figsize=DEFAULT_FIGSIZE)
         ax1_dbg.bar(positions, data["overall_counts"], color="tab:blue", alpha=0.7, width=0.5)
         
-        # Annotate bars with exact counts
         for pos, count in zip(positions, data["overall_counts"]):
             ax1_dbg.text(pos, count, f"{count:,}", ha="center", va="bottom", fontsize=8 * text_scale)
 
         ax1_dbg.set_xticks(positions)
         ax1_dbg.set_xticklabels(dates, rotation=45)
-        ax1_dbg.set_ylabel("Total AS Paths Count")
+        count_type = "Transit ASNs" if aggregate_by_transit_median else "Total AS Paths"
+        ax1_dbg.set_ylabel(f"Count of {count_type}")
         ax1_dbg.set_xlabel("Date")
-        ax1_dbg.set_title(f"[DEBUG] Total AS Paths Considered Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        ax1_dbg.set_title(f"[DEBUG] {count_type} Considered Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax1_dbg.grid(True, linestyle="--", alpha=0.5)
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig1_dbg, title=f"debug_path_count_overall_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig1_dbg, title=f"debug_path_count_overall{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+
         # ==========================================
         # FIGURE 2: VPP vs. Non-VPP Side-by-Side Analysis
         # ==========================================
@@ -457,7 +489,7 @@ def analyze_path_length_hegemony(
 
         ax2.set_xticks(positions)
         ax2.set_xticklabels(dates, rotation=45)
-        ax2.set_ylabel("AS Path Length (Hops)")
+        ax2.set_ylabel(y_label_text)
         ax2.set_xlabel("Date")
         ax2.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'}: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})")
         ax2.grid(True, linestyle="--", alpha=0.5)
@@ -467,7 +499,7 @@ def analyze_path_length_hegemony(
 
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig2, title=f"path_length_vpp_vs_non_vpp_{plot_type_tag}{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
         fig2b, ax2b = plt.subplots(figsize=DEFAULT_FIGSIZE)
 
@@ -493,17 +525,17 @@ def analyze_path_length_hegemony(
 
         ax2b.set_xticks(positions)
         ax2b.set_xticklabels(dates, rotation=45)
-        ax2b.set_ylabel("Average AS Path Length (Hops)")
+        ax2b.set_ylabel(f"Average {y_label_text}")
         ax2b.set_xlabel("Date")
         ax2b.set_title(
             f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.lower()})\n(AS{asn}, Scope: {rrc_tag})"
         )
         ax2b.grid(True, linestyle="--", alpha=0.5)
-        ax2b.legend(loc="upper left", bbox_to_anchor=(1.05, 1),)
+        ax2b.legend(loc="upper left", bbox_to_anchor=(1.05, 1))
 
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig2b, title=f"path_length_vpp_vs_non_vpp_mean_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig2b, title=f"path_length_vpp_vs_non_vpp_mean{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
         # ==========================================
         # FIGURE 3: Top X Hegemony Path Length Analysis
@@ -525,7 +557,7 @@ def analyze_path_length_hegemony(
 
         ax3.set_xticks(positions)
         ax3.set_xticklabels(dates, rotation=45)
-        ax3.set_ylabel("AS Path Length (Hops)")
+        ax3.set_ylabel(y_label_text)
         ax3.set_xlabel("Date")
         ax3.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} for {top_label_desc} Hegemony Transits ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax3.grid(True, linestyle="--", alpha=0.5)
@@ -533,7 +565,7 @@ def analyze_path_length_hegemony(
             ax3.legend(loc="upper right")
         plt.tight_layout()
         plt.show()
-        save_plot(fig=fig3, title=f"path_length_hegemony_{top_tag}_{plot_type_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
+        save_plot(fig=fig3, title=f"path_length_hegemony_{top_tag}_{plot_type_tag}{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
 
 if __name__ == "__main__":
@@ -547,10 +579,12 @@ if __name__ == "__main__":
     dup_input = input("Consider duplicated paths? ('y/n') [default 'y']: ").strip().lower() or "y"
     plot_type_input = input("Plot type ('boxplot' or 'mean') [default 'boxplot']: ").strip().lower() or "boxplot"
     fliers_input = input("Show outlier dots in boxplots? ('y/n') [default 'n']: ").strip().lower() or "n"
+    agg_input = input("Aggregate by transit median? ('y/n') [default 'y']: ").strip().lower() or "y"
 
     considers_duplicated_paths = dup_input in ["y", "yes", "true", "1"]
     use_mean = plot_type_input in ["mean", "m", "line"]
     showfliers = fliers_input in ["y", "yes", "true", "1"]
+    aggregate_by_transit_median = agg_input in ["y", "yes", "true", "1"]
 
     if top_x_input.endswith("%"):
         is_percentage_top_x = True
@@ -573,6 +607,7 @@ if __name__ == "__main__":
             considers_duplicated_paths=considers_duplicated_paths,
             showfliers=showfliers,
             use_mean=use_mean,
+            aggregate_by_transit_median=aggregate_by_transit_median,
         )
     else:
         rrc_used = input("Enter single RRC to analyze (e.g. 'rrc03') [default 'rrc03']: ").strip() or "rrc03"
@@ -589,4 +624,5 @@ if __name__ == "__main__":
             considers_duplicated_paths=considers_duplicated_paths,
             showfliers=showfliers,
             use_mean=use_mean,
+            aggregate_by_transit_median=aggregate_by_transit_median,
         )
