@@ -42,12 +42,15 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
     use_strict_viewpoint_filtering: bool = False,
     use_best_next_days: int = 0,
     show_as_percentage: bool = False,
-    only_top_5: bool = False,
+    top_n: Optional[int] = 5,
     text_scale: float = 1.0,
     show_both_ip_versions: bool = False,
     start_date=None,
     month_interval: int = 6,
-): 
+):
+    if top_n is not None and (not isinstance(top_n, int) or top_n <= 0):
+        raise ValueError("top_n must be a positive integer or None")
+
     clean_vpp_set = _get_clean_vpp_set()
     ip_versions = _parse_ip_versions(ip_version, show_both_ip_versions)
 
@@ -63,7 +66,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
     })
 
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
-    scope_str = "Top 5 ASes Only" if only_top_5 else "All ASes"
+    scope_str = f"Top {top_n} ASes Only" if top_n is not None else "All ASes"
     has_data = False
 
     for ip_ver in ip_versions:
@@ -103,9 +106,9 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
                 for raw_asn, score in date_scores.items()
             }
 
-            if only_top_5:
+            if top_n is not None:
                 sorted_items = sorted(cleaned_date_scores.items(), key=lambda x: x[1], reverse=True)
-                target_items = sorted_items[:5]
+                target_items = sorted_items[:top_n]
             else:
                 target_items = cleaned_date_scores.items()
 
@@ -177,7 +180,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
     plt.tight_layout()
     plt.show()
 
-    file_tag = "top5" if only_top_5 else "all"
+    file_tag = f"top{top_n}" if top_n is not None else "all"
     save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
     save_plot(
         fig=fig,
@@ -195,6 +198,14 @@ if __name__ == "__main__":
     if asn_input:
         asn = int(asn_input)
 
+    top_n_input = input("Enter number of top ASes to include (default 5, or 'all'): ").strip().lower()
+    if top_n_input in ("", "5"):
+        top_n = 5
+    elif top_n_input == "all":
+        top_n = None
+    else:
+        top_n = int(top_n_input)
+
     configs = [
         {"rrc_used": rrc, "ip_version": "both", "asn": asn, "start_date": None, "use_best_next_days": 0}
         for rrc in rrcs
@@ -203,8 +214,6 @@ if __name__ == "__main__":
     alpha = 0.34
     use_strict_viewpoint_filtering = True
     show_as_percentage = True
-    only_top_5 = True  # Toggle between True (Top 5 only) and False (All ASes)
-
     for config in configs:
         rrc_used = config["rrc_used"]
         ip_version = config["ip_version"]
@@ -212,7 +221,8 @@ if __name__ == "__main__":
         start_date = config["start_date"]
         use_best_next_days = config["use_best_next_days"]
 
-        print(f"\n[INFO] Running VPP Analysis for ASN {target_asn} on RRC {rrc_used} ({ip_version.upper()}) [Top 5 Only: {only_top_5}]...")
+        scope_description = f"Top {top_n}" if top_n is not None else "All"
+        print(f"\n[INFO] Running VPP Analysis for ASN {target_asn} on RRC {rrc_used} ({ip_version.upper()}) [{scope_description} ASes]...")
 
         try:
             # dates = get_interval_dates_for_asn_data(
@@ -228,7 +238,7 @@ if __name__ == "__main__":
                 use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
                 use_best_next_days=use_best_next_days,
                 show_as_percentage=show_as_percentage,
-                only_top_5=only_top_5,
+                top_n=top_n,
                 text_scale=text_scale,
             )
         except Exception as e:

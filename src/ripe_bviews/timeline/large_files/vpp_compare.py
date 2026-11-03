@@ -397,7 +397,7 @@ if __name__ == "__main__":
     asn1 = 15169
     asn2 = 396986
     alpha = 0.34
-    ip_version = "both"
+    ip_version = input("Enter IP version ('v4', 'v6', or 'both') [default 'both']: ").strip() or "both"
     rrc_used = "rrc03"
     rrc_list = [rrc["rrc"] for rrc in get_all_rrcs()]
 
