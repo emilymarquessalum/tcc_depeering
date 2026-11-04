@@ -887,7 +887,7 @@ def plot_global_vpp_vs_non_vpp_cdf(
 
 
 if __name__ == "__main__":
-    asn = 15169
+    asn = input("Enter target ASN (default 15169): ") or "15169"
     alpha = 0.34
     ip_version = "both"
     text_scale = 1.25
