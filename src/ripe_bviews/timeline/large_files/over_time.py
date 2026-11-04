@@ -183,4 +183,5 @@ if __name__ == "__main__":
         top_n=top_n,
         ip_version="both",
         show_as_percentage=True,
+        highlight_max_per_date=True
     )
