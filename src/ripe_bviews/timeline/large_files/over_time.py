@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import sys
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 from matplotlib import pyplot as plt
 
@@ -46,6 +46,7 @@ def plot_top_asns_over_time(
     month_interval: int = 6,
     start_date: Optional[str] = None,
     text_scale: float = 1.0,
+    highlight_max_per_date: bool = False,
     show: bool = False,
 ) -> List[plt.Figure]:
     """Save plots of the top ``top_n`` transit ASes for one RRC.
@@ -99,6 +100,7 @@ def plot_top_asns_over_time(
         totals = [sum(scores[date].values()) for date in valid_dates]
         fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
         cmap = plt.get_cmap("tab20")
+        plotted_values: List[List[float]] = []
         for index, target_asn in enumerate(top_asns):
             values = [top_scores[date_index][index] for date_index in range(len(valid_dates))]
             if show_as_percentage:
@@ -106,6 +108,7 @@ def plot_top_asns_over_time(
                     value / total * 100.0 if total > 0 else 0.0
                     for value, total in zip(values, totals)
                 ]
+            plotted_values.append(values)
             ax.plot(
                 valid_dates,
                 values,
@@ -113,6 +116,20 @@ def plot_top_asns_over_time(
                 linewidth=2.0,
                 color=cmap(index % 20),
                 label=f"AS{target_asn}",
+            )
+
+        if highlight_max_per_date:
+            highest_values = [
+                max(values_at_date) if values_at_date else 0.0
+                for values_at_date in zip(*plotted_values)
+            ]
+            ax.plot(
+                valid_dates,
+                highest_values,
+                color="blue",
+                linewidth=4.5,
+                zorder=5,
+                label="Highest Score",
             )
 
         ax.set_xlabel("Date", fontsize=12 * text_scale)
