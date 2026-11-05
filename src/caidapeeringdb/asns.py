@@ -243,6 +243,46 @@ def plot_connections_for_asns_over_time(connections_over_time_by_asn_peered, con
                     ylabel="Quantity of De-peered IXPs"
                 )
 
+        time_series = connections_over_time_by_asn_not_peered[asn]
+
+    if len(time_series) >= 2:
+        prev_date, prev_connections = time_series[-2]
+        curr_date, curr_connections = time_series[-1]
+
+        # Extract IXP IDs for both dates
+        prev_ixp_ids = {net.get("ix_id") for net in prev_connections if net.get("ix_id") is not None}
+        curr_ixp_ids = {net.get("ix_id") for net in curr_connections if net.get("ix_id") is not None}
+
+        # Identify IXPs lost between second-to-last and last snapshot
+        lost_ixp_ids = prev_ixp_ids - curr_ixp_ids
+
+        # Group lost IXPs by continent
+        number_of_lost_ixps_per_continent = {}
+        for ixp_id in lost_ixp_ids:
+            ixp_info = next((ixp for ixp in ixps if str(ixp["id"]) == str(ixp_id)), None)
+            continent = get_continent_for_ixp(ixp_id, ixp_info)
+            number_of_lost_ixps_per_continent[continent] = number_of_lost_ixps_per_continent.get(continent, 0) + 1
+
+        all_loss = sum(number_of_lost_ixps_per_continent.values())
+
+        if all_loss > 0:
+            continents = list(number_of_lost_ixps_per_continent.keys())
+            y_percentages = [v / all_loss for v in number_of_lost_ixps_per_continent.values()]
+            colors = [continent_colors.get(continent, "#333333") for continent in continents]
+
+            plot_list_as_bar_plot(
+                continents,
+                y=y_percentages,
+                subfolder=subfolder,
+                is_percentage=True,
+                colors=colors,
+                title=f"Number of IXPs Lost by Continent for {format_asn_to_search(asn_to_search)} ({prev_date} to {curr_date})",
+                xlabel="Continent",
+                ylabel="Percentage of IXPs Lost"
+            )
+        else:
+            print(f"No IXPs lost for {format_asn_to_search(asn_to_search)} between {prev_date} and {curr_date}.")
+            
         plot_ixps_lost = False
 
         if plot_ixps_lost:

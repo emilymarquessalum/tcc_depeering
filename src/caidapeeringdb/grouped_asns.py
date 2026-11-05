@@ -218,6 +218,13 @@ def plot_google_ixp_infrastructure_loss_by_continent(all_files, asn=15169):
         max_labels=12,
         use_rotated_labels=True,
         is_percentage=True,
+        color_map={
+            "Europe": "lightblue",
+            "Africa": "purple",
+            "North America": "orange",
+            "Asia Pacific": "lightgreen",
+            "Middle East": "magenta"
+        }
     )
 
     return {

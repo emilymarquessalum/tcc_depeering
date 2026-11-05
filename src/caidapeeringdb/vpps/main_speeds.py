@@ -150,7 +150,67 @@ def plot_vpp_ixp_speed_over_time(
 
     return dates, speeds_over_time, all_snapshot_speeds
 
+def plot_total_vpp_ixp_speed_over_time(
+    all_files, all_snapshots, convert_to_gbps=True
+):
+    """
+    Plots the total (SUM) speed of all VPP IXP connections over time.
+    """
+    if not all_files:
+        raise ValueError("At least one PeeringDB snapshot is required.")
 
+    latest_snapshot = get_data(all_files[-1])
+    vpp_asn_map = build_vpp_asn_map(latest_snapshot)
+    target_vpp_asns = set(vpp_asn_map.keys())
+
+    dates = get_dates_from_files(all_files)
+    labels = [date.replace("_", "-") for date in dates]
+
+    unit = "Gbps" if convert_to_gbps else "Mbps"
+    divisor = 1000.0 if convert_to_gbps else 1.0
+
+    total_speeds_over_time = []
+
+    for snapshot in all_snapshots:
+        total_speed = 0.0
+        netixlan_entries = snapshot.get("netixlan", {}).get("data", [])
+
+        for conn in netixlan_entries:
+            raw_asn = conn.get("asn") if conn.get("asn") is not None else conn.get("local_asn")
+            if raw_asn is None:
+                continue
+
+            try:
+                conn_asn = int(raw_asn)
+            except (ValueError, TypeError):
+                continue
+
+            if conn_asn in target_vpp_asns:
+                speed = conn.get("speed")
+                if speed is not None:
+                    try:
+                        speed_val = int(speed)
+                        if speed_val > 0:
+                            total_speed += (speed_val / divisor)
+                    except (ValueError, TypeError):
+                        pass
+
+        total_speeds_over_time.append(round(total_speed, 2))
+
+    plot_list_as_line_plot(
+        total_speeds_over_time,
+        y=labels,
+        subfolder="vpps",
+        title=f"Total VPP IXP Connection Capacity Over Time ({unit})",
+        xlabel="Date",
+        ylabel=f"Total Speed ({unit})",
+        max_labels=7,
+        fontsize=18
+    )
+
+    return dates, total_speeds_over_time
+
+    
 if __name__ == "__main__":
     all_files = get_all_files()
     all_snapshots = get_all_data(all_files)

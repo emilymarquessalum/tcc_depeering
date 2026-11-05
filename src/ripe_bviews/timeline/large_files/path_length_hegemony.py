@@ -569,7 +569,7 @@ def analyze_path_length_hegemony(
 
 
 if __name__ == "__main__":
-    asn = 15169
+    asn = input("Enter the ASN to analyze: ") or "15169"
     alpha = 0.34
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 

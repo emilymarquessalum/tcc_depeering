@@ -189,7 +189,7 @@ def plot_list_as_line_plot(data_list, y=None, title='Data Line Plot', xlabel='In
 def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title='Multiple Lines Plot', 
                                                 xlabel='Index', ylabel='Value', subfolder=None, max_labels=None, 
                                                 notes=None, annotations=None, use_rotated_labels=False,
-                                                is_percentage=False):
+                                                is_percentage=False, color_map=None):
     """
     Plots multiple lines on a single chart with customized line configurations.
     
@@ -209,6 +209,9 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
         notes (str): Informational text blurb displayed in the bottom-right corner.
         annotations (list): Custom artist annotations to add to the plot.
         use_rotated_labels (bool): Rotates X-ticks by 45 degrees if True.
+        is_percentage (bool): Formats Y-axis as percentage if True.
+        color_map (dict, optional): Mapping of line labels to colors, e.g., {"Route Server": "blue"}.
+            Overrides individual color fields inside `lines_data` if a matching label key is found.
     """
     # Defensive programming: Ensure we have lines to plot and match dimensions
     assert len(lines_data) > 0, "lines_data cannot be empty."
@@ -219,6 +222,9 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
     if x_labels is not None:
         assert len(x_labels) == first_line_len, f"Length of x_labels ({len(x_labels)}) must match data length ({first_line_len})."
     
+    # Initialize color map if not provided
+    color_map = color_map or {}
+
     # Reset internal canvas settings
     plt.rcdefaults()
     plt.figure(figsize=DEFAULT_FIGSIZE)
@@ -237,7 +243,10 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
     for line in lines_data:
         y_values = np.array(line["data"])
         line_label = line.get("label", "")
-        line_color = line.get("color", None)
+        
+        # Determine color: prioritize color_map, fall back to line configuration dictionary
+        line_color = color_map.get(line_label, line.get("color", None))
+        
         line_marker = line.get("marker", default_marker)
         line_style = line.get("linestyle", "-")
         
@@ -248,7 +257,6 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
                  color=line_color, 
                  linewidth=2, 
                  label=line_label)
-
 
     plt.axhline(y=0, color='black', linestyle='-', linewidth=0.8)
     plt.xlabel(xlabel)
@@ -263,6 +271,7 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
         plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
         max_value = max(max(line["data"]) for line in lines_data)
         plt.ylim(top=max_value * 1.1 if max_value else 1)
+        
     # Inject third-party matplotlib artist layers if present
     if annotations:
         for at in annotations:
@@ -291,7 +300,6 @@ def plot_lists_as_plot_list_with_multiple_lines(lines_data, x_labels=None, title
     # Save and terminate canvas sequence safely
     save_plot(plt, title, subfolder=subfolder)
     plt.close()
-
     
 def plot_map_as_bar_plot(data_map, title='Data Bar Plot', xlabel='Key', ylabel='Value', subfolder=None, max_x_value=None, max_labels=None, use_colors=False, 
                          colors=None,
@@ -313,6 +321,9 @@ def plot_map_as_bar_plot(data_map, title='Data Bar Plot', xlabel='Key', ylabel='
                           sort_by_size_cut=sort_by_size_cut,
                           colors=colors if colors else get_negative_positive_colors(keys) if type(keys[0]) == float else None,
                            subfolder=subfolder, max_x_value=max_x_value, max_labels=max_labels, use_colors=use_colors, use_rotated_labels=use_rotated_labels)
+
+
+
 def _prepare_and_filter_data(data_list, y, colors, data_annotated_values, use_colors, do_top_n, sort_by_size, sort_by_size_cut):
     """Handles sorting, top-n filtering, and default coloring."""
     # 1. Unify: If y is missing, data_list is actually the values, and labels are indices
