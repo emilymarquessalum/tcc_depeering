@@ -184,7 +184,9 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
             "Africa": "purple",
             "North America": "orange",
             "Asia Pacific": "lightgreen",
-            "Middle East": "magenta"
+            "Middle East": "magenta",
+            "South America": "cyan",
+             "Australia": "red",
         }
     )
     print("Saved to ", out_path / "vpp_ixp_geographical_percentage_over_time.png")
