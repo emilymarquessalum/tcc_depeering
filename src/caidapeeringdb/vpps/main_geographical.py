@@ -107,7 +107,7 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
         max_labels=12,
         rotate_labels=True,
         max_y=100, 
-        color_map={
+        colormap={
             "Europe": "lightblue",
             "Africa": "purple",
             "North America": "orange",
