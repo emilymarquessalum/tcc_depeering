@@ -61,7 +61,7 @@ def _parse_ip_versions(
         return [clean_v]
     return ["v4"]
 
-
+'''
 def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
     """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
     bgp_match = re.search(r"\d{8}", str(bgp_date_str))
@@ -79,7 +79,7 @@ def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[st
         pdb_dates_normalized,
         key=lambda d: abs((parse_pdb_date(d) - bgp_dt).days)
     )
-
+'''
 
 def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
     """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
@@ -915,6 +915,7 @@ if __name__ == "__main__":
     text_scale = 1.25
     start_date = None
     month_interval = 6
+    use_strict_viewpoint_filtering = False
 
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
@@ -937,7 +938,7 @@ if __name__ == "__main__":
         rrc_list=all_rrcs,
         start_date=start_date,
         month_interval=month_interval,
-        use_strict_viewpoint_filtering=False,
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=True,
         show_as_percentage=True,
         text_scale=text_scale,
@@ -954,7 +955,7 @@ if __name__ == "__main__":
         rrc_list=all_rrcs,
         start_date=start_date,
         month_interval=month_interval,
-        use_strict_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=False,
         show_as_percentage=True,
         text_scale=text_scale,
@@ -971,7 +972,7 @@ if __name__ == "__main__":
         rrc_list=all_rrcs,
         start_date=start_date,
         month_interval=6,
-        use_strict_viewpoint_filtering=True,
+        use_strict_viewpoint_filtering=use_strict_viewpoint_filtering,
         use_free_viewpoint_filtering=False,
         text_scale=text_scale,
     )
