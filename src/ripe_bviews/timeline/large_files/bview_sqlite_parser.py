@@ -447,18 +447,20 @@ def get_auto_interval_dates(
             asn, rrc_used, ip_version, month_interval=month_interval, start_date=start_date
         )
 
-
 def get_distinct_as_counts_over_time_multi_rrc(
     asn: int,
     rrc_list: List[str],
     ip_version: str,
     is_global: bool = True,
     month_interval: int = 3,
-    start_date: Optional[str] = None
+    start_date: Optional[str] = None,
+    use_strict_viewpoint_filtering: bool = True,
+    v4_threshold: int = 1,
+    v6_threshold: int = 1,
 ) -> Tuple[List[str], List[int], List[int]]:
     """
-    Extracts valid snapshot dates (auto-resolved from disk), total count of 
-    distinct ASes across ALL specified RRCs, and total active monitors.
+    Extracts valid snapshot dates, total count of distinct ASes, and total active monitors,
+    optionally enforcing strict viewpoint filtering across snapshots.
     """
     date_list = get_auto_interval_dates(
         asn=asn,
@@ -466,25 +468,19 @@ def get_distinct_as_counts_over_time_multi_rrc(
         ip_version=ip_version,
         is_global=is_global,
         month_interval=month_interval,
-        start_date=start_date
+        start_date=start_date,
     )
 
     if not date_list:
         return [], [], []
 
-    valid_dates = []
-    distinct_counts = []
-    monitor_counts = []
-
+    # Map each (rrc, date) pair to its set of active viewpoints
+    rrc_date_vps: Dict[str, Dict[str, Set[str]]] = defaultdict(dict)
+    
     for date in date_list:
-        combined_distinct_ases = set()
-        total_active_monitors = 0
-        date_has_data = False
-
-        for rrc_used in rrc_list:
-            db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
-            rrc_dir = _resolve_rrc_dir(rrc_used)
-            
+        for rrc in rrc_list:
+            db_path = f"huge_bgp_cache_{rrc}_{date}_{ip_version}_{asn}.db"
+            rrc_dir = _resolve_rrc_dir(rrc)
             raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
             if not os.path.exists(raw_path):
                 raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
@@ -495,27 +491,73 @@ def get_distinct_as_counts_over_time_multi_rrc(
                 parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
                 parser.parse_to_disk(raw_path)
 
+            if os.path.exists(db_path):
+                active_vps = get_active_viewpoints_for_date(
+                    asn, rrc, date, ip_version,
+                    v4_threshold=v4_threshold, v6_threshold=v6_threshold
+                )
+                rrc_date_vps[rrc][date] = active_vps
+
+    # Determine strict allowed viewpoints per RRC across valid dates
+    rrc_allowed_vps: Dict[str, Set[str]] = {}
+    valid_date_list = list(date_list)
+
+    if use_strict_viewpoint_filtering:
+        for rrc in rrc_list:
+            if not rrc_date_vps[rrc]:
+                continue
+
+            # Drop dates that have <= 3 monitors
+            rrc_valid_dates = [
+                d for d in date_list
+                if d in rrc_date_vps[rrc] and len(rrc_date_vps[rrc][d]) > 3
+            ]
+
+            if rrc_valid_dates:
+                active_sets = [rrc_date_vps[rrc][d] for d in rrc_valid_dates]
+                rrc_allowed_vps[rrc] = set.intersection(*active_sets)
+
+    valid_dates = []
+    distinct_counts = []
+    monitor_counts = []
+
+    for date in valid_date_list:
+        combined_distinct_ases = set()
+        total_active_monitors = 0
+        date_has_data = False
+
+        for rrc_used in rrc_list:
+            db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
             if not os.path.exists(db_path):
+                continue
+
+            allowed_vps = rrc_allowed_vps.get(rrc_used) if use_strict_viewpoint_filtering else None
+
+            # Skip snapshot if strict filtering eliminated all monitors
+            if use_strict_viewpoint_filtering and allowed_vps is not None and len(allowed_vps) == 0:
                 continue
 
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
-            cursor.execute("SELECT as_path FROM bgp_mappings")
-            
+            cursor.execute("SELECT viewpoint_peer, as_path FROM bgp_mappings")
+
             while True:
                 rows = cursor.fetchmany(size=50_000)
                 if not rows:
                     break
-                for (path_str,) in rows:
+                for vp, path_str in rows:
+                    # Apply strict viewpoint filter
+                    if allowed_vps is not None and vp not in allowed_vps:
+                        continue
                     if path_str:
                         combined_distinct_ases.update(int(a) for a in path_str.split(",") if a)
             conn.close()
 
-            try:
-                active_vps = get_active_viewpoints_for_date(asn, rrc_used, date, ip_version)
-                total_active_monitors += len(active_vps)
-            except Exception:
-                pass
+            # Active monitor count calculation
+            if allowed_vps is not None:
+                total_active_monitors += len(allowed_vps)
+            elif date in rrc_date_vps[rrc_used]:
+                total_active_monitors += len(rrc_date_vps[rrc_used][date])
 
             date_has_data = True
 
@@ -525,6 +567,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
             monitor_counts.append(total_active_monitors)
 
     return valid_dates, distinct_counts, monitor_counts
+
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
