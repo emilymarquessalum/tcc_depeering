@@ -109,15 +109,21 @@ def load_global_hegemony_for_date(
     rrc_list: list[str],
     allowed_viewpoints=None,
 ):
-    """
-    Parses and aggregates BGP data from ALL listed RRCs for a given date,
-    then executes Hegemony math on the global dataset.
-    """
-    global_db_path = f"huge_bgp_cache_GLOBAL_{date}_{ip_version}_{asn}.db"
+    global_db_path = f"huge_bgp_cache_GLOBAL_{date}_{ip_version}_{asn}.db" 
 
-    number_of_non_found_rrc_data = 0
-    if not os.path.exists(global_db_path):
-        print(f"\n[GLOBAL] Initializing unified database for date {date} across {len(rrc_list)} RRCs...")
+    # Re-initialize if DB file does not exist or has 0 rows
+    db_needs_build = not os.path.exists(global_db_path)
+    if not db_needs_build:
+        conn_check = sqlite3.connect(global_db_path)
+        cursor_check = conn_check.cursor()
+        cursor_check.execute("SELECT COUNT(*) FROM bgp_mappings")
+        if cursor_check.fetchone()[0] == 0:
+            db_needs_build = True
+        conn_check.close()
+
+    if db_needs_build:
+        if os.path.exists(global_db_path):
+            os.remove(global_db_path)
 
         parser = LargeBViewParser(db_path=global_db_path, ip_version=ip_version)
         parser.init_database()
@@ -125,14 +131,13 @@ def load_global_hegemony_for_date(
         global_conn = sqlite3.connect(global_db_path)
         global_cursor = global_conn.cursor()
 
+        number_of_found = 0
         for rrc in rrc_list:
             rrc_dir = _resolve_rrc_dir(rrc)
             raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
-
             if not os.path.exists(raw_path):
                 raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
                 if not os.path.exists(raw_path):
-                    number_of_non_found_rrc_data += 1
                     continue
 
             rrc_db_path = f"huge_bgp_cache_{rrc}_{date}_{ip_version}_{asn}.db"
@@ -147,12 +152,11 @@ def load_global_hegemony_for_date(
             """)
             global_conn.commit()
             global_cursor.execute("DETACH DATABASE source_db;")
+            number_of_found += 1
 
         global_conn.close()
+        print(f"[GLOBAL] Attached and merged {number_of_found} RRC sources into {global_db_path}.")
 
-
-    if number_of_non_found_rrc_data != 0:
-        print("Data not found", number_of_non_found_rrc_data)
     return calculate_as_hegemony_disk(
         global_db_path,
         target_asn=asn,
@@ -160,7 +164,6 @@ def load_global_hegemony_for_date(
         ip_version=ip_version,
         allowed_viewpoints=allowed_viewpoints,
     )
-
 
 def get_global_hegemony_scores(
     asn: int,
