@@ -118,8 +118,12 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     else:
         plt.xticks(rotation=45)
 
-    plt.tight_layout()
-    plt.savefig(out_path / "vpp_ixp_geographical_distribution.png", dpi=300)
+    plt.tight_layout() 
+
+
+    saved = out_path / "vpp_ixp_geographical_distribution.png"
+    plt.savefig(saved, dpi=300)
+    print("Saved to ",saved )
     plt.show()
 
     # ---------------------------------------------------------
@@ -173,7 +177,9 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
         plt.xticks(rotation=45)
 
     plt.tight_layout()
-    plt.savefig(out_path / "vpp_ixp_geographical_growth_over_time.png", dpi=300)
+    saved = out_path / "vpp_ixp_geographical_growth_over_time.png"
+    plt.savefig(saved, dpi=300)
+    print("Saved to ",saved )
     plt.show()
 
     return dates_for_plot, continent_data_series, growth_series
