@@ -13,7 +13,7 @@ from src.caidapeeringdb.caidapeeringdb_load import (
 )
 from src.caidapeeringdb.ixp_features.continent_logic import organize_connections_by_continent
 from src.google.vpps.google_vpps_list import get_google_vpp_asns
-from src.utils.graphs import DEFAULT_FIGSIZE
+from src.utils.graphs import DEFAULT_FIGSIZE, plot_stacked_line_plot
 
 
 def build_vpp_asn_map(data=None):
@@ -181,7 +181,7 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     print("Saved to ", out_path / "vpp_ixp_geographical_percentage_over_time.png")
 
     return dates_for_plot, continent_data_series, growth_series, percentage_series
-    
+
 
 if __name__ == "__main__":
     all_files = get_all_files()
