@@ -502,7 +502,7 @@ def analyze_global_hegemony_over_time(
         ax1.grid(True, linestyle="--", alpha=0.5)
         ax1.legend(
             #bbox_to_anchor=(1.05, 1),
-            loc="upper",# left",
+            loc="upper center",# left",
             title="Top Transits",
             fontsize=10 * text_scale,
             title_fontsize=11 * text_scale,
