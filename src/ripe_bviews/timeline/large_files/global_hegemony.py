@@ -201,6 +201,10 @@ def get_global_hegemony_scores(
 
         allowed_viewpoints_baseline = set.intersection(*[date_to_vps[d] for d in valid_date_list])
 
+        if len(allowed_viewpoints_baseline) == 0:
+            print("[WARNING] Strict viewpoint intersection resulted in 0 viewpoints.")
+            sys.exit(0)
+
     for d in valid_date_list:
         scores, active_vps = load_global_hegemony_for_date(
             asn,
