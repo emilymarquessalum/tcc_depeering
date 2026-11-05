@@ -167,6 +167,7 @@ def load_global_hegemony_for_date(
         filter_full_feed=False
     )
 
+
 def get_global_hegemony_scores(
     asn: int,
     ip_version: str,
@@ -917,7 +918,7 @@ if __name__ == "__main__":
     text_scale = 1.25
     start_date = None
     month_interval = 6
-    use_strict_viewpoint_filtering = False
+    use_strict_viewpoint_filtering = True
 
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
