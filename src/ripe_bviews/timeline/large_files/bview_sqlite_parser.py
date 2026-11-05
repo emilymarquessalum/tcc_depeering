@@ -473,11 +473,15 @@ def get_distinct_as_counts_over_time_multi_rrc(
 
     if not date_list:
         return [], [], []
-
+    date_list = date_list[1:]
+    
+    if not date_list:
+        return [], [], []
+    
     # Map each (rrc, date) pair to its set of active viewpoints
     rrc_date_vps: Dict[str, Dict[str, Set[str]]] = defaultdict(dict)
     
-    for date in date_list[1:]:
+    for date in date_list:
         for rrc in rrc_list:
             db_path = f"huge_bgp_cache_{rrc}_{date}_{ip_version}_{asn}.db"
             rrc_dir = _resolve_rrc_dir(rrc)
@@ -511,7 +515,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
             rrc_valid_dates = [
                 d for d in date_list
                 if d in rrc_date_vps[rrc] and len(rrc_date_vps[rrc][d]) > 3
-            ][1:]
+            ]
 
             if rrc_valid_dates:
                 active_sets = [rrc_date_vps[rrc][d] for d in rrc_valid_dates]
@@ -521,7 +525,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
     distinct_counts = []
     monitor_counts = []
 
-    for date in valid_date_list[1:]:
+    for date in valid_date_list:
         combined_distinct_ases = set()
         total_active_monitors = 0
         date_has_data = False
@@ -567,7 +571,6 @@ def get_distinct_as_counts_over_time_multi_rrc(
             monitor_counts.append(total_active_monitors)
 
     return valid_dates, distinct_counts, monitor_counts
-
 
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
