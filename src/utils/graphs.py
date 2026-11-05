@@ -763,8 +763,8 @@ def plot_stacked_bar_plot(data_lists, labels, x_labels=None, title='Stacked Bar 
 
 def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Line Plot',
                            show_title=True, xlabel='Index', ylabel='Value', colors=None, 
-                           subfolder=None, annotations=None, notes=None, max_labels=None, 
-                           rotate_labels=True,
+                           colormap=None, max_y=None, subfolder=None, annotations=None, 
+                           notes=None, max_labels=None, rotate_labels=True,
                            sort_by_size=True, put_color_legend_below_y_axis=False): 
     
     assert len(data_lists) > 0, "At least one data list is required"
@@ -791,9 +791,17 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
     current_stack = [0] * len(data_lists[0])
     
     for i, data_list in enumerate(data_lists):
+        label = labels[i]
+        
+        # Determine color: check colormap dictionary first, fallback to colors list
+        if colormap is not None and label in colormap:
+            series_color = colormap[label]
+        else:
+            series_color = colors[i % len(colors)]
+            
         stacked_values = [current_stack[j] + data_list[j] for j in range(len(data_list))]
-        plt.fill_between(x_indices, current_stack, stacked_values, alpha=0.7, label=labels[i], color=colors[i % len(colors)])
-        plt.plot(x_indices, stacked_values, marker='o', color=colors[i % len(colors)], linewidth=2)
+        plt.fill_between(x_indices, current_stack, stacked_values, alpha=0.7, label=label, color=series_color)
+        plt.plot(x_indices, stacked_values, marker='o', color=series_color, linewidth=2)
         current_stack = stacked_values
     
     plt.xlabel(xlabel)
@@ -812,7 +820,7 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
     ax = plt.gca()
 
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))  
-    ax.set_ylim(bottom=0)  # Ensure y-axis starts at 0
+    ax.set_ylim(bottom=0, top=max_y)  # Ensures y-axis starts at 0 and caps at max_y if specified
     
     if annotations:
         for at in (annotations):
@@ -838,7 +846,7 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
      
     save_plot(plt, title, subfolder=subfolder)
     plt.close()
-
+    
 
 def plot_list_as_win_loss_bar_plot(list_to_plot, title, y=None, xlabel='Index', ylabel='Gain/Loss', subfolder=None, max_labels=None,
                                    create_text_report=False):

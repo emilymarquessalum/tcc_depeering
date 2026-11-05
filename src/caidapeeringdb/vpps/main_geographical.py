@@ -106,6 +106,14 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
         subfolder=str(out_path / "vpp_ixp_geographical_distribution.png"),
         max_labels=12,
         rotate_labels=True,
+        max_y=100, 
+        color_map={
+            "Europe": "lightblue",
+            "Africa": "purple",
+            "North America": "orange",
+            "Asia Pacific": "lightgreen",
+            "Middle East": "magenta"
+        }
     )
     print("Saved to ", out_path / "vpp_ixp_geographical_distribution.png")
 
