@@ -711,6 +711,5 @@ if __name__ == "__main__":
             distinct_counts=distinct_counts,
             asn=asn, 
             rrc_label="GLOBAL" if mode == "global" else rrc_used,
-            ip_version=ip_ver,
-            monitor_counts=monitor_counts
+            ip_version=ip_ver, 
         ) 
