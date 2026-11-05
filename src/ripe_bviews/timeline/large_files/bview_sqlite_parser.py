@@ -511,7 +511,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
             rrc_valid_dates = [
                 d for d in date_list
                 if d in rrc_date_vps[rrc] and len(rrc_date_vps[rrc][d]) > 3
-            ]
+            ][1:]
 
             if rrc_valid_dates:
                 active_sets = [rrc_date_vps[rrc][d] for d in rrc_valid_dates]
@@ -521,7 +521,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
     distinct_counts = []
     monitor_counts = []
 
-    for date in valid_date_list:
+    for date in valid_date_list[1:]:
         combined_distinct_ases = set()
         total_active_monitors = 0
         date_has_data = False
