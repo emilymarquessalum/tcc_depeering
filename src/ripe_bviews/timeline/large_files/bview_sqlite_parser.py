@@ -396,6 +396,136 @@ def get_interval_dates(month_interval, start_date, end_date):
 
     return final_dates
 
+
+
+def get_auto_interval_dates(
+    asn: int,
+    rrc_list: List[str],
+    ip_version: str,
+    is_global: bool = True,
+    month_interval: int = 3,
+    start_date: Optional[str] = None
+) -> List[str]:
+    """
+    Automatically calculates spaced interval dates from all available dataset files 
+    for a given ASN across single or multiple RRCs.
+    """
+    if is_global:
+        all_available_dates = set()
+        for rrc in rrc_list:
+            d_avail = get_all_dates_available_for_asn_data(asn, rrc, ip_version, start_date=start_date)
+            all_available_dates.update(d_avail)
+
+        if not all_available_dates:
+            print(f"[WARNING] No dates available across RRCs for ASN {asn} ({ip_version.upper()}).")
+            return []
+
+        sorted_dates = sorted(list(all_available_dates))
+        available_dts = [datetime.strptime(d, "%Y%m%d") for d in sorted_dates]
+        interval_dates = [available_dts[0].strftime("%Y%m%d")]
+        current_dt = available_dts[0]
+
+        while True:
+            future_dts = [d for d in available_dts if d > current_dt]
+            if not future_dts:
+                break
+            ideal_target = current_dt + relativedelta(months=month_interval)
+            closest_dt = min(future_dts, key=lambda d: abs((d - ideal_target).days))
+            
+            if closest_dt <= current_dt:
+                break
+
+            interval_dates.append(closest_dt.strftime("%Y%m%d"))
+            current_dt = closest_dt
+            if current_dt >= available_dts[-1]:
+                break
+        return interval_dates
+    else:
+        # Fallback for single RRC mode using first item in list
+        rrc_used = rrc_list[0] if rrc_list else "rrc00"
+        return get_interval_dates_for_asn_data(
+            asn, rrc_used, ip_version, month_interval=month_interval, start_date=start_date
+        )
+
+
+def get_distinct_as_counts_over_time_multi_rrc(
+    asn: int,
+    rrc_list: List[str],
+    ip_version: str,
+    is_global: bool = True,
+    month_interval: int = 3,
+    start_date: Optional[str] = None
+) -> Tuple[List[str], List[int], List[int]]:
+    """
+    Extracts valid snapshot dates (auto-resolved from disk), total count of 
+    distinct ASes across ALL specified RRCs, and total active monitors.
+    """
+    date_list = get_auto_interval_dates(
+        asn=asn,
+        rrc_list=rrc_list,
+        ip_version=ip_version,
+        is_global=is_global,
+        month_interval=month_interval,
+        start_date=start_date
+    )
+
+    if not date_list:
+        return [], [], []
+
+    valid_dates = []
+    distinct_counts = []
+    monitor_counts = []
+
+    for date in date_list:
+        combined_distinct_ases = set()
+        total_active_monitors = 0
+        date_has_data = False
+
+        for rrc_used in rrc_list:
+            db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
+            rrc_dir = _resolve_rrc_dir(rrc_used)
+            
+            raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
+            if not os.path.exists(raw_path):
+                raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
+
+            if not os.path.exists(db_path):
+                if not os.path.exists(raw_path):
+                    continue
+                parser = LargeBViewParser(db_path=db_path, ip_version=ip_version)
+                parser.parse_to_disk(raw_path)
+
+            if not os.path.exists(db_path):
+                continue
+
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT as_path FROM bgp_mappings")
+            
+            while True:
+                rows = cursor.fetchmany(size=50_000)
+                if not rows:
+                    break
+                for (path_str,) in rows:
+                    if path_str:
+                        combined_distinct_ases.update(int(a) for a in path_str.split(",") if a)
+            conn.close()
+
+            try:
+                active_vps = get_active_viewpoints_for_date(asn, rrc_used, date, ip_version)
+                total_active_monitors += len(active_vps)
+            except Exception:
+                pass
+
+            date_has_data = True
+
+        if date_has_data:
+            valid_dates.append(date)
+            distinct_counts.append(len(combined_distinct_ases))
+            monitor_counts.append(total_active_monitors)
+
+    return valid_dates, distinct_counts, monitor_counts
+
 def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewpoints=None):
     db_path = f"huge_bgp_cache_{rrc_used}_{date}_{ip_version}_{asn}.db"
     rrc_dir = _resolve_rrc_dir(rrc_used)

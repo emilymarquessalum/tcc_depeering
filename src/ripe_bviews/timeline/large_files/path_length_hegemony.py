@@ -22,6 +22,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     LargeBViewParser,
     calculate_as_hegemony_disk,
     get_all_dates_available_for_asn_data,
+    get_distinct_as_counts_over_time_multi_rrc,
     get_interval_dates_for_asn_data,
     _resolve_rrc_dir,
 )
@@ -195,6 +196,7 @@ def get_db_for_date(
         return db_path
 
 
+    
 def analyze_path_length_hegemony(
     asn: int,
     alpha: float = 0.34,
@@ -568,6 +570,70 @@ def analyze_path_length_hegemony(
         save_plot(fig=fig3, title=f"path_length_hegemony_{top_tag}_{plot_type_tag}{agg_tag}_{asn}_{rrc_tag.lower()}_{ip_ver}.png")
 
 
+def plot_distinct_ases_over_time(
+    valid_dates: List[str],
+    distinct_counts: List[int],
+    asn: int,
+    rrc_label: str,
+    ip_version: str,
+    monitor_counts: Optional[List[int]] = None
+):
+    """
+    Renders and saves a plot of distinct AS count over time.
+    """
+    if not valid_dates:
+        print("[WARNING] No valid dates provided to plot.")
+        return
+
+    fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
+
+    line1 = ax1.plot(
+        valid_dates,
+        distinct_counts,
+        marker="o",
+        linewidth=2.5,
+        color="tab:blue",
+        label="Distinct AS Count"
+    )
+    ax1.set_xlabel("Date", fontsize=12)
+    ax1.set_ylabel("Quantity of Distinct ASes", fontsize=12, color="tab:blue")
+    ax1.tick_params(axis="y", labelcolor="tab:blue")
+    ax1.tick_params(axis="x", rotation=45)
+    ax1.grid(True, linestyle="--", alpha=0.5)
+
+    bars = None
+    if monitor_counts and len(monitor_counts) == len(valid_dates):
+        ax2 = ax1.twinx()
+        bars = ax2.bar(
+            valid_dates,
+            monitor_counts,
+            color="tab:gray",
+            alpha=0.25,
+            width=0.4,
+            label="Active Monitors",
+        )
+        ax2.set_ylabel("Number of Monitors", fontsize=12, color="tab:gray")
+        ax2.tick_params(axis="y", labelcolor="tab:gray")
+        ax2.grid(False)
+
+    title_str = (
+        f"Distinct AS Count Over Time\n"
+        f"(Target ASN: {asn}, RRC Scope: {rrc_label}, IP: {ip_version.upper()})"
+    )
+    ax1.set_title(title_str, fontsize=14)
+
+    handles = line1
+    if bars:
+        handles.append(bars)
+    labels = [h.get_label() for h in handles]
+    ax1.legend(handles, labels, loc="upper left")
+
+    plt.tight_layout()
+    plt.show()
+
+    clean_label = rrc_label.replace(" ", "_").replace(",", "_")
+    save_plot(fig=fig, title=f"distinct_ases_over_time_{asn}_{clean_label}_{ip_version}.png") 
+
 if __name__ == "__main__":
     asn = input("Enter the ASN to analyze: ") or "15169"
     alpha = 0.34
@@ -611,6 +677,7 @@ if __name__ == "__main__":
         )
     else:
         rrc_used = input("Enter single RRC to analyze (e.g. 'rrc03') [default 'rrc03']: ").strip() or "rrc03"
+        all_rrcs = [rrc_used]
         print(f"\n[INFO] Running Single RRC Path Length Hegemony analysis for ASN {asn} on {rrc_used}...")
         analyze_path_length_hegemony(
             asn=asn,
@@ -626,3 +693,24 @@ if __name__ == "__main__":
             use_mean=use_mean,
             aggregate_by_transit_median=aggregate_by_transit_median,
         )
+
+    versions_to_run = ["v4", "v6"] if ip_version == "both" else [ip_version]
+
+    for ip_ver in versions_to_run:
+        print(f"\n Processing Distinct AS Count for Scope [{ 'GLOBAL' if mode == 'global' else rrc_used }] ({ip_ver.upper()})...")
+        valid_dates, distinct_counts, monitor_counts = get_distinct_as_counts_over_time_multi_rrc(
+            asn=asn,
+            rrc_list=all_rrcs,
+            ip_version=ip_ver,
+            is_global=mode == "global",
+            month_interval=3
+        )
+
+        plot_distinct_ases_over_time(
+            valid_dates=valid_dates,
+            distinct_counts=distinct_counts,
+            asn=asn, 
+            rrc_label="GLOBAL" if mode == "global" else rrc_used,
+            ip_version=ip_ver,
+            monitor_counts=monitor_counts
+        ) 
