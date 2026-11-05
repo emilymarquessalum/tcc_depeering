@@ -42,12 +42,12 @@ def build_vpp_asn_map(data=None):
 
     return vpp_asn_map
 
-
 def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, vpp_asn_map, output_dir="plots/vpps"):
     """
     Plots:
     1. The absolute geographical distribution (by continent) of IXP connections over time.
     2. The relative percentage growth of IXP connections per region over time (normalized to the first snapshot).
+    3. The percentage share of total IXP connections by region over time.
     """
     if not all_files or not all_snapshots:
         raise ValueError("At least one snapshot is required.")
@@ -87,6 +87,7 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     labels = [date.replace("_", "-") for date in dates_for_plot]
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+    max_labels = 12
 
     # ---------------------------------------------------------
     # Plot 1: Absolute Number of IXP Connections by Region
@@ -107,7 +108,6 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.legend(fontsize=11, title="Continent")
 
-    max_labels = 12
     if len(labels) > max_labels:
         step = len(labels) // max_labels
         plt.xticks(
@@ -118,12 +118,11 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     else:
         plt.xticks(rotation=45)
 
-    plt.tight_layout() 
-
+    plt.tight_layout()
 
     saved = out_path / "vpp_ixp_geographical_distribution.png"
     plt.savefig(saved, dpi=300)
-    print("Saved to ",saved )
+    print("Saved to ", saved)
     plt.show()
 
     # ---------------------------------------------------------
@@ -135,10 +134,8 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
         baseline = series[0] if series and series[0] > 0 else None
         
         if baseline is not None:
-            # Percentage growth relative to baseline: ((val - baseline) / baseline) * 100
             growth = [((val - baseline) / baseline) * 100.0 for val in series]
         else:
-            # If a region started with 0 connections, calculate growth relative to first non-zero point
             first_nonzero = next((val for val in series if val > 0), None)
             if first_nonzero:
                 growth = [
@@ -179,11 +176,61 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
     plt.tight_layout()
     saved = out_path / "vpp_ixp_geographical_growth_over_time.png"
     plt.savefig(saved, dpi=300)
-    print("Saved to ",saved )
+    print("Saved to ", saved)
     plt.show()
 
-    return dates_for_plot, continent_data_series, growth_series
+    # ---------------------------------------------------------
+    # Plot 3: Percentage Share of Total IXP Connections by Region
+    # ---------------------------------------------------------
+    num_timestamps = len(dates_for_plot)
+    totals_per_timestamp = [
+        sum(continent_data_series[continent][t] for continent in sorted_continents)
+        for t in range(num_timestamps)
+    ]
 
+    percentage_series = {}
+    for continent in sorted_continents:
+        percentage_series[continent] = [
+            (continent_data_series[continent][t] / totals_per_timestamp[t] * 100.0)
+            if totals_per_timestamp[t] > 0 else 0.0
+            for t in range(num_timestamps)
+        ]
+
+    plt.figure(figsize=DEFAULT_FIGSIZE)
+    for continent in sorted_continents:
+        plt.plot(
+            labels,
+            percentage_series[continent],
+            marker="^",
+            linewidth=2,
+            label=continent
+        )
+
+    plt.title("Percentage Share of IXP Connections by Region Over Time", fontsize=14, pad=15)
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Share of Connections (%)", fontsize=12)
+    plt.ylim(0, 105)
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.legend(fontsize=11, title="Continent")
+
+    if len(labels) > max_labels:
+        step = len(labels) // max_labels
+        plt.xticks(
+            ticks=range(0, len(labels), step),
+            labels=[labels[i] for i in range(0, len(labels), step)],
+            rotation=45,
+        )
+    else:
+        plt.xticks(rotation=45)
+
+    plt.tight_layout()
+    saved = out_path / "vpp_ixp_geographical_percentage_over_time.png"
+    plt.savefig(saved, dpi=300)
+    print("Saved to ", saved)
+    plt.show()
+
+    return dates_for_plot, continent_data_series, growth_series, percentage_series
+    
 
 if __name__ == "__main__":
     all_files = get_all_files()
