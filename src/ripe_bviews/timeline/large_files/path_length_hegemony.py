@@ -586,8 +586,8 @@ def plot_distinct_ases_over_time(
         return
 
     title_str = (
-        f"Distinct AS Count Over Time\n"
-        f"(Target ASN: {asn}, RRC Scope: {rrc_label}, IP: {ip_version.upper()})"
+        f"Distinct AS Count Over Time "
+        f"(AS{asn} {rrc_label} IP{ip_version.lower()})"
     )
 
     clean_label = rrc_label.replace(" ", "_").replace(",", "_")
