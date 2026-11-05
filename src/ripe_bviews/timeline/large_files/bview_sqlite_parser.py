@@ -477,7 +477,7 @@ def get_distinct_as_counts_over_time_multi_rrc(
     # Map each (rrc, date) pair to its set of active viewpoints
     rrc_date_vps: Dict[str, Dict[str, Set[str]]] = defaultdict(dict)
     
-    for date in date_list:
+    for date in date_list[1:]:
         for rrc in rrc_list:
             db_path = f"huge_bgp_cache_{rrc}_{date}_{ip_version}_{asn}.db"
             rrc_dir = _resolve_rrc_dir(rrc)
