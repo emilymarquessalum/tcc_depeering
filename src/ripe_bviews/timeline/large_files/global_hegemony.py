@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from src.ripe_bviews.timeline.bview_load import get_all_rrcs
@@ -26,6 +27,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_active_viewpoints_for_date,
     get_all_dates_available_for_asn_data,
     get_top_five_asns_over_time,
+    _resolve_rrc_dir
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
 
@@ -61,22 +63,41 @@ def _parse_ip_versions(
 
 
 def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
-    """Finds the closest PeeringDB snapshot date for a given BGP date string."""
-    if not pdb_dates_normalized:
-        raise ValueError("Cannot find closest PeeringDB date: pdb_dates_normalized list is empty.")
+    """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
+    bgp_match = re.search(r"\d{8}", str(bgp_date_str))
+    if not bgp_match:
+        raise ValueError(f"Invalid BGP date format: {bgp_date_str}")
+    bgp_dt = datetime.strptime(bgp_match.group(0), "%Y%m%d")
 
-    def parse_to_datetime(d_str: str) -> datetime:
-        match = re.search(r"(\d{4})[-_]?(\d{2})[-_]?(\d{2})", str(d_str))
+    def parse_pdb_date(d_str: str) -> datetime:
+        match = re.search(r"\d{8}", str(d_str))
         if match:
-            clean_str = "".join(match.groups())
-            return datetime.strptime(clean_str, "%Y%m%d")
-        raise ValueError(f"Could not parse valid date from string: {d_str}")
-
-    bgp_dt = parse_to_datetime(bgp_date_str)
+            return datetime.strptime(match.group(0), "%Y%m%d")
+        raise ValueError(f"Could not parse 8-digit date from PeeringDB date string: {d_str}")
 
     return min(
         pdb_dates_normalized,
-        key=lambda d: abs((parse_to_datetime(d) - bgp_dt).days)
+        key=lambda d: abs((parse_pdb_date(d) - bgp_dt).days)
+    )
+
+
+def _get_closest_peeringdb_date(bgp_date_str: str, pdb_dates_normalized: List[str]) -> str:
+    """Finds the closest PeeringDB snapshot date for a given BGP date string (YYYYMMDD)."""
+    if not pdb_dates_normalized:
+        raise ValueError("Cannot find closest PeeringDB date: pdb_dates_normalized list is empty.")
+
+    def parse_date_to_datetime(d_str: str) -> datetime:
+        match = re.search(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})", str(d_str))
+        if match:
+            clean_str = "".join(match.groups())
+            return datetime.strptime(clean_str, "%Y%m%d")
+        raise ValueError(f"Could not parse valid YYYYMMDD date from string: {d_str}")
+
+    bgp_dt = parse_date_to_datetime(bgp_date_str)
+
+    return min(
+        pdb_dates_normalized,
+        key=lambda d: abs((parse_date_to_datetime(d) - bgp_dt).days)
     )
 
 
@@ -94,6 +115,7 @@ def load_global_hegemony_for_date(
     """
     global_db_path = f"huge_bgp_cache_GLOBAL_{date}_{ip_version}_{asn}.db"
 
+    number_of_non_found_rrc_data = 0
     if not os.path.exists(global_db_path):
         print(f"\n[GLOBAL] Initializing unified database for date {date} across {len(rrc_list)} RRCs...")
 
@@ -104,10 +126,13 @@ def load_global_hegemony_for_date(
         global_cursor = global_conn.cursor()
 
         for rrc in rrc_list:
-            raw_path = f"{ROOT_DIR}/{rrc}/output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt"
+            rrc_dir = _resolve_rrc_dir(rrc)
+            raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.{ip_version}.origin_as.{asn}.txt")
+
             if not os.path.exists(raw_path):
-                raw_path = f"{ROOT_DIR}/{rrc}/output_bview.{date}.0000.origin_as.{asn}.txt"
+                raw_path = os.path.join(rrc_dir, f"output_bview.{date}.0000.origin_as.{asn}.txt")
                 if not os.path.exists(raw_path):
+                    number_of_non_found_rrc_data += 1
                     continue
 
             rrc_db_path = f"huge_bgp_cache_{rrc}_{date}_{ip_version}_{asn}.db"
@@ -125,6 +150,9 @@ def load_global_hegemony_for_date(
 
         global_conn.close()
 
+
+    if number_of_non_found_rrc_data != 0:
+        print("Data not found", number_of_non_found_rrc_data)
     return calculate_as_hegemony_disk(
         global_db_path,
         target_asn=asn,
@@ -191,6 +219,14 @@ def analyze_global_vpp_ixp_connected_hegemony_over_time(
     use_free_viewpoint_filtering: bool = True,
     text_scale: float = 1.0,
 ):
+    """
+    Calculates and plots the percentage of Total VPP Hegemony coming from VPPs
+    that have at least one IXP connection over time.
+
+    If unconnected VPPs account for X% of total VPP hegemony on a date,
+    this plot displays (100 - X)%, representing the hegemony share of IXP-connected VPPs.
+    """
+    # 1. Load PeeringDB snapshots and build VPP status map from main.py
     all_files = get_all_files()
     all_snapshots = get_all_data(all_files)
     latest_snapshot = get_data(all_files[-1])
@@ -269,6 +305,7 @@ def analyze_global_vpp_ixp_connected_hegemony_over_time(
                 except (ValueError, TypeError):
                     continue
 
+            # Match BGP date to closest PeeringDB snapshot date
             closest_pdb_date = _get_closest_peeringdb_date(date, pdb_dates_normalized)
             conn_asns = status_map[closest_pdb_date]["connected_asns"]
             unconn_asns = status_map[closest_pdb_date]["unconnected_asns"]
@@ -286,6 +323,7 @@ def analyze_global_vpp_ixp_connected_hegemony_over_time(
                 score for asn_id, score in cleaned_date_scores.items() if asn_id in unconn_asns
             )
 
+            # If unconnected VPPs account for X%, display value is (100 - X)%
             pct_unconnected = (unconnected_vpp_hegemony / total_vpp_hegemony) * 100.0
             pct_connected = 100.0 - pct_unconnected
 
@@ -422,6 +460,7 @@ def analyze_global_hegemony_over_time(
         line_styles = ["-", "--", ":", "-."]
         markers = ["o", "s", "^", "v", "D", "X", "P"]
 
+        # Store all plotted series per date to compute max scores across tracked ASNs
         all_asn_scores_by_date = [[] for _ in valid_date_list]
 
         for i, target_asn in enumerate(unique_asns_list):
@@ -444,6 +483,7 @@ def analyze_global_hegemony_over_time(
                 label=f"ASN {target_asn}",
             )
 
+        # --- NEW PLOTTING STEP FOR HIGHEST SCORE PER DATE ---
         if highlight_max_per_date and valid_date_list:
             max_scores_per_date = [
                 max(scores) if scores else 0.0 for scores in all_asn_scores_by_date
@@ -459,11 +499,18 @@ def analyze_global_hegemony_over_time(
 
         ax1.set_xlabel("Date", fontsize=12 * text_scale)
         ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12 * text_scale)
+        '''
+        ax1.set_title(
+            f"Global Hegemony Over Time Top {top_n} \n(Target ASN: {asn}, IP{ip_ver.lower()})",
+            fontsize=14 * text_scale,
+        )
+        '''
         ax1.tick_params(axis="both", labelsize=10 * text_scale)
         ax1.tick_params(axis="x", rotation=45)
         ax1.grid(True, linestyle="--", alpha=0.5)
         ax1.legend(
-            loc="upper center",
+            #bbox_to_anchor=(1.05, 1),
+            loc="upper center",# left",
             title="Top Transits",
             fontsize=10 * text_scale,
             title_fontsize=11 * text_scale,
@@ -472,7 +519,6 @@ def analyze_global_hegemony_over_time(
         plt.tight_layout()
         plt.show()
         save_plot(fig=fig, title=f"global_hegemony_over_time_{asn}_{ip_ver}.png")
-
 
 def analyze_global_vpp_hegemony_over_time_top_ases(
     asn: int,
@@ -870,6 +916,7 @@ if __name__ == "__main__":
 
     user_input = input("Enter the number of top ASNs to consider (leave blank to default to 5): ").strip()
 
+    # 1. Run Global Individual Transit Hegemony Over Time
     print(f"\n[1/3] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_hegemony_over_time(
         asn=asn,
@@ -885,7 +932,8 @@ if __name__ == "__main__":
         top_n=int(user_input) if user_input else 5,
         highlight_max_per_date=True,
     )
-
+ 
+    # 2. Run Global VPP vs Non-VPP Hegemony Over Time
     print(f"\n[2/3] Running Global VPP vs Non-VPP Hegemony ({'Top ' + str(percentage) + '%' if percentage else 'Top 5'}) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_vpp_hegemony_over_time_top_ases(
         asn=asn,
@@ -902,6 +950,7 @@ if __name__ == "__main__":
         is_percentage=is_percentage
     )
 
+    # 3. Run IXP-Connected VPP Hegemony Share Over Time
     print(f"\n[3/3] Running IXP-Connected VPP Hegemony Share Over Time for ASN {asn} ({ip_version.upper()})...")
     analyze_global_vpp_ixp_connected_hegemony_over_time(
         asn=asn,
