@@ -164,7 +164,7 @@ def load_global_hegemony_for_date(
         ip_version=ip_version,
         allowed_viewpoints=allowed_viewpoints,
         only_penultimate_as=False,
-        filter_full_feed=False
+        filter_full_feed=True
     )
 
 
