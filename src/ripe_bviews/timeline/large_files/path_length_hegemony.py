@@ -594,17 +594,18 @@ def plot_distinct_ases_over_time(
     filename = f"distinct_ases_over_time_{asn}_{clean_label}_{ip_version}.png"
 
     plot_list_as_line_plot(
-        data_list=valid_dates,
-        y=distinct_counts,
+        data_list=distinct_counts,   # Y numerical values go here
+        y=valid_dates,               # X axis label strings go here
         title=title_str,
         xlabel="Date",
         ylabel="Quantity of Distinct ASes",
         fontsize=fontsize,
         use_rotated_labels=True,
-        subfolder=filename
+        subfolder=filename,
+        use_fill=False               # Optional: disable filled background area if desired
     )
 
-    
+
 if __name__ == "__main__":
     asn = input("Enter the ASN to analyze: ") or "15169"
     alpha = 0.34
