@@ -491,16 +491,18 @@ def analyze_global_hegemony_over_time(
 
         ax1.set_xlabel("Date", fontsize=12 * text_scale)
         ax1.set_ylabel("Hegemony (%)" if show_as_percentage else "Hegemony Score", fontsize=12 * text_scale)
+        '''
         ax1.set_title(
             f"Global Hegemony Over Time Top {top_n} \n(Target ASN: {asn}, IP{ip_ver.lower()})",
             fontsize=14 * text_scale,
         )
+        '''
         ax1.tick_params(axis="both", labelsize=10 * text_scale)
         ax1.tick_params(axis="x", rotation=45)
         ax1.grid(True, linestyle="--", alpha=0.5)
         ax1.legend(
-            bbox_to_anchor=(1.05, 1),
-            loc="upper left",
+            #bbox_to_anchor=(1.05, 1),
+            loc="upper",# left",
             title="Top Transits",
             fontsize=10 * text_scale,
             title_fontsize=11 * text_scale,
