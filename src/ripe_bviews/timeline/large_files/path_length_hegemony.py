@@ -27,7 +27,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     _resolve_rrc_dir,
 )
 from src.ripe_bviews.timeline.large_files.global_hegemony import _parse_ip_versions
-from src.utils.graphs import DEFAULT_FIGSIZE, save_plot, format_labels_if_they_are_dates
+from src.utils.graphs import DEFAULT_FIGSIZE, plot_list_as_line_plot, save_plot, format_labels_if_they_are_dates
 
 
 def _get_clean_vpp_set() -> Set[str]:
@@ -576,64 +576,35 @@ def plot_distinct_ases_over_time(
     asn: int,
     rrc_label: str,
     ip_version: str,
-    monitor_counts: Optional[List[int]] = None
+    fontsize: Optional[int] = 12
 ):
     """
-    Renders and saves a plot of distinct AS count over time.
+    Renders and saves a plot of distinct AS count over time using plot_list_as_line_plot.
     """
     if not valid_dates:
         print("[WARNING] No valid dates provided to plot.")
         return
 
-    fig, ax1 = plt.subplots(figsize=DEFAULT_FIGSIZE)
-
-    line1 = ax1.plot(
-        valid_dates,
-        distinct_counts,
-        marker="o",
-        linewidth=2.5,
-        color="tab:blue",
-        label="Distinct AS Count"
-    )
-    ax1.set_xlabel("Date", fontsize=12)
-    ax1.set_ylabel("Quantity of Distinct ASes", fontsize=12, color="tab:blue")
-    ax1.tick_params(axis="y", labelcolor="tab:blue")
-    ax1.tick_params(axis="x", rotation=45)
-    ax1.grid(True, linestyle="--", alpha=0.5)
-
-    bars = None
-    if monitor_counts and len(monitor_counts) == len(valid_dates):
-        ax2 = ax1.twinx()
-        bars = ax2.bar(
-            valid_dates,
-            monitor_counts,
-            color="tab:gray",
-            alpha=0.25,
-            width=0.4,
-            label="Active Monitors",
-        )
-        ax2.set_ylabel("Number of Monitors", fontsize=12, color="tab:gray")
-        ax2.tick_params(axis="y", labelcolor="tab:gray")
-        ax2.grid(False)
-
     title_str = (
         f"Distinct AS Count Over Time\n"
         f"(Target ASN: {asn}, RRC Scope: {rrc_label}, IP: {ip_version.upper()})"
     )
-    ax1.set_title(title_str, fontsize=14)
-
-    handles = line1
-    if bars:
-        handles.append(bars)
-    labels = [h.get_label() for h in handles]
-    ax1.legend(handles, labels, loc="upper left")
-
-    plt.tight_layout()
-    plt.show()
 
     clean_label = rrc_label.replace(" ", "_").replace(",", "_")
-    save_plot(fig=fig, title=f"distinct_ases_over_time_{asn}_{clean_label}_{ip_version}.png") 
+    filename = f"distinct_ases_over_time_{asn}_{clean_label}_{ip_version}.png"
 
+    plot_list_as_line_plot(
+        data_list=valid_dates,
+        y=distinct_counts,
+        title=title_str,
+        xlabel="Date",
+        ylabel="Quantity of Distinct ASes",
+        fontsize=fontsize,
+        use_rotated_labels=True,
+        subfolder=filename
+    )
+
+    
 if __name__ == "__main__":
     asn = input("Enter the ASN to analyze: ") or "15169"
     alpha = 0.34

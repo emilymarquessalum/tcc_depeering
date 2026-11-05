@@ -210,7 +210,7 @@ def plot_total_vpp_ixp_speed_over_time(
 
     return dates, total_speeds_over_time
 
-    
+
 if __name__ == "__main__":
     all_files = get_all_files()
     all_snapshots = get_all_data(all_files)
@@ -226,4 +226,10 @@ if __name__ == "__main__":
         all_snapshots=all_snapshots,
         convert_to_gbps=True,
         use_median=False
+    )
+
+    dates, total_speeds_over_time = plot_total_vpp_ixp_speed_over_time(
+        all_files=all_files,
+        all_snapshots=all_snapshots,
+        convert_to_gbps=True
     )
