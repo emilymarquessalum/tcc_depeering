@@ -810,7 +810,8 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
         plt.title(title)
          
     if put_color_legend_below_y_axis: 
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.225 if rotate_labels else -0.08), ncol=min(6, len(labels)))
+        plt.legend(loc='upper center', bbox_to_anchor=(1, 1.05), ncol=min(6, len(labels)))
+        #plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.225 if rotate_labels else -0.08), ncol=min(6, len(labels)))
     else:
         plt.legend() 
         
@@ -846,7 +847,7 @@ def plot_stacked_line_plot(data_lists, labels, x_labels=None, title='Stacked Lin
      
     save_plot(plt, title, subfolder=subfolder)
     plt.close()
-    
+
 
 def plot_list_as_win_loss_bar_plot(list_to_plot, title, y=None, xlabel='Index', ylabel='Gain/Loss', subfolder=None, max_labels=None,
                                    create_text_report=False):

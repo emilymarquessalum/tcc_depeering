@@ -62,7 +62,7 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
 
     for file_path, snapshot in zip(all_files, all_snapshots):
         raw_date = Path(file_path).stem
-        clean_date = re.sub(r"\D", "", raw_date)
+        clean_date = re.sub(r"\D", "", raw_date)[1:]
 
         vpp_ixp_connections = []
         for conn in snapshot.get("netixlan", {}).get("data", []):
@@ -106,7 +106,8 @@ def plot_vpp_ixp_geographical_distribution_over_time(all_files, all_snapshots, v
         subfolder=str(out_path / "vpp_ixp_geographical_distribution.png"),
         max_labels=12,
         rotate_labels=True,
-
+        show_title=False,
+        put_color_legend_below_y_axis=True,
         colormap={
             "Europe": "lightblue",
             "Africa": "purple",
