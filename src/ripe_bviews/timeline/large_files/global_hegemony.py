@@ -179,13 +179,18 @@ def get_global_hegemony_scores(
     if use_strict_viewpoint_filtering:
         print(f"[GLOBAL VIEWPOINTS] Finding strict viewpoint intersection across all {len(valid_date_list)} dates...")
         date_to_vps = {}
+
         for d in valid_date_list:
             d_vps = set()
             for rrc in rrc_list:
-                raw_path = f"{ROOT_DIR}/{rrc}/output_bview.{d}.0000.{ip_version}.origin_as.{asn}.txt"
+                rrc_dir = _resolve_rrc_dir(rrc)
+                raw_path = os.path.join(rrc_dir, f"output_bview.{d}.0000.{ip_version}.origin_as.{asn}.txt")
+                if not os.path.exists(raw_path):
+                    raw_path = os.path.join(rrc_dir, f"output_bview.{d}.0000.origin_as.{asn}.txt")
                 if os.path.exists(raw_path):
                     d_vps.update(get_active_viewpoints_for_date(asn, rrc, d, ip_version))
             date_to_vps[d] = d_vps
+            
 
         valid_date_list = [d for d in valid_date_list if len(date_to_vps[d]) > 3]
         if not valid_date_list:
