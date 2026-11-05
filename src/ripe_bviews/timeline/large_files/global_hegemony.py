@@ -163,6 +163,8 @@ def load_global_hegemony_for_date(
         alpha=alpha,
         ip_version=ip_version,
         allowed_viewpoints=allowed_viewpoints,
+        only_penultimate_as=False,
+        filter_full_feed=False
     )
 
 def get_global_hegemony_scores(
