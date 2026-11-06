@@ -368,7 +368,7 @@ if __name__ == "__main__":
         3356: "Lumen (VPP)",
         3257: "GTT (VPP)", 
         6939: "Hurricane",
-        8212: "Zayo (VPP)",
+        8218: "Zayo (VPP)",
         24482: "SG GS",
         34549: "meerfarbig",
         202365: "Chronos",
