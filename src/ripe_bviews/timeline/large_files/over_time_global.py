@@ -319,15 +319,17 @@ def plot_top_global_asns_over_time(
             "Global Hegemony (%)" if show_as_percentage else "Global Hegemony Score",
             fontsize=12 * text_scale,
         )
+
+        '''
         ax.set_title(
             f"Top {top_n} Global Transit ASes Over Time\n"
             f"(Target ASN: {asn}, Pool: ALL RRCs, IP: {ip_ver.upper()}, α={alpha})",
             fontsize=14 * text_scale,
-        )
+        )'''
         ax.tick_params(axis="both", labelsize=10 * text_scale)
         ax.tick_params(axis="x", rotation=45)
         ax.grid(True, linestyle="--", alpha=0.5)
-        ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", title="Global Transit AS")
+        ax.legend(bbox_to_anchor=(0, 1.05), loc="upper center", title="Global Transit AS")
 
         fig.tight_layout()
         save_plot(
