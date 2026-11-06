@@ -380,7 +380,7 @@ if __name__ == "__main__":
         214292: "DE-CIX (VPP)",
 
         9002: "RETN Limited",
-        1299: "Arelion",
+        1299: "Arelion (VPP)",
         21859: "Zenlayer",
         2914: "NTT",
 
