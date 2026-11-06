@@ -80,9 +80,7 @@ def load_timeline_data(config_path):
     return all_files_before_depeering[0], all_files_after_depeering[0]
 
 
-def build_asn_ixp_dataHere is the global version of your over_time plotting functionality.
-
-Instead of evaluating each RRC separately, this implementation pools data across all RRCs to calculate global hegemony scores per snapshot date, tracking the top global transit providers over time._structures(asn_to_analyze, before_data, after_data, all_ixps):
+def build_asn_ixp_data_structures(asn_to_analyze, before_data, after_data, all_ixps):
     # 1. Create a lookup map for IXPs immediately
     # This turns O(N) searches into O(1) lookups
     ixp_lookup = {ixp["id"]: ixp for ixp in all_ixps}
