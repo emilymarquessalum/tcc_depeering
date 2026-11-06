@@ -329,7 +329,7 @@ def plot_top_global_asns_over_time(
         ax.tick_params(axis="both", labelsize=10 * text_scale)
         ax.tick_params(axis="x", rotation=45)
         ax.grid(True, linestyle="--", alpha=0.5)
-        ax.legend(bbox_to_anchor=(0.2, 1.05), loc="upper center", 
+        ax.legend(bbox_to_anchor=(0.25, 1.05), loc="upper center", 
         ncols=3,
         title="Global Transit AS")
 
