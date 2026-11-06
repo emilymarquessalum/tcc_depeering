@@ -382,6 +382,7 @@ if __name__ == "__main__":
         9002: "RETN Limited",
         1299: "Arelion",
         21859: "Zenlayer",
+        2914: "NTT",
 
         3491:"PCCW Global",
         32653:"eNetworks",
