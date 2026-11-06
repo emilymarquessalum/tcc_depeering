@@ -332,7 +332,7 @@ def plot_top_global_asns_over_time(
         fig.tight_layout()
         save_plot(
             fig=fig,
-            title=f"top{top_n}_global_asns_over_time_{asn}_{ip_ver}.png",
+            title=f"top{top_n}_global_asns_over_time_{asn}_{ip_ver}{'' if highlight_max_per_date else 'non_highlight'}.png",
         )
         if show:
             plt.show()
@@ -383,3 +383,13 @@ if __name__ == "__main__":
         highlight_max_per_date=True,
         asn_to_name_map=my_asn_map,
     )
+    
+    over_time_global(
+        target_asn,
+        top_n=top_n,
+        ip_version="both",
+        show_as_percentage=True,
+        highlight_max_per_date=False,
+        asn_to_name_map=my_asn_map,
+    )
+    
