@@ -585,7 +585,8 @@ def load_hegemony_for_date(asn, alpha, rrc_used, date, ip_version, allowed_viewp
         parser.parse_to_disk(path) 
         
     return calculate_as_hegemony_disk(
-        db_path, target_asn=asn, alpha=alpha, ip_version=ip_version, allowed_viewpoints=allowed_viewpoints
+        db_path, target_asn=asn, alpha=alpha, ip_version=ip_version, allowed_viewpoints=allowed_viewpoints,
+        only_penultimate_as=False,filter_full_feed=True
     ) 
 
 
