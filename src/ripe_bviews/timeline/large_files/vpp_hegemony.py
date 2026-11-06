@@ -66,7 +66,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
     })
 
     fig, ax = plt.subplots(figsize=DEFAULT_FIGSIZE)
-    scope_str = f"Top {top_n} ASes Only" if top_n is not None else "All ASes"
+    scope_str = f"(Top {top_n} ASes Only)" if top_n is not None else ""
     has_data = False
 
     for ip_ver in ip_versions:
@@ -137,7 +137,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
             linewidth=2.5,
             color="tab:blue",
             linestyle=linestyle,
-            label=f"VPP Hegemony ({scope_str}){label_suffix}",
+            label=f"VPP Hegemony {scope_str}{label_suffix}",
         )
 
         ax.plot(
@@ -147,7 +147,7 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
             linewidth=2.5,
             color="tab:orange",
             linestyle=linestyle,
-            label=f"Non-VPP Hegemony ({scope_str}){label_suffix}",
+            label=f"Non-VPP Hegemony {scope_str}{label_suffix}",
         )
         has_data = True
 
@@ -161,11 +161,12 @@ def compare_vpp_and_non_vpp_hegemony_over_time(
     ax.set_xlabel("Date", fontsize=12 * text_scale)
 
     ip_desc = "IPv4 & IPv6" if len(ip_versions) > 1 else ip_versions[0].upper()
+    '''
     ax.set_title(
         f"VPP vs. Non-VPP Hegemony Share Over Time [{scope_str}]\n"
         f"(Target ASN: {asn}, RRC: {rrc_used.upper()}, IP: {ip_desc}, α={alpha})",
         fontsize=14 * text_scale,
-    )
+    )'''
     ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
