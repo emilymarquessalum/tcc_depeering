@@ -221,10 +221,14 @@ def plot_top_global_asns_over_time(
     text_scale: float = 1.0,
     highlight_max_per_date: bool = False,
     show: bool = False,
+    asn_to_name_map: Optional[Dict[Union[int, str], str]] = None,
 ) -> List[plt.Figure]:
     """Save plots of top N global transit providers across all RRCs combined."""
     if rrc_list is None:
         rrc_list = [item["rrc"] for item in get_all_rrcs()]
+
+    if asn_to_name_map is None:
+        asn_to_name_map = {}
 
     figures: List[plt.Figure] = []
     for ip_ver in _parse_ip_versions(ip_version):
@@ -279,13 +283,21 @@ def plot_top_global_asns_over_time(
                     for value, total in zip(values, totals)
                 ]
             plotted_values.append(values)
+            
+            # Resolve name from provided dictionary (handling both int and str keys)
+            label_name = (
+                asn_to_name_map.get(target_asn)
+                or asn_to_name_map.get(str(target_asn))
+                or f"AS{target_asn}"
+            )
+
             ax.plot(
                 valid_dates,
                 values,
                 marker="o",
                 linewidth=2.0,
                 color=cmap(index % 20),
-                label=f"AS{target_asn}",
+                label=label_name,
             )
 
         if highlight_max_per_date:
@@ -335,19 +347,39 @@ def over_time_global(
     asn: int,
     rrc_list: Optional[List[str]] = None,
     alpha: float = 0.34,
+    asn_to_name_map: Optional[Dict[Union[int, str], str]] = None,
     **kwargs,
 ) -> List[plt.Figure]:
     """Plots global top ASes by aggregating data across all (or specified) RRCs."""
-    return plot_top_global_asns_over_time(asn, rrc_list=rrc_list, alpha=alpha, **kwargs)
+    return plot_top_global_asns_over_time(
+        asn,
+        rrc_list=rrc_list,
+        alpha=alpha,
+        asn_to_name_map=asn_to_name_map,
+        **kwargs,
+    )
 
 
 if __name__ == "__main__":
     target_asn = int(input("Enter target ASN (default 15169): ") or "15169")
     top_n = int(input("Enter number of top global ASes (default 5): ") or "5")
+     
+    my_asn_map = { 
+        3356: "Lumen (VPP)",
+        3257: "GTT (VPP)", 
+        6939: "Hurricane",
+        8212: "Zayo (VPP)",
+        24482: "SG GS",
+        34549: "meerfarbig",
+        202365: "Chronos",
+        214292: "DE-CIX (VPP)"
+    }
+    
     over_time_global(
         target_asn,
         top_n=top_n,
         ip_version="both",
         show_as_percentage=True,
         highlight_max_per_date=True,
+        asn_to_name_map=my_asn_map,
     )
