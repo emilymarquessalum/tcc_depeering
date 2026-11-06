@@ -21,7 +21,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     get_active_viewpoints_for_date,
     LargeBViewParser,
 )
-from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+from src.utils.graphs import DEFAULT_FIGSIZE, save_plot, format_labels_if_they_are_dates
 
 
 def _parse_ip_versions(ip_version: Union[str, Sequence[str]]) -> List[str]:
@@ -275,6 +275,7 @@ def plot_top_global_asns_over_time(
         cmap = plt.get_cmap("tab20")
         plotted_values: List[List[float]] = []
 
+        valid_dates = format_labels_if_they_are_dates(valid_dates)
         for index, target_asn in enumerate(top_asns):
             values = [top_scores[date_index][index] for date_index in range(len(valid_dates))]
             if show_as_percentage:
