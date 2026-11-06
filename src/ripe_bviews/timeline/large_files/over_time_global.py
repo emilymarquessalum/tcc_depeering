@@ -377,7 +377,15 @@ if __name__ == "__main__":
         24482: "SG GS",
         34549: "meerfarbig",
         202365: "Chronos",
-        214292: "DE-CIX (VPP)"
+        214292: "DE-CIX (VPP)",
+
+        9002: "RETN Limited",
+        1299: "Arelion",
+        21859: "Zenlayer",
+
+        3491:"PCCW Global",
+        32653:"eNetworks",
+        328320:"Kurlec",
     }
     
     over_time_global(
