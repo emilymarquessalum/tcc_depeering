@@ -174,13 +174,17 @@ def get_global_hegemony_scores(
 
     if use_strict_viewpoint_filtering:
         for rrc in rrc_list:
-            date_vps = []
-            for date in date_list:
-                vps = get_active_viewpoints_for_date(asn, rrc, date, ip_version)
-                if len(vps) > 3:
-                    date_vps.append(vps)
-            if date_vps:
-                rrc_allowed_vps[rrc] = set.intersection(*date_vps)
+
+            try:
+                date_vps = []
+                for date in date_list:
+                    vps = get_active_viewpoints_for_date(asn, rrc, date, ip_version)
+                    if len(vps) > 3:
+                        date_vps.append(vps)
+                if date_vps:
+                    rrc_allowed_vps[rrc] = set.intersection(*date_vps)
+            except:
+                print("No data, skipping ", rrc)
 
     global_hegemony_dict = {}
     global_monitors_dict = {}
@@ -238,7 +242,7 @@ def plot_top_global_asns_over_time(
         if not dates:
             print(f"[WARNING] No snapshots available globally for ASN {asn} ({ip_ver.upper()}).")
             continue
-
+        
         scores, monitor_counts, valid_dates = get_global_hegemony_scores(
             asn=asn,
             rrc_list=rrc_list,
