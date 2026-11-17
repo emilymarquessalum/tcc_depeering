@@ -18,7 +18,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
 from src.ripe_bviews.timeline.large_files.global_hegemony import (
     get_global_hegemony_scores,
 )
-from src.utils.graphs import DEFAULT_FIGSIZE, save_plot
+from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
 
 
 def _parse_ip_versions(
@@ -190,6 +190,10 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
         if not is_percentage:
             label = f"Top {int(percentage)} Transits {label_suffix}"
 
+
+        
+        valid_date_list = format_labels_if_they_are_dates(valid_date_list)  
+    
         ax.plot(
             valid_date_list,
             top_percent_percentages,
