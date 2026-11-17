@@ -274,6 +274,8 @@ if __name__ == "__main__":
     # Target specific RRCs that contain downloaded dataset files
     rrc_target = "rrc03"
 
+    rrc_target = input(f"Enter RRC to analyze (default {rrc_target}): ").strip() or rrc_target
+
     
     available_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()] 
 
