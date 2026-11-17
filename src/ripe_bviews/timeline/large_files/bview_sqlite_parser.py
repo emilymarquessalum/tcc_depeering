@@ -151,7 +151,7 @@ def calculate_as_hegemony_from_db(
 
                 if target_asn is not None:
                     if target_asn in unique_transits or int(target_asn) in unique_transits:
-                        unique_transits.remove(target_asn)
+                        unique_transits.remove(int(target_asn))
 
             for transit_node in unique_transits:
                 transit_vp_weights[transit_node][vp] += weight
