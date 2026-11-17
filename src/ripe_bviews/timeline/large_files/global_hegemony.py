@@ -155,7 +155,7 @@ def load_global_hegemony_for_date(
             number_of_found += 1
 
         global_conn.close()
-        print(f"[GLOBAL] Attached and merged {number_of_found} RRC sources into {global_db_path}.")
+        #print(f"[GLOBAL] Attached and merged {number_of_found} RRC sources into {global_db_path}.")
 
     return calculate_as_hegemony_disk(
         global_db_path,
