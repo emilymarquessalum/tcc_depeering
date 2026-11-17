@@ -168,12 +168,12 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
 
             top_score = sum(score for _, score in sorted_transits[:top_count])
             others_score = sum(score for _, score in sorted_transits[top_count:])
+ 
+            top_val = (top_score / total_hegemony) * 100.0 if is_percentage else top_score
+            others_val = (others_score / total_hegemony) * 100.0 if is_percentage else others_score
 
-            top_pct = (top_score / total_hegemony) * 100.0
-            others_pct = (others_score / total_hegemony) * 100.0
-
-            top_percent_percentages.append(top_pct)
-            others_percentages.append(others_pct)
+            top_percent_percentages.append(top_val)
+            others_percentages.append(others_val)
 
         avg_top_asns = sum(top_counts) / len(top_counts) if top_counts else 0
 
@@ -220,8 +220,8 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.set_ylim(-5, 105)
     ax.legend(
-        bbox_to_anchor=(1.02, 1),
-        loc="upper left",
+        #bbox_to_anchor=(1.02, 1),
+        loc="upper right",
         title="Groups",
         fontsize=10 * text_scale,
         title_fontsize=11 * text_scale,
