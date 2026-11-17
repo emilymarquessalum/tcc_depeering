@@ -327,7 +327,7 @@ class LargeBViewParser:
                 conn.commit()
                 
         conn.close()
-        print(f"[PARSER] Parsing completed. Records offloaded to {self.db_path}.")
+        #print(f"[PARSER] Parsing completed. Records offloaded to {self.db_path}.")
 
 
 def get_first_and_last_date_available_for_asn_data(asn, rrc_used, ip_version):
