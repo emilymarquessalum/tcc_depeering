@@ -220,11 +220,14 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
     ax.set_ylabel("Hegemony Share (%)", fontsize=12 * text_scale)
 
     ip_desc = "IPv4 & IPv6" if len(ip_versions) > 1 else ip_versions[0].upper()
+
+    '''
     ax.set_title(
         f"Top {percentage}{'%' if is_percentage else ''} vs. Others Hegemony Share Over Time [{mode_label}]\n"
         f"(Target ASN: {asn}, IP{ip_desc.lower()})",#, α={alpha})",
         fontsize=14 * text_scale,
     )
+    '''
     ax.tick_params(axis="both", labelsize=10 * text_scale)
     ax.tick_params(axis="x", rotation=45)
     ax.grid(True, linestyle="--", alpha=0.5)
