@@ -169,8 +169,13 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             top_score = sum(score for _, score in sorted_transits[:top_count])
             others_score = sum(score for _, score in sorted_transits[top_count:])
  
-            top_val = (top_score / total_hegemony) * 100.0 if is_percentage else top_score
-            others_val = (others_score / total_hegemony) * 100.0 if is_percentage else others_score
+            #top_val = (top_score / total_hegemony) * 100.0 if is_percentage else top_score
+            #others_val = (others_score / total_hegemony) * 100.0 if is_percentage else others_score
+
+            top_val = (top_score / total_hegemony) * 100.0
+            others_val = (others_score / total_hegemony) * 100.0
+            
+            print(f"Date: {date} | total_hegemony={total_hegemony} | top={top_val} | others={others_val}")
 
             top_percent_percentages.append(top_val)
             others_percentages.append(others_val)
@@ -232,6 +237,8 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
 
     save_suffix = "both" if len(ip_versions) > 1 else ip_versions[0]
     save_plot(fig=fig, title=f"top{int(percentage)}{'pct' if is_percentage else ''}_vs_others_hegemony_{mode_file_suffix}_{save_suffix}.png")
+
+    
 
 
 if __name__ == "__main__":
