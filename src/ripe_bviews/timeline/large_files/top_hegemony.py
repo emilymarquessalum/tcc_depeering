@@ -185,6 +185,11 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
         linestyle = "-" if ip_ver == "v4" else "--"
         label_suffix = f" ({ip_ver.upper()})" if len(ip_versions) > 1 else ""
 
+        label = f"Top {percentage}{'%' if is_percentage else ''} Transits (~{avg_top_asns:.1f} ASNs){label_suffix}"
+
+        if not is_percentage:
+            label = f"Top {int(percentage)} Transits {label_suffix}"
+
         ax.plot(
             valid_date_list,
             top_percent_percentages,
@@ -192,7 +197,7 @@ def analyze_top10_percent_vs_others_hegemony_over_time(
             linewidth=2.5,
             color="tab:blue",
             linestyle=linestyle,
-            label=f"Top {percentage}{'%' if is_percentage else ''} Transits (~{avg_top_asns:.1f} ASNs){label_suffix}",
+            label=label,
         )
 
         ax.plot(
