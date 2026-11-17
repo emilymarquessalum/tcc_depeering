@@ -260,6 +260,8 @@ if __name__ == "__main__":
     text_scale = 1.0
     month_interval = 6
 
+    asn = int(input(f"Enter target ASN (default {asn}): ") or asn)
+
     user_input = input("Enter the percentage of top ASNs to consider (default 20): ").strip()
 
     ip_version_input = input("Enter IP version (v4, v6, both) [default: both]: ").strip().lower()
