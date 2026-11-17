@@ -302,7 +302,7 @@ class LargeBViewParser:
         batch = []
         lines_processed = 0
         
-        print(f"[PARSER] Commencing out-of-core file streaming ({self.ip_version.upper()}) for {file_path}...")
+        #print(f"[PARSER] Commencing out-of-core file streaming ({self.ip_version.upper()}) for {file_path}...")
         
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             for line in f:
