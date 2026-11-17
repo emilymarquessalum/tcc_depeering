@@ -423,7 +423,7 @@ def analyze_path_length_hegemony(
         ax1.set_xticklabels(dates, rotation=45)
         ax1.set_ylabel(y_label_text)
         ax1.set_xlabel("Date")
-        ax1.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        #ax1.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax1.grid(True, linestyle="--", alpha=0.5)
         if use_mean:
             ax1.legend(loc="upper right")
@@ -445,7 +445,7 @@ def analyze_path_length_hegemony(
         count_type = "Transit ASNs" if aggregate_by_transit_median else "Total AS Paths"
         ax1_dbg.set_ylabel(f"Count of {count_type}")
         ax1_dbg.set_xlabel("Date")
-        ax1_dbg.set_title(f"[DEBUG] {count_type} Considered Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        #ax1_dbg.set_title(f"[DEBUG] {count_type} Considered Over Time ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax1_dbg.grid(True, linestyle="--", alpha=0.5)
         plt.tight_layout()
         plt.show()
@@ -493,7 +493,7 @@ def analyze_path_length_hegemony(
         ax2.set_xticklabels(dates, rotation=45)
         ax2.set_ylabel(y_label_text)
         ax2.set_xlabel("Date")
-        ax2.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'}: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})")
+        #ax2.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'}: VPPs vs. Non-VPPs ({ip_ver.upper()})\n(AS{asn}, Scope: {rrc_tag})")
         ax2.grid(True, linestyle="--", alpha=0.5)
 
         if use_mean:
@@ -529,9 +529,7 @@ def analyze_path_length_hegemony(
         ax2b.set_xticklabels(dates, rotation=45)
         ax2b.set_ylabel(f"Average {y_label_text}")
         ax2b.set_xlabel("Date")
-        ax2b.set_title(
-            f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.lower()})\n(AS{asn}, Scope: {rrc_tag})"
-        )
+        #ax2b.set_title(f"Average AS Path Length: VPPs vs. Non-VPPs ({ip_ver.lower()})\n(AS{asn}, Scope: {rrc_tag})")
         ax2b.grid(True, linestyle="--", alpha=0.5)
         ax2b.legend(loc="upper left", bbox_to_anchor=(1.05, 1))
 
@@ -561,7 +559,7 @@ def analyze_path_length_hegemony(
         ax3.set_xticklabels(dates, rotation=45)
         ax3.set_ylabel(y_label_text)
         ax3.set_xlabel("Date")
-        ax3.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} for {top_label_desc} Hegemony Transits ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
+        #ax3.set_title(f"AS Path Length {'Mean' if use_mean else 'Distribution'} for {top_label_desc} Hegemony Transits ({ip_ver.upper()})\n(Target ASN: {asn}, Scope: {rrc_tag})")
         ax3.grid(True, linestyle="--", alpha=0.5)
         if use_mean:
             ax3.legend(loc="upper right")
