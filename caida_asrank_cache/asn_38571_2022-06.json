@@ -1,0 +1,1 @@
+{"rank": 9338, "asn": "38571", "asnName": "SBS-ISP-AS", "source": "APNIC", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 77.16, "latitude": 28.56, "organization": {"orgId": "b5fdfcbb3c"}, "cone": {"numberAsns": 2, "numberPrefixes": 41, "numberAddresses": 10496}, "country": {"iso": "IN"}, "asnDegree": {"total": 3, "customer": 1, "peer": 0, "provider": 2}}

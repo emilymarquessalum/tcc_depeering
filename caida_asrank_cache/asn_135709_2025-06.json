@@ -1,0 +1,1 @@
+{"rank": 3351, "asn": "135709", "asnName": "LTCIN-AS-IN", "source": "APNIC", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 77.15, "latitude": 28.43, "organization": {"orgId": "0be8174559"}, "cone": {"numberAsns": 8, "numberPrefixes": 34, "numberAddresses": 13824}, "country": {"iso": "IN"}, "asnDegree": {"total": 8, "customer": 1, "peer": 4, "provider": 3}}

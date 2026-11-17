@@ -8,7 +8,7 @@ import re
 from matplotlib import pyplot as plt
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-from services.asrank import fetch_all_asrank, find_closest_similar_ases_fast, get_asn_info
+from src.services.asrank import fetch_all_asrank, find_closest_similar_ases
 from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_all_files, get_data
 from src.caidapeeringdb.vpps.main import build_vpp_asn_map
 
@@ -23,9 +23,9 @@ def load_similar_ases():
     vpp_asn_map = build_vpp_asn_map(latest_snapshot)
     vpp_asns = vpp_asn_map.keys()
  
-    all_asns = fetch_all_asrank(limit=10000) 
+    all_asns = fetch_all_asrank(limit=100000) 
     asn_to_idx = {item['asn']: idx for idx, item in enumerate(all_asns)}
-    similar_ases = find_closest_similar_ases_fast(vpp_asns, all_asns=all_asns, asn_to_idx=asn_to_idx)
+    similar_ases = find_closest_similar_ases(vpp_asns, all_asns=all_asns, asn_to_idx=asn_to_idx, prioritize_higher=True, minimum_distance=3)
 
     with open("vpp_asn_similar_asrank.json", "w") as f:
         json.dump(similar_ases, f, indent=4)

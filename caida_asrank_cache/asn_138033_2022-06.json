@@ -1,0 +1,1 @@
+{"rank": 34859, "asn": "138033", "asnName": "BBIX-AS-AP", "source": "APNIC", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 139.75, "latitude": 35.68, "organization": {"orgId": "2b27320f02"}, "cone": {"numberAsns": 1, "numberPrefixes": 4, "numberAddresses": 1024}, "country": {"iso": "JP"}, "asnDegree": {"total": 11, "customer": 0, "peer": 10, "provider": 1}}

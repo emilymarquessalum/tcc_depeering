@@ -5,6 +5,15 @@
   "loading_method": "data_range",
   "start_folder": "/home/emily/Desktop/projects/furg/tcc_depeering_elixir/data/caida-peeringdb/",
   "asns_to_search": [
+
+
+
+    [19527, "Google LLC", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]], 
+    [139070, "Google Cloud Korea", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]], 
+    [139190, "Google Cloud Indonesia", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]], 
+
+    
+
     [396986, "ByteDance", ["Big Tech", "Cloud", "Social Media", "ICP"]],
     [15169, "Google", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]],
     [714, "Apple", ["Big Tech", "Consumer Electronics", "FAANG"]], 
@@ -23,7 +32,6 @@
     [20940, "Akamai", ["Big Tech", "Cloud"]],
     
     [36561, "Youtube", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]],
-    
 
 
     [15133, "EdgeCast", ["Cloud"]],
@@ -33,8 +41,8 @@
   "forgotten_asns": [
     [396982, "Google Cloud", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]],
 
-    [36040, "Google Cloud (not sure)", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]],
-    [43515, "Google (not sure again)", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]]
+    [36040, "Google LLC (another one)", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]],
+    [43515, "Google LLC (yet another)", ["Big Tech", "Cloud", "Search Engine", "FAANG", "ICP"]]
   ],
   "date_skips": 3,
   "manual_ixp_to_continent_mapping": {

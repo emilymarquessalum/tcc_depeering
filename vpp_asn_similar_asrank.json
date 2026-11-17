@@ -1,0 +1,1449 @@
+{
+    "50263": {
+        "target_rank": 49,
+        "closest_asn": "11537",
+        "closest_asn_name": "INTERNET2-RESEARCH-EDU",
+        "closest_rank": 46,
+        "rank_distance": 3
+    },
+    "29119": {
+        "target_rank": 149,
+        "closest_asn": "43727",
+        "closest_asn_name": "KVANT-TELECOM",
+        "closest_rank": 146,
+        "rank_distance": 3
+    },
+    "9730": {
+        "target_rank": 276,
+        "closest_asn": "205103",
+        "closest_asn_name": "TELEGRAPH-AS",
+        "closest_rank": 273,
+        "rank_distance": 3
+    },
+    "137085": {
+        "target_rank": 756,
+        "closest_asn": "140641",
+        "closest_asn_name": "YOTTA",
+        "closest_rank": 753,
+        "rank_distance": 3
+    },
+    "1299": {
+        "target_rank": 3,
+        "closest_asn": "2914",
+        "closest_asn_name": "NTT-DATA-2914",
+        "closest_rank": 6,
+        "rank_distance": 3
+    },
+    "49127": {
+        "target_rank": 465,
+        "closest_asn": "7470",
+        "closest_asn_name": "TRUEINTERNET-AS-AP",
+        "closest_rank": 462,
+        "rank_distance": 3
+    },
+    "6079": {
+        "target_rank": 361,
+        "closest_asn": "55685",
+        "closest_asn_name": "JLM-AS-ID",
+        "closest_rank": 358,
+        "rank_distance": 3
+    },
+    "2686": {
+        "target_rank": 479,
+        "closest_asn": "17665",
+        "closest_asn_name": "ONEBROADBAND",
+        "closest_rank": 476,
+        "rank_distance": 3
+    },
+    "4764": {
+        "target_rank": 295,
+        "closest_asn": "9808",
+        "closest_asn_name": "CHINAMOBILE-CN",
+        "closest_rank": 292,
+        "rank_distance": 3
+    },
+    "138033": {
+        "target_rank": 34859,
+        "closest_asn": "207153",
+        "closest_asn_name": "cz-stream-it",
+        "closest_rank": 34859,
+        "rank_distance": 0
+    },
+    "8551": {
+        "target_rank": 304,
+        "closest_asn": "49581",
+        "closest_asn_name": "TUBE-HOSTING",
+        "closest_rank": 301,
+        "rank_distance": 3
+    },
+    "2518": {
+        "target_rank": 480,
+        "closest_asn": "262999",
+        "closest_asn_name": "",
+        "closest_rank": 477,
+        "rank_distance": 3
+    },
+    "17451": {
+        "target_rank": 457,
+        "closest_asn": "199599",
+        "closest_asn_name": "CIREX",
+        "closest_rank": 454,
+        "rank_distance": 3
+    },
+    "45588": {
+        "target_rank": 1982,
+        "closest_asn": "49289",
+        "closest_asn_name": "Media-Veneto",
+        "closest_rank": 1979,
+        "rank_distance": 3
+    },
+    "38158": {
+        "target_rank": 137,
+        "closest_asn": "202984",
+        "closest_asn_name": "team-host",
+        "closest_rank": 133,
+        "rank_distance": 4
+    },
+    "17408": {
+        "target_rank": 560,
+        "closest_asn": "263237",
+        "closest_asn_name": "",
+        "closest_rank": 557,
+        "rank_distance": 3
+    },
+    "23951": {
+        "target_rank": 1501,
+        "closest_asn": "52376",
+        "closest_asn_name": "",
+        "closest_rank": 1498,
+        "rank_distance": 3
+    },
+    "13335": {
+        "target_rank": 61,
+        "closest_asn": "7738",
+        "closest_asn_name": "",
+        "closest_rank": 58,
+        "rank_distance": 3
+    },
+    "62240": {
+        "target_rank": 1216,
+        "closest_asn": "36873",
+        "closest_asn_name": "VNL1-AS",
+        "closest_rank": 1213,
+        "rank_distance": 3
+    },
+    "9354": {
+        "target_rank": 1949,
+        "closest_asn": "38091",
+        "closest_asn_name": "HELLONET-AS-KR",
+        "closest_rank": 1946,
+        "rank_distance": 3
+    },
+    "7922": {
+        "target_rank": 44,
+        "closest_asn": "20764",
+        "closest_asn_name": "RASCOM-AS",
+        "closest_rank": 39,
+        "rank_distance": 5
+    },
+    "3491": {
+        "target_rank": 10,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 3
+    },
+    "33891": {
+        "target_rank": 33,
+        "closest_asn": "16735",
+        "closest_asn_name": "",
+        "closest_rank": 30,
+        "rank_distance": 3
+    },
+    "2734": {
+        "target_rank": 1422,
+        "closest_asn": "18683",
+        "closest_asn_name": "MWFN",
+        "closest_rank": 1419,
+        "rank_distance": 3
+    },
+    "9886": {
+        "target_rank": 743,
+        "closest_asn": "267470",
+        "closest_asn_name": "",
+        "closest_rank": 740,
+        "rank_distance": 3
+    },
+    "146919": {
+        "target_rank": 3665,
+        "closest_asn": "52747",
+        "closest_asn_name": "",
+        "closest_rank": 3662,
+        "rank_distance": 3
+    },
+    "49063": {
+        "target_rank": 569,
+        "closest_asn": "25899",
+        "closest_asn_name": "LSNET",
+        "closest_rank": 566,
+        "rank_distance": 3
+    },
+    "214292": {
+        "target_rank": 2012,
+        "closest_asn": "271578",
+        "closest_asn_name": "",
+        "closest_rank": 2009,
+        "rank_distance": 3
+    },
+    "132559": {
+        "target_rank": 2655,
+        "closest_asn": "263362",
+        "closest_asn_name": "",
+        "closest_rank": 2652,
+        "rank_distance": 3
+    },
+    "3320": {
+        "target_rank": 20,
+        "closest_asn": "12389",
+        "closest_asn_name": "ROSTELECOM-AS",
+        "closest_rank": 17,
+        "rank_distance": 3
+    },
+    "210021": {
+        "target_rank": 711,
+        "closest_asn": "263073",
+        "closest_asn_name": "",
+        "closest_rank": 708,
+        "rank_distance": 3
+    },
+    "60051": {
+        "target_rank": 814,
+        "closest_asn": "2200",
+        "closest_asn_name": "FR-RENATER",
+        "closest_rank": 811,
+        "rank_distance": 3
+    },
+    "7195": {
+        "target_rank": 19,
+        "closest_asn": "1273",
+        "closest_asn_name": "CW",
+        "closest_rank": 15,
+        "rank_distance": 4
+    },
+    "6667": {
+        "target_rank": 362,
+        "closest_asn": "58495",
+        "closest_asn_name": "HSPNET-AS-ID",
+        "closest_rank": 359,
+        "rank_distance": 3
+    },
+    "15830": {
+        "target_rank": 69,
+        "closest_asn": "4766",
+        "closest_asn_name": "KIXS-AS-KR",
+        "closest_rank": 66,
+        "rank_distance": 3
+    },
+    "9066": {
+        "target_rank": 15542,
+        "closest_asn": "31400",
+        "closest_asn_name": "ACCELERATED-IT",
+        "closest_rank": 15542,
+        "rank_distance": 0
+    },
+    "49378": {
+        "target_rank": 81711,
+        "closest_asn": "18395",
+        "closest_asn_name": "IBSYS-AS-AP",
+        "closest_rank": 81711,
+        "rank_distance": 0
+    },
+    "10075": {
+        "target_rank": 108,
+        "closest_asn": "32097",
+        "closest_asn_name": "WII",
+        "closest_rank": 105,
+        "rank_distance": 3
+    },
+    "32098": {
+        "target_rank": 197,
+        "closest_asn": "17494",
+        "closest_asn_name": "BTTB-AS-AP",
+        "closest_rank": 194,
+        "rank_distance": 3
+    },
+    "18403": {
+        "target_rank": 164,
+        "closest_asn": "54004",
+        "closest_asn_name": "LIGHTPATH",
+        "closest_rank": 161,
+        "rank_distance": 3
+    },
+    "5650": {
+        "target_rank": 219,
+        "closest_asn": "16637",
+        "closest_asn_name": "MTNNS-AS",
+        "closest_rank": 216,
+        "rank_distance": 3
+    },
+    "61512": {
+        "target_rank": 1145,
+        "closest_asn": "14282",
+        "closest_asn_name": "",
+        "closest_rank": 1142,
+        "rank_distance": 3
+    },
+    "35382": {
+        "target_rank": 25819,
+        "closest_asn": "214101",
+        "closest_asn_name": "EU-SOVEREIGN-CLOUD",
+        "closest_rank": 25819,
+        "rank_distance": 0
+    },
+    "137409": {
+        "target_rank": 45,
+        "closest_asn": "20764",
+        "closest_asn_name": "RASCOM-AS",
+        "closest_rank": 39,
+        "rank_distance": 6
+    },
+    "6797": {
+        "target_rank": 12,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 5
+    },
+    "45701": {
+        "target_rank": 16945,
+        "closest_asn": "23131",
+        "closest_asn_name": "STARLAN",
+        "closest_rank": 16942,
+        "rank_distance": 3
+    },
+    "49800": {
+        "target_rank": 594,
+        "closest_asn": "30600",
+        "closest_asn_name": "AS-CMN",
+        "closest_rank": 591,
+        "rank_distance": 3
+    },
+    "31500": {
+        "target_rank": 65,
+        "closest_asn": "53062",
+        "closest_asn_name": "",
+        "closest_rank": 62,
+        "rank_distance": 3
+    },
+    "62513": {
+        "target_rank": 9626,
+        "closest_asn": "204533",
+        "closest_asn_name": "Sotoon-Cloud-Infrastructure-DC2",
+        "closest_rank": 9619,
+        "rank_distance": 7
+    },
+    "28007": null,
+    "151412": {
+        "target_rank": 2112,
+        "closest_asn": "265890",
+        "closest_asn_name": "",
+        "closest_rank": 2109,
+        "rank_distance": 3
+    },
+    "3257": {
+        "target_rank": 2,
+        "closest_asn": "6453",
+        "closest_asn_name": "AS6453",
+        "closest_rank": 5,
+        "rank_distance": 3
+    },
+    "137996": {
+        "target_rank": 2762,
+        "closest_asn": "197394",
+        "closest_asn_name": "Telecommunications21century",
+        "closest_rank": 2759,
+        "rank_distance": 3
+    },
+    "3462": {
+        "target_rank": 435,
+        "closest_asn": "5578",
+        "closest_asn_name": "AS-BENESTRA",
+        "closest_rank": 432,
+        "rank_distance": 3
+    },
+    "29075": {
+        "target_rank": 297,
+        "closest_asn": "24534",
+        "closest_asn_name": "TRANSHYBRID-AS-ID",
+        "closest_rank": 294,
+        "rank_distance": 3
+    },
+    "137367": {
+        "target_rank": 340,
+        "closest_asn": "2603",
+        "closest_asn_name": "NORDUNET",
+        "closest_rank": 337,
+        "rank_distance": 3
+    },
+    "135607": {
+        "target_rank": 279,
+        "closest_asn": "200612",
+        "closest_asn_name": "GulfBridgeInternational",
+        "closest_rank": 275,
+        "rank_distance": 4
+    },
+    "5405": {
+        "target_rank": 42,
+        "closest_asn": "20764",
+        "closest_asn_name": "RASCOM-AS",
+        "closest_rank": 39,
+        "rank_distance": 3
+    },
+    "7606": {
+        "target_rank": 81711,
+        "closest_asn": "33773",
+        "closest_asn_name": "nic-mw-as1",
+        "closest_rank": 81711,
+        "rank_distance": 0
+    },
+    "44217": {
+        "target_rank": 2145,
+        "closest_asn": "11686",
+        "closest_asn_name": "ZAYO-ENA-11686",
+        "closest_rank": 2142,
+        "rank_distance": 3
+    },
+    "45117": {
+        "target_rank": 315,
+        "closest_asn": "35133",
+        "closest_asn_name": "ERANIUM",
+        "closest_rank": 312,
+        "rank_distance": 3
+    },
+    "137303": {
+        "target_rank": 62636,
+        "closest_asn": "208846",
+        "closest_asn_name": "ATOM3-AS",
+        "closest_rank": 62636,
+        "rank_distance": 0
+    },
+    "55836": {
+        "target_rank": 135,
+        "closest_asn": "201054",
+        "closest_asn_name": "EPIX-PolMix",
+        "closest_rank": 132,
+        "rank_distance": 3
+    },
+    "137295": null,
+    "23815": {
+        "target_rank": 2130,
+        "closest_asn": "51706",
+        "closest_asn_name": "FRANCE-IX-PAR-AS",
+        "closest_rank": 2127,
+        "rank_distance": 3
+    },
+    "146984": {
+        "target_rank": 8718,
+        "closest_asn": "12657",
+        "closest_asn_name": "BAYCIX",
+        "closest_rank": 8715,
+        "rank_distance": 3
+    },
+    "131976": {
+        "target_rank": 5001,
+        "closest_asn": "22637",
+        "closest_asn_name": "C-R-T",
+        "closest_rank": 4997,
+        "rank_distance": 4
+    },
+    "2516": {
+        "target_rank": 148,
+        "closest_asn": "55410",
+        "closest_asn_name": "VIL-AS-AP",
+        "closest_rank": 145,
+        "rank_distance": 3
+    },
+    "134090": {
+        "target_rank": 923,
+        "closest_asn": "38264",
+        "closest_asn_name": "WATEEN-IMS-PK-AS-AP",
+        "closest_rank": 920,
+        "rank_distance": 3
+    },
+    "6830": {
+        "target_rank": 35,
+        "closest_asn": "7473",
+        "closest_asn_name": "SINGTEL-AS-AP",
+        "closest_rank": 32,
+        "rank_distance": 3
+    },
+    "30844": {
+        "target_rank": 112,
+        "closest_asn": "22773",
+        "closest_asn_name": "ASN-CXA-ALL-CCI-22773-RDC",
+        "closest_rank": 109,
+        "rank_distance": 3
+    },
+    "3356": {
+        "target_rank": 1,
+        "closest_asn": "174",
+        "closest_asn_name": "COGENT-174",
+        "closest_rank": 4,
+        "rank_distance": 3
+    },
+    "50629": {
+        "target_rank": 166,
+        "closest_asn": "60171",
+        "closest_asn_name": "AFRIX-AS",
+        "closest_rank": 163,
+        "rank_distance": 3
+    },
+    "15704": {
+        "target_rank": 971,
+        "closest_asn": "49544",
+        "closest_asn_name": "i3Dnet",
+        "closest_rank": 968,
+        "rank_distance": 3
+    },
+    "141137": {
+        "target_rank": 604,
+        "closest_asn": "141047",
+        "closest_asn_name": "NDSPL-AS-AP",
+        "closest_rank": 601,
+        "rank_distance": 3
+    },
+    "131293": {
+        "target_rank": 2183,
+        "closest_asn": "43440",
+        "closest_asn_name": "digitalesuisse",
+        "closest_rank": 2180,
+        "rank_distance": 3
+    },
+    "1764": {
+        "target_rank": 152,
+        "closest_asn": "29076",
+        "closest_asn_name": "CITYTELECOM-AS",
+        "closest_rank": 147,
+        "rank_distance": 5
+    },
+    "4713": {
+        "target_rank": 368,
+        "closest_asn": "4761",
+        "closest_asn_name": "INDOSAT-INP-AP",
+        "closest_rank": 365,
+        "rank_distance": 3
+    },
+    "199995": {
+        "target_rank": 251,
+        "closest_asn": "52573",
+        "closest_asn_name": "",
+        "closest_rank": 248,
+        "rank_distance": 3
+    },
+    "44306": {
+        "target_rank": 245,
+        "closest_asn": "9507",
+        "closest_asn_name": "NEXTHOP-AS-AP",
+        "closest_rank": 242,
+        "rank_distance": 3
+    },
+    "8781": {
+        "target_rank": 714,
+        "closest_asn": "394177",
+        "closest_asn_name": "SHIFT-HOSTING-LLC",
+        "closest_rank": 710,
+        "rank_distance": 4
+    },
+    "17511": {
+        "target_rank": 2525,
+        "closest_asn": "56046",
+        "closest_asn_name": "CMNET-Jiangsu-AP",
+        "closest_rank": 2522,
+        "rank_distance": 3
+    },
+    "8697": {
+        "target_rank": 1044,
+        "closest_asn": "272112",
+        "closest_asn_name": "",
+        "closest_rank": 1041,
+        "rank_distance": 3
+    },
+    "5511": {
+        "target_rank": 14,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 7
+    },
+    "41114": {
+        "target_rank": 5383,
+        "closest_asn": "18070",
+        "closest_asn_name": "NDAC",
+        "closest_rank": 5380,
+        "rank_distance": 3
+    },
+    "46450": {
+        "target_rank": 760,
+        "closest_asn": "53356",
+        "closest_asn_name": "FREE RANGE CLOUD",
+        "closest_rank": 757,
+        "rank_distance": 3
+    },
+    "64146": {
+        "target_rank": 3197,
+        "closest_asn": "22987",
+        "closest_asn_name": "BRIGHTRIDGE",
+        "closest_rank": 3194,
+        "rank_distance": 3
+    },
+    "56665": {
+        "target_rank": 1404,
+        "closest_asn": "204208",
+        "closest_asn_name": "Peravix",
+        "closest_rank": 1401,
+        "rank_distance": 3
+    },
+    "64315": {
+        "target_rank": 425,
+        "closest_asn": "12430",
+        "closest_asn_name": "VODAFONE_ES",
+        "closest_rank": 421,
+        "rank_distance": 4
+    },
+    "138128": {
+        "target_rank": 422,
+        "closest_asn": "39737",
+        "closest_asn_name": "Prime-Telecom-AS",
+        "closest_rank": 419,
+        "rank_distance": 3
+    },
+    "55821": {
+        "target_rank": 1274,
+        "closest_asn": "42156",
+        "closest_asn_name": "GNX",
+        "closest_rank": 1271,
+        "rank_distance": 3
+    },
+    "138384": {
+        "target_rank": 5036,
+        "closest_asn": "14522",
+        "closest_asn_name": "",
+        "closest_rank": 5033,
+        "rank_distance": 3
+    },
+    "38511": {
+        "target_rank": 2962,
+        "closest_asn": "20900",
+        "closest_asn_name": "AS-IMSNETORKS",
+        "closest_rank": 2959,
+        "rank_distance": 3
+    },
+    "9002": {
+        "target_rank": 11,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 4
+    },
+    "63927": {
+        "target_rank": 412,
+        "closest_asn": "7016",
+        "closest_asn_name": "CCCH-3",
+        "closest_rank": 409,
+        "rank_distance": 3
+    },
+    "8399": {
+        "target_rank": 13390,
+        "closest_asn": "137872",
+        "closest_asn_name": "PEOPLESPHONE-HK",
+        "closest_rank": 13387,
+        "rank_distance": 3
+    },
+    "4922": {
+        "target_rank": 890,
+        "closest_asn": "216458",
+        "closest_asn_name": "HardCore",
+        "closest_rank": 887,
+        "rank_distance": 3
+    },
+    "262761": {
+        "target_rank": 495,
+        "closest_asn": "58511",
+        "closest_asn_name": "ANYCAST-GLOBAL-BACKBONE",
+        "closest_rank": 492,
+        "rank_distance": 3
+    },
+    "17676": {
+        "target_rank": 134,
+        "closest_asn": "577",
+        "closest_asn_name": "BACOM",
+        "closest_rank": 131,
+        "rank_distance": 3
+    },
+    "2527": {
+        "target_rank": 5010,
+        "closest_asn": "5607",
+        "closest_asn_name": "BSKYB-BROADBAND-AS",
+        "closest_rank": 5007,
+        "rank_distance": 3
+    },
+    "20115": {
+        "target_rank": 98,
+        "closest_asn": "5617",
+        "closest_asn_name": "TPNET",
+        "closest_rank": 95,
+        "rank_distance": 3
+    },
+    "38195": {
+        "target_rank": 115,
+        "closest_asn": "9121",
+        "closest_asn_name": "TTNet",
+        "closest_rank": 111,
+        "rank_distance": 4
+    },
+    "132876": {
+        "target_rank": 371,
+        "closest_asn": "57866",
+        "closest_asn_name": "FUSIX-AS",
+        "closest_rank": 367,
+        "rank_distance": 4
+    },
+    "21928": {
+        "target_rank": 5003,
+        "closest_asn": "135814",
+        "closest_asn_name": "EXTREME-IX-AS",
+        "closest_rank": 5000,
+        "rank_distance": 3
+    },
+    "39651": {
+        "target_rank": 81711,
+        "closest_asn": "44538",
+        "closest_asn_name": "ALGATA-AS",
+        "closest_rank": 81711,
+        "rank_distance": 0
+    },
+    "6762": {
+        "target_rank": 9,
+        "closest_asn": "2914",
+        "closest_asn_name": "NTT-DATA-2914",
+        "closest_rank": 6,
+        "rank_distance": 3
+    },
+    "57344": {
+        "target_rank": 246,
+        "closest_asn": "812",
+        "closest_asn_name": "ROGERS-COMMUNICATIONS",
+        "closest_rank": 243,
+        "rank_distance": 3
+    },
+    "8400": {
+        "target_rank": 331,
+        "closest_asn": "52361",
+        "closest_asn_name": "",
+        "closest_rank": 328,
+        "rank_distance": 3
+    },
+    "1221": {
+        "target_rank": 56,
+        "closest_asn": "8359",
+        "closest_asn_name": "MTS",
+        "closest_rank": 53,
+        "rank_distance": 3
+    },
+    "4637": {
+        "target_rank": 16,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 9
+    },
+    "852": {
+        "target_rank": 230,
+        "closest_asn": "15924",
+        "closest_asn_name": "BORUSANTELEKOM-AS",
+        "closest_rank": 227,
+        "rank_distance": 3
+    },
+    "12956": {
+        "target_rank": 13,
+        "closest_asn": "6939",
+        "closest_asn_name": "HURRICANE",
+        "closest_rank": 7,
+        "rank_distance": 6
+    },
+    "13101": {
+        "target_rank": 1779,
+        "closest_asn": "7046",
+        "closest_asn_name": "RFC2270-UUNET-CUSTOMER",
+        "closest_rank": 1776,
+        "rank_distance": 3
+    },
+    "38193": {
+        "target_rank": 198,
+        "closest_asn": "17494",
+        "closest_asn_name": "BTTB-AS-AP",
+        "closest_rank": 194,
+        "rank_distance": 4
+    },
+    "55554": {
+        "target_rank": 6117,
+        "closest_asn": "4004",
+        "closest_asn_name": "COGENT-4000",
+        "closest_rank": 6114,
+        "rank_distance": 3
+    },
+    "52468": {
+        "target_rank": 41,
+        "closest_asn": "23764",
+        "closest_asn_name": "CTGNet",
+        "closest_rank": 38,
+        "rank_distance": 3
+    },
+    "38794": {
+        "target_rank": 818,
+        "closest_asn": "8926",
+        "closest_asn_name": "MOLDTELECOM-AS",
+        "closest_rank": 815,
+        "rank_distance": 3
+    },
+    "13760": {
+        "target_rank": 385,
+        "closest_asn": "4775",
+        "closest_asn_name": "GLOBE-TELECOM-AS",
+        "closest_rank": 382,
+        "rank_distance": 3
+    },
+    "701": {
+        "target_rank": 28,
+        "closest_asn": "58453",
+        "closest_asn_name": "CMI-INT-HK",
+        "closest_rank": 25,
+        "rank_distance": 3
+    },
+    "5769": {
+        "target_rank": 1841,
+        "closest_asn": "24863",
+        "closest_asn_name": "LINKdotNET-AS",
+        "closest_rank": 1838,
+        "rank_distance": 3
+    },
+    "7552": {
+        "target_rank": 195,
+        "closest_asn": "1828",
+        "closest_asn_name": "UNITAS",
+        "closest_rank": 192,
+        "rank_distance": 3
+    },
+    "4826": {
+        "target_rank": 43,
+        "closest_asn": "20764",
+        "closest_asn_name": "RASCOM-AS",
+        "closest_rank": 39,
+        "rank_distance": 4
+    },
+    "48728": {
+        "target_rank": 1947,
+        "closest_asn": "12252",
+        "closest_asn_name": "",
+        "closest_rank": 1944,
+        "rank_distance": 3
+    },
+    "52320": {
+        "target_rank": 26,
+        "closest_asn": "22356",
+        "closest_asn_name": "",
+        "closest_rank": 23,
+        "rank_distance": 3
+    },
+    "24961": {
+        "target_rank": 277,
+        "closest_asn": "8717",
+        "closest_asn_name": "A1BG",
+        "closest_rank": 274,
+        "rank_distance": 3
+    },
+    "7029": {
+        "target_rank": 116,
+        "closest_asn": "35320",
+        "closest_asn_name": "ETT-AS",
+        "closest_rank": 113,
+        "rank_distance": 3
+    },
+    "9136": {
+        "target_rank": 701,
+        "closest_asn": "7568",
+        "closest_asn_name": "CSLOX-IIG-AS-AP",
+        "closest_rank": 698,
+        "rank_distance": 3
+    },
+    "8529": {
+        "target_rank": 104,
+        "closest_asn": "136106",
+        "closest_asn_name": "FIBERSTAR-AS-ID",
+        "closest_rank": 101,
+        "rank_distance": 3
+    },
+    "6461": {
+        "target_rank": 8,
+        "closest_asn": "6453",
+        "closest_asn_name": "AS6453",
+        "closest_rank": 5,
+        "rank_distance": 3
+    },
+    "28283": {
+        "target_rank": 121,
+        "closest_asn": "44530",
+        "closest_asn_name": "HOPUS",
+        "closest_rank": 118,
+        "rank_distance": 3
+    },
+    "266830": {
+        "target_rank": 3367,
+        "closest_asn": "133278",
+        "closest_asn_name": "ENETSOLS-AS-IN",
+        "closest_rank": 3364,
+        "rank_distance": 3
+    },
+    "12735": {
+        "target_rank": 302,
+        "closest_asn": "52925",
+        "closest_asn_name": "",
+        "closest_rank": 299,
+        "rank_distance": 3
+    },
+    "24724": {
+        "target_rank": 249,
+        "closest_asn": "6777",
+        "closest_asn_name": "AMS-IX-RS",
+        "closest_rank": 244,
+        "rank_distance": 5
+    },
+    "7575": {
+        "target_rank": 186,
+        "closest_asn": "35280",
+        "closest_asn_name": "F5",
+        "closest_rank": 183,
+        "rank_distance": 3
+    },
+    "146902": {
+        "target_rank": 4867,
+        "closest_asn": "52508",
+        "closest_asn_name": "",
+        "closest_rank": 4864,
+        "rank_distance": 3
+    },
+    "47697": {
+        "target_rank": 5814,
+        "closest_asn": "61704",
+        "closest_asn_name": "",
+        "closest_rank": 5811,
+        "rank_distance": 3
+    },
+    "14840": {
+        "target_rank": 54,
+        "closest_asn": "4230",
+        "closest_asn_name": "",
+        "closest_rank": 51,
+        "rank_distance": 3
+    },
+    "210788": null,
+    "50392": {
+        "target_rank": 3388,
+        "closest_asn": "201589",
+        "closest_asn_name": "EdgeAmLLC",
+        "closest_rank": 3385,
+        "rank_distance": 3
+    },
+    "58762": {
+        "target_rank": 4706,
+        "closest_asn": "61625",
+        "closest_asn_name": "",
+        "closest_rank": 4703,
+        "rank_distance": 3
+    },
+    "211181": {
+        "target_rank": 2013,
+        "closest_asn": "133817",
+        "closest_asn_name": "INTIDATA-AS-ID",
+        "closest_rank": 2010,
+        "rank_distance": 3
+    },
+    "25309": {
+        "target_rank": 69434,
+        "closest_asn": "51774",
+        "closest_asn_name": "SPS-NET",
+        "closest_rank": 69434,
+        "rank_distance": 0
+    },
+    "58212": {
+        "target_rank": 503,
+        "closest_asn": "53013",
+        "closest_asn_name": "",
+        "closest_rank": 500,
+        "rank_distance": 3
+    },
+    "134640": {
+        "target_rank": 3469,
+        "closest_asn": "30764",
+        "closest_asn_name": "PODA-AS",
+        "closest_rank": 3466,
+        "rank_distance": 3
+    },
+    "28649": {
+        "target_rank": 804,
+        "closest_asn": "3249",
+        "closest_asn_name": "ESTPAK",
+        "closest_rank": 801,
+        "rank_distance": 3
+    },
+    "38240": null,
+    "263569": {
+        "target_rank": 3622,
+        "closest_asn": "30176",
+        "closest_asn_name": "AS-PRIORITYCOLO",
+        "closest_rank": 3619,
+        "rank_distance": 3
+    },
+    "51069": {
+        "target_rank": 17239,
+        "closest_asn": "28334",
+        "closest_asn_name": "",
+        "closest_rank": 17236,
+        "rank_distance": 3
+    },
+    "24224": {
+        "target_rank": 81711,
+        "closest_asn": "395897",
+        "closest_asn_name": "BLUE-APRON-01",
+        "closest_rank": 81711,
+        "rank_distance": 0
+    },
+    "12897": {
+        "target_rank": 2714,
+        "closest_asn": "40498",
+        "closest_asn_name": "ABQG",
+        "closest_rank": 2711,
+        "rank_distance": 3
+    },
+    "39686": {
+        "target_rank": 40,
+        "closest_asn": "7018",
+        "closest_asn_name": "ATT-INTERNET4",
+        "closest_rank": 37,
+        "rank_distance": 3
+    },
+    "57112": {
+        "target_rank": 5222,
+        "closest_asn": "23783",
+        "closest_asn_name": "CNA",
+        "closest_rank": 5219,
+        "rank_distance": 3
+    },
+    "39801": {
+        "target_rank": 820,
+        "closest_asn": "41313",
+        "closest_asn_name": "NOVATEL-AS",
+        "closest_rank": 817,
+        "rank_distance": 3
+    },
+    "134375": {
+        "target_rank": 1977,
+        "closest_asn": "40317",
+        "closest_asn_name": "PEOPLESCOMMUNICATIONS",
+        "closest_rank": 1974,
+        "rank_distance": 3
+    },
+    "133275": {
+        "target_rank": 1124,
+        "closest_asn": "50309",
+        "closest_asn_name": "ARCADIZ",
+        "closest_rank": 1121,
+        "rank_distance": 3
+    },
+    "328471": {
+        "target_rank": 8175,
+        "closest_asn": "12079",
+        "closest_asn_name": "CELLCO-PART",
+        "closest_rank": 8172,
+        "rank_distance": 3
+    },
+    "13045": {
+        "target_rank": 2710,
+        "closest_asn": "25818",
+        "closest_asn_name": "CMCNETWORKS",
+        "closest_rank": 2707,
+        "rank_distance": 3
+    },
+    "134858": {
+        "target_rank": 21740,
+        "closest_asn": "57087",
+        "closest_asn_name": "JYSK",
+        "closest_rank": 21740,
+        "rank_distance": 0
+    },
+    "132174": {
+        "target_rank": 69434,
+        "closest_asn": "138613",
+        "closest_asn_name": "CONNECTTELPTYLTD-AS-AP",
+        "closest_rank": 69434,
+        "rank_distance": 0
+    },
+    "13030": {
+        "target_rank": 226,
+        "closest_asn": "59796",
+        "closest_asn_name": "STORMWALL-AS",
+        "closest_rank": 223,
+        "rank_distance": 3
+    },
+    "146908": {
+        "target_rank": 29732,
+        "closest_asn": "401215",
+        "closest_asn_name": "MPS-MP",
+        "closest_rank": 29732,
+        "rank_distance": 0
+    },
+    "262427": {
+        "target_rank": 2475,
+        "closest_asn": "270966",
+        "closest_asn_name": "",
+        "closest_rank": 2472,
+        "rank_distance": 3
+    },
+    "28305": {
+        "target_rank": 18239,
+        "closest_asn": "37363",
+        "closest_asn_name": "FAIRCAPE",
+        "closest_rank": 18236,
+        "rank_distance": 3
+    },
+    "135845": {
+        "target_rank": 24561,
+        "closest_asn": "1411",
+        "closest_asn_name": "CHRISTOPHER-NEWPORT-UNIVERSITY",
+        "closest_rank": 24561,
+        "rank_distance": 0
+    },
+    "48648": {
+        "target_rank": 1099,
+        "closest_asn": "8470",
+        "closest_asn_name": "MAcomnet",
+        "closest_rank": 1096,
+        "rank_distance": 3
+    },
+    "135709": {
+        "target_rank": 3351,
+        "closest_asn": "52688",
+        "closest_asn_name": "",
+        "closest_rank": 3348,
+        "rank_distance": 3
+    },
+    "270707": {
+        "target_rank": 11893,
+        "closest_asn": "142332",
+        "closest_asn_name": "TELNETINDONESIA-AS-ID",
+        "closest_rank": 11893,
+        "rank_distance": 0
+    },
+    "12479": {
+        "target_rank": 534,
+        "closest_asn": "61621",
+        "closest_asn_name": "",
+        "closest_rank": 531,
+        "rank_distance": 3
+    },
+    "17727": {
+        "target_rank": 2098,
+        "closest_asn": "205996",
+        "closest_asn_name": "Interfiber",
+        "closest_rank": 2095,
+        "rank_distance": 3
+    },
+    "135208": {
+        "target_rank": 10100,
+        "closest_asn": "132445",
+        "closest_asn_name": "KHETAN-IN",
+        "closest_rank": 10097,
+        "rank_distance": 3
+    },
+    "263482": {
+        "target_rank": 1225,
+        "closest_asn": "6208",
+        "closest_asn_name": "FIBERX",
+        "closest_rank": 1222,
+        "rank_distance": 3
+    },
+    "146904": {
+        "target_rank": 3356,
+        "closest_asn": "49835",
+        "closest_asn_name": "GUIFINET-AS",
+        "closest_rank": 3353,
+        "rank_distance": 3
+    },
+    "12416": null,
+    "20810": {
+        "target_rank": 8831,
+        "closest_asn": "12133",
+        "closest_asn_name": "LISCO",
+        "closest_rank": 8828,
+        "rank_distance": 3
+    },
+    "12741": {
+        "target_rank": 99,
+        "closest_asn": "12552",
+        "closest_asn_name": "GlobalConnect-AS12552",
+        "closest_rank": 96,
+        "rank_distance": 3
+    },
+    "894": {
+        "target_rank": 61266,
+        "closest_asn": "151653",
+        "closest_asn_name": "GTSI-AS-AP",
+        "closest_rank": 61266,
+        "rank_distance": 0
+    },
+    "401887": {
+        "target_rank": 81711,
+        "closest_asn": "264721",
+        "closest_asn_name": "",
+        "closest_rank": 81711,
+        "rank_distance": 0
+    },
+    "151732": {
+        "target_rank": 1761,
+        "closest_asn": "38740",
+        "closest_asn_name": "TASHICELL-TRANSIT-AS",
+        "closest_rank": 1758,
+        "rank_distance": 3
+    },
+    "263444": {
+        "target_rank": 141,
+        "closest_asn": "4788",
+        "closest_asn_name": "TTSSB-MY",
+        "closest_rank": 138,
+        "rank_distance": 3
+    },
+    "10214": {
+        "target_rank": 9311,
+        "closest_asn": "59919",
+        "closest_asn_name": "BRAINBOX",
+        "closest_rank": 9308,
+        "rank_distance": 3
+    },
+    "205112": {
+        "target_rank": 2773,
+        "closest_asn": "4226",
+        "closest_asn_name": "SUMOFIBER",
+        "closest_rank": 2770,
+        "rank_distance": 3
+    },
+    "62206": {
+        "target_rank": 978,
+        "closest_asn": "29169",
+        "closest_asn_name": "GANDI-AS",
+        "closest_rank": 975,
+        "rank_distance": 3
+    },
+    "13285": {
+        "target_rank": 2016,
+        "closest_asn": "216456",
+        "closest_asn_name": "AS216456",
+        "closest_rank": 2011,
+        "rank_distance": 5
+    },
+    "37105": {
+        "target_rank": 5052,
+        "closest_asn": "14492",
+        "closest_asn_name": "DATAPIPE",
+        "closest_rank": 5049,
+        "rank_distance": 3
+    },
+    "135799": {
+        "target_rank": 9420,
+        "closest_asn": "265005",
+        "closest_asn_name": "",
+        "closest_rank": 9417,
+        "rank_distance": 3
+    },
+    "268556": {
+        "target_rank": 36128,
+        "closest_asn": "52743",
+        "closest_asn_name": "",
+        "closest_rank": 36128,
+        "rank_distance": 0
+    },
+    "15796": {
+        "target_rank": 13743,
+        "closest_asn": "38103",
+        "closest_asn_name": "SKB-QRIXNETKS-AS-KR",
+        "closest_rank": 13740,
+        "rank_distance": 3
+    },
+    "12276": {
+        "target_rank": 61132,
+        "closest_asn": "214076",
+        "closest_asn_name": "ECKER",
+        "closest_rank": 61132,
+        "rank_distance": 0
+    },
+    "132696": {
+        "target_rank": 60974,
+        "closest_asn": "60913",
+        "closest_asn_name": "UR-AS",
+        "closest_rank": 60963,
+        "rank_distance": 11
+    },
+    "132934": {
+        "target_rank": 7071,
+        "closest_asn": "149746",
+        "closest_asn_name": "IDNIC-BLIP-AS-ID",
+        "closest_rank": 7068,
+        "rank_distance": 3
+    },
+    "48449": {
+        "target_rank": 3683,
+        "closest_asn": "197204",
+        "closest_asn_name": "Telemaks",
+        "closest_rank": 3680,
+        "rank_distance": 3
+    },
+    "133720": {
+        "target_rank": 1210,
+        "closest_asn": "197453",
+        "closest_asn_name": "BIZTEL-AS",
+        "closest_rank": 1207,
+        "rank_distance": 3
+    },
+    "132137": {
+        "target_rank": 9027,
+        "closest_asn": "60246",
+        "closest_asn_name": "PG-19",
+        "closest_rank": 9024,
+        "rank_distance": 3
+    },
+    "37425": {
+        "target_rank": 3438,
+        "closest_asn": "9158",
+        "closest_asn_name": "TELENOR_DANMARK_AS",
+        "closest_rank": 3435,
+        "rank_distance": 3
+    },
+    "18187": {
+        "target_rank": 2428,
+        "closest_asn": "12418",
+        "closest_asn_name": "QUANTUM",
+        "closest_rank": 2425,
+        "rank_distance": 3
+    },
+    "4648": {
+        "target_rank": 426,
+        "closest_asn": "16509",
+        "closest_asn_name": "AMAZON-02",
+        "closest_rank": 423,
+        "rank_distance": 3
+    },
+    "38571": {
+        "target_rank": 9338,
+        "closest_asn": "7453",
+        "closest_asn_name": "ACCELERATION",
+        "closest_rank": 9334,
+        "rank_distance": 4
+    },
+    "200924": {
+        "target_rank": 3564,
+        "closest_asn": "263693",
+        "closest_asn_name": "",
+        "closest_rank": 3561,
+        "rank_distance": 3
+    },
+    "131958": {
+        "target_rank": 15837,
+        "closest_asn": "136959",
+        "closest_asn_name": "UNICOM-FuoShan-IDC",
+        "closest_rank": 15832,
+        "rank_distance": 5
+    },
+    "55507": {
+        "target_rank": 19659,
+        "closest_asn": "27940",
+        "closest_asn_name": "",
+        "closest_rank": 19646,
+        "rank_distance": 13
+    },
+    "11432": {
+        "target_rank": 222,
+        "closest_asn": "58682",
+        "closest_asn_name": "LEVEL3-BD",
+        "closest_rank": 218,
+        "rank_distance": 4
+    },
+    "9924": {
+        "target_rank": 665,
+        "closest_asn": "201814",
+        "closest_asn_name": "Mevspace",
+        "closest_rank": 662,
+        "rank_distance": 3
+    },
+    "196714": {
+        "target_rank": 2309,
+        "closest_asn": "19893",
+        "closest_asn_name": "NTT-GLOBAL-DATA-CENTERS-AMERICA-INC",
+        "closest_rank": 2306,
+        "rank_distance": 3
+    },
+    "13188": {
+        "target_rank": 6143,
+        "closest_asn": "12392",
+        "closest_asn_name": "ASVOO",
+        "closest_rank": 6140,
+        "rank_distance": 3
+    },
+    "49888": {
+        "target_rank": 10360,
+        "closest_asn": "201094",
+        "closest_asn_name": "gmhost",
+        "closest_rank": 10357,
+        "rank_distance": 3
+    },
+    "28343": {
+        "target_rank": 418,
+        "closest_asn": "13293",
+        "closest_asn_name": "PIONIER-AS-COM",
+        "closest_rank": 415,
+        "rank_distance": 3
+    },
+    "25160": {
+        "target_rank": 2174,
+        "closest_asn": "36940",
+        "closest_asn_name": "IXPN-AS-MGMT",
+        "closest_rank": 2171,
+        "rank_distance": 3
+    },
+    "11845": {
+        "target_rank": 1836,
+        "closest_asn": "21738",
+        "closest_asn_name": "Rozint",
+        "closest_rank": 1833,
+        "rank_distance": 3
+    },
+    "136946": {
+        "target_rank": 1283,
+        "closest_asn": "42861",
+        "closest_asn_name": "FOTONTELECOM-TRANSIT-AS",
+        "closest_rank": 1280,
+        "rank_distance": 3
+    },
+    "10111": {
+        "target_rank": 992,
+        "closest_asn": "210756",
+        "closest_asn_name": "EdgeCenterLLC",
+        "closest_rank": 989,
+        "rank_distance": 3
+    },
+    "42611": {
+        "target_rank": 8610,
+        "closest_asn": "7600",
+        "closest_asn_name": "ESCAPE-NET-AS",
+        "closest_rank": 8607,
+        "rank_distance": 3
+    }
+}

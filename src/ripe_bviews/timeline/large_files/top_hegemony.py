@@ -274,7 +274,7 @@ if __name__ == "__main__":
     )
 
     # --- 2. GLOBAL ANALYSIS ---
-    print(f"\n[2/2] Running Global Top {percentage}% Analysis...")
+    print(f"\n[2/2] Running Global Top {percentage}{"%" if is_percentage else ''} Analysis...")
     analyze_top10_percent_vs_others_hegemony_over_time(
         asn=asn,
         alpha=alpha,

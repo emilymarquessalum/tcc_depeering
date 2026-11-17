@@ -1,0 +1,1 @@
+{"rank": 69434, "asn": "25309", "asnName": "TOP-IX_RS", "source": "RIPE", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 7.67, "latitude": 45.07, "organization": {"orgId": "b93802e535"}, "cone": {"numberAsns": 1, "numberPrefixes": 1, "numberAddresses": 256}, "country": {"iso": "IT"}, "asnDegree": {"total": 1, "customer": 0, "peer": 0, "provider": 1}}

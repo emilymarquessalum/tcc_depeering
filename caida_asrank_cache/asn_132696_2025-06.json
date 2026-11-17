@@ -1,0 +1,1 @@
+{"rank": 60974, "asn": "132696", "asnName": "SGIX-SG-AS", "source": "APNIC", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 103.83, "latitude": 1.31, "organization": {"orgId": "b83f4d337c"}, "cone": {"numberAsns": 1, "numberPrefixes": 1, "numberAddresses": 256}, "country": {"iso": "SG"}, "asnDegree": {"total": 18, "customer": 0, "peer": 16, "provider": 2}}

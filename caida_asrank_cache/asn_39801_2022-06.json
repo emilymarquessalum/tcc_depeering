@@ -1,0 +1,1 @@
+{"rank": 820, "asn": "39801", "asnName": "FRANCE-IX-L3P", "source": "RIPE", "cliqueMember": true, "seen": true, "ixp": null, "longitude": 2.34, "latitude": 48.86, "organization": {"orgId": "f027cb3fcf"}, "cone": {"numberAsns": 53, "numberPrefixes": 1009, "numberAddresses": 224000}, "country": {"iso": "FR"}, "asnDegree": {"total": 179, "customer": 36, "peer": 141, "provider": 2}}

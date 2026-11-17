@@ -1,0 +1,1 @@
+{"rank": 61132, "asn": "12276", "asnName": "SFMIX-MGMT", "source": "ARIN", "cliqueMember": true, "seen": true, "ixp": null, "longitude": -122.29, "latitude": 37.84, "organization": {"orgId": "128fe65127"}, "cone": {"numberAsns": 1, "numberPrefixes": 1, "numberAddresses": 256}, "country": {"iso": "US"}, "asnDegree": {"total": 9, "customer": 0, "peer": 6, "provider": 3}}

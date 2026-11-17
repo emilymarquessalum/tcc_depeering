@@ -236,6 +236,9 @@ def plot_google_ixp_infrastructure_loss_by_continent(all_files, asn=15169):
     }
 
 
+
+
+
 def get_ixps_by_continent_count(all_files):
     # 1. Use a generator instead of a list comprehension to save memory 
     # (Assuming get_unique_ixps_from_data_list accepts iterables)
