@@ -12,7 +12,6 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
-from src.ripe_bviews.timeline.large_files.asn_names import _resolve_asn_label
 
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
@@ -33,6 +32,7 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
 
+from src.ripe_bviews.timeline.large_files.asn_names import _resolve_asn_label
 from src.ripe_bviews.timeline.large_files.asn_names import hegemony_asn_map
 
 
