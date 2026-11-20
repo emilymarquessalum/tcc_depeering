@@ -1,7 +1,8 @@
 import sys 
 from pathlib import Path
 
-from src.caidapeeringdb.main import bview_analyze_depeering_by_continent, load_timeline_data
+from src.caidapeeringdb.loaders import load_timeline_data
+from src.caidapeeringdb.main import bview_analyze_depeering_by_continent
 from src.caidapeeringdb.vpps.vpp_routes import analyze_vpp_routes_and_prefixes
 from src.ripe_bviews.routeserver.bview_timeline_lookingglass import bview_looking_glass
 from src.ripe_bviews.timeline.bview_new_members import bview_new_members 
