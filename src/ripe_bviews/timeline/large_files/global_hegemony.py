@@ -919,6 +919,7 @@ if __name__ == "__main__":
     start_date = None
     month_interval = 6
     use_strict_viewpoint_filtering = True
+    highlight_max_per_date = False
 
     all_rrcs = [rrc["rrc"] for rrc in get_all_rrcs()]
 
@@ -948,7 +949,7 @@ if __name__ == "__main__":
         show_as_percentage=True,
         text_scale=text_scale,
         top_n=int(user_input) if user_input else 5,
-        highlight_max_per_date=True,
+        highlight_max_per_date=highlight_max_per_date,
     )
  
     # 2. Run Global VPP vs Non-VPP Hegemony Over Time
