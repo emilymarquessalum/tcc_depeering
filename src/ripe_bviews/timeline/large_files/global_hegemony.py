@@ -932,6 +932,8 @@ if __name__ == "__main__":
 
     user_input = input("Enter the number of top ASNs to consider (leave blank to default to 5): ").strip()
 
+    ip_version = input("Enter IP version (v4, v6, or both) (default 'both'): ").strip().lower() or "both"
+
     # 1. Run Global Individual Transit Hegemony Over Time
     print(f"\n[1/3] Running Global Hegemony Over Time (Per Transit) for ASN {asn} ({ip_version.upper()})...")
     analyze_global_hegemony_over_time(

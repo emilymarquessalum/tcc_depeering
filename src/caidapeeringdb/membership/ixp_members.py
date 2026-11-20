@@ -8,7 +8,7 @@ import re
 
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from src.utils.graphs import plot_list_as_line_plot
 
 from src.caidapeeringdb.caidapeeringdb_load import get_all_data, get_asn_from_net, get_data, get_file_from_date
@@ -125,6 +125,7 @@ def top_n_ixps_with_most_depeerings(start_date, end_date, n=10):
     top_depeered_ixps = heapq.nlargest(n, ixp_losses.items(), key=lambda x: x[1])
 
     return top_depeered_ixps
+
 
 if __name__ == "__main__":
     

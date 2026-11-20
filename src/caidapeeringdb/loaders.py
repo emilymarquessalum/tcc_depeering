@@ -163,3 +163,26 @@ def load_all_data(timeline_config):
     print(f"Saved dataset cache to: {cache_path}")
 
     return all_data, dates
+
+
+
+def load_timeline_data(config_path):
+    """Load before and after depeering timeline data.
+    
+    Args:
+        config_path: Path to config directory
+        
+    Returns:
+        tuple: (all_files_before_depeering, all_files_after_depeering)
+    """
+    with open(config_path + "/config_google_before_depeering_timeline.json", 'r') as f:
+        config_google_before_depeering = json.load(f)
+    with open(config_path + "/config_google_after_depeering_timeline.json", 'r') as f:
+        config_google_after_depeering = json.load(f)
+
+    print(config_google_before_depeering)
+    print(config_google_after_depeering)
+    all_files_before_depeering = load_all_files(config_google_before_depeering)
+    all_files_after_depeering = load_all_files(config_google_after_depeering) 
+    
+    return all_files_before_depeering[0], all_files_after_depeering[0]

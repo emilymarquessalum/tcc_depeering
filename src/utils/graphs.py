@@ -610,7 +610,10 @@ def format_labels_if_they_are_dates(labels):
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ]
-    if isinstance(first_label, str):
+    if isinstance(first_label, str): 
+        labels = [label.replace("peeringdb_2_dump_", "") for label in labels]  
+        labels = [label.replace("peeringdb-2-dump-", "") for label in labels]  
+        first_label = labels[0]
         try:
             # Try parsing the first label as a date
             from dateutil import parser
@@ -652,7 +655,7 @@ def format_labels_if_they_are_dates(labels):
                 
             return formatted_labels
         except (ValueError, TypeError) as e:
-            print("Couldnt parse because: ", e)
+            print("[format_labels_if_they_are_dates] Couldnt parse because: ", e)
             return labels  # Not date strings, return original labels
     else:
         print("First label is not a string, skipping date formatting.")

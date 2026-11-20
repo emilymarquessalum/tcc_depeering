@@ -2,7 +2,7 @@ import re
 import numpy as np
 from datetime import datetime
 from src.caidapeeringdb.utils import PEERINGDB_SUBFOLDER_PREFIX
-from src.caidapeeringdb.ixp_overtime import plot_ixp_connections_over_time_by_category
+from src.caidapeeringdb.membership.ixp_overtime import plot_ixp_connections_over_time_by_category
 
 DEFAULT_TIME_RANGE_THRESHOLDS = [30, 90, 180, 365, 365*2, 365*3, 365*4]
 

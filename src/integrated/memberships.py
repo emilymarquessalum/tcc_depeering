@@ -10,7 +10,7 @@ from src.caidapeeringdb.loaders import load_all_data, load_all_files
 
 
 from src.caidapeeringdb.caidapeeringdb_load import get_all_data
-from src.caidapeeringdb.ixp_overtime import plot_ixps_connections_over_time
+from src.caidapeeringdb.membership.ixp_overtime import plot_ixps_connections_over_time
 from src.ripe_bviews.download_and_parse.load_configs import load_configs
 
 

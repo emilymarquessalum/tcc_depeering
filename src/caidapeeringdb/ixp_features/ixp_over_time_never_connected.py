@@ -5,7 +5,7 @@
 
 
 from src.caidapeeringdb.caidapeeringdb_load import get_asn_from_net, get_dates_from_files, get_ixp_from_net, get_unique_ixps_from_data_list
-from src.caidapeeringdb.ixp_overtime import plot_ixp_connections_over_time_by_category, plot_ixp_statistics_connections_over_time, plot_ixps_connections_over_time
+from src.caidapeeringdb.membership.ixp_overtime import plot_ixp_connections_over_time_by_category, plot_ixp_statistics_connections_over_time, plot_ixps_connections_over_time
 
 
 def get_ixps_that_never_had_connections_with_asns(asn_to_analyze, all_data, all_ixps=None): 

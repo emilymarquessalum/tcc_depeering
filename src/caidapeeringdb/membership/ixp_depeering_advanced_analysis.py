@@ -1,8 +1,23 @@
+import sys
+from pathlib import Path
 
+# Ensure the project root is on sys.path (matching ixp_members_by_top_losses.py)
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
+from src.caidapeeringdb.build_structures import build_asn_ixp_data_structures
+from src.caidapeeringdb.loaders import load_timeline_data
 
-
-from src.caidapeeringdb.ixp_overtime import get_ases_that_depeered_at_ixp_at_depeering_peak, get_ixp_with_most_depeering_loss_at_a_single_point_in_time, plot_ixps_connections_over_time
+from src.caidapeeringdb.caidapeeringdb_load import (
+    get_all_data,
+    get_data,
+    get_unique_ixps_from_data_list,
+    load_connections_over_time_for_asns,
+) 
+from src.caidapeeringdb.membership.ixp_overtime import (
+    get_ases_that_depeered_at_ixp_at_depeering_peak,
+    get_ixp_with_most_depeering_loss_at_a_single_point_in_time,
+    plot_ixps_connections_over_time,
+)
 
 
 def look_at_max_loss(
@@ -14,7 +29,7 @@ def look_at_max_loss(
     dates,
     connections_over_time_for_asns,
     target_asn,
-    use_target_asn_peak_event: bool = False,   
+    use_target_asn_peak_event: bool = False,
     consider_x_next: int = 3
 ):
     """
@@ -50,7 +65,8 @@ def look_at_max_loss(
             print(f"\n[ASN {target_asn} Peak Event Mode - Group {label}]")
             print(f"  Max IXP Departures Index: {peak_index} ({dates[peak_index]})")
             print(f"  IXPs Left by Target ASN: {departure_analysis['max_departures_count']}")
-            print(f"  Most Impacted IXP: IXP {target_ixp_id} with {departure_analysis['most_impacted_ixp_loss']} connection(s) lost")
+            print(f"  Most Impacted IXP: IXP {target_ixp_id} ({ixp_names.get(int(target_ixp_id), ixp_names.get(target_ixp_id, 'Unknown'))}) "
+                  f"with {departure_analysis['most_impacted_ixp_loss']} connection(s) lost")
 
             plot_ixps_connections_over_time(
                 all_data=all_data,
@@ -73,6 +89,10 @@ def look_at_max_loss(
         )
 
         if max_ixp_ratio_id is not None:
+            print(f"\n[Global Max Ratio Loss - {label}]")
+            print(f"  IXP: {max_ixp_ratio_id} ({ixp_names.get(max_ixp_ratio_id, 'Unknown')})")
+            print(f"  Max Ratio Loss: {max_ratio:.2%} at {dates[index_of_max_ratio]} (index {index_of_max_ratio})")
+
             depeered_at_peak_ases_by_ixp[max_ixp_ratio_id] = get_ases_that_depeered_at_ixp_at_depeering_peak(
                 all_data, max_ixp_ratio_id, index_of_max_ratio
             )
@@ -96,8 +116,12 @@ def look_at_max_loss(
             as_ratio=False
         )
 
+        if max_ixp_val_id is not None:
+            print(f"\n[Global Max Absolute Loss - {label}]")
+            print(f"  IXP: {max_ixp_val_id} ({ixp_names.get(max_ixp_val_id, 'Unknown')})")
+            print(f"  Max Connections Lost: {max_val} at {dates[index_of_max_val]} (index {index_of_max_val})")
+
         if max_ixp_val_id is not None and max_ixp_val_id != max_ixp_ratio_id:
-            # Optionally populate absolute value peak IXP as well if distinct
             depeered_at_peak_ases_by_ixp[max_ixp_val_id] = get_ases_that_depeered_at_ixp_at_depeering_peak(
                 all_data, max_ixp_val_id, index_of_max_val
             )
@@ -124,13 +148,6 @@ def find_max_departure_and_impacted_ixp(
     Finds the index where target_asn left the most IXPs within combined_range_ixp_ids,
     and identifies which IXP from that set lost the most total connections 
     across 'consider_x_next' snapshots.
-    
-    If consider_absolute_value is True:
-        - Step 2 calculates net departure per transition: (departed IXPs - joined IXPs).
-        - Step 3 measures net loss for IXPs using (baseline_conns - future_conns).
-    If False:
-        - Step 2 calculates gross departure count: len(prev_ixps - curr_ixps).
-        - Step 3 measures gross loss, clamping negative losses to 0 (gains ignored).
     """
     if target_asn not in connections_over_time_for_asns:
         return {}
@@ -143,8 +160,8 @@ def find_max_departure_and_impacted_ixp(
     snapshot_ixp_sets = []
     for _, conns in timeline:
         ixp_ids = {
-            str(conn.get("ix_id")) 
-            for conn in conns 
+            str(conn.get("ix_id"))
+            for conn in conns
             if str(conn.get("ix_id")) in target_ixp_set
         }
         snapshot_ixp_sets.append(ixp_ids)
@@ -157,15 +174,13 @@ def find_max_departure_and_impacted_ixp(
     for idx in range(1, num_snapshots):
         prev_ixps = snapshot_ixp_sets[idx - 1]
         curr_ixps = snapshot_ixp_sets[idx]
-        
+
         left_ixps = prev_ixps - curr_ixps
         joined_ixps = curr_ixps - prev_ixps
 
         if consider_absolute_value:
-            # Net loss across IXPs for target_asn
             departure_score = len(left_ixps) - len(joined_ixps)
         else:
-            # Gross loss (only counting departures)
             departure_score = len(left_ixps)
 
         if departure_score > max_departures_score:
@@ -177,7 +192,6 @@ def find_max_departure_and_impacted_ixp(
         return {}
 
     # 3. Calculate connection loss for departed IXPs across consider_x_next snapshots
-    # Departure baseline uses index best_index - 1 (the last state before departure occurred)
     start_snapshot_idx = best_index - 1
     end_snapshot_idx = min(start_snapshot_idx + consider_x_next, len(all_data) - 1)
 
@@ -197,7 +211,6 @@ def find_max_departure_and_impacted_ixp(
         if consider_absolute_value:
             ixp_losses[ixp_id] = net_loss
         else:
-            # Clamp gains to 0 so we only track true connection drop
             ixp_losses[ixp_id] = max(0, net_loss)
 
     most_impacted_ixp = max(ixp_losses.items(), key=lambda item: item[1]) if ixp_losses else (None, 0)
@@ -209,3 +222,67 @@ def find_max_departure_and_impacted_ixp(
         "most_impacted_ixp_id": most_impacted_ixp[0],
         "most_impacted_ixp_loss": most_impacted_ixp[1]
     }
+
+
+if __name__ == "__main__": 
+    config_path = str(Path(__file__).parent.parent)
+    if not (Path(config_path) / "config_google_before_depeering_timeline.json").exists():
+        config_path = str(Path(__file__).parent)
+
+    # 1. Load timeline files (matching ixp_members_by_top_losses.py)
+    all_files_before_depeering, all_files_after_depeering = load_timeline_data(config_path)
+    all_files = all_files_before_depeering + all_files_after_depeering
+    all_files = [f for f in all_files if "2024_05_01" not in f and "2025_02_01" not in f]
+
+    dates = [file.split("/")[-1].split(".")[0] for file in all_files]
+    all_data = get_all_data(all_files, use_cache=False)
+
+    # 2. Identify all IXPs Google (AS15169) de-peered from
+    google_asn = 15169
+    before_data = get_data(all_files_before_depeering[-1])
+    after_data = get_data(all_files_after_depeering[-1])
+
+    all_ixps = get_unique_ixps_from_data_list([before_data, after_data])
+    ixp_names = {ixp["id"]: ixp.get("name", f"IXP {ixp['id']}") for ixp in all_ixps}
+
+    data_structures = build_asn_ixp_data_structures(
+        google_asn, before_data, after_data, all_ixps
+    )
+    google_depeered_ixp_ids = list(data_structures["depeered_ixp_ids"])
+    print(f"Google (AS{google_asn}) de-peered from {len(google_depeered_ixp_ids)} IXPs.")
+
+    # 3. Load Google's peering timeline for Mode 2 analysis
+    connections_over_time_for_asns = load_connections_over_time_for_asns(
+        all_files=all_files,
+        asns_to_search=[(google_asn, "Google", ["ICP"])],
+        connections_should_be="peered"
+    )
+
+    depeered_at_peak_ases_by_ixp = {}
+
+    # 4A. Mode 1: Overall highest loss (both ratio and absolute) across all Google de-peered IXPs
+    look_at_max_loss(
+        all_data=all_data,
+        combined_range_ixp_ids=google_depeered_ixp_ids,
+        ixp_names=ixp_names,
+        label="All Google De-peered IXPs",
+        depeered_at_peak_ases_by_ixp=depeered_at_peak_ases_by_ixp,
+        dates=dates,
+        connections_over_time_for_asns=connections_over_time_for_asns,
+        target_asn=google_asn,
+        use_target_asn_peak_event=False
+    )
+
+    # 4B. Mode 2: Highest loss specifically during Google's peak de-peering event window
+    look_at_max_loss(
+        all_data=all_data,
+        combined_range_ixp_ids=google_depeered_ixp_ids,
+        ixp_names=ixp_names,
+        label="All Google De-peered IXPs",
+        depeered_at_peak_ases_by_ixp=depeered_at_peak_ases_by_ixp,
+        dates=dates,
+        connections_over_time_for_asns=connections_over_time_for_asns,
+        target_asn=google_asn,
+        use_target_asn_peak_event=True,
+        consider_x_next=3
+    )
