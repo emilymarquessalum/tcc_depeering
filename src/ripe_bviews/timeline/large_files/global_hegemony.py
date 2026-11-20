@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 from matplotlib.dates import relativedelta
 import numpy as np
 
+from src.ripe_bviews.timeline.large_files.asn_names import _resolve_asn_label
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
@@ -30,6 +32,8 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
     _resolve_rrc_dir
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, format_labels_if_they_are_dates, save_plot
+
+from src.ripe_bviews.timeline.large_files.asn_names import hegemony_asn_map
 
 
 def _get_clean_vpp_set() -> set[str]:
@@ -398,6 +402,7 @@ def analyze_global_hegemony_over_time(
     top_n: int = 5,
     text_scale: float = 1.0,
     highlight_max_per_date: bool = False,   
+    asn_to_name_map: Optional[Dict[Union[int, str], str]] = None,
 ):
     if as_color_map is None:
         as_color_map = {}
@@ -495,7 +500,7 @@ def analyze_global_hegemony_over_time(
                 linestyle=line_styles[i % len(line_styles)],
                 linewidth=2.5,
                 color=as_color_map[target_asn],
-                label=f"ASN {target_asn}",
+                label=_resolve_asn_label(target_asn, asn_to_name_map),
             )
 
         # --- NEW PLOTTING STEP FOR HIGHEST SCORE PER DATE ---
@@ -950,6 +955,7 @@ if __name__ == "__main__":
         text_scale=text_scale,
         top_n=int(user_input) if user_input else 5,
         highlight_max_per_date=highlight_max_per_date,
+        asn_to_name_map=hegemony_asn_map
     )
  
     # 2. Run Global VPP vs Non-VPP Hegemony Over Time

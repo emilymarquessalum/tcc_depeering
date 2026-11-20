@@ -23,6 +23,8 @@ from src.ripe_bviews.timeline.large_files.bview_sqlite_parser import (
 )
 from src.utils.graphs import DEFAULT_FIGSIZE, save_plot, format_labels_if_they_are_dates
 
+from src.ripe_bviews.timeline.large_files.asn_names import hegemony_asn_map
+
 
 def _parse_ip_versions(ip_version: Union[str, Sequence[str]]) -> List[str]:
     """Normalize an IP-version argument to one or both supported values."""
@@ -369,25 +371,6 @@ if __name__ == "__main__":
     target_asn = int(input("Enter target ASN (default 15169): ") or "15169")
     top_n = int(input("Enter number of top global ASes (default 5): ") or "5")
      
-    my_asn_map = { 
-        3356: "Lumen (VPP)",
-        3257: "GTT (VPP)", 
-        6939: "Hurricane",
-        8218: "Zayo (VPP)",
-        24482: "SG GS",
-        34549: "meerfarbig",
-        202365: "Chronos",
-        214292: "DE-CIX (VPP)",
-
-        9002: "RETN Limited",
-        1299: "Arelion (VPP)",
-        21859: "Zenlayer",
-        2914: "NTT",
-
-        3491:"PCCW Global",
-        32653:"eNetworks",
-        328320:"Kurlec",
-    }
     
     over_time_global(
         target_asn,
@@ -395,7 +378,7 @@ if __name__ == "__main__":
         ip_version="both",
         show_as_percentage=True,
         highlight_max_per_date=True,
-        asn_to_name_map=my_asn_map,
+        asn_to_name_map=hegemony_asn_map,
     )
     
     over_time_global(
@@ -404,6 +387,6 @@ if __name__ == "__main__":
         ip_version="both",
         show_as_percentage=True,
         highlight_max_per_date=False,
-        asn_to_name_map=my_asn_map,
+        asn_to_name_map=hegemony_asn_map,
     )
     
