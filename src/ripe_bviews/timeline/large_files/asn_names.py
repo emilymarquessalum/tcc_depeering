@@ -1,5 +1,10 @@
 
 
+from typing import Dict, Union
+
+from pyparsing import Optional
+
+
 def _resolve_asn_label(
     target_asn: Union[int, str],
     asn_to_name_map: Optional[Dict[Union[int, str], str]] = None,
